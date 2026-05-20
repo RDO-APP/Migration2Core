@@ -1,0 +1,75 @@
+@using RdoApp.Core.Utils
+@* 
+    ESCOLHER OBRA HEADER - Simplified Header Partial
+    Date: February 4, 2026
+    
+    Structure matches legacy nav.html for proper CSS alignment
+    Uses modern ASP.NET Core Razor syntax with legacy HTML structure
+    Permission checking uses PermissionHelper (exact copy of legacy Permission.check() logic)
+*@
+
+<div class="topo">
+    <nav class="navbar bg-blue-default">
+        <div class="no-padding">
+            @* Logo/Brand - Always Visible *@
+            <a class="navbar-brand logo pointer" href="@Url.Action("Escolher", "Obra")">
+                <i class="icon-logo"></i>
+                <span>Piscinas</span>
+            </a>
+
+            @* Center area for obra name (empty on Escolher page) *@
+            <div class="menu-lateral">
+                <h2 id="tituloObra"></h2>
+            </div>
+        </div>
+
+        <div class="no-padding">
+            <div class="navbar-collapse menu">
+                @* User Dropdown - Always Visible (FIRST - this was the working order) *@
+                <ul class="nav navbar-nav navbar-right user">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle pointer" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="image">
+                                <img src="~/images/user.png" alt="User Avatar">
+                            </span>
+                            <p>@User.Identity.Name</p>
+                            <i class="caret"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="@Url.Action("ChangePassword", "Account")">TROCAR SENHA</a></li>
+                            <li>
+                                <form asp-action="Logout" asp-controller="Account" method="post" style="margin: 0;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" style="background: none; border: none; color: #26476D; padding: 10px 20px; width: 100%; text-align: left; cursor: pointer; font-family: 'sf-md';">
+                                        SAIR
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                @* Navigation Buttons - Permission Protected (SECOND - this was the working order) *@
+                <ul class="nav navbar-nav navbar-right ball-hover">
+                    @if (PermissionHelper.HasPermission(Context, "visualizar", "/chart"))
+                    {
+                        <li class="btn-tooltip pointer" title="DASHBOARD GERAL">
+                            <a href="@Url.Action("Index", "Chart")">
+                                <i class="fa fa-bar-chart"></i>
+                            </a>
+                        </li>
+                    }
+                    
+                    @if (PermissionHelper.HasPermission(Context, "visualizar", "/obra/cadastro"))
+                    {
+                        <li class="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
+                            <a href="@Url.Action("Cadastro", "Obra")">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

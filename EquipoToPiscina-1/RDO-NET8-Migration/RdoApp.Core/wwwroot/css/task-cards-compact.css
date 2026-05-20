@@ -1,0 +1,202 @@
+/* CSS GRID LAYOUT - LEGACY STANDARD 300PX ENFORCEMENT */
+.task-cards-grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, 300px) !important;
+    gap: 15px !important;
+    padding: 8px 0 !important;
+    justify-content: center !important; /* Center the grid */
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure grid items don't stretch */
+.task-cards-grid-container > * {
+    width: 300px !important;
+    max-width: 300px !important;
+    min-width: 300px !important;
+    justify-self: center !important;
+}
+
+/* Add Task Button Styling */
+.add-task-button-container {
+    margin-top: 16px !important;
+    text-align: center !important;
+    grid-column: 1 / -1 !important; /* Span full width if inside grid */
+}
+
+/* Empty State Styling */
+.empty-state-container {
+    text-align: center !important;
+    width: 100% !important;
+    padding: 20px !important;
+    grid-column: 1 / -1 !important; /* Span full width */
+}
+
+/* Debug info styling */
+.empty-state-container small {
+    display: block !important;
+    margin-top: 8px !important;
+    font-family: monospace !important;
+    background: #f8f9fa !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+/* Responsive behavior - maintain 300px cards */
+@media (max-width: 768px) {
+    .task-cards-grid-container {
+        grid-template-columns: repeat(auto-fill, 300px) !important;
+        justify-content: center !important; /* Center on mobile */
+    }
+}
+
+@media (max-width: 320px) {
+    .task-cards-grid-container {
+        grid-template-columns: 1fr !important; /* Single column on very small screens */
+        justify-items: center !important;
+    }
+    
+    .task-cards-grid-container > * {
+        width: 300px !important; /* Still maintain 300px even on small screens */
+        max-width: 300px !important;
+    }
+}
+
+/* Task Cards CSS - Clean Working Version */
+/* Basic styling for task cards without conflicts */
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    background: #fff;
+}
+
+.head {
+    background-color: #5bc0de;
+    color: white;
+    padding: 10px;
+    border-radius: 4px 4px 0 0;
+}
+
+.head h5 {
+    color: white;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.head i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.icones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.inf {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 12px;
+}
+
+.actions .btn {
+    margin-left: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+.datas {
+    padding: 8px 10px;
+    background: #f9f9f9;
+    font-size: 11px;
+}
+
+.datas label {
+    display: block;
+    margin: 2px 0;
+}
+
+.col-xs-12 {
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress {
+    flex: 1;
+    height: 16px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #17a2b8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.checkbox {
+    margin: 0;
+}
+
+.item {
+    margin-bottom: 15px;
+}
+
+/* Status Colors */
+.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+.bg-primary {
+    background-color: #007bff !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Icon support */
+.icon-trator:before {
+    content: "\f1b9";
+    font-family: "FontAwesome";
+}
+
+.icon-planejada:before {
+    content: "\f073";
+    font-family: "FontAwesome";
+    margin-right: 4px;
+    color: #007bff;
+}
+
+.icon-executada:before {
+    content: "\f058";
+    font-family: "FontAwesome";
+    margin-right: 4px;
+    color: #28a745;
+}

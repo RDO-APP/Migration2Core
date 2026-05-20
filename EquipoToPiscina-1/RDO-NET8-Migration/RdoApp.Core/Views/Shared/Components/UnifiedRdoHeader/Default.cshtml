@@ -1,0 +1,205 @@
+@{
+    var userName = ViewData["UserName"] as string ?? "Usuário";
+    var obraNome = ViewData["ObraNome"] as string;
+}
+
+@* UNIFIED HEADER - Same dark blue theme, dynamic content based on context *@
+<header class="rdo-header">
+    <nav class="navbar rdo-dark-blue">
+        <div class="no-padding">
+            <!-- Logo (always present) -->
+            @if (string.IsNullOrEmpty(obraNome))
+            {
+                <a class="navbar-brand logo">
+                    <i class="icon-logo"></i>
+                    <span>Piscinas</span>
+                </a>
+            }
+            else
+            {
+                <a class="navbar-brand logo pointer" href="/Obra/Escolher">
+                    <i class="icon-logo"></i>
+                    <span>Piscinas</span>
+                </a>
+            }
+
+            <!-- Mobile Menu -->
+            <div class="menu-lateral">
+                <ul class="nav-mobile">
+                    <li class="menu-container">
+                        <input id="menu-toggle" type="checkbox">
+                        <label for="menu-toggle" class="menu-button">
+                            <svg class="icon-open" viewBox="0 0 24 24">
+                                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                            </svg>
+                            <svg class="icon-close" viewBox="0 0 100 100">
+                                <path d="M83.288 88.13c-2.114 2.112-5.575 2.112-7.69 0L53.66 66.188c-2.113-2.112-5.572-2.112-7.686 0l-21.72 21.72c-2.114 2.113-5.572 2.113-7.687 0l-4.693-4.692c-2.114-2.114-2.114-5.573 0-7.688l21.72-21.72c2.112-2.115 2.112-5.574 0-7.687L11.87 24.4c-2.114-2.113-2.114-5.57 0-7.686l4.842-4.842c2.113-2.114 5.57-2.114 7.686 0l21.72 21.72c2.114 2.113 5.572 2.113 7.688 0l21.72-21.72c2.115-2.114 5.574-2.114 7.688 0l4.695 4.695c2.112 2.113 2.112 5.57-.002 7.686l-21.72 21.72c-2.112 2.114-2.112 5.573 0 7.686L88.13 75.6c2.112 2.11 2.112 5.572 0 7.687l-4.842 4.84z" />
+                            </svg>
+                        </label>
+
+                        <!-- Mobile Sidebar -->
+                        <div class="menu-sidebar">
+                            <div class="scrollbar-inner">
+                                <!-- User Menu -->
+                                <ul class="nav navbar-nav navbar-right user">
+                                    <li>
+                                        <a class="collapsed" data-toggle="collapse" href="#user-menu" role="button" aria-expanded="false" aria-controls="user-menu">
+                                            <span class="image">
+                                                <img src="/Assets/images/user.png" alt="">
+                                            </span>
+                                            <p>@userName</p>
+                                        </a>
+                                        <ul class="collapse multi-collapse" id="user-menu">
+                                            <li><a href="/Account/ChangePassword">TROCAR SENHA</a></li>
+                                            <li><a href="/Account/Logout">SAIR</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                
+                                <!-- Dynamic Navigation Menu -->
+                                <ul class="nav navbar-nav navbar-right ball-hover">
+                                    @if (string.IsNullOrEmpty(obraNome))
+                                    {
+                                        <!-- ESCOLHER OBRA: Limited icons -->
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Charts">
+                                            <a href="/Chart/Index">
+                                                <i class="fa fa-bar-chart"></i>
+                                                <span>Charts</span>
+                                            </a>
+                                        </li>
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Nova Obra">
+                                            <a href="/Obra/Cadastro">
+                                                <i class="fa fa-plus"></i>
+                                                <span>Nova Obra</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <!-- ETAPA TAREFA: All icons enabled -->
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Laudos">
+                                            <a href="/Laudo/Index">
+                                                <i class="fa fa-folder"></i>
+                                                <span>Laudos</span>
+                                            </a>
+                                        </li>
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Dashboard">
+                                            <a href="/Dashboard/Index">
+                                                <i class="icon-dashboard"></i>
+                                                <span>Dashboard</span>
+                                            </a>
+                                        </li>
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="RDO">
+                                            <a href="/Rdo/Index">
+                                                <i class="icon-rdo-novo_2"></i>
+                                                <span>RDO</span>
+                                            </a>
+                                        </li>
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Tarefas">
+                                            <a href="/Tarefa/Cards">
+                                                <i class="fa fa-th"></i>
+                                                <span>Tarefas</span>
+                                            </a>
+                                        </li>
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Charts">
+                                            <a href="/Chart/Index">
+                                                <i class="fa fa-bar-chart"></i>
+                                                <span>Charts</span>
+                                            </a>
+                                        </li>
+                                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Nova Obra">
+                                            <a href="/Obra/Cadastro">
+                                                <i class="fa fa-plus"></i>
+                                                <span>Nova Obra</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <!-- Dynamic Obra Title (only show if obra selected) -->
+                @if (!string.IsNullOrEmpty(obraNome))
+                {
+                    <h2 id="tituloObra">@obraNome.ToUpper()</h2>
+                }
+            </div>
+        </div><!-- CLOSE: no-padding (mobile section) -->
+        
+        <!-- Desktop Navigation -->
+        <div class="no-padding">
+            <div class="collapse navbar-collapse menu">
+                <!-- User Dropdown -->
+                <ul class="nav navbar-nav navbar-right user">
+                    <li>
+                        <a class="dropdown-toggle pointer" data-toggle="dropdown">
+                            <span class="image">
+                                <img src="/Assets/images/user.png" alt="User Avatar">
+                            </span>
+                            <p>@userName</p>
+                            <i class="caret"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/Account/ChangePassword">TROCAR SENHA</a></li>
+                            <li><a href="/Account/Logout">SAIR</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- Dynamic Navigation Buttons -->
+                <ul class="nav navbar-nav navbar-right ball-hover">
+                    @if (string.IsNullOrEmpty(obraNome))
+                    {
+                        <!-- ESCOLHER OBRA: Only 2 icons (Chart, Plus) -->
+                        <li class="btn-tooltip pointer" data-toggle="tooltip" data-placement="left" title="Charts">
+                            <a href="/Chart/Index">
+                                <i class="fa fa-bar-chart"></i>
+                            </a>
+                        </li>
+                        <li class="btn-tooltip pointer" data-toggle="tooltip" data-placement="left" title="Nova Obra">
+                            <a href="/Obra/Cadastro">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- ETAPA TAREFA: All 6 icons -->
+                        <li class="btn-tooltip pointer" data-toggle="tooltip" data-placement="left" title="Laudos">
+                            <a href="/Laudo/Index">
+                                <i class="fa fa-folder"></i>
+                            </a>
+                        </li>
+                        <li class="btn-tooltip pointer" data-toggle="tooltip" data-placement="left" title="Dashboard">
+                            <a href="/Dashboard/Index">
+                                <i class="icon-dashboard"></i>
+                            </a>
+                        </li>
+                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="RDO">
+                            <a href="/Rdo/Index">
+                                <i class="icon-rdo-novo_2"></i>
+                            </a>
+                        </li>
+                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Tarefas">
+                            <a href="/Tarefa/Cards">
+                                <i class="fa fa-th"></i>
+                            </a>
+                        </li>
+                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Charts">
+                            <a href="/Chart/Index">
+                                <i class="fa fa-bar-chart"></i>
+                            </a>
+                        </li>
+                        <li class="btn-tooltip" data-toggle="tooltip" data-placement="left" title="Nova Obra">
+                            <a href="/Obra/Cadastro">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div><!-- CLOSE: no-padding (desktop section) -->
+    </nav>
+</header>

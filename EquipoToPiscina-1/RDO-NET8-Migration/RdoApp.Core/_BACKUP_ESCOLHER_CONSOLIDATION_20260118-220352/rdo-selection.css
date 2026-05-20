@@ -1,0 +1,305 @@
+/* RDO SELECTION MODE CSS - Minimal interface for obra selection */
+/* Based on legacy architecture analysis - Selection Mode (Project A) */
+
+/* Selection Body - Blue theme background */
+.rdo-selection-body {
+    background: #27496f; /* Legacy blue theme */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Selection Header - Minimal branding only */
+.rdo-selection-header {
+    padding: 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 30px;
+}
+
+.rdo-logo-minimal {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.rdo-logo-minimal i {
+    font-size: 32px;
+}
+
+/* Selection Main Content */
+.rdo-selection-main {
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Obra Cards Container */
+.rdo-obra-cards-container {
+    width: 100%;
+}
+
+/* Filters Section */
+.rdo-filters-section {
+    margin-bottom: 30px;
+}
+
+.rdo-selection-title {
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+.rdo-filters-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.rdo-filter-group {
+    flex: 0 0 auto;
+    min-width: 250px;
+}
+
+.rdo-filter-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rdo-filter-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Obra Grid - Legacy responsive breakpoints */
+.rdo-obra-grid {
+    margin-bottom: 40px;
+}
+
+.lista-obras {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 17px;
+}
+
+.lista-obras .item {
+    flex-basis: 100%; /* Mobile first */
+    max-width: 300px;
+    padding: 0 3px;
+}
+
+/* Tablet breakpoint - 3 columns */
+@media (min-width: 768px) {
+    .lista-obras .item {
+        flex-basis: 33%;
+        max-width: none;
+    }
+}
+
+/* Desktop breakpoint - 5 columns */
+@media (min-width: 1200px) {
+    .lista-obras .item {
+        flex-basis: 20%;
+    }
+}
+
+/* Obra Card Button - Legacy styling */
+.lista-obras .item .btn {
+    background: #fff;
+    margin: 0;
+    padding: 10px;
+    margin-bottom: 7px;
+    border-radius: 5px;
+    height: 100%;
+    display: block;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.lista-obras .item .btn:hover {
+    background: #0088DD; /* Legacy hover color */
+    color: #fff;
+    box-shadow: none;
+    text-decoration: none;
+}
+
+/* Icon System - 97px legacy size */
+.lista-obras .item .btn i {
+    font-size: 97px;
+    color: #0088DD;
+    margin: 0 auto;
+    display: table;
+    text-align: center;
+    margin-bottom: -20px;
+}
+
+.lista-obras .item .btn:hover i {
+    color: #28496F; /* Icon changes to dark blue on hover */
+}
+
+/* Typography - Legacy hierarchy */
+.lista-obras .item h5 {
+    font-family: 'sf-bd', sans-serif;
+    font-size: 24px;
+    color: #28496F;
+    text-align: center;
+    line-height: 24px;
+    text-transform: none;
+    white-space: normal;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.lista-obras .item .btn p {
+    color: #27486E;
+    font-size: 12px;
+    margin: 0 0;
+    display: block;
+}
+
+.lista-obras .item .btn small {
+    color: #666;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Hover text color changes */
+.lista-obras .item .btn:hover h5,
+.lista-obras .item .btn:hover p,
+.lista-obras .item .btn:hover small {
+    color: #fff;
+}
+
+/* Progress Bar - Legacy color system */
+.progress {
+    height: 20px;
+    margin-bottom: 0;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    transform: scaleX(-1); /* Legacy reversed direction */
+}
+
+.progress-bar {
+    float: left;
+    width: 0%;
+    height: 100%;
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    background-color: #337ab7;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    transition: width 0.6s ease;
+    transform: scaleX(-1); /* Reverse text back */
+}
+
+/* Status color system - Legacy colors */
+.progress.bg-verde { background: #57B257 !important; }    /* Green - Completed */
+.progress.bg-vermelho { background: #D04541 !important; } /* Red - Overdue */
+.progress.bg-cinza { background: #999999 !important; }    /* Gray - In Progress */
+.progress.bg-azul { background: #51BCDC !important; }     /* Blue - Active */
+.progress.bg-laranja { background: #FF8000 !important; }  /* Orange - Warning */
+
+/* No obras message */
+.rdo-no-obras {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    padding: 40px 20px;
+}
+
+/* Legend Section */
+.area-legenda {
+    margin-top: 40px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.legenda-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.legenda-title {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: block;
+    text-align: center;
+}
+
+.legenda {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.legenda i.status {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.legenda small {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 767px) {
+    .rdo-filters-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .rdo-filter-group {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .lista-obras .item h5 {
+        font-size: 20px;
+    }
+    
+    .lista-obras .item .btn i {
+        font-size: 80px;
+    }
+    
+    .legenda {
+        flex-direction: column;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .legenda i.status {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+}

@@ -1,0 +1,33 @@
+@model IEnumerable<RdoApp.Core.Models.ViewModels.ObraViewModel>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MINIMAL TEST</title>
+    <style>
+        body { background: yellow; padding: 50px; font-family: Arial; font-size: 20px; }
+        .test { background: white; padding: 20px; border: 5px solid red; }
+    </style>
+</head>
+<body>
+    <div class="test">
+        <h1>🔥 MINIMAL TEST - IF YOU SEE THIS, VIEW IS RENDERING</h1>
+        <p><strong>Model is null:</strong> @(Model == null ? "YES" : "NO")</p>
+        <p><strong>Model count:</strong> @(Model?.Count() ?? 0)</p>
+        
+        @if (Model != null && Model.Any())
+        {
+            <h2>OBRAS FOUND:</h2>
+            <ul>
+                @foreach (var obra in Model.Take(5))
+                {
+                    <li>@obra.Id - @obra.Descricao</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p style="color: red; font-size: 24px;">NO OBRAS IN MODEL</p>
+        }
+    </div>
+</body>
+</html>

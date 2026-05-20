@@ -1,0 +1,379 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.JSInterop
+@using RdoApp.Core.Models.ViewModels
+@using RdoApp.Core.Models.Requests
+@using RdoApp.Core.Services.Interfaces
+@using System.ComponentModel.DataAnnotations
+@inject ITarefaService TarefaService
+@inject IJSRuntime JSRuntime
+
+<!-- PURE BLAZOR NOVA MEDIÇÃO MODAL - ZERO JAVASCRIPT DEPENDENCIES -->
+<div class="modal fade" id="nova-medicao-modal-blazor" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <EditForm Model="@Model" OnValidSubmit="@HandleValidSubmit">
+                <DataAnnotationsValidator />
+                
+                <div class="modal-header">
+                    <button type="button" class="btn-close" @onclick="@CloseModal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="panel-heading">
+                        <h4>Nova Medição - @TaskDescription</h4>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Status - Required Field -->
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Status<span style="color:red">*</span></label>
+                                <InputSelect @bind-Value="Model.Status" class="form-control rdo-select" required>
+                                    <option value="0">Selecione...</option>
+                                    <option value="1">Planejada</option>
+                                    <option value="2">Em Execução</option>
+                                    <option value="3">Finalizada</option>
+                                    <option value="4">Paralisada</option>
+                                    <option value="5">Cancelada</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => Model.Status)" />
+                            </div>
+                        </div>
+                        
+                        <!-- Data - Required Field with Blazor InputDate -->
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Data<span style="color:red">*</span></label>
+                                <InputDate @bind-Value="Model.DataMedicao" 
+                                          class="form-control rdo-date-input" 
+                                          required />
+                                <ValidationMessage For="@(() => Model.DataMedicao)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Quantidade - Blazor InputNumber -->
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Quantidade</label>
+                                <InputNumber @bind-Value="Model.QtdConstruida" 
+                                           class="form-control rdo-number-input" 
+                                           step="0.01" 
+                                           min="0" 
+                                           placeholder="0.00" />
+                                <ValidationMessage For="@(() => Model.QtdConstruida)" />
+                            </div>
+                        </div>
+
+                        <!-- Water Quality Dropdowns - Blazor InputSelect -->
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Cloro</label>
+                                <InputSelect @bind-Value="Model.NivelCloro" class="form-control rdo-select">
+                                    <option value="">Selecione</option>
+                                    <option value="1">0 ppm</option>
+                                    <option value="2">0,5 &lt; 1,0</option>
+                                    <option value="3">1,5 &lt; 2,0</option>
+                                    <option value="4">2,5 &lt; 3,0</option>
+                                    <option value="5">&gt; 3,0</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">PH</label>
+                                <InputSelect @bind-Value="Model.Ph" class="form-control rdo-select">
+                                    <option value="">Selecione</option>
+                                    <option value="1">&lt; 7.0</option>
+                                    <option value="2">7.0 &lt; 7.2</option>
+                                    <option value="3">7.2 &lt; 7.4</option>
+                                    <option value="4">7.4 &lt; 7.6</option>
+                                    <option value="5">7.6 &lt; 7.8</option>
+                                    <option value="6">&gt; 7.8</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Alcalinidade</label>
+                                <InputSelect @bind-Value="Model.Alcalinidade" class="form-control rdo-select">
+                                    <option value="">Selecione</option>
+                                    <option value="1">&lt; 70</option>
+                                    <option value="2">70 &lt; 80</option>
+                                    <option value="3">90 &lt; 100</option>
+                                    <option value="4">110 &lt; 120</option>
+                                    <option value="5">130 &gt; 140</option>
+                                    <option value="6">&gt; 140</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Water Quality Radio Buttons - Blazor InputRadioGroup -->
+                    <div class="row novoscards px-sm-6">
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label>Limpidez</label><br>
+                                <InputRadioGroup @bind-Value="Model.Limpidez" class="rdo-radio-group">
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="true" class="form-check-input" id="limpidez-sim" />
+                                        <label class="form-check-label" for="limpidez-sim">Sim</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="false" class="form-check-input" id="limpidez-nao" />
+                                        <label class="form-check-label" for="limpidez-nao">Não</label>
+                                    </div>
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label>Materiais flutuantes</label><br>
+                                <InputRadioGroup @bind-Value="Model.Superficie" class="rdo-radio-group">
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="true" class="form-check-input" id="superficie-sim" />
+                                        <label class="form-check-label" for="superficie-sim">Sim</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="false" class="form-check-input" id="superficie-nao" />
+                                        <label class="form-check-label" for="superficie-nao">Não</label>
+                                    </div>
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label>Areia no fundo</label><br>
+                                <InputRadioGroup @bind-Value="Model.Fundo" class="rdo-radio-group">
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="true" class="form-check-input" id="fundo-sim" />
+                                        <label class="form-check-label" for="fundo-sim">Sim</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="false" class="form-check-input" id="fundo-nao" />
+                                        <label class="form-check-label" for="fundo-nao">Não</label>
+                                    </div>
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label>Algas</label><br>
+                                <InputRadioGroup @bind-Value="Model.NivelProliferacao" class="rdo-radio-group">
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="true" class="form-check-input" id="proliferacao-sim" />
+                                        <label class="form-check-label" for="proliferacao-sim">Sim</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="false" class="form-check-input" id="proliferacao-nao" />
+                                        <label class="form-check-label" for="proliferacao-nao">Não</label>
+                                    </div>
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+
+                        <!-- CRITICAL FIX: 'Nível de Detritos' (UI) saves to tar_nr_nivel_bacteria (Database) -->
+                        <div class="col-md-4 col-sm-6">
+                            <div class="form-group">
+                                <label>Nível de Detritos</label><br>
+                                <InputRadioGroup @bind-Value="Model.NivelDetritos" class="rdo-radio-group">
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="true" class="form-check-input" id="detritos-sim" />
+                                        <label class="form-check-label" for="detritos-sim">Sim</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <InputRadio Value="false" class="form-check-input" id="detritos-nao" />
+                                        <label class="form-check-label" for="detritos-nao">Não</label>
+                                    </div>
+                                </InputRadioGroup>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments - Blazor InputTextArea -->
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label">Comentário</label>
+                            <InputTextArea @bind-Value="Model.Comentario" 
+                                         class="form-control rdo-textarea" 
+                                         maxlength="1400" 
+                                         rows="4" />
+                            <ValidationMessage For="@(() => Model.Comentario)" />
+                            <div class="form-text">@(1400 - (Model.Comentario?.Length ?? 0)) caracteres restantes</div>
+                        </div>
+                    </div>
+
+                    <!-- Error and Success Messages -->
+                    @if (ShowError)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            @ErrorMessage
+                        </div>
+                    }
+
+                    @if (ShowSuccess)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <i class="fas fa-check-circle"></i>
+                            @SuccessMessage
+                        </div>
+                    }
+                </div>
+
+                <div class="modal-footer">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-rdo-primary btn-block-xs" disabled="@IsSubmitting">
+                            @if (IsSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            }
+                            <i class="fas fa-save"></i>
+                            SALVAR
+                        </button>
+                        <button type="button" class="btn btn-secondary" @onclick="@CloseModal">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int TaskId { get; set; }
+    [Parameter] public string TaskDescription { get; set; } = "";
+    [Parameter] public int CurrentStatus { get; set; }
+    [Parameter] public EventCallback<NovaMedicaoResult> OnMeasurementSaved { get; set; }
+    
+    private NovaMedicaoViewModel Model = new();
+    private bool IsSubmitting = false;
+    private string ErrorMessage = "";
+    private string SuccessMessage = "";
+    private bool ShowError => !string.IsNullOrEmpty(ErrorMessage);
+    private bool ShowSuccess => !string.IsNullOrEmpty(SuccessMessage);
+
+    /// <summary>
+    /// Initialize modal with smart defaults - Pure Blazor OnInitialized
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        PopulateSmartDefaults();
+    }
+
+    /// <summary>
+    /// Show modal with task context - Pure Blazor method
+    /// </summary>
+    public async Task ShowAsync(int taskId, string taskDescription, int currentStatus)
+    {
+        TaskId = taskId;
+        TaskDescription = taskDescription;
+        CurrentStatus = currentStatus;
+        
+        PopulateSmartDefaults();
+        ClearMessages();
+        
+        // Use minimal JavaScript only for Bootstrap CSS modal display
+        await JSRuntime.InvokeVoidAsync("eval", 
+            "new bootstrap.Modal(document.getElementById('nova-medicao-modal-blazor')).show()");
+        
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Populate smart defaults in C# - Zero JavaScript
+    /// </summary>
+    private void PopulateSmartDefaults()
+    {
+        Model.TarefaId = TaskId;
+        Model.DataMedicao = DateTime.Today;
+        Model.Status = CurrentStatus > 0 ? CurrentStatus : 1; // Default to "Planejada" if no status
+        Model.TarefaDescricao = TaskDescription;
+        
+        // Set default values for boolean fields (matching original behavior)
+        Model.Limpidez = false;
+        Model.Superficie = false;
+        Model.Fundo = false;
+        Model.NivelProliferacao = false;
+        Model.NivelDetritos = false;
+    }
+
+    /// <summary>
+    /// Handle form submission - Pure Blazor with C# validation and REAL DATABASE INTEGRATION
+    /// </summary>
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            ClearMessages();
+            IsSubmitting = true;
+            StateHasChanged();
+
+            // PRODUCTION REALITY: Real service call to save measurement to database
+            var result = await TarefaService.SalvarMedicaoAsync(Model);
+
+            if (result.Success)
+            {
+                SuccessMessage = result.Message ?? "Medição salva com sucesso!";
+                StateHasChanged();
+                
+                // Show success message briefly
+                await Task.Delay(2000);
+                
+                // Close modal and notify parent to refresh real data
+                await CloseModal();
+                await OnMeasurementSaved.InvokeAsync(result);
+            }
+            else
+            {
+                ErrorMessage = result.Message ?? "Erro ao salvar medição.";
+            }
+        }
+        catch (ValidationException ex)
+        {
+            ErrorMessage = $"Erro de validação: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Erro interno do servidor. Tente novamente.";
+            // Log error for debugging but don't expose internal details to user
+            Console.WriteLine($"❌ NOVA MEDIÇÃO ERROR: {ex.Message}");
+        }
+        finally
+        {
+            IsSubmitting = false;
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Close modal - Minimal JavaScript for Bootstrap CSS
+    /// </summary>
+    private async Task CloseModal()
+    {
+        ClearMessages();
+        
+        // Use minimal JavaScript only for Bootstrap CSS modal hide
+        await JSRuntime.InvokeVoidAsync("eval", 
+            "bootstrap.Modal.getInstance(document.getElementById('nova-medicao-modal-blazor'))?.hide()");
+    }
+
+    /// <summary>
+    /// Clear all messages - Pure C# state management
+    /// </summary>
+    private void ClearMessages()
+    {
+        ErrorMessage = "";
+        SuccessMessage = "";
+    }
+}

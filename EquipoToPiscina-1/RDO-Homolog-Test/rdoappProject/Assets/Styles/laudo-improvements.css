@@ -1,0 +1,87 @@
+/* Melhorias na Interface do Laudo - Baseado no código de produção do Gilberto */
+
+/* Tooltips com SVG icons */
+.hover {
+    cursor: help;
+    position: relative;
+}
+
+.hover svg {
+    margin-left: 5px;
+    vertical-align: middle;
+    opacity: 0.7;
+}
+
+.hover:hover svg {
+    opacity: 1;
+}
+
+/* Layout melhorado para os cards novos */
+.novoscards {
+    margin-top: 15px;
+    padding: 0 15px;
+}
+
+.novoscards .form-group {
+    margin-bottom: 20px;
+}
+
+.novoscards label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.novoscards input[type="radio"] {
+    margin: 0 5px 0 15px;
+}
+
+.novoscards input[type="radio"]:first-of-type {
+    margin-left: 0;
+}
+
+/* Melhorias na tabela do histórico */
+.medicao tr.zebra {
+    background-color: #f9f9f9;
+}
+
+.medicao td {
+    padding: 8px 12px;
+    vertical-align: middle;
+}
+
+.medicao th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Melhorias nos dropdowns */
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Espaçamento melhorado */
+.container-fluid.mt-4 {
+    margin-top: 1rem !important;
+}
+
+/* Botões de ação melhorados */
+.btn-simple {
+    transition: all 0.2s ease;
+}
+
+.btn-simple:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

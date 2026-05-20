@@ -1,0 +1,146 @@
+<div class="modal fade" id="relatorio-horas-piscina">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="hideRelatorioModal()">
+                    <i class="icon-close"></i>
+                </button>
+                <div class="panel-heading">
+                    <h4>Relatório Controle de Horas - <span id="relatorio-descricao">Tarefa</span></h4>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="form-filtro-relatorio-horas">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Data Inicial<span style="color:red">*</span></label>
+                                <input type="date" class="form-control" id="relatorio-data-inicial" name="dataInicial" required>
+                                <span class="material-input"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Data Final<span style="color:red">*</span></label>
+                                <input type="date" class="form-control" id="relatorio-data-final" name="dataFinal" required>
+                                <span class="material-input"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="relatorio-tarefa-id" name="tarefaId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="col-xs-12">
+                    <button class="btn btn-blue btn-block-xs" onclick="gerarRelatorioExcel()">
+                        <i class="fa fa-file-excel-o"></i>
+                        GERAR EXCEL
+                    </button>
+                    <button class="btn btn-blue btn-block-xs" onclick="gerarRelatorioPDF()">
+                        <i class="fa fa-file-pdf-o"></i>
+                        GERAR PDF
+                    </button>
+                    <button type="button" class="btn btn-simple" data-dismiss="modal" onclick="hideRelatorioModal()">
+                        <i class="icon-close" aria-hidden="true"></i>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirRelatorioHoras(tarefaId, descricao) {
+        document.getElementById('relatorio-descricao').textContent = descricao;
+        document.getElementById('relatorio-tarefa-id').value = tarefaId;
+        
+        // Set default dates (last 30 days)
+        var hoje = new Date();
+        var trintaDiasAtras = new Date();
+        trintaDiasAtras.setDate(hoje.getDate() - 30);
+        
+        document.getElementById('relatorio-data-inicial').value = trintaDiasAtras.toISOString().split('T')[0];
+        document.getElementById('relatorio-data-final').value = hoje.toISOString().split('T')[0];
+        
+        // MODERN: Pure JavaScript modal show (no jQuery)
+        var modalElement = document.getElementById('relatorio-horas-piscina');
+        if (modalElement) {
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            modalElement.setAttribute('aria-hidden', 'false');
+            
+            // Add backdrop
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'relatorio-backdrop';
+            document.body.appendChild(backdrop);
+            document.body.classList.add('modal-open');
+        }
+    }
+
+    // MODERN: Helper function to hide modal
+    function hideRelatorioModal() {
+        var modalElement = document.getElementById('relatorio-horas-piscina');
+        if (modalElement) {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            modalElement.setAttribute('aria-hidden', 'true');
+            
+            var backdrop = document.getElementById('relatorio-backdrop');
+            if (backdrop) backdrop.remove();
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function gerarRelatorioExcel() {
+        var form = document.getElementById('form-filtro-relatorio-horas');
+        var formData = new FormData(form);
+        
+        // Create a temporary form to submit for file download
+        var downloadForm = document.createElement('form');
+        downloadForm.method = 'POST';
+        downloadForm.action = '@Url.Action("GerarRelatorioExcel", "Relatorio")';
+        
+        for (var pair of formData.entries()) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = pair[0];
+            input.value = pair[1];
+            downloadForm.appendChild(input);
+        }
+        
+        document.body.appendChild(downloadForm);
+        downloadForm.submit();
+        document.body.removeChild(downloadForm);
+        
+        // MODERN: Pure JavaScript modal hide
+        hideRelatorioModal();
+    }
+
+    function gerarRelatorioPDF() {
+        var form = document.getElementById('form-filtro-relatorio-horas');
+        var formData = new FormData(form);
+        
+        // Create a temporary form to submit for file download
+        var downloadForm = document.createElement('form');
+        downloadForm.method = 'POST';
+        downloadForm.action = '@Url.Action("GerarRelatorioPDF", "Relatorio")';
+        
+        for (var pair of formData.entries()) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = pair[0];
+            input.value = pair[1];
+            downloadForm.appendChild(input);
+        }
+        
+        document.body.appendChild(downloadForm);
+        downloadForm.submit();
+        document.body.removeChild(downloadForm);
+        
+        // MODERN: Pure JavaScript modal hide
+        hideRelatorioModal();
+    }
+</script>

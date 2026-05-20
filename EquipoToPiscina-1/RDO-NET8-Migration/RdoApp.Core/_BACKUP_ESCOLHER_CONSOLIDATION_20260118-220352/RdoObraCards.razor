@@ -1,0 +1,189 @@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@using RdoApp.Core.Models.ViewModels
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<!-- OPTION A: Legacy-First Implementation -->
+<!-- Pure CSS, No Bootstrap, Simple HTML Structure -->
+
+<!-- Filters Section -->
+<div class="rdo-filters-section">
+    <div class="rdo-filters-container">
+        <h2 class="rdo-selection-title">Selecione uma das unidades escolares abaixo:</h2>
+        
+        <div class="rdo-filters-row">
+            <div class="rdo-filter-group">
+                <input type="text" 
+                       class="rdo-filter-input" 
+                       placeholder="Unidade escolar" 
+                       @bind="FiltroUnidade" 
+                       @oninput="OnFilterChange"
+                       autofocus />
+            </div>
+            <div class="rdo-filter-group">
+                <input type="text" 
+                       class="rdo-filter-input" 
+                       placeholder="Município" 
+                       @bind="FiltroMunicipio" 
+                       @oninput="OnFilterChange" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Obra Cards Grid - Legacy Structure -->
+@if (FilteredObras != null && FilteredObras.Any())
+{
+    <div class="lista-obras">
+        @foreach (var obra in FilteredObras)
+        {
+            <div class="item">
+                <button class="btn change-background" @onclick="() => OnObraSelected(obra)">
+                    <!-- Icon System - 97px with Contratante/Contratada Logic -->
+                    <i class="icon-@obra.ContratanteContratada" 
+                       title="@(obra.ContratanteContratada == "contratante" ? "Cliente/Contratante" : "Contratada/Prestadora")"></i>
+                    
+                    <!-- Content Hierarchy -->
+                    <h5>@obra.Descricao</h5>
+                    <p>@obra.CidadeEstado</p>
+                    <p>(@obra.StatusBasicaGratuita)</p>
+                    
+                    <small>STATUS</small>
+                    
+                    <!-- Progress Bar with Legacy Color System -->
+                    <div class="progress progress-line-info @obra.ClasseStatusCss">
+                        <div class="progress-bar progress-bar-info" 
+                             role="progressbar" 
+                             aria-valuenow="@obra.ProgressoPorcentagem" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100" 
+                             style="width: @(100 - obra.ProgressoPorcentagem)%;">
+                            <span class="branco">@obra.ProgressoPorcentagem%</span>
+                        </div>
+                        <span class="azul">@obra.ProgressoPorcentagem%</span>
+                    </div>
+                </button>
+            </div>
+        }
+    </div>
+    
+    <!-- Legend Section -->
+    <div class="area-legenda">
+        <div class="legenda-container">
+            <label class="legenda-title">BARRA DE PROGRESSO DA UNIDADE ESCOLAR:</label>
+            <div class="legenda">
+                <i class="status bg-verde"></i>
+                <small>UNIDADE ESCOLAR COM PRAZO ESTIMADO ATINGIDO</small>
+            </div>
+            <div class="legenda">
+                <i class="status bg-vermelho"></i>
+                <small>UNIDADE ESCOLAR COM PRAZO ESTIMADO ULTRAPASSADO</small>
+            </div>
+            <div class="legenda">
+                <i class="status bg-cinza"></i>
+                <small>UNIDADE ESCOLAR EM ANDAMENTO</small>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="rdo-no-obras">
+        <label>Você deve cadastrar uma unidade escolar para começar a usar o sistema.</label>
+    </div>
+}
+
+@code {
+    [Parameter] public IEnumerable<ObraViewModel>? Obras { get; set; }
+    
+    private string _filtroUnidade = string.Empty;
+    private string _filtroMunicipio = string.Empty;
+    
+    public string FiltroUnidade
+    {
+        get => _filtroUnidade;
+        set
+        {
+            _filtroUnidade = value;
+            FilterObras();
+        }
+    }
+    
+    public string FiltroMunicipio
+    {
+        get => _filtroMunicipio;
+        set
+        {
+            _filtroMunicipio = value;
+            FilterObras();
+        }
+    }
+    
+    private List<ObraViewModel> FilteredObras { get; set; } = new();
+    
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            if (Obras == null)
+            {
+                FilteredObras = new List<ObraViewModel>();
+                StateHasChanged();
+                return;
+            }
+            
+            FilterObras();
+            StateHasChanged();
+        }
+        catch (Exception)
+        {
+            FilteredObras = new List<ObraViewModel>();
+            StateHasChanged();
+        }
+    }
+    
+    private void OnFilterChange()
+    {
+        FilterObras();
+        StateHasChanged();
+    }
+    
+    private void FilterObras()
+    {
+        try
+        {
+            if (Obras == null)
+            {
+                FilteredObras = new List<ObraViewModel>();
+                return;
+            }
+            
+            var filtered = Obras.AsEnumerable();
+            
+            if (!string.IsNullOrEmpty(FiltroUnidade))
+            {
+                filtered = filtered.Where(o => 
+                    o.Descricao.Contains(FiltroUnidade, StringComparison.OrdinalIgnoreCase));
+            }
+            
+            if (!string.IsNullOrEmpty(FiltroMunicipio))
+            {
+                filtered = filtered.Where(o => 
+                    o.CidadeEstado.Contains(FiltroMunicipio, StringComparison.OrdinalIgnoreCase));
+            }
+            
+            FilteredObras = filtered.ToList();
+        }
+        catch (Exception)
+        {
+            FilteredObras = Obras?.ToList() ?? new List<ObraViewModel>();
+        }
+    }
+    
+    private async Task OnObraSelected(ObraViewModel obra)
+    {
+        // Navigate to Etapa/Cards page with obra ID
+        await JSRuntime.InvokeVoidAsync("rdoObraCards.submitObraSelection", obra.Id);
+    }
+}

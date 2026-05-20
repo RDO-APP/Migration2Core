@@ -1,0 +1,133 @@
+@model IEnumerable<RdoApp.Core.Models.ViewModels.ObraViewModel>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ESCOLHER OBRA - NUCLEAR TEST</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #FFD700 !important; 
+            padding: 50px !important; 
+            font-family: Arial, sans-serif !important;
+            min-height: 100vh !important;
+        }
+        .container {
+            background: white !important;
+            padding: 30px !important;
+            border: 10px solid #FF0000 !important;
+            border-radius: 10px !important;
+        }
+        h1 { 
+            color: #FF0000 !important; 
+            font-size: 36px !important; 
+            margin-bottom: 20px !important;
+            text-align: center !important;
+        }
+        .info {
+            background: #E0E0E0 !important;
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-left: 5px solid #2196F3 !important;
+        }
+        .obras-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            gap: 20px !important;
+            margin-top: 30px !important;
+        }
+        .obra-card {
+            background: #F5F5F5 !important;
+            padding: 20px !important;
+            border: 2px solid #333 !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+        }
+        .obra-card:hover {
+            background: #E0E0E0 !important;
+            transform: scale(1.05) !important;
+        }
+        .obra-card h3 {
+            color: #333 !important;
+            margin-bottom: 10px !important;
+            font-size: 18px !important;
+        }
+        .obra-card p {
+            color: #666 !important;
+            margin: 5px 0 !important;
+        }
+        .obra-card form {
+            margin-top: 15px !important;
+        }
+        .obra-card button {
+            width: 100% !important;
+            padding: 10px !important;
+            background: #4CAF50 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 5px !important;
+            cursor: pointer !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+        }
+        .obra-card button:hover {
+            background: #45a049 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 NUCLEAR TEST - ESCOLHER OBRA 🔥</h1>
+        
+        <div class="info">
+            <h2>STATUS:</h2>
+            <p><strong>Model is null:</strong> @(Model == null ? "YES ❌" : "NO ✅")</p>
+            <p><strong>Model count:</strong> @(Model?.Count() ?? 0)</p>
+            <p><strong>Page rendering:</strong> ✅ YES (you can see this yellow page)</p>
+            <p><strong>CSS working:</strong> ✅ YES (you can see the red border)</p>
+        </div>
+        
+        @if (Model != null && Model.Any())
+        {
+            <div class="info" style="background: #C8E6C9 !important; border-left-color: #4CAF50 !important;">
+                <h2>✅ OBRAS FOUND: @Model.Count()</h2>
+                <p>The data is loading correctly from the database.</p>
+                <p>If you see the cards below, everything is working!</p>
+            </div>
+            
+            <div class="obras-grid">
+                @foreach (var obra in Model.Take(20))
+                {
+                    <div class="obra-card">
+                        <h3>@obra.Descricao</h3>
+                        <p><strong>ID:</strong> @obra.Id</p>
+                        <p><strong>Local:</strong> @obra.CidadeEstado</p>
+                        <p><strong>Status:</strong> @obra.StatusBasicaGratuita</p>
+                        <p><strong>Progresso:</strong> @obra.ProgressoPorcentagem%</p>
+                        
+                        <form method="post" action="/Etapa/Cards">
+                            <input type="hidden" name="obraId" value="@obra.Id" />
+                            <button type="submit">ACESSAR OBRA</button>
+                        </form>
+                    </div>
+                }
+            </div>
+            
+            @if (Model.Count() > 20)
+            {
+                <div class="info" style="margin-top: 30px !important;">
+                    <p><strong>Note:</strong> Showing first 20 of @Model.Count() obras</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="info" style="background: #FFCDD2 !important; border-left-color: #F44336 !important;">
+                <h2>❌ NO OBRAS FOUND</h2>
+                <p>The model is empty or null.</p>
+                <p>Check the backend logs for database connection issues.</p>
+            </div>
+        }
+    </div>
+</body>
+</html>

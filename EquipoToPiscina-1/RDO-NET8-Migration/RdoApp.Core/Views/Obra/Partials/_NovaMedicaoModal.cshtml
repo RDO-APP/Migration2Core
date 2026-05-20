@@ -1,0 +1,460 @@
+@model RdoApp.Core.Models.DTOs.NovaMedicaoDto
+
+<!-- Modal Nova Medição - Baseado no código original do Gilberto -->
+<div class="modal fade" id="novaMedicaoModal" tabindex="-1" aria-labelledby="novaMedicaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="novaMedicaoModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Nova Medição - <span id="tarefaDescricaoModal">Carregando...</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="formNovaMedicao">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="tarefaIdModal" name="TarefaId" />
+                    
+                    <!-- Primeira linha: Status, Código Paralização, Data, Horas -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-select" id="statusMedicao" name="Status" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">Planejada</option>
+                                <option value="2">Em Execução</option>
+                                <option value="3">Finalizada</option>
+                                <option value="4">Paralisada</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-3" id="codigoParalizacaoDiv" style="display: none;">
+                            <label class="form-label">Código de Paralização <span class="text-danger">*</span></label>
+                            <select class="form-select" id="codigoParalizacao" name="CodigoParalizacao">
+                                <option value="">Selecione...</option>
+                                <!-- Códigos serão carregados via JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">Data <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="dataMedicao" name="DataMedicao" required />
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">Hora Inicial</label>
+                            <input type="time" class="form-control" id="horaInicial" name="HoraInicial" />
+                        </div>
+                    </div>
+                    
+                    <!-- Segunda linha: Hora Final, Quantidade -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Hora Final</label>
+                            <input type="time" class="form-control" id="horaFinal" name="HoraFinal" />
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <label class="form-label">Quantidade</label>
+                            <input type="number" step="0.01" class="form-control" id="quantidadeConstruida" name="QuantidadeConstruida" placeholder="0,00" />
+                        </div>
+                    </div>
+                    
+                    <!-- Seção Qualidade da Água -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-tint me-2"></i>
+                                Qualidade da Água
+                            </h6>
+                        </div>
+                        
+                        <!-- Cloro, PH, Alcalinidade -->
+                        <div class="col-md-4">
+                            <label class="form-label">Cloro</label>
+                            <select class="form-select" id="nivelCloro" name="NivelCloro">
+                                <option value="">Selecione</option>
+                                <option value="1">0 ppm</option>
+                                <option value="2">0,5 < 1,0</option>
+                                <option value="3">1,5 < 2,0</option>
+                                <option value="4">2,5 < 3,0</option>
+                                <option value="5">> 3,0</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">PH</label>
+                            <select class="form-select" id="nivelPH" name="NivelPH">
+                                <option value="">Selecione</option>
+                                <option value="1">< 7.0</option>
+                                <option value="2">7.0 < 7.2</option>
+                                <option value="3">7.2 < 7.4</option>
+                                <option value="4">7.4 < 7.6</option>
+                                <option value="5">7.6 < 7.8</option>
+                                <option value="6">> 7.8</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">Alcalinidade</label>
+                            <select class="form-select" id="nivelAlcalinidade" name="NivelAlcalinidade">
+                                <option value="">Selecione</option>
+                                <option value="1">< 70</option>
+                                <option value="2">70 < 80</option>
+                                <option value="3">90 < 100</option>
+                                <option value="4">110 < 120</option>
+                                <option value="5">130 > 140</option>
+                                <option value="6">> 140</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos Sim/Não - Exatamente como no original do Gilberto -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="border-bottom pb-2 mb-3">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Condições da Piscina
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <label class="form-label d-flex align-items-center">
+                                Limpidez
+                                <i class="fas fa-question-circle ms-2 text-info" 
+                                   title="A LIMPIDEZ DA ÁGUA permite perfeita visibilidade da parte mais profunda do tanque?"
+                                   data-bs-toggle="tooltip"></i>
+                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Limpidez" id="limpidezSim" value="sim">
+                                <label class="form-check-label" for="limpidezSim">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Limpidez" id="limpidezNao" value="nao">
+                                <label class="form-check-label" for="limpidezNao">Não</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <label class="form-label d-flex align-items-center">
+                                Materiais flutuantes
+                                <i class="fas fa-question-circle ms-2 text-info" 
+                                   title="A superfície da água está livre de MATERIAIS FLUTUANTES, estranhas à piscina?"
+                                   data-bs-toggle="tooltip"></i>
+                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Superficie" id="superficieSim" value="sim">
+                                <label class="form-check-label" for="superficieSim">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Superficie" id="superficieNao" value="nao">
+                                <label class="form-check-label" for="superficieNao">Não</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <label class="form-label d-flex align-items-center">
+                                Areia no fundo
+                                <i class="fas fa-question-circle ms-2 text-info" 
+                                   title="Existe AREIA DO FILTRO NO FUNDO da piscina?"
+                                   data-bs-toggle="tooltip"></i>
+                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Fundo" id="fundoSim" value="sim">
+                                <label class="form-check-label" for="fundoSim">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Fundo" id="fundoNao" value="nao">
+                                <label class="form-check-label" for="fundoNao">Não</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <label class="form-label d-flex align-items-center">
+                                Algas
+                                <i class="fas fa-question-circle ms-2 text-info" 
+                                   title="Há proliferação de ALGAS na piscina?"
+                                   data-bs-toggle="tooltip"></i>
+                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Proliferacao" id="proliferacaoSim" value="sim">
+                                <label class="form-check-label" for="proliferacaoSim">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Proliferacao" id="proliferacaoNao" value="nao">
+                                <label class="form-check-label" for="proliferacaoNao">Não</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <label class="form-label d-flex align-items-center">
+                                Detritos
+                                <i class="fas fa-question-circle ms-2 text-info" 
+                                   title="O fundo do tanque está LIVRE DE DETRITOS?"
+                                   data-bs-toggle="tooltip"></i>
+                            </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Detritos" id="detritosSim" value="sim">
+                                <label class="form-check-label" for="detritosSim">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="Detritos" id="detritosNao" value="nao">
+                                <label class="form-check-label" for="detritosNao">Não</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comentário -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Comentário</label>
+                            <textarea class="form-control" id="comentario" name="Comentario" rows="4" maxlength="1400" 
+                                      placeholder="Digite observações sobre a medição..."></textarea>
+                            <div class="form-text">Máximo 1400 caracteres</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload de Foto -->
+                    <div class="row mb-3" id="fotoSection">
+                        <div class="col-12">
+                            <label class="form-label">Foto</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="fotoUpload" name="Foto" 
+                                       accept=".png,.jpg,.jpeg,.bmp" />
+                                <button class="btn btn-outline-secondary" type="button" id="adicionarFotoBtn">
+                                    <i class="fas fa-camera me-1"></i>
+                                    Adicionar Foto
+                                </button>
+                            </div>
+                            <div class="form-text">Formatos aceitos: PNG, JPG, JPEG, BMP. Tamanho máximo: 2MB</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Galeria de Fotos -->
+                    <div class="row mb-3" id="galeriaFotos" style="display: none;">
+                        <div class="col-12">
+                            <label class="form-label">Fotos Adicionadas</label>
+                            <div class="d-flex flex-wrap gap-2" id="fotosContainer">
+                                <!-- Fotos serão adicionadas aqui via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="salvarMedicaoBtn">
+                    <i class="fas fa-save me-1"></i>
+                    Salvar Medição
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para o modal - Baseado no design do Gilberto */
+#novaMedicaoModal .modal-content {
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+#novaMedicaoModal .modal-header {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+    border-radius: 10px 10px 0 0;
+}
+
+#novaMedicaoModal .form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+#novaMedicaoModal .form-control:focus,
+#novaMedicaoModal .form-select:focus {
+    border-color: #2196F3;
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+#novaMedicaoModal .form-check-input:checked {
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+
+#novaMedicaoModal .btn-primary {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    border: none;
+}
+
+#novaMedicaoModal .btn-primary:hover {
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    transform: translateY(-1px);
+}
+
+#novaMedicaoModal .text-danger {
+    color: #dc3545 !important;
+}
+
+#novaMedicaoModal .border-bottom {
+    border-bottom: 2px solid #e9ecef !important;
+}
+
+/* Galeria de fotos */
+.foto-preview {
+    position: relative;
+    display: inline-block;
+}
+
+.foto-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+}
+
+.foto-preview .btn-remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+
+<script>
+// JavaScript para funcionalidade do modal - Baseado no TarefaController.js do Gilberto
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Controle do campo Código de Paralização
+    document.getElementById('statusMedicao').addEventListener('change', function() {
+        const codigoDiv = document.getElementById('codigoParalizacaoDiv');
+        if (this.value === '4') { // Paralisada
+            codigoDiv.style.display = 'block';
+            document.getElementById('codigoParalizacao').required = true;
+        } else {
+            codigoDiv.style.display = 'none';
+            document.getElementById('codigoParalizacao').required = false;
+        }
+    });
+    
+    // Upload de foto
+    document.getElementById('adicionarFotoBtn').addEventListener('click', function() {
+        const fileInput = document.getElementById('fotoUpload');
+        const file = fileInput.files[0];
+        
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB
+                alert('Arquivo muito grande. Tamanho máximo: 2MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                adicionarFotoGaleria(e.target.result, file.name);
+            };
+            reader.readAsDataURL(file);
+            
+            fileInput.value = ''; // Limpar input
+        }
+    });
+    
+    // Salvar medição
+    document.getElementById('salvarMedicaoBtn').addEventListener('click', function() {
+        salvarNovaMedicao();
+    });
+});
+
+function abrirModalNovaMedicao(tarefaId, descricaoTarefa) {
+    document.getElementById('tarefaIdModal').value = tarefaId;
+    document.getElementById('tarefaDescricaoModal').textContent = descricaoTarefa;
+    
+    // Definir data atual
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('dataMedicao').value = hoje;
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('novaMedicaoModal'));
+    modal.show();
+}
+
+function adicionarFotoGaleria(src, nome) {
+    const container = document.getElementById('fotosContainer');
+    const galeria = document.getElementById('galeriaFotos');
+    
+    const fotoDiv = document.createElement('div');
+    fotoDiv.className = 'foto-preview';
+    fotoDiv.innerHTML = `
+        <img src="${src}" alt="${nome}" title="${nome}">
+        <button type="button" class="btn btn-remove" onclick="removerFoto(this)">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    container.appendChild(fotoDiv);
+    galeria.style.display = 'block';
+}
+
+function removerFoto(btn) {
+    btn.parentElement.remove();
+    
+    const container = document.getElementById('fotosContainer');
+    const galeria = document.getElementById('galeriaFotos');
+    
+    if (container.children.length === 0) {
+        galeria.style.display = 'none';
+    }
+}
+
+async function salvarNovaMedicao() {
+    const form = document.getElementById('formNovaMedicao');
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('/api/Medicao', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            alert('Medição salva com sucesso!');
+            
+            // Fechar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('novaMedicaoModal'));
+            modal.hide();
+            
+            // Recarregar página ou atualizar dados
+            location.reload();
+        } else {
+            const error = await response.text();
+            alert('Erro ao salvar medição: ' + error);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao salvar medição. Tente novamente.');
+    }
+}
+</script>

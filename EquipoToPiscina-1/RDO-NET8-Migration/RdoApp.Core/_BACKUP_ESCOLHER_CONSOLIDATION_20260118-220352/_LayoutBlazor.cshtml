@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App Piscinas</title>
+    
+    <!-- CRITICAL: Base href required for Blazor Circuit connection -->
+    <base href="/" />
+    
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- RDO Logo Icon Font - Official Fontello System -->
+    <link rel="stylesheet" href="~/css/fontello.css" />
+    
+    <!-- Blazor component styles -->
+    <link rel="stylesheet" href="~/RdoApp.Core.styles.css" asp-append-version="true" />
+    
+    <!-- RDO Brand CSS -->
+    <link rel="stylesheet" href="~/css/rdo-blazor-theme.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body data-page-context="@(ViewBag.IsObraSelection == true ? "obra-selection" : "workspace")">
+    <header>
+        @try
+        {
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark-theme border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <!-- RDO BRANDING: Always show RDO Logo + Piscinas -->
+                    <div class="navbar-brand-section d-flex align-items-center">
+                        <a asp-controller="Obra" asp-action="Escolher" class="logo-link me-2">
+                            <img src="~/images/logo.png" alt="RDO Logo" class="rdo-logo" />
+                        </a>
+                        <span class="brand-text">Piscinas</span>
+                    </div>
+                    
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="navbar-collapse collapse d-flex justify-content-between align-items-center">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <!-- TWO-WORLDS CONDITIONAL CONTENT -->
+                            @if (ViewBag.IsObraSelection == true)
+                            {
+                                <!-- WORLD A: Obra Selection (Gateway) - ONLY 2 BUTTONS -->
+                                <div class="navbar-left d-flex align-items-center">
+                                    <span class="context-label text-light">Selecione uma obra para continuar</span>
+                                </div>
+                                
+                                <!-- ONLY 2 SELECTION BUTTONS + User Profile in Selection Mode -->
+                                <div class="navbar-right d-flex align-items-center">
+                                    <!-- 2-BUTTON SELECTION TOOLBAR - Using ActionToolbar Component -->
+                                    @await Component.InvokeAsync("ActionToolbar", new { context = "selection" })
+                                    
+                                    <!-- USER PROFILE -->
+                                    <div class="user-profile">
+                                        <div class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-user me-1"></i>@User.Identity.Name
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- WORLD B: Workspace (Etapa/Tarefa) - Full Header with Context + Toolbar -->
+                                <div class="navbar-left d-flex align-items-center">
+                                    <div class="context-indicator d-flex align-items-center ms-3">
+                                        <span class="context-label text-muted me-2">Obra:</span>
+                                        <span class="context-name fw-semibold text-truncate" style="max-width: 300px;">
+                                            @await Component.InvokeAsync("CurrentObra")
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Full Workspace Header: Action Toolbar + User Profile -->
+                                <div class="navbar-right d-flex align-items-center">
+                                    <!-- 6-BUTTON ACTION TOOLBAR - Only in Workspace Context -->
+                                    @await Component.InvokeAsync("ActionToolbar", new { context = "workspace" })
+                                    
+                                    <!-- USER PROFILE -->
+                                    <div class="user-profile">
+                                        <div class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-user me-1"></i>@User.Identity.Name
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Perfil</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                                    </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <!-- UNAUTHENTICATED STATE -->
+                            <div class="navbar-right">
+                                <a class="nav-link text-dark d-flex align-items-center" asp-controller="Auth" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Entrar
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </nav>
+        }
+        catch (Exception ex)
+        {
+            <!-- EMERGENCY FALLBACK HEADER -->
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark-theme border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <div class="navbar-brand-section d-flex align-items-center">
+                        <a asp-controller="Obra" asp-action="Escolher" class="logo-link me-2">
+                            <img src="~/images/logo.png" alt="RDO Logo" class="rdo-logo" />
+                        </a>
+                        <span class="brand-text">Piscinas</span>
+                    </div>
+                    <div class="navbar-collapse collapse d-flex justify-content-between align-items-center">
+                        <div class="navbar-left d-flex align-items-center">
+                            <span class="context-label text-light">Selecione uma obra para continuar</span>
+                        </div>
+                        <div class="navbar-right d-flex align-items-center">
+                            <!-- STATIC FALLBACK BUTTONS -->
+                            <div class="action-toolbar action-toolbar-dark d-flex align-items-center me-3">
+                                <a href="/Chart" class="toolbar-btn-dark" title="Dashboard Geral">
+                                    <i class="fa fa-bar-chart"></i>
+                                </a>
+                                <a href="/Obra/Cadastro" class="toolbar-btn-dark" title="Nova Unidade Escolar">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="user-profile">
+                                <span class="text-light">@User.Identity.Name</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- ERROR DEBUG INFO -->
+            <div class="alert alert-danger">
+                <strong>Header Error:</strong> @ex.Message
+            </div>
+        }
+    </header>
+    
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - RDO App Piscinas - 
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidade</a>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- CRITICAL: Blazor Server Hub Connection -->
+    <script src="_framework/blazor.server.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

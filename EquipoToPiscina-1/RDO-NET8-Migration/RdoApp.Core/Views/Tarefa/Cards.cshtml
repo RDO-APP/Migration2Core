@@ -1,0 +1,122 @@
+@model IEnumerable<RdoApp.Core.Models.ViewModels.EtapaViewModel>
+@{
+    ViewData["Title"] = "Tarefas - Obra " + ViewBag.ObraId;
+    Layout = "_Layout"; // Use shared layout for task management
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">@ViewData["Title"]</h2>
+                <div>
+                    <a href="@Url.Action("Escolher", "Obra")" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar para Obras
+                    </a>
+                </div>
+            </div>
+            
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+            
+            @if (Model != null && Model.Any())
+            {
+                <div class="row">
+                    @foreach (var etapa in Model)
+                    {
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#etapa-@etapa.Id" 
+                                                aria-expanded="@(etapa.IsExpanded ? "true" : "false")">
+                                            @etapa.Descricao
+                                            <span class="badge bg-primary ms-2">@etapa.TotalTarefas tarefas</span>
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div id="etapa-@etapa.Id" class="collapse @(etapa.IsExpanded ? "show" : "")">
+                                    <div class="card-body">
+                                        @if (etapa.Tarefas != null && etapa.Tarefas.Any())
+                                        {
+                                            <div class="row">
+                                                @foreach (var tarefa in etapa.Tarefas)
+                                                {
+                                                    <div class="col-md-6 col-lg-4 mb-3">
+                                                        <div class="card h-100">
+                                                            <div class="card-body">
+                                                                <h6 class="card-title">@tarefa.Descricao</h6>
+                                                                <p class="card-text">
+                                                                    <small class="text-muted">
+                                                                        Status: @tarefa.StatusDescricao
+                                                                    </small>
+                                                                </p>
+                                                                <p class="card-text">
+                                                                    <small class="text-muted">
+                                                                        Início: @tarefa.DataInicioFormatada
+                                                                    </small>
+                                                                </p>
+                                                                @if (tarefa.DataPrevisaoFim.HasValue)
+                                                                {
+                                                                    <p class="card-text">
+                                                                        <small class="text-muted">
+                                                                            Previsão: @tarefa.DataPrevisaoFimFormatada
+                                                                        </small>
+                                                                    </p>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-center py-4">
+                                                <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted">Nenhuma tarefa encontrada para esta etapa.</p>
+                                                @if (etapa.CanAddTasks)
+                                                {
+                                                    <button class="btn btn-primary">
+                                                        <i class="fas fa-plus"></i> Adicionar Tarefa
+                                                    </button>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h4>Nenhuma etapa encontrada</h4>
+                    <p class="text-muted">Não foram encontradas etapas para esta obra.</p>
+                    <a href="@Url.Action("Escolher", "Obra")" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Voltar para Seleção de Obras
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Tarefa Cards Page Loaded');
+            console.log('Obra ID: @ViewBag.ObraId');
+            console.log('Etapas Count: @(Model?.Count() ?? 0)');
+        });
+    </script>
+}

@@ -1,0 +1,75 @@
+﻿<section ng-controller="TarefaController as controller" ng-init="controller.codparalizacoes.carregarLista(1);">
+
+    <div class="panel-heading">
+        <h3>Código de Paralizações</h3>
+    </div>
+
+    <div class="panel">
+        <div class="col-md-12 col-sm-12">
+            <div class="form-group">
+                <label class="control-label">Nome</label>
+                <input type="text" class="form-control" ng-model="controller.codparalizacoes.filtroParam.descricao">
+                <span class="material-input"></span>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-xs-12">
+            <div class="pull-right">
+                <button class="btn btn-blue" ng-click="controller.codparalizacoes.carregarLista(1)">
+                    <i class="fa fa-search"></i>
+                    PESQUISAR
+                </button>
+                <button class="btn btn-blue" permission="criarNovo" ng-click="controller.codparalizacoes.novo()">
+                    <i class="fa fa-plus"></i>
+                    NOVO
+                </button>
+            </div>
+        </div>
+    </div>
+    <label ng-hide="controller.codparalizacoes.pagedlist.list.length > 0" class="col-xs-12 no-padding" style="text-align:center;top: 84px;">Nenhum registro encontrado.</label>
+    <div ng-show="controller.codparalizacoes.pagedlist.list.length > 0" class="tabela table-responsive" aria-hidden="false">
+        <table class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th width="10%">
+                        CÓDIGO
+                    </th>
+                    <th> 
+                        DESCRIÇÃO
+                    </th>
+
+                    <th colspan="2" scope="col" width="15%">
+                        AÇÕES
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="codParalizacao in controller.codparalizacoes.pagedlist.list" class="ng-scope" style="">
+                <tr>
+                    <td class="ng-binding">
+                        {{codParalizacao.codigo}}
+                    </td>
+                    <td class="ng-binding">
+                        {{codParalizacao.descricao}}
+                    </td>
+                    <td>
+                        <button ng-click="controller.codparalizacoes.editar(codParalizacao.codigo);" permission="editar" class="btn btn-simple btn-just-icon ng-isolate-scope" title="Editar">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                    <td class="fadeout-xs">
+                        <button ng-click="controller.codparalizacoes.excluir(codParalizacao.codigo, codParalizacao.descricao);" permission="deletar" class="btn btn-simple btn-just-icon ng-isolate-scope" title="Excluir">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <ul class="pull-right pagination">
+            <li ng-repeat="page in controller.codparalizacoes.pagedlist.pages" ng-class="page == controller.codparalizacoes.pagedlist.currentPage ? 'active' : ''"><a ng-click="controller.codparalizacoes.carregarLista(page)">{{page}}</a></li>
+        </ul>
+    </div>
+
+</section>
+
+
+

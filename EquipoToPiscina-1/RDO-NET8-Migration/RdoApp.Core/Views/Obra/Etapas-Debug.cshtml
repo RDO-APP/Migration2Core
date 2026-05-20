@@ -1,0 +1,78 @@
+@model IEnumerable<RdoApp.Core.Models.ViewModels.EtapaViewModel>
+@{
+    ViewData["Title"] = "Etapas / Tarefas - DEBUG";
+}
+
+<!-- VERSÃO DEBUG SIMPLIFICADA - SEM ÍCONES COMPLEXOS -->
+<div class="container-fluid">
+    <h3>DEBUG: Etapas / Tarefas - @ViewBag.ObraNome</h3>
+    
+    <div class="alert alert-info">
+        <strong>DEBUG INFO:</strong><br>
+        Model é null: @(Model == null)<br>
+        @if (Model != null)
+        {
+            <text>Quantidade de etapas: @Model.Count()</text>
+        }
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <h4>Etapas encontradas:</h4>
+        @foreach (var etapa in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Etapa @etapa.Id: @etapa.Descricao</h5>
+                    <p>Total de tarefas: @etapa.TotalTarefas</p>
+                </div>
+                <div class="card-body">
+                    @if (etapa.Tarefas != null && etapa.Tarefas.Any())
+                    {
+                        <h6>Tarefas:</h6>
+                        <ul>
+                            @foreach (var tarefa in etapa.Tarefas)
+                            {
+                                <li>
+                                    Tarefa @tarefa.Id: @tarefa.Descricao 
+                                    (Status: @tarefa.StatusId - @tarefa.StatusDescricao)
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Nenhuma tarefa encontrada nesta etapa.</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <h4>NENHUMA ETAPA ENCONTRADA</h4>
+            <p>Possíveis causas:</p>
+            <ul>
+                <li>Não há etapas no banco para obra @ViewBag.ObraId</li>
+                <li>Filtro por colaborador está eliminando todas as tarefas</li>
+                <li>Problema na query do Entity Framework</li>
+                <li>Erro no mapeamento Entity -> ViewModel</li>
+            </ul>
+        </div>
+    }
+
+    <hr>
+    <h4>Informações de Debug:</h4>
+    <ul>
+        <li><strong>ObraId:</strong> @ViewBag.ObraId</li>
+        <li><strong>ObraNome:</strong> @ViewBag.ObraNome</li>
+        <li><strong>UsuarioNome:</strong> @ViewBag.UsuarioNome</li>
+        <li><strong>ErrorMessage:</strong> @ViewBag.ErrorMessage</li>
+    </ul>
+
+    <div class="mt-3">
+        <a href="@Url.Action("Escolher", "Obra")" class="btn btn-secondary">Voltar para Obras</a>
+        <a href="@Url.Action("Etapas", "Obra")" class="btn btn-primary">Versão Normal</a>
+    </div>
+</div>

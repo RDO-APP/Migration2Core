@@ -1,0 +1,23 @@
+-- Descobrir a estrutura real das tabelas
+-- Execute no DBeaver
+
+-- 1. VER ESTRUTURA DA TABELA USUARIO
+DESCRIBE usuario;
+
+-- 2. VER ESTRUTURA DA TABELA OBRA  
+DESCRIBE obra;
+
+-- 3. VER ESTRUTURA DA TABELA ETAPA
+DESCRIBE etapa;
+
+-- 4. VER ESTRUTURA DA TABELA TAREFA
+DESCRIBE tarefa;
+
+-- 5. LISTAR TODAS AS TABELAS
+SHOW TABLES;
+
+-- 6. VER ALGUNS REGISTROS DE CADA TABELA (sem especificar colunas)
+SELECT * FROM usuario LIMIT 2;
+SELECT * FROM obra LIMIT 2;
+SELECT * FROM etapa LIMIT 2;
+SELECT * FROM tarefa LIMIT 2;

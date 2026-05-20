@@ -1,0 +1,762 @@
+﻿@model IEnumerable<RdoApp.Core.Models.ViewModels.EtapaViewModel>
+@{
+    ViewData["Title"] = "Etapas / Tarefas";
+}
+@{
+    // FRONTEND INTEGRITY FIX: Enhanced model validation with safety checks
+    var modelCount = Model?.Count() ?? 0;
+    var safeModel = Model ?? new List<RdoApp.Core.Models.ViewModels.EtapaViewModel>();
+    System.Console.WriteLine($"FRONTEND INTEGRITY FIX: Model count = {modelCount}");
+    
+    if (safeModel.Any()) {
+        foreach (var etapa in safeModel) {
+            System.Console.WriteLine($"FRONTEND INTEGRITY FIX: Etapa {etapa.Id}: {etapa.SafeDescricao} - {etapa.SafeTotalTarefas} tarefas (Fallback: {etapa.IsFallbackData})");
+        }
+    } else {
+        System.Console.WriteLine("FRONTEND INTEGRITY FIX: Model is empty - this should not happen with safety render!");
+    }
+}
+
+<!-- Modern Bootstrap 5 implementation with Gilberto's visual design -->
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="etapas-header">
+        <h3>
+            <i class="fas fa-tasks me-2"></i>
+            Etapas / Tarefas - @ViewBag.ObraNome
+        </h3>
+        
+        <div class="etapas-actions">
+            <button type="button" class="btn" title="Voltar para Obras" onclick="location.href='@Url.Action("Escolher", "Obra")'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button type="button" class="btn" title="Gerar RDO">
+                <i class="fas fa-file-alt"></i>
+            </button>
+            <button type="button" class="btn" title="Editar Obra">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="btn" title="Efetivo DiÃ¡rio">
+                <i class="fas fa-list-alt"></i>
+            </button>
+            <button type="button" class="btn" title="Nova Tarefa" onclick="location.href='@Url.Action("NovaTarefa", "Obra")'">
+                <i class="fas fa-clipboard"></i>
+            </button>
+            <button type="button" class="btn" title="Nova Etapa" onclick="location.href='@Url.Action("NovaEtapa", "Obra")'">
+                <i class="fas fa-file"></i>
+            </button>
+            <button type="button" class="btn" title="Filtros" data-bs-toggle="collapse" data-bs-target="#filterSection">
+                <i class="fas fa-filter"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="collapse" id="filterSection">
+        <div class="filter-section">
+            <div class="filter-buttons">
+                <button class="btn btn-custom-dark" type="button" data-bs-toggle="collapse" data-bs-target="#filterSection">
+                    <i class="fas fa-filter me-2"></i>
+                    FILTRO
+                </button>
+                <button class="btn btn-custom-blue" onclick="location.href='@Url.Action("NovaTarefa", "Obra")'">
+                    <i class="fas fa-clipboard me-2"></i>
+                    ADICIONAR TAREFA
+                </button>
+                <button class="btn btn-custom-blue" onclick="location.href='@Url.Action("NovaEtapa", "Obra")'">
+                    <i class="fas fa-file me-2"></i>
+                    ADICIONAR ETAPA
+                </button>
+            </div>
+            
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">DescriÃ§Ã£o</label>
+                    <input type="text" class="form-control" placeholder="Filtrar por descriÃ§Ã£o">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data Inicial Planejada</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data Final Planejada</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="1">Planejada</option>
+                        <option value="2">Em ExecuÃ§Ã£o</option>
+                        <option value="3">Finalizada</option>
+                        <option value="4">Paralisada</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data Inicial Executada</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data Final Executada</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-12">
+                    <button type="button" class="btn btn-custom-blue">
+                        <i class="fas fa-search me-2"></i>
+                        PESQUISAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mass Actions -->
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="selectAll">
+            <label class="form-check-label" for="selectAll">
+                SELECIONAR TUDO
+            </label>
+        </div>
+        <button class="btn btn-custom-blue btn-sm">
+            <i class="fas fa-play-circle me-1"></i>
+            ALTERAR STATUS EM MASSA
+        </button>
+    </div>
+
+    <!-- Accordion for Real Stages from Database -->
+    <div class="accordion custom-accordion" id="etapasAccordion">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var etapa in Model.Select((value, index) => new { value, index }))
+            {
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="etapa@(etapa.index)Header">
+                        <button class="accordion-button @(etapa.index == 0 ? "" : "collapsed")" 
+                                type="button" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#etapa@(etapa.index)" 
+                                aria-expanded="@(etapa.index == 0 ? "true" : "false")"
+                                onclick="loadTasksForEtapa('@etapa.value.Descricao', @etapa.value.Id, @etapa.index)">
+                            <i class="fas fa-cogs me-2"></i>
+                            @etapa.value.Descricao
+                            <span class="badge bg-secondary ms-2">@etapa.value.BadgeText</span>
+                            @if (etapa.value.TotalTarefas > 0)
+                            {
+                                <span class="badge bg-info ms-1">@etapa.value.PercentualConclusaoFormatado</span>
+                            }
+                        </button>
+                    </h2>
+                    <div id="etapa@(etapa.index)" class="accordion-collapse collapse @(etapa.index == 0 ? "show" : "")" data-bs-parent="#etapasAccordion">
+                        <div class="accordion-body">
+                            <div class="tasks-grid">
+                                @if (etapa.value.Tarefas != null && etapa.value.Tarefas.Any())
+                                {
+                                    @foreach (var tarefa in etapa.value.Tarefas)
+                                    {
+                                        <div class="task-card">
+                                            <div class="task-card-header @tarefa.StatusCssClass">
+                                                <h6 class="task-card-title">@tarefa.Descricao</h6>
+                                                <button class="task-card-menu" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @if (tarefa.PodeIniciar)
+                                                    {
+                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-play me-1"></i> Iniciar</a></li>
+                                                    }
+                                                    @if (tarefa.PodePausar)
+                                                    {
+                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-pause me-1"></i> Pausar</a></li>
+                                                    }
+                                                    @if (tarefa.PodeFinalizar)
+                                                    {
+                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-check me-1"></i> Finalizar</a></li>
+                                                    }
+                                                </ul>
+                                                
+                                                <div class="task-card-stats">
+                                                    <div class="task-card-stat">
+                                                        <i class="fas fa-users"></i>
+                                                        <span>@tarefa.QuantidadeColaboradores</span>
+                                                    </div>
+                                                    <div class="task-card-stat">
+                                                        <i class="fas fa-tools"></i>
+                                                        <span>@tarefa.QuantidadeEquipamentos</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="task-card-body">
+                                                <div class="task-dates">
+                                                    <div class="task-date planned">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        <span>Planejado: @tarefa.DataInicio.ToString("dd/MM/yyyy") Ã  @(tarefa.DataPrevisaoFim?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                                    </div>
+                                                    <div class="task-date executed">
+                                                        <i class="fas fa-calendar-check"></i>
+                                                        <span>Executado: @(tarefa.DataMedicao.ToString("dd/MM/yyyy")) Ã  @(tarefa.DataFim?.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="task-progress">
+                                                    <div class="progress-custom">
+                                                        <div class="progress-bar-custom @(tarefa.PercentualExtrapolado ? "bg-warning" : "")" style="width: @Math.Min(tarefa.PercentualConclusao, 100)%;">
+                                                            @tarefa.PercentualConclusaoFormatado
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="task-actions">
+                                                    <button class="task-action-btn" title="Visualizar">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="task-action-btn" title="Histórico" onclick="abrirHistoricoTarefa(@tarefa.Id, '@tarefa.Descricao')">
+                                                        <i class="fas fa-clock"></i>
+                                                    </button>
+                                                    @if (tarefa.PodeAdicionarMedicao)
+                                                    {
+                                                        <button class="task-action-btn" title="Nova Medição" onclick="abrirModalNovaMedicao(@tarefa.Id, '@tarefa.Descricao')">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    }
+                                                    @if (tarefa.PodeEditar)
+                                                    {
+                                                        <button class="task-action-btn" title="Editar">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    }
+                                                    @if (tarefa.PodeExcluir)
+                                                    {
+                                                        <button class="task-action-btn" title="Excluir">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                                
+                                                <button class="task-status-btn @tarefa.StatusCssClass">
+                                                    <i class="fas @(tarefa.StatusId == 1 ? "fa-clock" : tarefa.StatusId == 2 ? "fa-play" : tarefa.StatusId == 3 ? "fa-check" : "fa-pause") me-1"></i>
+                                                    @tarefa.StatusDescricao
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-center w-100 mb-3">
+                                        <p class="text-muted">@etapa.value.StatusSummary</p>
+                                    </div>
+                                }
+                                
+                                <!-- Add New Task Card -->
+                                @if (etapa.value.CanAddTasks)
+                                {
+                                    <div class="add-task-card" onclick="location.href='@Url.Action("NovaTarefa", "Obra")?etapaId=@etapa.value.Id'">
+                                        <div class="add-task-content">
+                                            <i class="fas fa-clipboard"></i>
+                                            <span>Adicionar nova tarefa</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                Nenhuma etapa encontrada para esta obra. 
+                <a href="@Url.Action("NovaEtapa", "Obra")" class="alert-link">Clique aqui para adicionar uma nova etapa</a>.
+            </div>
+        }
+    </div>
+</div>
+
+@* Include the Nova MediÃ§Ã£o Modal *@
+<!-- Modal temporariamente removido -->
+
+<!-- History Modal -->
+<div class="modal fade" id="historicoModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-clock me-2"></i>
+                    HistÃ³rico de MediÃ§Ãµes
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Hora Inicial</th>
+                                <th>Hora Final</th>
+                                <th>Status</th>
+                                <th>Cloro</th>
+                                <th>PH</th>
+                                <th>Alcalinidade</th>
+                                <th>Limpidez</th>
+                                <th>Flutuantes</th>
+                                <th>Areia</th>
+                                <th>Detritos</th>
+                                <th>Algas</th>
+                                <th>AÃ§Ãµes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>15/12/2024</td>
+                                <td>08:00</td>
+                                <td>12:00</td>
+                                <td><span class="badge bg-success">Finalizada</span></td>
+                                <td>Normal</td>
+                                <td>7.2</td>
+                                <td>Normal</td>
+                                <td>Sim</td>
+                                <td>NÃ£o</td>
+                                <td>NÃ£o</td>
+                                <td>NÃ£o</td>
+                                <td>NÃ£o</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info" title="Imprimir">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// FRONTEND INTEGRITY FIX: JavaScript Error Handling Framework
+class RdoErrorHandler {
+    static init() {
+        // Global error handler for unhandled JavaScript errors
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error('🚨 FRONTEND INTEGRITY FIX: JavaScript Error Caught:', {
+                message: message,
+                source: source,
+                line: lineno,
+                column: colno,
+                error: error
+            });
+            
+            // Show user-friendly error message
+            RdoErrorHandler.showUserError('Erro JavaScript detectado. A página pode não funcionar corretamente.');
+            
+            // Don't prevent default error handling
+            return false;
+        };
+
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('🚨 FRONTEND INTEGRITY FIX: Unhandled Promise Rejection:', event.reason);
+            RdoErrorHandler.showUserError('Erro de carregamento detectado. Alguns recursos podem não estar disponíveis.');
+        });
+
+        console.log('✅ FRONTEND INTEGRITY FIX: Error handling framework initialized');
+    }
+
+    static safeExecute(func, fallbackMessage = 'Operação não pôde ser executada') {
+        try {
+            return func();
+        } catch (error) {
+            console.error('🚨 FRONTEND INTEGRITY FIX: Safe execution failed:', error);
+            RdoErrorHandler.showUserError(fallbackMessage);
+            return null;
+        }
+    }
+
+    static showUserError(message) {
+        // Create or update error notification
+        let errorDiv = document.getElementById('rdoErrorNotification');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'rdoErrorNotification';
+            errorDiv.className = 'alert alert-warning alert-dismissible fade show position-fixed';
+            errorDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+            document.body.appendChild(errorDiv);
+        }
+
+        errorDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            if (errorDiv && errorDiv.parentNode) {
+                errorDiv.remove();
+            }
+        }, 5000);
+    }
+}
+
+// GILBERTO'S SOURCE OF TRUTH: Lazy Loading Pattern Implementation
+class EtapaTaskLoader {
+    constructor() {
+        this.loadedEtapas = new Set(); // Track which etapas have been loaded
+        this.taskCache = {}; // Cache loaded tasks
+    }
+
+    /**
+     * Load tasks for a specific etapa (mimics Gilberto's loadCards function)
+     * This is the "Source of Truth" implementation
+     */
+    async loadTasksForEtapa(etapaDescricao, etapaId, etapaIndex) {
+        return RdoErrorHandler.safeExecute(async () => {
+            console.log(`🔥 GILBERTO PATTERN: Loading tasks for "${etapaDescricao}" (ID: ${etapaId}, Index: ${etapaIndex})`);
+
+            // Check if already loaded (Gilberto's pattern: if (!controller.cardsArray[titulo]))
+            if (this.loadedEtapas.has(etapaId)) {
+                console.log(`✅ GILBERTO PATTERN: Tasks already loaded for Etapa ${etapaId}`);
+                return;
+            }
+
+            const container = document.getElementById(`tasks-container-${etapaIndex}`);
+            const loadingDiv = document.getElementById(`loading-etapa${etapaIndex}`);
+            
+            if (!container) {
+                console.error(`❌ GILBERTO PATTERN: Container not found for etapa ${etapaIndex}`);
+                return;
+            }
+
+            // Show loading indicator
+            if (loadingDiv) {
+                loadingDiv.style.display = 'block';
+            }
+
+            try {
+                // Call our API that mimics Gilberto's backend pattern
+                const response = await fetch(`/api/EtapaTasks/LoadTasks/${etapaId}?colaboradorId=1`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const tarefas = await response.json();
+                console.log(`✅ GILBERTO PATTERN: Loaded ${tarefas.length} tasks for Etapa ${etapaId}`);
+
+                // Cache the results (Gilberto's pattern: controller.cardsArray[titulo] = values[0])
+                this.taskCache[etapaId] = tarefas;
+                this.loadedEtapas.add(etapaId);
+
+                // Render tasks in the container
+                this.renderTasks(container, tarefas, etapaId);
+
+            } catch (error) {
+                console.error(`❌ GILBERTO PATTERN: Failed to load tasks for Etapa ${etapaId}:`, error);
+                
+                // Show error message in container
+                container.innerHTML = `
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Erro ao carregar tarefas. <button class="btn btn-link p-0" onclick="etapaTaskLoader.retryLoadTasks('${etapaDescricao}', ${etapaId}, ${etapaIndex})">Tentar novamente</button>
+                    </div>
+                `;
+            } finally {
+                // Hide loading indicator
+                if (loadingDiv) {
+                    loadingDiv.style.display = 'none';
+                }
+            }
+        }, `Não foi possível carregar as tarefas da etapa ${etapaDescricao}`);
+    }
+
+    /**
+     * Render tasks in the container (mimics Gilberto's ng-repeat pattern)
+     */
+    renderTasks(container, tarefas, etapaId) {
+        if (!tarefas || tarefas.length === 0) {
+            container.innerHTML = `
+                <div class="text-center w-100 mb-3">
+                    <p class="text-muted">Nenhuma tarefa cadastrada nesta etapa.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const tasksHtml = tarefas.map(tarefa => this.renderTaskCard(tarefa)).join('');
+        container.innerHTML = tasksHtml;
+
+        console.log(`✅ GILBERTO PATTERN: Rendered ${tarefas.length} task cards for Etapa ${etapaId}`);
+    }
+
+    /**
+     * Render individual task card (mimics Gilberto's card template)
+     */
+    renderTaskCard(tarefa) {
+        const statusIcon = this.getStatusIcon(tarefa.statusId);
+        const statusClass = tarefa.statusCssClass || this.getStatusClass(tarefa.statusId);
+
+        return `
+            <div class="task-card">
+                <div class="task-card-header ${statusClass}">
+                    <h6 class="task-card-title">${tarefa.descricao || `Tarefa ${tarefa.id}`}</h6>
+                    <button class="task-card-menu" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        ${tarefa.podeIniciar ? '<li><a class="dropdown-item" href="#"><i class="fas fa-play me-1"></i> Iniciar</a></li>' : ''}
+                        ${tarefa.podePausar ? '<li><a class="dropdown-item" href="#"><i class="fas fa-pause me-1"></i> Pausar</a></li>' : ''}
+                        ${tarefa.podeFinalizar ? '<li><a class="dropdown-item" href="#"><i class="fas fa-check me-1"></i> Finalizar</a></li>' : ''}
+                    </ul>
+                    
+                    <div class="task-card-stats">
+                        <div class="task-card-stat">
+                            <i class="fas fa-users"></i>
+                            <span>${tarefa.quantidadeColaboradores || 0}</span>
+                        </div>
+                        <div class="task-card-stat">
+                            <i class="fas fa-tools"></i>
+                            <span>${tarefa.quantidadeEquipamentos || 0}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="task-card-body">
+                    <div class="task-dates">
+                        <div class="task-date planned">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Planejado: ${this.formatDate(tarefa.dataInicio)} à ${this.formatDate(tarefa.dataPrevisaoFim)}</span>
+                        </div>
+                        <div class="task-date executed">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Executado: ${this.formatDate(tarefa.dataMedicao)} à ${this.formatDate(tarefa.dataFim)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="task-progress">
+                        <div class="progress-custom">
+                            <div class="progress-bar-custom ${tarefa.percentualExtrapolado ? 'bg-warning' : ''}" style="width: ${Math.min(tarefa.percentualConclusao || 0, 100)}%;">
+                                ${(tarefa.percentualConclusao || 0).toFixed(1)}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <button class="task-action-btn" title="Visualizar">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="task-action-btn" title="Histórico" onclick="abrirHistoricoTarefa(${tarefa.id}, '${tarefa.descricao}')">
+                            <i class="fas fa-clock"></i>
+                        </button>
+                        ${tarefa.podeAdicionarMedicao ? `<button class="task-action-btn" title="Nova Medição" onclick="abrirModalNovaMedicao(${tarefa.id}, '${tarefa.descricao}')"><i class="fas fa-plus"></i></button>` : ''}
+                        ${tarefa.podeEditar ? '<button class="task-action-btn" title="Editar"><i class="fas fa-edit"></i></button>' : ''}
+                        ${tarefa.podeExcluir ? '<button class="task-action-btn" title="Excluir"><i class="fas fa-trash"></i></button>' : ''}
+                    </div>
+                    
+                    <button class="task-status-btn ${statusClass}">
+                        <i class="fas ${statusIcon} me-1"></i>
+                        ${tarefa.statusDescricao || this.getStatusDescription(tarefa.statusId)}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Retry loading tasks (for error recovery)
+     */
+    async retryLoadTasks(etapaDescricao, etapaId, etapaIndex) {
+        // Remove from loaded set to allow retry
+        this.loadedEtapas.delete(etapaId);
+        delete this.taskCache[etapaId];
+        
+        // Retry loading
+        await this.loadTasksForEtapa(etapaDescricao, etapaId, etapaIndex);
+    }
+
+    // Helper methods
+    getStatusIcon(statusId) {
+        switch (statusId) {
+            case 1: return 'fa-clock';
+            case 2: return 'fa-play';
+            case 3: return 'fa-check';
+            case 4: return 'fa-pause';
+            default: return 'fa-question';
+        }
+    }
+
+    getStatusClass(statusId) {
+        switch (statusId) {
+            case 1: return 'status-planejada';
+            case 2: return 'status-em-execucao';
+            case 3: return 'status-finalizada';
+            case 4: return 'status-paralisada';
+            default: return 'status-indefinido';
+        }
+    }
+
+    getStatusDescription(statusId) {
+        switch (statusId) {
+            case 1: return 'Planejada';
+            case 2: return 'Em Execução';
+            case 3: return 'Finalizada';
+            case 4: return 'Paralisada';
+            default: return 'Indefinido';
+        }
+    }
+
+    formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        } catch {
+            return 'N/A';
+        }
+    }
+}
+
+// Global instance (mimics Gilberto's controller pattern)
+const etapaTaskLoader = new EtapaTaskLoader();
+
+// Global function for onclick events (mimics Gilberto's ng-click pattern)
+function loadTasksForEtapa(etapaDescricao, etapaId, etapaIndex) {
+    etapaTaskLoader.loadTasksForEtapa(etapaDescricao, etapaId, etapaIndex);
+}
+
+// FRONTEND INTEGRITY FIX: Enhanced function implementations with error handling
+function abrirHistoricoTarefa(tarefaId, descricaoTarefa) {
+    RdoErrorHandler.safeExecute(() => {
+        console.log('📊 Loading task history for:', tarefaId, descricaoTarefa);
+        
+        // Carregar dados do histórico via AJAX
+        fetch(`/api/Medicao/${tarefaId}/historico`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ History loaded successfully:', data);
+                
+                // Mostrar modal
+                const modal = new bootstrap.Modal(document.getElementById('historicoModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('❌ Error loading task history:', error);
+                RdoErrorHandler.showUserError('Erro ao carregar histórico da tarefa. Tente novamente.');
+            });
+    }, 'Não foi possível abrir o histórico da tarefa');
+}
+
+// Enhanced Nova Medição function with error handling
+if (typeof abrirModalNovaMedicao === 'undefined') {
+    function abrirModalNovaMedicao(tarefaId, descricaoTarefa) {
+        RdoErrorHandler.safeExecute(() => {
+            console.log('📝 Opening new measurement modal for:', tarefaId, descricaoTarefa);
+            
+            const tarefaIdElement = document.getElementById('tarefaIdModal');
+            const tarefaDescricaoElement = document.getElementById('tarefaDescricaoModal');
+            const dataMedicaoElement = document.getElementById('dataMedicao');
+            
+            if (!tarefaIdElement || !tarefaDescricaoElement) {
+                throw new Error('Modal elements not found');
+            }
+            
+            tarefaIdElement.value = tarefaId;
+            tarefaDescricaoElement.textContent = descricaoTarefa;
+            
+            // Definir data atual
+            if (dataMedicaoElement) {
+                const hoje = new Date().toISOString().split('T')[0];
+                dataMedicaoElement.value = hoje;
+            }
+            
+            // Mostrar modal
+            const modalElement = document.getElementById('novaMedicaoModal');
+            if (modalElement) {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            } else {
+                throw new Error('Nova Medição modal not found');
+            }
+        }, 'Não foi possível abrir o modal de nova medição');
+    }
+}
+
+// FRONTEND INTEGRITY FIX: Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 FRONTEND INTEGRITY FIX: Initializing Etapas page...');
+    
+    // Initialize error handling
+    RdoErrorHandler.init();
+    
+    // Validate page state
+    const accordion = document.getElementById('etapasAccordion');
+    const etapaItems = accordion ? accordion.querySelectorAll('.accordion-item') : [];
+    
+    console.log(`📊 FRONTEND INTEGRITY FIX: Found ${etapaItems.length} etapa items`);
+    
+    // Check for fallback data indicators
+    const fallbackItems = accordion ? accordion.querySelectorAll('.fallback-data') : [];
+    if (fallbackItems.length > 0) {
+        console.warn(`⚠️ FRONTEND INTEGRITY FIX: ${fallbackItems.length} etapas using fallback data`);
+        RdoErrorHandler.showUserError(`${fallbackItems.length} etapa(s) carregada(s) com dados padrão devido a problemas no sistema.`);
+    }
+    
+    // Validate critical elements
+    const criticalElements = ['etapasAccordion'];
+    const missingElements = criticalElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+        console.error('❌ FRONTEND INTEGRITY FIX: Missing critical elements:', missingElements);
+        RdoErrorHandler.showUserError('Alguns elementos da página não foram carregados corretamente.');
+    }
+    
+    console.log('✅ FRONTEND INTEGRITY FIX: Etapas page initialization complete');
+});
+
+// LEGACY COMPATIBILITY: Renzo JavaScript support
+const RenzoCompatibility = {
+    // Map old element IDs to new ones if needed
+    getElementById: function(id) {
+        const element = document.getElementById(id);
+        if (!element) {
+            console.warn(`🔄 RENZO COMPATIBILITY: Element '${id}' not found, checking alternatives...`);
+            // Add fallback logic here if needed
+        }
+        return element;
+    },
+    
+    // Support for "+" expansion functionality
+    expandStage: function(stageId) {
+        RdoErrorHandler.safeExecute(() => {
+            const button = document.querySelector(`[data-bs-target="#etapa${stageId}"]`);
+            if (button) {
+                button.click();
+            }
+        }, 'Não foi possível expandir a etapa');
+    }
+};
+
+// Make compatibility layer globally available
+window.RenzoCompatibility = RenzoCompatibility;
+window.RdoErrorHandler = RdoErrorHandler;
+</script>
+

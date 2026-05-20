@@ -1,0 +1,80 @@
+@model EtapaViewModel
+
+<div class="accordion-item">
+    <h2 class="accordion-header" id="heading-etapa-@Model.Id">
+        <button class="accordion-button collapsed" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#collapse-etapa-@Model.Id" 
+                aria-expanded="false" 
+                aria-controls="collapse-etapa-@Model.Id">
+            
+            <!-- FIXED: Use card structure with proper Bootstrap 5 accordion -->
+            <div class="card kiro-compact-card" style="margin: 0; display: block; width: 100%; border: none; background: transparent;">
+                <div class="head kiro-card-header" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 4px;">
+                    <i class="fa fa-hand-paper-o" style="margin-right: 8px;"></i>
+                    <span class="task-title">@Model.SafeDescricao</span>
+                    <span class="badge bg-primary ms-auto" style="margin-left: auto;">@Model.BadgeText</span>
+                </div>
+            </div>
+        </button>
+    </h2>
+    
+    <!-- FIXED: Bootstrap 5 accordion collapse structure -->
+    <div id="collapse-etapa-@Model.Id" 
+         class="accordion-collapse collapse" 
+         aria-labelledby="heading-etapa-@Model.Id" 
+         data-bs-parent="#accordion">
+        <div class="accordion-body">
+            @if (Model.HasValidTarefas)
+            {
+                <!-- FINAL CHANCE: Kill Empty Space - Cards close to left margin -->
+                <div class="task-cards-grid-container" style="justify-content: start !important; padding-left: 20px !important;">
+                    @foreach (var tarefa in Model.ValidTarefas)
+                    {
+                        @if (tarefa != null && tarefa.Id > 0)
+                        {
+                            <!-- Use Blazor TaskCard Component with proper isolation -->
+                            <component type="typeof(RdoApp.Core.Components.TaskCard)" 
+                                       render-mode="ServerPrerendered" 
+                                       param-Task="tarefa" 
+                                       param-CanEdit="@(ViewBag.CanEdit == true)" 
+                                       param-IsWorkFinalized="@(ViewBag.IsWorkFinalized == true)" />
+                        }
+                    }
+                </div>
+                
+                <!-- Add Task Button -->
+                @if (ViewBag.CanCreateNew == true && ViewBag.IsWorkFinalized != true)
+                {
+                    <div class="add-task-button-container">
+                        <button id="btn-adicionar-nova-tarefa-@Model.Id" class="btn btn-outline-primary" onclick="novaTarefa(@Model.Id)">
+                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                            <span>Adicionar nova tarefa</span>
+                        </button>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Empty state with debug info -->
+                <div class="empty-state-container">
+                    <i class="fa fa-info-circle fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">Nenhuma tarefa válida encontrada nesta etapa.</p>
+                    <small class="text-muted">Debug: @Model.SafeIterationDebug</small>
+                </div>
+                
+                <!-- Add Task Button for empty state -->
+                @if (ViewBag.CanCreateNew == true && ViewBag.IsWorkFinalized != true)
+                {
+                    <div class="text-center mt-3">
+                        <button id="btn-adicionar-nova-tarefa-@Model.Id" class="btn btn-outline-primary" onclick="novaTarefa(@Model.Id)">
+                            <i class="fa fa-clipboard" aria-hidden="true"></i>
+                            <span>Adicionar nova tarefa</span>
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

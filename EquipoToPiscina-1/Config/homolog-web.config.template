@@ -1,0 +1,106 @@
+<!-- 
+  Homologation Web.config Template
+  Copy the relevant sections to your rdoappProject/Web.config
+-->
+
+<!-- CONNECTION STRINGS - Replace in your Web.config -->
+<connectionStrings>
+  <add name="rdoappEntities" 
+       connectionString="metadata=res://*/rdoappModel.csdl|res://*/rdoappModel.ssdl|res://*/rdoappModel.msl;provider=MySql.Data.MySqlClient;provider connection string=&quot;server=equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com;User Id=rdoadmin;password=rdoapp2018aws;database=piscinas_rdoapp_homolog&quot;" 
+       providerName="System.Data.EntityClient" />
+</connectionStrings>
+
+<!-- APP SETTINGS - Add/Update in your Web.config -->
+<appSettings>
+  <!-- Environment identifier -->
+  <add key="Environment" value="Homologation" />
+  
+  <!-- Enable debug mode for detailed error messages -->
+  <add key="EnableDebugMode" value="true" />
+  
+  <!-- Detailed logging for troubleshooting -->
+  <add key="LogLevel" value="Debug" />
+  
+  <!-- Base path for homolog (if using subdirectory) -->
+  <add key="basePath" value="/homolog/" />
+  
+  <!-- Disable production features in homolog -->
+  <add key="EnableProductionFeatures" value="false" />
+  
+  <!-- Email settings for homolog (prevent sending real emails) -->
+  <add key="EmailEnabled" value="false" />
+  <add key="EmailTestMode" value="true" />
+  
+  <!-- Report settings -->
+  <add key="ReportDebugMode" value="true" />
+  <add key="ReportCacheEnabled" value="false" />
+</appSettings>
+
+<!-- COMPILATION - Enable debug mode -->
+<system.web>
+  <compilation debug="true" targetFramework="4.8">
+    <!-- Keep existing buildProviders and assemblies -->
+  </compilation>
+  
+  <!-- Custom errors off for debugging -->
+  <customErrors mode="Off" />
+  
+  <!-- Trace enabled for debugging -->
+  <trace enabled="true" pageOutput="false" requestLimit="100" localOnly="false"/>
+</system.web>
+
+<!-- ENTITY FRAMEWORK - Add detailed logging -->
+<entityFramework>
+  <defaultConnectionFactory type="System.Data.Entity.Infrastructure.LocalDbConnectionFactory, EntityFramework">
+    <parameters>
+      <parameter value="v13.0" />
+    </parameters>
+  </defaultConnectionFactory>
+  <providers>
+    <provider invariantName="MySql.Data.MySqlClient" 
+              type="MySql.Data.MySqlClient.MySqlProviderServices, MySql.Data.EntityFramework, Version=9.1.0.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+    </provider>
+  </providers>
+  
+  <!-- Enable EF logging for debugging -->
+  <interceptors>
+    <interceptor type="System.Data.Entity.Infrastructure.Interception.DatabaseLogger, EntityFramework">
+      <parameters>
+        <parameter value="C:\Logs\EF-Homolog.log" />
+        <parameter value="true" />
+      </parameters>
+    </interceptor>
+  </interceptors>
+</entityFramework>
+
+<!-- LOGGING CONFIGURATION -->
+<system.diagnostics>
+  <trace autoflush="true">
+    <listeners>
+      <add name="textWriterTraceListener" 
+           type="System.Diagnostics.TextWriterTraceListener" 
+           initializeData="C:\Logs\RDO-Homolog-Trace.log" />
+    </listeners>
+  </trace>
+</system.diagnostics>
+
+<!-- SECURITY - Relaxed for homolog testing -->
+<system.webServer>
+  <security>
+    <requestFiltering>
+      <requestLimits maxAllowedContentLength="52428800" /> <!-- 50MB for large PDFs -->
+    </requestFiltering>
+  </security>
+  
+  <!-- Enable detailed error messages -->
+  <httpErrors errorMode="Detailed" />
+  
+  <!-- CORS for testing (if needed) -->
+  <httpProtocol>
+    <customHeaders>
+      <add name="Access-Control-Allow-Origin" value="*" />
+      <add name="Access-Control-Allow-Methods" value="GET, POST, PUT, DELETE, OPTIONS" />
+      <add name="Access-Control-Allow-Headers" value="Content-Type, Authorization" />
+    </customHeaders>
+  </httpProtocol>
+</system.webServer>

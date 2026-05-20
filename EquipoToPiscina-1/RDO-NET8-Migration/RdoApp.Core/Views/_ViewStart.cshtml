@@ -1,0 +1,44 @@
+﻿@{
+    // NUCLEAR PROTECTION: PHASE 1 - ELIMINATE GHOST INHERITANCE
+    // Single DNA approach - Unified Blazor architecture throughout
+    
+    var viewPath = ViewContext.View.Path ?? "";
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    
+    // NUCLEAR OPTION: ABSOLUTE PROTECTION for ESCOLHER OBRA and Blazor components
+    // Multiple detection methods to ensure 100% isolation
+    var isEscolherObra = (controllerName.Equals("Obra", StringComparison.OrdinalIgnoreCase) && 
+                         actionName.Equals("Escolher", StringComparison.OrdinalIgnoreCase)) ||
+                         viewPath.Contains("Escolher.cshtml", StringComparison.OrdinalIgnoreCase) ||
+                         viewPath.Contains("/Obra/Escolher", StringComparison.OrdinalIgnoreCase);
+    
+    var isPureBlazorView = viewPath.Contains("CardsBlazor") || 
+                          viewPath.Contains("BlazorHost") ||
+                          viewPath.Contains("EtapaCardsPage") ||
+                          ViewData["Layout"]?.ToString() == "_LayoutBlazor" ||
+                          ViewData["Layout"]?.ToString() == "_LayoutSelection";
+    
+    // SINGLE DNA: Blazor Login uses _LayoutSelection (no MVC login view needed)
+    var isBlazorLogin = viewPath.Contains("LoginPage.razor") ||
+                       ViewData["Layout"]?.ToString() == "_LayoutSelection";
+    
+    var hasExplicitLayout = ViewData["Layout"] != null || Layout != null;
+    
+    // SAFETY FIRST: FORCE ISOLATION - NEVER override ESCOLHER OBRA or Blazor components
+    if (isEscolherObra || isPureBlazorView || isBlazorLogin)
+    {
+        // COMPLETE ISOLATION: Let these views use their explicit layouts
+        // This prevents ANY legacy layout contamination
+        return;
+    }
+    
+    // Apply legacy layout only to confirmed legacy views
+    if (!hasExplicitLayout)
+    {
+        Layout = "_Layout";
+    }
+    
+    // DIAGNOSTIC: Log layout selection for debugging
+    System.Diagnostics.Debug.WriteLine($"_ViewStart: Controller={controllerName}, Action={actionName}, IsEscolher={isEscolherObra}, IsBlazor={isPureBlazorView}, Layout={Layout}");
+}

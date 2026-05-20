@@ -1,0 +1,225 @@
+@using RdoApp.Core.Models.ViewModels
+@using RdoApp.Core.Models.Requests
+
+<!-- TASKCARD RECONSTRUCTION - LEGACY STANDARD MATCH -->
+<!-- 3RD AND FINAL CHANCE: Force the Box - Temporary background to see 130px limit [2026-01-03] -->
+<div style="width: 300px !important; height: 130px !important; min-width: 300px !important; max-width: 300px !important; overflow: hidden !important; border: 1px solid #ccc; flex: none !important; display: block !important; margin: 0; padding: 0; box-sizing: border-box; background-color: #f8f9fa !important;">
+    <div class="task-card @GetHeaderClass()" style="width: 100%; height: 100%; display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        
+        <!-- ROW 1 (Header): Status Hand Icon | Description Text | 3-dot Menu -->
+        <div class="task-card-row row-1" style="display: flex; align-items: center; padding-top: 2px !important; padding-bottom: 2px !important; padding-left: 8px; padding-right: 8px; overflow: hidden; flex-shrink: 0; width: 100%; max-width: 284px; margin: 0 auto; box-sizing: border-box; @GetRow1BackgroundColor() color: white; height: 26px; justify-content: space-between; border-radius: 4px 4px 0 0;">
+            <div class="status-icon-section">
+                <i class="@GetStatusIcon()"></i>
+            </div>
+            <div class="task-title-section">
+                <span class="task-title">@Task.Descricao</span>
+            </div>
+            <div class="menu-icon-section">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+
+        <!-- ROW 2 (Resources & Toolbar): Human Resources | Machinery | Action Toolbar -->
+        <div class="task-card-row row-2" style="display: flex; align-items: center; padding-top: 2px !important; padding-bottom: 2px !important; padding-left: 8px; padding-right: 8px; overflow: hidden; flex-shrink: 0; width: 100%; max-width: 284px; margin: 0 auto; box-sizing: border-box; @GetRow2BackgroundColor() color: white; height: 26px; justify-content: space-between;">
+            <div class="resource-counts">
+                <span class="resource-item">
+                    <i class="fas fa-user"></i>@Task.QuantidadeColaboradores
+                </span>
+                <span class="resource-item">
+                    <i class="fas fa-truck-pickup"></i>@Task.QuantidadeEquipamentos
+                </span>
+            </div>
+            
+            <div class="action-toolbar" style="display: flex; align-items: center; gap: 2px; flex-shrink: 0; flex-wrap: nowrap;">
+                <button @onclick="() => ViewTask()" title="View" class="toolbar-btn" style="background: transparent !important; border: 1px solid white !important; color: white !important; padding: 3px 5px; font-size: 10px; cursor: pointer; border-radius: 3px; width: 26px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button @onclick="() => ShowHistory()" title="History" class="toolbar-btn" style="background: transparent !important; border: 1px solid white !important; color: white !important; padding: 3px 5px; font-size: 10px; cursor: pointer; border-radius: 3px; width: 26px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-clock"></i>
+                </button>
+                <button @onclick="() => DeleteTask()" title="Delete" class="toolbar-btn" style="background: transparent !important; border: 1px solid white !important; color: white !important; padding: 3px 5px; font-size: 10px; cursor: pointer; border-radius: 3px; width: 26px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button @onclick="() => EditTask()" title="Edit" class="toolbar-btn" style="background: transparent !important; border: 1px solid white !important; color: white !important; padding: 3px 5px; font-size: 10px; cursor: pointer; border-radius: 3px; width: 26px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button @onclick="() => AddMeasurement()" 
+                        title="Add Measurement" 
+                        class="toolbar-btn nova-medicao-trigger" 
+                        style="background: transparent !important; border: 1px solid white !important; color: white !important; padding: 3px 5px; font-size: 10px; cursor: pointer; border-radius: 3px; width: 26px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ROW 3 (Dates): Left (Planned) | Center (Empty Space) | Right (Execution) -->
+        <div class="task-card-row row-3" style="display: flex; align-items: center; padding-top: 2px !important; padding-bottom: 2px !important; padding-left: 8px; padding-right: 8px; overflow: hidden; flex-shrink: 0; width: 100%; max-width: 284px; margin: 0 auto; box-sizing: border-box; background: white; height: 36px;">
+            <div class="dates-container" style="width: 100%; height: 100%; display: flex; align-items: center; gap: 10px; justify-content: space-between;">
+                <!-- Left (Planned): 2 Dates with Calendar icons only -->
+                <div class="date-section planned">
+                    <div class="date-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="date-value">@Task.DataInicioFormatada</span>
+                    </div>
+                    <div class="date-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="date-value">@Task.DataPrevisaoFimFormatada</span>
+                    </div>
+                </div>
+                
+                <!-- Center: Empty space (À character removed as requested) -->
+                <div class="date-separator-empty"></div>
+                
+                <!-- Right (Execution): 2 Dates with Calendar icons only (Play/Stop icons removed) -->
+                <div class="date-section execution">
+                    <div class="date-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="date-value">@Task.DataMedicaoFormatada</span>
+                    </div>
+                    <div class="date-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="date-value">@Task.DataFimFormatada</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 4 (Progress Bar): Single Orange progress bar at the bottom -->
+        <div class="task-card-row row-4" style="display: flex; align-items: center; padding-top: 2px !important; padding-bottom: 2px !important; padding-left: 8px; padding-right: 8px; overflow: hidden; flex-shrink: 0; width: 100%; max-width: 284px; margin: 0 auto; margin-top: auto !important; box-sizing: border-box; background: #f8f9fa; height: 32px; border-radius: 0 0 4px 4px;">
+            <div class="progress-bar-section">
+                <div class="progress-bar-container" style="width: 100%; max-width: 250px; height: 12px; background: #e9ecef; border-radius: 6px; overflow: hidden; position: relative; display: flex; align-items: center; margin: 0 auto; box-sizing: border-box;">
+                    <div class="progress-bar-fill" style="width: @Task.SafePercentualConclusao%"></div>
+                    <span class="progress-percentage">@Task.PercentualConclusaoFormatado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public TarefaViewModel Task { get; set; } = new();
+    [Parameter] public bool CanEdit { get; set; } = true;
+    [Parameter] public bool IsWorkFinalized { get; set; } = false;
+    
+    // Pure Blazor EventCallback Communication
+    [Parameter] public EventCallback<ViewTaskRequest> OnViewTask { get; set; }
+    [Parameter] public EventCallback<HistoryTaskRequest> OnShowHistory { get; set; }
+    [Parameter] public EventCallback<DeleteTaskRequest> OnDeleteTask { get; set; }
+    [Parameter] public EventCallback<EditTaskRequest> OnEditTask { get; set; }
+    [Parameter] public EventCallback<NovaMedicaoRequest> OnAddMeasurement { get; set; }
+
+    /// <summary>
+    /// Status Logic: Card theme reacts to latest Status ID
+    /// </summary>
+    private string GetHeaderClass()
+    {
+        return Task.StatusId switch
+        {
+            1 => "status-gray",      // Status 1 - GRAY
+            2 => "status-blue",      // Status 2 - BLUE (#007bff) - CORRECTED
+            3 => "status-green",     // Status 3 - GREEN
+            4 => "status-orange",    // Status 4 - ORANGE
+            5 => "status-red",       // Status 5 - RED
+            _ => "status-gray"       // Default - GRAY
+        };
+    }
+
+    /// <summary>
+    /// Row 1 Background Color - WRITTEN IN STONE COLORS
+    /// </summary>
+    private string GetRow1BackgroundColor()
+    {
+        return Task.StatusId switch
+        {
+            1 => "background-color: #6c757d;",     // Status 1 - GRAY
+            2 => "background-color: #007bff;",     // Status 2 - BLUE (#007bff) - CORRECTED
+            3 => "background-color: #28a745;",     // Status 3 - GREEN
+            4 => "background-color: #fd7e14;",     // Status 4 - ORANGE
+            5 => "background-color: #dc3545;",     // Status 5 - RED
+            _ => "background-color: #6c757d;"      // Default - GRAY
+        };
+    }
+
+    /// <summary>
+    /// Row 2 Background Color - Darker Shade for 2-tone hierarchy
+    /// </summary>
+    private string GetRow2BackgroundColor()
+    {
+        return Task.StatusId switch
+        {
+            1 => "background-color: #5a6268;",     // Status 1 - Darker GRAY
+            2 => "background-color: #0056b3;",     // Status 2 - Darker BLUE - CORRECTED
+            3 => "background-color: #1e7e34;",     // Status 3 - Darker GREEN
+            4 => "background-color: #e55a00;",     // Status 4 - Darker ORANGE
+            5 => "background-color: #c82333;",     // Status 5 - Darker RED
+            _ => "background-color: #5a6268;"      // Default - Darker GRAY
+        };
+    }
+
+    /// <summary>
+    /// Status Hand Icons - Legacy Standard
+    /// </summary>
+    private string GetStatusIcon()
+    {
+        return Task.StatusId switch
+        {
+            1 => "fas fa-handshake",     // Status 1 (GRAY): handshake
+            2 => "fas fa-thumbs-up",     // Status 2 (BLUE): thumbs-up
+            3 => "fas fa-hand-peace",    // Status 3 (GREEN): hand-peace
+            4 => "fas fa-hand-paper",    // Status 4 (ORANGE): hand-paper
+            5 => "fas fa-thumbs-down",   // Status 5 (RED): thumbs-down
+            _ => "fas fa-handshake"      // Default: handshake
+        };
+    }
+
+    // Pure Blazor Event Handlers - Zero JavaScript
+    private async Task ViewTask()
+    {
+        if (OnViewTask.HasDelegate)
+        {
+            var request = new ViewTaskRequest { TaskId = Task.Id, TaskDescription = Task.Descricao };
+            await OnViewTask.InvokeAsync(request);
+        }
+    }
+
+    private async Task ShowHistory()
+    {
+        if (OnShowHistory.HasDelegate)
+        {
+            var request = new HistoryTaskRequest { TaskId = Task.Id, TaskDescription = Task.Descricao };
+            await OnShowHistory.InvokeAsync(request);
+        }
+    }
+
+    private async Task DeleteTask()
+    {
+        if (OnDeleteTask.HasDelegate)
+        {
+            var request = new DeleteTaskRequest { TaskId = Task.Id, TaskDescription = Task.Descricao };
+            await OnDeleteTask.InvokeAsync(request);
+        }
+    }
+
+    private async Task EditTask()
+    {
+        if (OnEditTask.HasDelegate)
+        {
+            var request = new EditTaskRequest { TaskId = Task.Id, TaskDescription = Task.Descricao };
+            await OnEditTask.InvokeAsync(request);
+        }
+    }
+
+    private async Task AddMeasurement()
+    {
+        if (OnAddMeasurement.HasDelegate)
+        {
+            var request = new NovaMedicaoRequest 
+            { 
+                TaskId = Task.Id, 
+                TaskDescription = Task.Descricao, 
+                CurrentStatus = Task.StatusId 
+            };
+            await OnAddMeasurement.InvokeAsync(request);
+        }
+    }
+}

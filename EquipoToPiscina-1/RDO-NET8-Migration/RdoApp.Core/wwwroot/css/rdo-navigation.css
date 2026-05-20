@@ -1,0 +1,389 @@
+/* RDO NAVIGATION MODE CSS - Full interface for post-selection pages */
+/* Based on legacy architecture analysis - Navigation Mode (Project B) */
+
+/* Navigation Body - Standard background */
+.rdo-navigation-body {
+    background: #EEEEEE; /* Legacy default background */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation Header - Full system */
+.rdo-navigation-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #27496f; /* Legacy blue theme */
+    height: 103px; /* Legacy header height */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar Container */
+.rdo-navbar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.rdo-navbar-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+/* Logo Section */
+.rdo-logo-section {
+    margin-right: 30px;
+}
+
+.rdo-logo-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.rdo-logo-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.rdo-logo-button i {
+    font-size: 24px;
+}
+
+/* Mobile Menu */
+.rdo-mobile-menu {
+    display: none;
+    position: relative;
+}
+
+#rdo-menu-toggle {
+    display: none;
+}
+
+.rdo-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.rdo-menu-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.rdo-menu-button svg {
+    width: 24px;
+    height: 24px;
+    fill: white;
+    transition: opacity 0.3s ease;
+}
+
+.rdo-icon-close {
+    opacity: 0;
+}
+
+#rdo-menu-toggle:checked + .rdo-menu-button .rdo-icon-open {
+    opacity: 0;
+}
+
+#rdo-menu-toggle:checked + .rdo-menu-button .rdo-icon-close {
+    opacity: 1;
+}
+
+/* Mobile Sidebar */
+.rdo-mobile-sidebar {
+    position: fixed;
+    top: 103px;
+    left: -300px;
+    width: 300px;
+    height: calc(100vh - 103px);
+    background: #1C334D; /* Legacy darker blue */
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    z-index: 9;
+}
+
+.rdo-mobile-sidebar.active {
+    left: 0;
+}
+
+.rdo-mobile-content {
+    padding: 20px;
+}
+
+.rdo-mobile-user {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.rdo-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.rdo-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.rdo-user-name {
+    color: white;
+    margin: 0;
+    font-weight: bold;
+}
+
+.rdo-user-menu-item {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px 0;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.rdo-user-menu-item:hover {
+    color: #0088DD;
+}
+
+.rdo-mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    padding: 15px 0;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rdo-mobile-nav-item:hover {
+    color: #0088DD;
+}
+
+.rdo-mobile-nav-item i {
+    font-size: 20px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Title Section - Shows obra name */
+.rdo-title-section {
+    flex: 1;
+    text-align: center;
+}
+
+.rdo-obra-title {
+    color: white;
+    font-size: 14px;
+    font-family: 'sf-lg', sans-serif;
+    font-weight: bold;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Desktop Navigation */
+.rdo-desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* User Dropdown */
+.rdo-user-dropdown {
+    position: relative;
+}
+
+.rdo-user-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.rdo-user-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.rdo-user-button .rdo-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.rdo-user-button .rdo-user-name {
+    margin: 0;
+    font-size: 14px;
+}
+
+.rdo-caret {
+    font-size: 12px;
+}
+
+.rdo-user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.rdo-user-dropdown.active .rdo-user-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.rdo-dropdown-item {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #333;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.rdo-dropdown-item:hover {
+    background: #f5f5f5;
+}
+
+.rdo-dropdown-item:first-child {
+    border-radius: 5px 5px 0 0;
+}
+
+.rdo-dropdown-item:last-child {
+    border-radius: 0 0 5px 5px;
+}
+
+/* Navigation Buttons - Circular 48x49px (Legacy) */
+.rdo-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rdo-nav-button {
+    width: 48px;
+    height: 49px;
+    border-radius: 200px; /* Legacy circular */
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+}
+
+.rdo-nav-button:hover {
+    background: #1C334D; /* Legacy hover color */
+}
+
+.rdo-nav-button i {
+    font-size: 18px;
+}
+
+/* Main Content with Header Offset */
+.rdo-navigation-main {
+    margin-top: 103px; /* Legacy header height offset */
+    padding: 20px;
+    min-height: calc(100vh - 103px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .rdo-mobile-menu {
+        display: block;
+    }
+    
+    .rdo-desktop-nav {
+        display: none;
+    }
+    
+    .rdo-title-section {
+        margin-left: 20px;
+    }
+    
+    .rdo-obra-title {
+        font-size: 12px;
+    }
+    
+    .rdo-navbar {
+        padding: 0 15px;
+    }
+    
+    .rdo-navigation-main {
+        padding: 15px;
+    }
+}
+
+/* Tablet Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .rdo-nav-buttons {
+        gap: 5px;
+    }
+    
+    .rdo-nav-button {
+        width: 40px;
+        height: 41px;
+        font-size: 16px;
+    }
+    
+    .rdo-obra-title {
+        font-size: 12px;
+    }
+}

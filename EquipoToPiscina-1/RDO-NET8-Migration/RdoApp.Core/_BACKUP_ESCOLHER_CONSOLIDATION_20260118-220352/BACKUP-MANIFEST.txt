@@ -1,0 +1,46 @@
+﻿ESCOLHER CONSOLIDATION - BACKUP MANIFEST
+Date: 20260118-220352
+Phase: 1 (Backup and Quarantine)
+
+FILES QUARANTINED:
+==================
+
+VIEWS (5 files):
+- EscolherDebug.cshtml
+- EscolherNuclear.cshtml
+- EscolherMinimal.cshtml
+- Escolher-Diagnostic.cshtml
+- Escolher.cshtml.backup
+
+LAYOUTS (1 file):
+- _LayoutBlazor.cshtml
+
+CSS (1 file):
+- rdo-selection.css
+
+COMPONENTS (2 files):
+- RdoObraCards.razor
+- RdoObraCards.razor.css
+
+TOTAL: 9 files quarantined
+
+MASTER FILES REMAINING:
+=======================
+- Escolher.cshtml (Layout = null)
+- escolher-legacy.css
+- fontello.css
+- _LayoutSelection.cshtml (for future use)
+
+REASON FOR QUARANTINE:
+======================
+These files represent 7 iterations of "almost working" code.
+Current working version: Escolher.cshtml with Layout = null
+Consolidation goal: One master version per category
+
+EMERGENCY ROLLBACK:
+===================
+Copy-Item 'RDO-NET8-Migration/RdoApp.Core/_BACKUP_ESCOLHER_CONSOLIDATION_20260118-220352/*' 'RDO-NET8-Migration/RdoApp.Core/Views/Obra/' -Force
+Copy-Item 'RDO-NET8-Migration/RdoApp.Core/_BACKUP_ESCOLHER_CONSOLIDATION_20260118-220352/_LayoutBlazor.cshtml' 'RDO-NET8-Migration/RdoApp.Core/Views/Shared/' -Force
+Copy-Item 'RDO-NET8-Migration/RdoApp.Core/_BACKUP_ESCOLHER_CONSOLIDATION_20260118-220352/rdo-selection.css' 'RDO-NET8-Migration/RdoApp.Core/wwwroot/css/' -Force
+Copy-Item 'RDO-NET8-Migration/RdoApp.Core/_BACKUP_ESCOLHER_CONSOLIDATION_20260118-220352/RdoObraCards.razor*' 'RDO-NET8-Migration/RdoApp.Core/Components/' -Force
+

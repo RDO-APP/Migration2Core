@@ -1,0 +1,285 @@
+/* RDO Login Component - Single DNA Blazor Styling */
+
+/* Reset and Base Styles */
+.rdo-login-container {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Login Card - Solid White with Shadow */
+.rdo-login-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+/* Logo Section */
+.rdo-logo-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.rdo-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rdo-app-title {
+    color: #1e3a8a;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+/* Form Groups */
+.rdo-form-group {
+    margin-bottom: 20px;
+}
+
+/* Input Groups */
+.rdo-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+}
+
+.rdo-input-group:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.rdo-input-icon {
+    background: #f8fafc;
+    color: #64748b;
+    padding: 12px 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #e2e8f0;
+}
+
+/* Form Inputs */
+.rdo-input {
+    background: transparent;
+    border: none;
+    color: #1e293b;
+    padding: 12px 15px;
+    flex: 1;
+    outline: none;
+    font-size: 16px;
+    width: 100%;
+}
+
+.rdo-input::placeholder {
+    color: #94a3b8;
+}
+
+.rdo-input:focus {
+    outline: none;
+}
+
+/* Password Toggle */
+.rdo-password-toggle {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.rdo-password-toggle:hover {
+    color: #3b82f6;
+}
+
+/* Checkbox Group */
+.rdo-checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.rdo-checkbox {
+    margin-right: 10px;
+    accent-color: #3b82f6;
+}
+
+.rdo-checkbox-label {
+    color: #64748b;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Login Button */
+.rdo-login-button {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    width: 100%;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.rdo-login-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.rdo-login-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.rdo-login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Loading Spinner */
+.rdo-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error Messages */
+.rdo-error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.rdo-validation-error {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Forgot Password Link */
+.rdo-forgot-password {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.rdo-forgot-password:hover {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .rdo-login-container {
+        padding: 15px;
+    }
+    
+    .rdo-login-card {
+        padding: 30px 20px;
+    }
+    
+    .rdo-app-title {
+        font-size: 20px;
+    }
+    
+    .rdo-logo {
+        width: 100px;
+    }
+    
+    .rdo-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+
+/* Focus States for Accessibility */
+.rdo-input:focus,
+.rdo-checkbox:focus,
+.rdo-login-button:focus,
+.rdo-forgot-password:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .rdo-login-card {
+        border: 2px solid #000;
+    }
+    
+    .rdo-input-group {
+        border: 2px solid #000;
+    }
+    
+    .rdo-login-button {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .rdo-login-button {
+        transition: none;
+    }
+    
+    .rdo-spinner {
+        animation: none;
+    }
+    
+    .rdo-login-button:hover:not(:disabled) {
+        transform: none;
+    }
+}

@@ -1,0 +1,48 @@
+@* 
+    ESCOLHER OBRA LAYOUT
+    Date: January 27, 2026
+    
+    Dedicated layout for the Escolher Obra page with:
+    - Blue background (tema-azul)
+    - Simplified header (no obra name, minimal buttons)
+    - Footer with copyright
+*@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App Piscinas</title>
+    
+    @* Bootstrap 5 *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    @* Header Styles (Phase 1 Task 1.2) *@
+    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
+    
+    @* Escolher Page Styles (includes fonts and header) *@
+    <link rel="stylesheet" href="~/css/escolher.css" asp-append-version="true" />
+</head>
+<body class="tema-azul base">
+    @* Escolher Header - Uses existing header with real user name *@
+    @await Html.PartialAsync("_HeaderEscolher")
+    
+    @* Main Content Area *@
+    <main class="conteudo">
+        @RenderBody()
+    </main>
+    
+    @* Footer *@
+    <footer class="footer">
+        <div class="container">
+            <p>RDO App Piscinas &copy; 2025. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+    
+    @* Scripts *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

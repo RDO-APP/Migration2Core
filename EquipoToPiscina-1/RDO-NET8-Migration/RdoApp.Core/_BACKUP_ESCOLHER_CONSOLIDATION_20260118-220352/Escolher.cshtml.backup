@@ -1,0 +1,662 @@
+@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Selecionar Obra";
+    Layout = null; // No layout - standalone page like Gilberto's
+    
+    // Helper method for progress bar classes
+    string GetProgressBarClass(string classeStatusCss)
+    {
+        return classeStatusCss switch
+        {
+            "bg-verde" => "bg-success",
+            "bg-vermelho" => "bg-danger", 
+            "bg-cinza" => "bg-secondary",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App Piscinas</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Fontello custom icons for Gilberto's dynamic icon system -->
+    <style>
+        @@font-face {
+          font-family: 'fontello';
+          src: url('data:application/octet-stream;base64,d09GRgABAAAAABgUAAsAAAAAGgQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABCAAAADsAAABUIIslek9TLzIAAAFEAAAAQwAAAFZAIUuKY21hcAAAAYgAAABaAAABhgAA4gBnbHlmAAAB5AAAE4AAABgwqNWJcGhlYWQAABVkAAAAMQAAADYZw/HsaGhlYQAAFZgAAAAdAAAAJAeAA4ZobXR4AAAVuAAAABQAAAAUDgAAAGxvY2EAABXMAAAADAAAAA4GRAZEbWF4cAAAFdgAAAAfAAAAIAEVAF1uYW1lAAAV+AAAATcAAAJSm5h6CnBvc3QAABcwAAAA4wAAAVJoYW1lcHJlcAAYFAAAABoAAAAaVouAuQAAAAEAAAAAzD2izwAAAADTOpLNAAAAANM6ks0AAQAAAAwAAAAWAAAAAgABAAEABwABAAQAAAACAAAAAAAAAAEAAAAA') format('woff');
+          font-weight: normal;
+          font-style: normal;
+        }
+        
+        [class^="icon-"]:before, [class*=" icon-"]:before {
+          font-family: "fontello";
+          font-style: normal;
+          font-weight: normal;
+          speak: none;
+          display: inline-block;
+          text-decoration: inherit;
+          width: 1em;
+          margin-right: .2em;
+          text-align: center;
+          font-variant: normal;
+          text-transform: none;
+          line-height: 1em;
+          margin-left: .2em;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+    <style>
+        body {
+            background: linear-gradient(135deg, #2c5aa0 0%, #1e3a5f 50%, #0f1419 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        /* Top Navigation - Exact match to production */
+        .top-nav {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: #1e88e5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .nav-icon {
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .nav-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #1e88e5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 40px 20px;
+            /* max-width: 1200px; <- REMOVED for better space utilization */
+            margin: 0 auto;
+        }
+        
+        /* Filter Tabs - Exact match to production */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .filter-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-bottom-color: #1e88e5;
+        }
+        
+        .filter-tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+        
+        /* Title - Exact match to Gilberto's */
+        .page-title {
+            text-align: left;
+            color: white;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Lista de Obras - Layout Original Flexbox */
+        .lista-obras {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-start;
+            padding: 0 20px;
+        }
+        
+        .lista-obras .item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .lista-obras .item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .lista-obras .item .btn {
+            background: none;
+            border: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+        
+        .lista-obras .item .btn i {
+            font-size: 60px !important; /* Tamanho original dos ícones */
+            color: #0088DD;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .lista-obras .item h5 {
+            color: #28496F;
+            font-size: 14px !important;
+            line-height: 16px;
+            margin: 10px 0;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .lista-obras .item p {
+            color: #27486E;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        
+        .lista-obras .item small {
+            color: #758594;
+            font-size: 10px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: auto;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            transition: width 0.3s ease;
+        }
+        
+        /* Container com padding adequado */
+        .main-content {
+            padding: 40px 0; /* Removido padding lateral, será controlado pelo container-fluid */
+        }
+        
+        /* Page Title - Exact match to Gilberto's */
+        .page-title {
+            text-align: left;
+            color: white;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* GILBERTO'S CUSTOM ICON DEFINITIONS - Exact match to production */
+        .icon-contratada:before { 
+            content: '\e807'; 
+            font-family: 'fontello';
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        .icon-contratante:before { 
+            content: '\e815'; 
+            font-family: 'fontello';
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        /* Fallback mappings for t/d values */
+        .icon-t:before { 
+            content: '\e815'; /* Same as contratante */
+            font-family: 'fontello';
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        .icon-d:before { 
+            content: '\e807'; /* Same as contratada */
+            font-family: 'fontello';
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        /* Legend area - Matching Gilberto's */
+        .area-legenda {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .area-legenda label {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .legenda {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        
+        .bg-verde {
+            background-color: #4caf50;
+        }
+        
+        .bg-vermelho {
+            background-color: #f44336;
+        }
+        
+        .bg-cinza {
+            background-color: #9e9e9e;
+        }
+        
+        .legenda small {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+        }
+        
+        /* No obras message */
+        .no-obras {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            padding: 40px 20px;
+        }
+        
+        /* Responsive - Optimized for 10 cards */
+        @@media (max-width: 768px) {
+            .top-nav {
+                padding: 8px 15px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .lista-obras .item {
+                flex-basis: 50%; /* 2 cards per row on mobile */
+            }
+            
+            .lista-obras .item .btn i {
+                font-size: 40px !important; /* Smaller on mobile */
+                margin-top: 0;
+            }
+            
+            .lista-obras .item h5 {
+                font-size: 16px !important;
+                line-height: 16px;
+            }
+            
+            .filter-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filter-tab {
+                width: 200px;
+                margin-bottom: 5px;
+            }
+        }
+        
+        @@media (min-width: 769px) and (max-width: 1024px) {
+            .lista-obras .item {
+                flex-basis: 20%; /* 5 cards per row on tablet */
+            }
+        }
+        
+        @@media (min-width: 1025px) and (max-width: 1366px) {
+            .lista-obras .item {
+                flex-basis: 14.28%; /* 7 cards per row on small laptop */
+            }
+        }
+        
+        @@media (min-width: 1367px) and (max-width: 1920px) {
+            .lista-obras .item {
+                flex-basis: 12.5%; /* 8 cards per row on standard laptop */
+            }
+        }
+        
+        @@media (min-width: 1921px) {
+            .lista-obras .item {
+                flex-basis: 10%; /* 10 cards per row on large screens */
+                -webkit-flex-basis: 10%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="logo-section">
+            <div class="logo-icon">rdo</div>
+            <span class="logo-text">Piscinas</span>
+        </div>
+        
+        <div class="nav-icons">
+            <i class="nav-icon fas fa-chart-bar" title="Relatórios"></i>
+            <i class="nav-icon fas fa-plus" title="Adicionar"></i>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <span>@ViewBag.UsuarioNome</span>
+        </div>
+    </nav>
+    
+    <!-- Main Content with proper Bootstrap container -->
+    <div class="main-content">
+        <!-- Filtros Section - Baseado no código do Gilberto -->
+        <div class="container-fluid px-4" style="margin-bottom: 30px;">
+            <div class="row">
+                <div class="col">
+                    <label class="control-label" style="color: white; font-size: 16px; margin-bottom: 15px;">Filtros</label>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <input class="form-control" type="text" id="filtroUnidade" name="unidade_escolar" 
+                           placeholder="Unidade escolar" autofocus style="margin-bottom: 10px;"/>
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control" type="text" id="filtroMunicipio" name="municipio" 
+                           placeholder="Município" style="margin-bottom: 10px;"/>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page Title - Exact match to Gilberto's -->
+        <div style="padding: 0 20px;">
+            <h2 class="page-title">Selecione uma das unidades escolares abaixo:</h2>
+        </div>
+        
+        <!-- Lista de Obras - Layout Original com 10 cards -->
+        <div class="lista-obras">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var obra in Model)
+                {
+                    <div class="item" data-unidade="@obra.Descricao.ToLower()" data-municipio="@obra.CidadeEstado.ToLower()">
+                        <button class="btn" onclick="escolherObra(@obra.Id)">
+                            <!-- SIMPLIFIED DYNAMIC ICON - Like Gilberto's AngularJS approach -->
+                            <i class="icon-@(obra.ContratanteContratada ?? "contratada")" 
+                               title="@(obra.ContratanteContratada ?? "contratada")" 
+                               data-tipo="@(obra.ContratanteContratada ?? "contratada")"></i>
+                        </button>
+                        <h5>@obra.Descricao</h5>
+                        <p>@obra.CidadeEstado</p>
+                        <small>(@obra.StatusBasicaGratuita)</small>
+                        <div class="progress-container">
+                            <div class="progress-bar @obra.ClasseStatusCss" style="width: @obra.ProgressoPorcentagem%">
+                                @obra.ProgressoPorcentagem%
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-obras">
+                    <p>Você deve cadastrar uma unidade escolar para começar a usar o sistema.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Legend Area - Matching Gilberto's -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="col-xs-12 no-padding area-legenda">
+                <div>
+                    <label>BARRA DE PROGRESSO DA UNIDADE ESCOLAR:</label>
+                    <div class="legenda">
+                        <i class="status bg-verde"></i>
+                        <small>UNIDADE ESCOLAR COM PRAZO ESTIMADO ATINGIDO</small>
+                    </div>
+                    <div class="legenda">
+                        <i class="status bg-vermelho"></i>
+                        <small>UNIDADE ESCOLAR COM PRAZO ESTIMADO ULTRAPASSADO</small>
+                    </div>
+                    <div class="legenda">
+                        <i class="status bg-cinza"></i>
+                        <small>UNIDADE ESCOLAR EM ANDAMENTO</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // FILTROS FUNCIONAIS - Adaptado para Bootstrap 5 cards
+        function filtrarObras() {
+            const filtroUnidade = document.getElementById('filtroUnidade').value.toLowerCase();
+            const filtroMunicipio = document.getElementById('filtroMunicipio').value.toLowerCase();
+            
+            const cards = document.querySelectorAll('.obra-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                // Título da obra (h5 dentro do card)
+                const titulo = card.querySelector('.card-title').textContent.toLowerCase();
+                
+                // Município (primeiro .card-text)
+                const cidadeEstado = card.querySelector('.card-text').textContent.toLowerCase();
+                
+                // Filtro EXATO do Gilberto
+                const matchUnidade = !filtroUnidade || titulo.includes(filtroUnidade);
+                const matchMunicipio = !filtroMunicipio || cidadeEstado.includes(filtroMunicipio);
+                
+                const cardContainer = card.closest('.col-xl-2, .col-lg-3, .col-md-4, .col-sm-6, .col-12');
+                
+                if (matchUnidade && matchMunicipio) {
+                    cardContainer.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    cardContainer.style.display = 'none';
+                }
+            });
+            
+            // Mostrar mensagem se nenhuma obra for encontrada
+            const container = document.querySelector('.container-fluid .row');
+            let noObrasMsg = container.querySelector('.no-obras-filtro');
+            
+            if (visibleCount === 0 && cards.length > 0) {
+                if (!noObrasMsg) {
+                    const msg = document.createElement('div');
+                    msg.className = 'col-12 text-center no-obras-filtro';
+                    msg.innerHTML = '<div class="alert alert-warning"><i class="fas fa-search me-2"></i>Nenhuma unidade escolar encontrada com os filtros aplicados.</div>';
+                    container.appendChild(msg);
+                }
+            } else if (noObrasMsg && visibleCount > 0) {
+                noObrasMsg.remove();
+            }
+        }
+
+        // Aplicar filtros em tempo real - como no AngularJS do Gilberto
+        document.getElementById('filtroUnidade').addEventListener('input', filtrarObras);
+        document.getElementById('filtroMunicipio').addEventListener('input', filtrarObras);
+        
+        // Filter tabs functionality
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                console.log('Filter changed to:', this.textContent);
+            });
+        });
+        
+        // Escolher obra function - Fixed navigation
+        function escolherObra(obraId) {
+            console.log('Escolhendo obra:', obraId);
+            
+            try {
+                // Use window.location.href for reliable navigation
+                var url = '@Url.Action("Etapas", "Obra")' + '?obraId=' + obraId;
+                console.log('Navigating to:', url);
+                window.location.href = url;
+            } catch (error) {
+                console.error('Navigation error:', error);
+                // Fallback navigation
+                window.location = '/Obra/Etapas?obraId=' + obraId;
+            }
+        }
+        
+        // Add hover effects para Bootstrap cards
+        document.querySelectorAll('.obra-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '';
+            });
+        });
+        
+        // ICON TRANSFORMATION - Replicate Gilberto's AngularJS behavior
+        function transformIcons() {
+            document.querySelectorAll('[class*="icon-"]').forEach(icon => {
+                const tipo = icon.getAttribute('data-tipo');
+                if (!tipo) return;
+                
+                // Transform values like Gilberto's system
+                let iconClass = '';
+                let iconTitle = '';
+                
+                switch(tipo.toLowerCase()) {
+                    case 't':
+                    case 'contratante':
+                        iconClass = 'icon-contratante';
+                        iconTitle = 'Contratante';
+                        break;
+                    case 'd':
+                    case 'contratada':
+                        iconClass = 'icon-contratada';
+                        iconTitle = 'Contratada';
+                        break;
+                    default:
+                        iconClass = 'icon-contratada';
+                        iconTitle = 'Contratada';
+                }
+                
+                // Update icon class and title
+                icon.className = iconClass;
+                icon.setAttribute('title', iconTitle);
+                
+                console.log('Icon transformed:', tipo, '->', iconClass);
+            });
+        }
+        
+        // Run transformation when page loads
+        document.addEventListener('DOMContentLoaded', transformIcons);
+        
+        // Also run after any dynamic content updates
+        setTimeout(transformIcons, 100);
+    </script>
+</body>
+</html>
+</content>

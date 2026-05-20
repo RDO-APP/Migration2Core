@@ -1,0 +1,42 @@
+﻿<div class="panel-heading">
+    <h3>Código de Paralizações</h3>
+</div>
+
+<section ng-controller="TarefaController as controller" ng-init="controller.codparalizacoes.obterRegistro()">
+
+    <form id="form-cadastro-paralizacao-tarefa" class="panel">
+
+        <div class="col-lg-1 col-md-1 col-sm-12">
+            <div class="form-group">
+                <label class="control-label">Código<span style="color:red">*</span></label>
+                <input type="text" class="form-control text-uppercase" ng-readonly="controller.codparalizacoes.cadastroParam.update" maxlength="3" ng-model="controller.codparalizacoes.cadastroParam.codigo">
+            </div>
+        </div>
+
+        <div class="col-lg-11 col-md-11 col-sm-12">
+            <div class="form-group">
+                <label class="control-label">Descrição<span style="color:red">*</span></label>
+                <input type="text" class="form-control" maxlength="100" ng-model="controller.codparalizacoes.cadastroParam.descricao">
+            </div>
+        </div>
+
+    </form>
+   
+    <div class="col-xs-12 no-padding">
+
+        <div class="pull-right">
+
+            <button class="btn btn-blue btn-block-xs" onclick="window.history.back()">
+                <i class="fa fa-arrow-left"></i>
+                Voltar
+            </button>
+
+            <button class="btn btn-blue btn-block-xs" ng-click="controller.codparalizacoes.salvar()">
+                <i class="icon-check" aria-hidden="true"></i>
+                SALVAR
+            </button>
+
+        </div>
+    </div>
+
+</section>

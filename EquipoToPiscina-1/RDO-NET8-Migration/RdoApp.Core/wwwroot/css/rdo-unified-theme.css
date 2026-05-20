@@ -1,0 +1,281 @@
+/* RDO UNIFIED THEME - Single Dark Blue Theme for All Pages */
+
+:root {
+    --rdo-dark-blue: #2c5282; /* Single dark blue color from screenshots */
+    --rdo-text-white: #ffffff;
+    --rdo-text-light: #e2e8f0;
+    --rdo-hover-blue: #3182ce;
+}
+
+/* CRITICAL: Base header structure */
+.rdo-header {
+    width: 100%;
+    position: relative;
+    z-index: 1000;
+}
+
+.rdo-header .navbar {
+    background-color: var(--rdo-dark-blue) !important;
+    color: var(--rdo-text-white) !important;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+
+.rdo-header .navbar.rdo-dark-blue {
+    background-color: var(--rdo-dark-blue) !important;
+    color: var(--rdo-text-white) !important;
+}
+
+/* CRITICAL: No-padding container */
+.rdo-header .no-padding {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Logo styling */
+.rdo-header .navbar-brand.logo {
+    color: var(--rdo-text-white) !important;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.rdo-header .navbar-brand.logo:hover {
+    color: var(--rdo-text-light) !important;
+}
+
+.rdo-header .navbar-brand.logo.pointer {
+    cursor: pointer;
+}
+
+.rdo-header .navbar-brand.logo.pointer:hover {
+    background-color: var(--rdo-hover-blue);
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.rdo-header .navbar-brand.logo span {
+    color: var(--rdo-text-white) !important;
+}
+
+/* Menu lateral (mobile menu container) */
+.rdo-header .menu-lateral {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Obra Title Styling */
+.rdo-header #tituloObra {
+    color: var(--rdo-text-white) !important;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+    padding: 8px 16px;
+}
+
+/* User Menu Styling */
+.rdo-header .user-menu,
+.rdo-header .nav.user {
+    color: var(--rdo-text-white) !important;
+}
+
+.rdo-header .user-menu .user-name,
+.rdo-header .nav.user p {
+    color: var(--rdo-text-white) !important;
+    margin: 0;
+    font-weight: 500;
+}
+
+.rdo-header .user-avatar,
+.rdo-header .nav.user .image img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--rdo-text-white);
+}
+
+/* CRITICAL: Ball hover navigation */
+.rdo-header .nav.ball-hover {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.rdo-header .nav.ball-hover li {
+    list-style: none;
+}
+
+.rdo-header .nav.ball-hover li a {
+    color: var(--rdo-text-white) !important;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.rdo-header .nav.ball-hover li a:hover {
+    background-color: var(--rdo-hover-blue);
+    color: var(--rdo-text-white) !important;
+}
+
+.rdo-header .nav.ball-hover li a i {
+    color: var(--rdo-text-white) !important;
+    font-size: 1.2rem;
+}
+
+.rdo-header .nav.ball-hover li a span {
+    color: var(--rdo-text-white) !important;
+    font-size: 0.9rem;
+    display: none; /* Hide text by default, show on hover or mobile */
+}
+
+/* Icon Toolbar Styling */
+.rdo-header .icon-toolbar,
+.rdo-header .nav.ball-hover {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rdo-header .icon-toolbar i,
+.rdo-header .nav.ball-hover i {
+    color: var(--rdo-text-white) !important;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.rdo-header .icon-toolbar i:hover,
+.rdo-header .nav.ball-hover a:hover i {
+    background-color: var(--rdo-hover-blue);
+}
+
+/* Mobile Menu Styling */
+.rdo-header .menu-button {
+    color: var(--rdo-text-white) !important;
+    cursor: pointer;
+}
+
+.rdo-header .menu-sidebar {
+    background-color: var(--rdo-dark-blue);
+    border-left: 1px solid var(--rdo-hover-blue);
+}
+
+.rdo-header .menu-sidebar .nav a {
+    color: var(--rdo-text-white) !important;
+    text-decoration: none;
+}
+
+.rdo-header .menu-sidebar .nav a:hover {
+    background-color: var(--rdo-hover-blue);
+    border-radius: 4px;
+}
+
+/* Dropdown Menu Styling */
+.rdo-header .dropdown-menu {
+    background-color: var(--rdo-dark-blue);
+    border: 1px solid var(--rdo-hover-blue);
+}
+
+.rdo-header .dropdown-menu a {
+    color: var(--rdo-text-white) !important;
+}
+
+.rdo-header .dropdown-menu a:hover {
+    background-color: var(--rdo-hover-blue);
+    color: var(--rdo-text-white) !important;
+}
+
+/* Body Theme Classes */
+.tema-azul,
+.base {
+    background-color: #f8f9fa; /* Light background for content */
+    min-height: 100vh;
+}
+
+/* Content Area Styling */
+.conteudo {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+    padding: 20px;
+    margin-top: 0;
+}
+
+/* CRITICAL: Ensure header is always visible and styled */
+header.rdo-header {
+    background-color: var(--rdo-dark-blue) !important;
+    color: var(--rdo-text-white) !important;
+    width: 100%;
+    position: relative;
+    z-index: 1000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .rdo-header #tituloObra {
+        font-size: 1rem;
+        padding: 4px 8px;
+    }
+    
+    .rdo-header .icon-toolbar {
+        gap: 8px;
+    }
+    
+    .rdo-header .icon-toolbar i {
+        font-size: 1rem;
+        padding: 6px;
+    }
+    
+    .rdo-header .nav.ball-hover li a span {
+        display: block; /* Show text on mobile */
+    }
+}
+
+/* Legacy Compatibility */
+.bg-blue-default {
+    background-color: var(--rdo-dark-blue) !important;
+}
+
+.navbar {
+    background-color: var(--rdo-dark-blue) !important;
+}
+
+/* Ensure consistent dark blue across all elements */
+.rdo-header,
+.rdo-header .navbar,
+.tema-azul .navbar,
+.base .navbar {
+    background-color: var(--rdo-dark-blue) !important;
+    color: var(--rdo-text-white) !important;
+}
+
+/* CRITICAL: Force all text in header to be white */
+.rdo-header * {
+    color: var(--rdo-text-white) !important;
+}
+
+.rdo-header a {
+    color: var(--rdo-text-white) !important;
+    text-decoration: none;
+}
+
+.rdo-header a:hover {
+    color: var(--rdo-text-light) !important;
+}

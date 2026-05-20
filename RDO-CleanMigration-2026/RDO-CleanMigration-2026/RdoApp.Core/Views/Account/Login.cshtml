@@ -1,0 +1,433 @@
+@model LoginDto
+@{
+    ViewData["Title"] = "Login - RDO App Piscinas";
+    Layout = null; // ✅ CRITICAL - Complete isolation, no layout
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    
+    <!-- ✅ INLINE CSS ONLY - NO CDN DEPENDENCIES (works in incognito mode) -->
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* RDO Brand Identity - Professional Blue Gradient Background */
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Login Card - Solid White with Shadow */
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        /* RDO Logo - Clean Integration */
+        .rdo-logo {
+            width: 120px;
+            height: auto;
+            margin: 0 auto 30px;
+            display: block;
+            border-radius: 10px;
+        }
+        
+        /* App Title */
+        .app-title {
+            color: #1e3a8a;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        /* Input Groups */
+        .input-group {
+            position: relative;
+            display: flex;
+        }
+        
+        .input-group-text {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            border-radius: 8px 0 0 8px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Form Controls - Clear Inputs */
+        .form-control {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            border-radius: 0 8px 8px 0;
+            padding: 12px 15px;
+            flex: 1;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        .form-control:focus {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+        
+        /* Password Toggle Eye */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 10;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .password-toggle:hover {
+            color: #3b82f6;
+        }
+        
+        .password-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        
+        .password-input-wrapper .form-control {
+            padding-right: 45px;
+        }
+        
+        /* Checkbox Styling */
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .form-check-input {
+            margin-right: 10px;
+            accent-color: #3b82f6;
+        }
+        
+        .form-check-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        /* Official Blue Button */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            width: 100%;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Links and Messages */
+        .forgot-password {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .forgot-password:hover {
+            color: #3b82f6;
+        }
+        
+        .alert-danger {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .text-danger {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        /* Icons using Unicode */
+        .icon-person::before { content: "👤"; }
+        .icon-lock::before { content: "🔒"; }
+        
+        /* Loading state */
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        
+        /* CSS Animation - Double @@ to escape Razor syntax */
+        @@keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @@media (max-width: 480px) {
+            body {
+                padding: 20px;
+            }
+            
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .app-title {
+                font-size: 20px;
+            }
+            
+            .rdo-logo {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- RDO Brand Identity - Centered Login -->
+    <div class="login-card">
+            <!-- Logo Integration -->
+            <img src="~/images/logo.jpg" alt="RDO App" class="rdo-logo">
+            <h1 class="app-title">Piscinas</h1>
+            
+            <!-- Standard HTML Form - 100% AngularJS Free -->
+            <form method="post" asp-action="Login" asp-controller="Account" id="loginForm">
+                @Html.AntiForgeryToken()
+                
+                <!-- Display validation errors -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert-danger">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
+                
+                <!-- Success message (if any) -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                
+                <!-- CPF Input -->
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-text icon-person"></span>
+                        <input asp-for="Cpf" 
+                               type="text" 
+                               class="form-control" 
+                               placeholder="000.000.000-00"
+                               maxlength="14"
+                               autocomplete="username"
+                               required>
+                    </div>
+                    <span asp-validation-for="Cpf" class="text-danger"></span>
+                </div>
+                
+                <!-- Password Input with Toggle Eye -->
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-text icon-lock"></span>
+                        <div class="password-input-wrapper">
+                            <input asp-for="Senha" 
+                                   type="password" 
+                                   class="form-control" 
+                                   placeholder="SENHA"
+                                   autocomplete="current-password"
+                                   id="passwordInput"
+                                   required>
+                            <button type="button" class="password-toggle" id="passwordToggle" title="Mostrar/Ocultar senha">
+                                👁️
+                            </button>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+                
+                <!-- Remember Me Checkbox -->
+                <div class="form-check">
+                    <input asp-for="LembrarMe" 
+                           type="checkbox" 
+                           class="form-check-input"
+                           id="lembrarMe">
+                    <label class="form-check-label" for="lembrarMe">
+                        Lembrar-me por 30 dias
+                    </label>
+                </div>
+                
+                <!-- Forgot Password Link -->
+                <a href="#" class="forgot-password" onclick="alert('Funcionalidade em desenvolvimento'); return false;">
+                    Esqueci a senha
+                </a>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    ACESSAR
+                </button>
+            </form>
+    </div>
+
+    <!-- ✅ INLINE JAVASCRIPT - NO EXTERNAL FILES (works in incognito mode) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Login page loaded - Clean Migration 2026');
+            
+            // CPF mask - pure JavaScript
+            const cpfInput = document.querySelector('input[name="Cpf"]');
+            
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    // Apply CPF mask: 000.000.000-00
+                    if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    }
+                    
+                    e.target.value = value;
+                });
+                
+                // Focus CPF field on page load
+                cpfInput.focus();
+                console.log('✅ CPF masking initialized');
+            }
+            
+            // Password Toggle Eye - Vanilla JavaScript
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordToggle = document.getElementById('passwordToggle');
+            
+            if (passwordInput && passwordToggle) {
+                passwordToggle.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        passwordToggle.textContent = '🙈';
+                        passwordToggle.title = 'Ocultar senha';
+                    } else {
+                        passwordInput.type = 'password';
+                        passwordToggle.textContent = '👁️';
+                        passwordToggle.title = 'Mostrar senha';
+                    }
+                });
+                console.log('✅ Password toggle initialized');
+            }
+            
+            // Enter key support
+            const senhaInput = document.querySelector('input[name="Senha"]');
+            if (senhaInput) {
+                senhaInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.getElementById('submitBtn').click();
+                    }
+                });
+            }
+            
+            // Form submission handling
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (loginForm && submitBtn) {
+                loginForm.addEventListener('submit', function(e) {
+                    // Add loading state
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('loading');
+                    submitBtn.textContent = 'ACESSANDO';
+                    console.log('🔄 Form submitting...');
+                });
+            }
+            
+            console.log('✅ Login page fully initialized');
+        });
+    </script>
+</body>
+</html>

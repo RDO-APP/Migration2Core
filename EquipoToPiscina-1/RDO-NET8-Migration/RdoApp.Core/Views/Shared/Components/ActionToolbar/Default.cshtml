@@ -1,0 +1,58 @@
+@model List<RdoApp.Core.Models.DTOs.ActionButtonDto>
+@{
+    var toolbarContext = ViewBag.ToolbarContext as string ?? "workspace";
+    var isSelectionMode = toolbarContext.Equals("selection", StringComparison.OrdinalIgnoreCase);
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="action-toolbar action-toolbar-dark d-flex align-items-center me-3" data-context="@toolbarContext">
+        @foreach (var button in Model.OrderBy(b => b.DisplayOrder))
+        {
+            <a href="@button.NavigationUrl" 
+               class="toolbar-btn-dark" 
+               title="@button.TooltipText"
+               data-button-type="@button.Type">
+                <i class="@button.IconClass"></i>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <!-- Fallback: Static buttons if service fails -->
+    <div class="action-toolbar action-toolbar-dark d-flex align-items-center me-3" data-context="@toolbarContext">
+        @if (isSelectionMode)
+        {
+            <!-- 2 Selection Buttons -->
+            <a href="/Chart" class="toolbar-btn-dark" title="Dashboard Geral">
+                <i class="fa fa-bar-chart"></i>
+            </a>
+            <a href="/Obra/Cadastro" class="toolbar-btn-dark" title="Nova Unidade Escolar">
+                <i class="fa fa-plus"></i>
+            </a>
+        }
+        else
+        {
+            <!-- 6 Workspace Buttons -->
+            <a href="/Laudo" class="toolbar-btn-dark" title="Laudos">
+                <i class="fa fa-folder"></i>
+            </a>
+            <a href="/Dashboard/Index" class="toolbar-btn-dark" title="Dashboard da Unidade Escolar">
+                <i class="fa fa-tachometer"></i>
+            </a>
+            <a href="/Relatorio" class="toolbar-btn-dark" title="Relatórios Diários">
+                <i class="fa fa-file-text"></i>
+            </a>
+            <a href="/Tarefa/Cards" class="toolbar-btn-dark" title="Tarefas">
+                <i class="fa fa-th"></i>
+            </a>
+            <a href="/Chart" class="toolbar-btn-dark" title="Dashboard Geral">
+                <i class="fa fa-bar-chart"></i>
+            </a>
+            <a href="/Obra/Cadastro" class="toolbar-btn-dark" title="Nova Unidade Escolar">
+                <i class="fa fa-plus"></i>
+            </a>
+        }
+    </div>
+}

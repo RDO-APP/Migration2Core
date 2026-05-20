@@ -1,0 +1,418 @@
+/* ===================================================================
+   ESCOLHER OBRA HEADER - CSS
+   Extracted from legacy custom.css and fonts.css
+   Date: January 27, 2026
+   =================================================================== */
+
+/* ==================== FONT FACES ==================== */
+
+/* Fontello Icons */
+@font-face {
+  font-family: 'fontello';
+  src: url('../fonts/fontello.eot?45388043');
+  src: url('../fonts/fontello.eot?45388043#iefix') format('embedded-opentype'),
+       url('../fonts/fontello.woff2?45388043') format('woff2'),
+       url('../fonts/fontello.woff?45388043') format('woff'),
+       url('../fonts/fontello.ttf?45388043') format('truetype'),
+       url('../fonts/fontello.svg?45388043#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Font Awesome */
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../fonts/fontawesome-webfont.eot?v=4.7.0');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'),
+       url('../fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),
+       url('../fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'),
+       url('../fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'),
+       url('../fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* SF UI Display Fonts */
+@font-face {
+	font-family: 'sf-lg';
+	src: url('../fonts/SFUIDisplay-Light.eot');
+	src: url('../fonts/SFUIDisplay-Light.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/SFUIDisplay-Light.woff') format('woff'),
+		url('../fonts/SFUIDisplay-Light.ttf') format('truetype'),
+		url('../fonts/SFUIDisplay-Light.svg#SFUIDisplay-Light') format('svg');
+	font-weight: 200;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'sf-md';
+	src: url('../fonts/SFUIDisplay-Medium.eot');
+	src: url('../fonts/SFUIDisplay-Medium.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/SFUIDisplay-Medium.woff') format('woff'),
+		url('../fonts/SFUIDisplay-Medium.ttf') format('truetype'),
+		url('../fonts/SFUIDisplay-Medium.svg#SFUIDisplay-Medium') format('svg');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'sf-bd';
+	src: url('../fonts/SFUIDisplay-Bold.eot');
+	src: url('../fonts/SFUIDisplay-Bold.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/SFUIDisplay-Bold.woff') format('woff'),
+		url('../fonts/SFUIDisplay-Bold.ttf') format('truetype'),
+		url('../fonts/SFUIDisplay-Bold.svg#SFUIDisplay-Bold') format('svg');
+	font-weight: bold;
+	font-style: normal;
+}
+
+/* ==================== ICON CLASSES ==================== */
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  margin-left: .2em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fontello Icons Used in Header */
+.icon-logo:before { content: '\e80c'; }
+.icon-dashboard:before { content: '\e808'; }
+.icon-rdo-novo_2:before { content: '\e825'; }
+
+/* Font Awesome Base */
+.fa {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font Awesome Icons Used in Header */
+.fa-folder:before { content: "\f07b"; }
+.fa-th:before { content: "\f00a"; }
+.fa-bar-chart:before { content: "\f080"; }
+.fa-plus:before { content: "\f067"; }
+.fa-caret-down:before { content: "\f0d7"; }
+
+/* ==================== BASE STYLES ==================== */
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box !important;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    font-family: 'sf-md';
+    background: #EEEEEE;
+    margin: 0;
+    padding: 0;
+}
+
+.base {
+    position: absolute;
+    min-height: 100%;
+    width: 100%;
+    background: #EEEEEE;
+}
+
+.tema-azul {
+    background: #27496f;
+    width: 100%;
+    padding-bottom: 57px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+/* ==================== HEADER (TOPO) ==================== */
+
+.topo {
+    position: fixed;
+    z-index: 10 !important;
+    width: 100%;
+}
+
+.topo h2 {
+    display: table;
+    float: left;
+    margin: 24px 0;
+    font-size: 14px;
+    margin: 0;
+    font-family: 'sf-lg';
+    display: block;
+    height: 54px;
+    text-transform: uppercase;
+    padding: 16px 0 0 26px;
+    color: #fff;
+}
+
+/* ==================== NAVBAR ==================== */
+
+.navbar {
+    border: none;
+    margin-bottom: 0;
+    min-height: 54px;
+}
+
+.bg-blue-default {
+    background: #27496f;
+    border-radius: 0;
+}
+
+.navbar .no-padding {
+    padding: 0;
+}
+
+/* ==================== LOGO ==================== */
+
+.topo .logo {
+    padding: 3px;
+    text-decoration: none;
+    display: inline-block;
+    color: #fff;
+}
+
+.topo .logo i {
+    font-size: 43px;
+    color: #fff;
+}
+
+.topo .logo span {
+    font-size: 14px;
+    font-family: 'sf-lg';
+    text-transform: uppercase;
+    margin-left: 8px;
+    position: relative;
+    top: -12px;
+}
+
+.navbar-brand.logo {
+    padding: 5px 15px;
+    height: 54px;
+    line-height: 44px;
+}
+
+/* ==================== USER DROPDOWN ==================== */
+
+.navbar .navbar-nav.user > li > a {
+    float: right;
+    padding: 3px 14px;
+    color: #fff;
+}
+
+.topo .user a span, .topo .user a p {
+    font-size: 11px;
+    margin: 0 8px;
+    display: block;
+    float: left;
+    padding: 0px;
+    color: #fff;
+}
+
+.topo .user a p {
+    position: relative;
+    top: 15px;
+}
+
+.topo .user a i.caret {
+    top: 14px;
+    position: relative;
+    border-top-color: #fff;
+}
+
+.topo .user a span.image {
+    border-radius: 200px;
+    overflow: hidden;
+    width: 40px;
+    height: 40px;
+    display: block;
+}
+
+.topo .user a span.image img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Dropdown Menu */
+.topo .navbar .navbar-nav > li.open > .dropdown-menu {
+    top: 54px;
+    text-transform: uppercase;
+    padding: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+.topo .dropdown-menu li > a {
+    margin: 0;
+    color: #26476D;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+}
+
+.topo .dropdown-menu li > a:hover,
+.topo .dropdown-menu li > a:focus {
+    background: #1C334D;
+    color: #fff;
+}
+
+/* ==================== NAVIGATION BUTTONS ==================== */
+
+.menu .navbar-right {
+    padding: 0 10px;
+}
+
+.topo .navbar .menu .navbar-nav.ball-hover > li > a {
+    border-radius: 200px;
+    width: 48px;
+    height: 49px;
+    margin: 0 7px;
+    padding: 13px 0;
+    text-align: center;
+    color: #fff;
+}
+
+.topo .navbar .menu .navbar-nav.ball-hover > li > a:hover,
+.topo .navbar .menu .navbar-nav.ball-hover > li > a:focus,
+.topo .navbar .menu .navbar-nav.ball-hover > li > a:active {
+    background: #1C334D;
+    text-decoration: none;
+}
+
+.topo .navbar .menu .navbar-nav.ball-hover > li > a i {
+    font-size: 23px;
+}
+
+.btn-tooltip {
+    position: relative;
+}
+
+/* ==================== FOOTER ==================== */
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    max-height: 106px;
+    padding: 20px;
+}
+
+.tema-azul footer, .tema-azul-escuro footer {
+    background-color: #244264;
+    max-height: 95px;
+}
+
+.tema-azul footer p {
+    display: block;
+    width: 100%;
+    max-width: 650px;
+    color: #fff;
+    margin: 0 auto;
+}
+
+/* ==================== CONTENT AREA ==================== */
+
+.conteudo {
+    float: left;
+    width: 100%;
+    padding: 20px;
+}
+
+.topo + .conteudo {
+    padding-top: 103px;
+}
+
+/* ==================== OBRA CARDS ==================== */
+
+.lista-obras {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    margin-bottom: 17px;
+}
+
+.lista-obras .item {
+    margin-bottom: 10px;
+    display: inline-block;
+    float: none;
+    padding: 0 3px;
+    width: auto;
+    flex-basis: 100%;
+    flex-shrink: 1;
+}
+
+.lista-obras .item .btn {
+    background: #fff;
+    margin: 0;
+    padding: 10px;
+    margin-bottom: 7px;
+    border-radius: 5px;
+    height: 100%;
+    display: block;
+    width: 100%;
+    border: none;
+}
+
+.lista-obras .item .btn:hover,
+.lista-obras .item .btn:focus,
+.lista-obras .item .btn:active {
+    background: #0088DD;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: none;
+}
+
+.lista-obras .item h5 {
+    font-family: 'sf-bd';
+    font-size: 24px;
+    color: #28496F;
+    text-align: center;
+    line-height: 24px;
+    text-transform: none;
+    white-space: normal;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (min-width: 768px) {
+    .lista-obras .item {
+        flex-basis: 50%;
+    }
+}
+
+@media (min-width: 992px) {
+    .lista-obras .item {
+        flex-basis: 33.333%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .lista-obras .item {
+        flex-basis: 25%;
+    }
+}

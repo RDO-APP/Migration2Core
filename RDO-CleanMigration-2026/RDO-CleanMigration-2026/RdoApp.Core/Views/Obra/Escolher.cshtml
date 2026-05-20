@@ -1,0 +1,47 @@
+@* 
+    ESCOLHER OBRA PAGE
+    Date: January 27, 2026
+    Uses _LayoutEscolher with simplified header
+*@
+@model IEnumerable<dynamic>
+@{
+    Layout = "_LayoutEscolher";
+    ViewData["Title"] = "Escolher Unidade Escolar";
+    var nomeColaborador = ViewData["NomeColaborador"]?.ToString() ?? "Usuário";
+    var colaboradorId = ViewData["ColaboradorId"];
+}
+
+<div class="conteudo">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="lista-obras">
+                        @foreach (var obra in Model)
+                        {
+                            <div class="item col-md-6 col-lg-4">
+                                <form asp-action="Selecionar" asp-controller="Obra" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="idObra" value="@obra.IdObra" />
+                                    <button type="submit" class="btn">
+                                        <i class="icon-obras"></i>
+                                        <h5>@obra.NomeObra</h5>
+                                        <p><small>ID: @obra.IdObra</small></p>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center" style="background: #fff; color: #856404; padding: 20px; border-radius: 8px;">
+                        <strong>Nenhuma unidade escolar encontrada.</strong><br />
+                        Você não está associado a nenhuma unidade escolar. Entre em contato com o administrador.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

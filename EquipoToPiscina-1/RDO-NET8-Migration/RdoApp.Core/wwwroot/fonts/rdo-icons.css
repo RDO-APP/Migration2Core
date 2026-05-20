@@ -1,0 +1,38 @@
+/* RDO ICON FONT SYSTEM - PLACEHOLDER */
+/* This file serves as a placeholder for the official RDO icon font */
+/* The actual font files (rdo-icons.woff2, rdo-icons.woff, rdo-icons.ttf) */
+/* should be deployed here when available from the original system */
+
+/* FONT FACE DEFINITION */
+@font-face {
+    font-family: 'rdo-icons';
+    src: url('rdo-icons.woff2') format('woff2'),
+         url('rdo-icons.woff') format('woff'),
+         url('rdo-icons.ttf') format('truetype');
+    font-display: swap;
+}
+
+/* OFFICIAL UNICODE CHARACTERS FROM GILBERTO'S SYSTEM */
+/* Contratante (Client/Owner): \e815 */
+/* Contratada (Contractor): \e807 */
+
+/* ICON CLASSES */
+.icon-contratante:before { 
+    font-family: 'rdo-icons';
+    content: '\e815'; /* Client/Owner figure */
+    font-size: 40px;
+    color: #3b82f6;
+    display: block;
+}
+
+.icon-contratada:before { 
+    font-family: 'rdo-icons';
+    content: '\e807'; /* Contractor figure */
+    font-size: 40px;
+    color: #3b82f6;
+    display: block;
+}
+
+/* FALLBACK SYSTEM */
+/* If RDO font is not available, FontAwesome icons will be used */
+/* This is handled in the main CSS within the Escolher.cshtml file */

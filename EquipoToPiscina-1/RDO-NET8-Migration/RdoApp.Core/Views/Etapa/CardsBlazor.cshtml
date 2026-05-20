@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Etapas / Tarefas - Pure Blazor";
+    Layout = "_LayoutBlazor";
+}
+
+@* PURE BLAZOR HOST PAGE - ZERO JAVASCRIPT DEPENDENCIES *@
+@* This Razor page hosts the Pure Blazor EtapaCardsPage component *@
+
+<div id="blazor-app">
+    @* Render the Pure Blazor component with the obra ID *@
+    @* Changed from ServerPrerendered to Server for proper circuit initialization *@
+    <component type="typeof(RdoApp.Core.Components.EtapaCardsPage)" 
+               render-mode="Server" 
+               param-ObraId="@((int)ViewBag.ObraId)" />
+</div>
+
+@section Scripts {
+    @* Only Blazor Server JavaScript - No legacy dependencies *@
+    <script>
+        console.log('🚀 PURE BLAZOR HOST PAGE: CardsBlazor.cshtml loaded');
+        console.log('✅ Zero legacy JavaScript dependencies');
+        console.log('✅ Pure Blazor component communication');
+        console.log('✅ Using _LayoutBlazor layout');
+        console.log('🔌 Blazor Circuit: Initializing...');
+    </script>
+}

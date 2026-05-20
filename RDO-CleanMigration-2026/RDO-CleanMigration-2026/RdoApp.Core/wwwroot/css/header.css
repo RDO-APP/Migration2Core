@@ -1,0 +1,312 @@
+/* 
+    HEADER CSS - Extracted from Legacy custom.css
+    Date: February 4, 2026
+    Phase 1, Task 1.2: Copy Legacy CSS
+    
+    This file contains EXACT CSS from legacy for:
+    - .topo (header container)
+    - .navbar (navigation bar)
+    - .navbar-brand / .logo (logo styles)
+    - .user dropdown (user menu)
+    - .ball-hover (action buttons)
+    - Mobile menu styles
+*/
+
+/* =====================TOPO (HEADER)========================== */
+
+.topo {
+    position: fixed;
+    z-index: 10 !important;
+    width: 100%;
+}
+
+    .topo h2 {
+        display: table;
+        float: left;
+        margin: 24px 0;
+        font-size: 14px;
+        margin: 0;
+        font-family: 'sf-lg';
+        display: block;
+        height: 54px;
+        text-transform: uppercase;
+        padding: 16px 0 0 26px;
+    }
+
+    .topo .navbar .navbar-nav > li.open > .dropdown-menu {
+        top: 63px;
+        text-transform: uppercase;
+        padding: 0;
+    }
+
+    .topo .dropdown-menu li > a {
+        margin: 0;
+        color: #26476D;
+    }
+
+    .topo i[class*="icon-"] {
+        font-size: 23px;
+    }
+
+    .topo .navbar .navbar-nav .dropdown-header {
+        display: block;
+        padding: 10px 20px;
+        border-bottom: 1px solid #ccc;
+    }
+
+/* =====================NAVBAR========================== */
+
+.bg-blue-default {
+    background: #27496f;
+    border-radius: 0;
+}
+
+/* CRITICAL FIX: Force horizontal alignment of logo and user */
+.topo .navbar.bg-blue-default {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+}
+
+.topo .navbar .no-padding {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.topo .navbar .no-padding:first-child {
+    flex: 1 !important;
+}
+
+.topo .navbar .no-padding:last-child {
+    flex: 0 0 auto !important;
+}
+
+.navbar .dropdown-menu li > a:hover, 
+.navbar .dropdown-menu li > a:focus, 
+.navbar.navbar-default .dropdown-menu li > a:hover, 
+.navbar.navbar-default .dropdown-menu li > a:focus {
+    background: #1C334D;
+    box-shadow: none;
+}
+
+.navbar .navbar-nav > li > a:not(.btn-just-icon) .fa {
+    margin: 0;
+}
+
+.menu .navbar-right {
+    padding: 0 10px;
+}
+
+/* CRITICAL FIX: Ensure menu container doesn't break alignment */
+.topo .navbar .menu {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* =====================LOGO========================== */
+
+.topo .logo {
+    padding: 3px;
+}
+
+    .topo .logo i {
+        font-size: 43px;
+    }
+
+.pointer {
+    cursor: pointer;
+}
+
+/* =====================USER DROPDOWN========================== */
+
+.navbar .navbar-nav.user > li > a {
+    float: right;
+    padding: 3px 14px;
+}
+
+.topo .user a span, 
+.topo .user a p {
+    font-size: 11px;
+    margin: 0 8px;
+    display: block;
+    float: left;
+    padding: 0px;
+}
+
+.topo .user a p {
+    position: relative;
+    top: 15px;
+}
+
+.topo .user a i {
+    top: 14px;
+    position: relative;
+}
+
+.topo .user a span.image {
+    border-radius: 200px;
+    overflow: hidden;
+}
+
+/* =====================ACTION BUTTONS (BALL HOVER)========================== */
+
+.topo .navbar .menu .navbar-nav.ball-hover > li > a {
+    border-radius: 200px;
+    width: 48px;
+    height: 49px;
+    margin: 0 auto;
+    padding: 13px 0;
+    text-align: center;
+}
+
+    .topo .navbar .menu .navbar-nav.ball-hover > li > a span {
+        display: none;
+    }
+
+    .topo .navbar .menu .navbar-nav.ball-hover > li > a:hover, 
+    .topo .menu .navbar .navbar-nav.ball-hover > li > a:focus, 
+    .topo .menu .navbar .navbar-nav.ball-hover > li > a:active {
+        background: #1C334D;
+    }
+
+    .topo .navbar .menu .navbar-nav.ball-hover > li > a .icon-rdo-novo {
+        width: 39px;
+        display: flex;
+        margin: 0 auto;
+    }
+
+.topo .navbar .navbar-nav > li.menu > a:hover, 
+.topo .navbar .navbar-nav > li.menu > a:focus, 
+.topo .navbar .navbar-nav > li.menu > a:active {
+    background: transparent;
+    color: #1C334D;
+}
+
+/* =====================OBRA NAME (CENTER)========================== */
+
+.menu-lateral h2 {
+    display: table;
+    float: left;
+    margin: 24px 0;
+    font-size: 14px;
+    margin: 0;
+    font-family: 'sf-lg';
+    display: block;
+    height: 54px;
+    text-transform: uppercase;
+    padding: 16px 0 0 26px;
+    color: #fff;
+}
+
+/* =====================MOBILE MENU========================== */
+
+.nav-mobile #menu-toggle {
+    display: none;
+}
+
+.menu-lateral .navbar-nav {
+    margin: 0;
+    width: 100%;
+}
+
+    .menu-lateral .navbar-nav li {
+        float: left;
+        width: 100%;
+    }
+
+        .menu-lateral .navbar-nav li ul {
+            float: left;
+            padding: 0;
+        }
+
+            .menu-lateral .navbar-nav li ul li a {
+                color: #fff;
+                display: block;
+            }
+
+.menu-lateral .nav-mobile .navbar-nav.user > li > a {
+    padding: 15px 10px;
+}
+
+.menu-lateral .navbar .navbar-nav.user > li > a {
+    width: 100%;
+    padding: 15px;
+}
+
+.navbar .menu-lateral li > a {
+    width: 100%;
+    padding-left: 58px;
+}
+
+    .navbar .menu-lateral li > a i[class*="icon-"] {
+        position: absolute;
+        left: 14px;
+    }
+
+.menu-lateral .navbar-nav li.active > a {
+    background-color: #28496F !important;
+}
+
+.navbar .menu-lateral li > a:not(.btn-just-icon) .fa {
+    position: absolute;
+    left: 21px;
+}
+
+.topo .menu-lateral .navbar .navbar-nav.user > li.open > a {
+    background: #16293E;
+}
+
+/* =====================UTILITY CLASSES========================== */
+
+.no-padding {
+    padding: 0;
+}
+
+.bg-dark-blue {
+    background: #1C334D;
+}
+
+/* =====================TOOLTIPS========================== */
+
+.btn-tooltip {
+    position: relative;
+}
+
+    .btn-tooltip:hover:after {
+        content: attr(title);
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1C334D;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        font-size: 11px;
+        z-index: 1000;
+    }
+
+/* =====================RESPONSIVE========================== */
+
+@media (max-width: 767px) {
+    .topo .navbar .menu .navbar-nav.ball-hover {
+        display: none;
+    }
+
+    .nav-mobile {
+        display: block !important;
+    }
+
+    .menu-lateral h2 {
+        font-size: 12px;
+        padding: 16px 0 0 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .nav-mobile {
+        display: none;
+    }
+}

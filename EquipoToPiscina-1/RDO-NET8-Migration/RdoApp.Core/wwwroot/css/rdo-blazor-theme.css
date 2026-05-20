@@ -1,0 +1,892 @@
+/* 
+ * RDO BLAZOR THEME - PURE BLAZOR STYLING
+ * 
+ * Clean CSS theme for Pure Blazor components
+ * Zero conflicts with legacy JavaScript
+ * Official RDO brand colors and styling
+ */
+
+/* ===== RDO BRAND COLORS ===== */
+:root {
+    /* RDO Professional Dark Theme - Soul Restoration */
+    --rdo-header-primary: #27496F;     /* Main header background */
+    --rdo-header-secondary: #1C334D;   /* Hover states */
+    --rdo-header-deep: #244264;        /* Deep sections */
+    --rdo-header-accent: #0088DD;      /* Interactive elements */
+    --rdo-header-text: #ffffff;        /* Text on dark */
+    --rdo-header-text-muted: rgba(255, 255, 255, 0.75);
+    
+    /* Button System */
+    --rdo-button-size: 48px;           /* Button width */
+    --rdo-button-height: 49px;         /* Button height */
+    --rdo-button-radius: 200px;        /* Perfect circles */
+    --rdo-button-spacing: 0.25rem;     /* Button gaps */
+    
+    /* Official RDO Color Palette */
+    --rdo-primary: #1e3a8a;        /* Deep Blue */
+    --rdo-secondary: #3b82f6;      /* Bright Blue */
+    --rdo-success: #57B257;        /* Green */
+    --rdo-gray: #6c757d;           /* Gray */
+    --rdo-orange: #fd7e14;         /* Orange */
+    --rdo-red: #dc3545;            /* Red */
+    
+    /* Status Colors (matching TaskCard) */
+    --rdo-status-1: #6c757d;       /* Status 1 - Gray */
+    --rdo-status-2: #007bff;       /* Status 2 - Blue */
+    --rdo-status-3: #28a745;       /* Status 3 - Green */
+    --rdo-status-4: #fd7e14;       /* Status 4 - Orange */
+    --rdo-status-5: #dc3545;       /* Status 5 - Red */
+    
+    /* Darker shades for 2-tone hierarchy */
+    --rdo-status-1-dark: #5a6268;
+    --rdo-status-2-dark: #0056b3;
+    --rdo-status-3-dark: #1e7e34;
+    --rdo-status-4-dark: #e55a00;
+    --rdo-status-5-dark: #c82333;
+    
+    /* UI Colors */
+    --rdo-border: #e2e8f0;
+    --rdo-background: #f8f9fa;
+    --rdo-text: #2d3748;
+    --rdo-text-muted: #718096;
+}
+
+/* ===== RDO LOGO STYLING ===== */
+
+/* Official RDO Logo */
+.rdo-logo {
+    height: 32px;
+    width: auto;
+    max-width: 40px;
+    object-fit: contain;
+    transition: all 0.2s ease;
+}
+
+.rdo-logo:hover {
+    transform: scale(1.05);
+}
+
+/* ===== CORRECTED BRAND SECTION ===== */
+
+/* Brand Section Container */
+.navbar-brand-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Logo Link (Only logo is clickable) */
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.logo-link:hover {
+    text-decoration: none;
+}
+
+.logo-link:hover .rdo-logo {
+    transform: scale(1.05);
+}
+
+/* Brand Text (Non-clickable) */
+.brand-text {
+    font-weight: 600;
+    color: var(--rdo-primary) !important;
+    font-size: 1.1rem;
+    letter-spacing: -0.025em;
+    pointer-events: none; /* Ensure non-clickable */
+    user-select: none; /* Prevent text selection */
+}
+
+/* ===== RDO PROFESSIONAL DARK THEME ===== */
+
+/* Header Dark Theme */
+.navbar-dark-theme {
+    background: #27496F; /* Fallback if CSS variables fail */
+    background: var(--rdo-header-primary, #27496F) !important;
+    border-bottom: 1px solid #1C334D; /* Fallback */
+    border-bottom: 1px solid var(--rdo-header-secondary, #1C334D);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Brand Text on Dark */
+.navbar-dark-theme .brand-text {
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff) !important;
+}
+
+/* Context Indicator Dark Theme */
+.navbar-dark-theme .context-indicator {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff);
+}
+
+.navbar-dark-theme .context-label {
+    color: rgba(255, 255, 255, 0.75); /* Fallback */
+    color: var(--rdo-header-text-muted, rgba(255, 255, 255, 0.75));
+}
+
+.navbar-dark-theme .context-name {
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff);
+    font-weight: 600;
+}
+
+/* Action Toolbar Dark Theme */
+.action-toolbar-dark {
+    gap: 0.25rem; /* Fallback */
+    gap: var(--rdo-button-spacing, 0.25rem);
+}
+
+.toolbar-btn-dark {
+    width: 48px; /* Fallback dimensions */
+    height: 49px;
+    width: var(--rdo-button-size, 48px);
+    height: var(--rdo-button-height, 49px);
+    border-radius: 200px; /* Fallback */
+    border-radius: var(--rdo-button-radius, 200px);
+    background: transparent;
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff);
+    border: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.toolbar-btn-dark:hover {
+    background-color: #1C334D; /* Fallback */
+    background-color: var(--rdo-header-secondary, #1C334D);
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff);
+    transform: none;
+}
+
+.toolbar-btn-dark:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+/* User Profile Dark Theme */
+.navbar-dark-theme .user-profile .nav-link {
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff) !important;
+}
+
+.navbar-dark-theme .user-profile .nav-link:hover {
+    background-color: #1C334D; /* Fallback */
+    background-color: var(--rdo-header-secondary, #1C334D);
+    color: #ffffff; /* Fallback */
+    color: var(--rdo-header-text, #ffffff) !important;
+}
+
+/* Navbar Toggler Dark Theme */
+.navbar-dark-theme .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar-dark-theme .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ===== LEGACY NAVBAR STYLING (Updated for Dark Theme) ===== */
+
+/* Navigation Header - Professional Dark Theme */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: white !important;
+    border-bottom: 1px solid var(--rdo-border);
+    padding: 0.75rem 0;
+}
+
+/* ===== CORRECTED NAVBAR STRUCTURE ===== */
+
+/* Main Navbar Collapse */
+.navbar-collapse {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Left Section (Context) */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto; /* Don't grow, don't shrink */
+}
+
+/* Right Section (Actions + User) */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 0 0 auto; /* Don't grow, don't shrink */
+}
+
+/* Navigation Links */
+.nav-link {
+    font-weight: 500;
+    transition: color 0.2s ease;
+    color: #495057 !important;
+}
+
+.nav-link:hover {
+    color: var(--rdo-secondary) !important;
+}
+
+/* ===== ACTION TOOLBAR STYLING ===== */
+
+/* Action Toolbar Container */
+.action-toolbar {
+    gap: 0.25rem;
+}
+
+/* Toolbar Button Base Styling */
+.toolbar-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--rdo-secondary);
+    background: white;
+    color: var(--rdo-secondary);
+    transition: all 0.2s ease;
+    font-size: 14px;
+    padding: 0;
+}
+
+.toolbar-btn:hover {
+    background-color: var(--rdo-secondary);
+    color: white;
+    border-color: var(--rdo-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.toolbar-btn:active {
+    transform: translateY(0);
+}
+
+.toolbar-btn:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Mobile Toolbar Adjustments */
+@media (max-width: 768px) {
+    .action-toolbar {
+        display: none !important;
+    }
+}
+
+/* ===== CONTEXT INDICATOR STYLING ===== */
+
+/* Context Indicator Container */
+.context-indicator {
+    background-color: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.context-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.context-name {
+    color: var(--rdo-primary);
+    font-weight: 600;
+}
+
+/* Context Indicator Responsive */
+@media (max-width: 992px) {
+    .context-indicator {
+        max-width: 200px;
+    }
+    
+    .context-name {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-left {
+        display: none !important;
+    }
+}
+
+/* ===== USER PROFILE STYLING ===== */
+
+/* User Profile Container */
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile .nav-link {
+    color: var(--rdo-text) !important;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.user-profile .nav-link:hover {
+    background-color: var(--rdo-background);
+    color: var(--rdo-primary) !important;
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+    border: 1px solid var(--rdo-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+
+.dropdown-item {
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--rdo-background);
+    color: var(--rdo-primary);
+}
+
+/* ===== PURE BLAZOR TASK CARD STYLING ===== */
+
+/* Task Card Base */
+.task-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    overflow: hidden;
+    background: white;
+}
+
+.task-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+/* Status Color Classes */
+.status-gray .task-card-row.row-1 { background-color: var(--rdo-status-1) !important; }
+.status-gray .task-card-row.row-2 { background-color: var(--rdo-status-1-dark) !important; }
+
+.status-blue .task-card-row.row-1 { background-color: var(--rdo-status-2) !important; }
+.status-blue .task-card-row.row-2 { background-color: var(--rdo-status-2-dark) !important; }
+
+.status-green .task-card-row.row-1 { background-color: var(--rdo-status-3) !important; }
+.status-green .task-card-row.row-2 { background-color: var(--rdo-status-3-dark) !important; }
+
+.status-orange .task-card-row.row-1 { background-color: var(--rdo-status-4) !important; }
+.status-orange .task-card-row.row-2 { background-color: var(--rdo-status-4-dark) !important; }
+
+.status-red .task-card-row.row-1 { background-color: var(--rdo-status-5) !important; }
+.status-red .task-card-row.row-2 { background-color: var(--rdo-status-5-dark) !important; }
+
+/* Task Card Toolbar Buttons */
+.toolbar-btn {
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.8) !important;
+}
+
+.toolbar-btn:hover {
+    background-color: rgba(255,255,255,0.2) !important;
+    border-color: white !important;
+    transform: scale(1.05);
+}
+
+.toolbar-btn:active {
+    transform: scale(0.95);
+}
+
+/* Progress Bar Styling */
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--rdo-orange), #ff8c00);
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.progress-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--rdo-text);
+    z-index: 2;
+}
+
+/* ===== PURE BLAZOR FORM CONTROLS ===== */
+
+/* Blazor InputDate */
+.rdo-date-input {
+    border: 2px solid var(--rdo-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.rdo-date-input:focus {
+    border-color: var(--rdo-secondary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Blazor InputSelect */
+.rdo-select {
+    border: 2px solid var(--rdo-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background-color: white;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 8px center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: 40px;
+}
+
+.rdo-select:focus {
+    border-color: var(--rdo-secondary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Blazor InputNumber */
+.rdo-number-input {
+    border: 2px solid var(--rdo-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.rdo-number-input:focus {
+    border-color: var(--rdo-secondary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Blazor InputTextArea */
+.rdo-textarea {
+    border: 2px solid var(--rdo-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background-color: white;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.rdo-textarea:focus {
+    border-color: var(--rdo-secondary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+/* Blazor InputRadioGroup */
+.rdo-radio-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.rdo-radio-group .form-check-input {
+    border: 2px solid var(--rdo-border);
+    transition: all 0.2s ease;
+}
+
+.rdo-radio-group .form-check-input:checked {
+    background-color: var(--rdo-secondary);
+    border-color: var(--rdo-secondary);
+}
+
+.rdo-radio-group .form-check-input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.rdo-radio-group .form-check-label {
+    font-weight: 500;
+    color: var(--rdo-text);
+    cursor: pointer;
+}
+
+/* ===== PURE BLAZOR BUTTON STYLING ===== */
+
+/* Primary RDO Button */
+.btn-rdo-primary {
+    background-color: var(--rdo-primary);
+    border-color: var(--rdo-primary);
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-rdo-primary:hover {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(30, 58, 138, 0.3);
+}
+
+.btn-rdo-primary:active {
+    transform: translateY(0);
+}
+
+.btn-rdo-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-1px);
+}
+
+/* ===== PURE BLAZOR MODAL STYLING ===== */
+
+/* Modal Container */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+/* Modal Header */
+.modal-header {
+    background: linear-gradient(135deg, var(--rdo-primary), var(--rdo-secondary));
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.modal-header h4 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 1.5rem;
+    background-color: #fafafa;
+}
+
+/* Modal Footer */
+.modal-footer {
+    border-top: 1px solid var(--rdo-border);
+    padding: 1.5rem;
+    background-color: white;
+}
+
+/* ===== PURE BLAZOR ACCORDION STYLING ===== */
+
+/* Accordion Items */
+.accordion-item {
+    border: 1px solid var(--rdo-border);
+    border-radius: 8px !important;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.accordion-button {
+    background-color: var(--rdo-background);
+    border: none;
+    font-weight: 600;
+    color: var(--rdo-text);
+    padding: 1rem 1.5rem;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--rdo-secondary);
+    color: white;
+    box-shadow: none;
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: transparent;
+}
+
+.accordion-body {
+    padding: 1.5rem;
+    background-color: white;
+}
+
+/* ===== PURE BLAZOR VALIDATION STYLING ===== */
+
+/* Validation Messages */
+.validation-message {
+    color: var(--rdo-red);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Invalid Input Styling */
+.form-control.invalid,
+.rdo-date-input.invalid,
+.rdo-select.invalid,
+.rdo-number-input.invalid,
+.rdo-textarea.invalid {
+    border-color: var(--rdo-red);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Valid Input Styling */
+.form-control.valid,
+.rdo-date-input.valid,
+.rdo-select.valid,
+.rdo-number-input.valid,
+.rdo-textarea.valid {
+    border-color: var(--rdo-success);
+    box-shadow: 0 0 0 3px rgba(87, 178, 87, 0.1);
+}
+
+/* ===== PURE BLAZOR LOADING STATES ===== */
+
+/* Loading Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Loading Button State */
+.btn:disabled .spinner-border {
+    margin-right: 0.5rem;
+}
+
+/* ===== PURE BLAZOR ALERTS ===== */
+
+/* Success Alert */
+.alert-success {
+    background-color: rgba(87, 178, 87, 0.1);
+    border-color: var(--rdo-success);
+    color: #155724;
+}
+
+/* Error Alert */
+.alert-danger {
+    background-color: rgba(220, 38, 38, 0.1);
+    border-color: var(--rdo-red);
+    color: #721c24;
+}
+
+/* Info Alert */
+.alert-info {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: var(--rdo-secondary);
+    color: #0c5460;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Desktop Optimizations (≥1200px) */
+@media (min-width: 1200px) {
+    .navbar-dark-theme {
+        padding: 1rem 0;
+    }
+    
+    .action-toolbar-dark {
+        gap: 0.5rem; /* Larger spacing on desktop */
+    }
+    
+    .context-indicator {
+        max-width: 400px; /* Full width on desktop */
+        padding: 0.75rem 1rem;
+    }
+    
+    .toolbar-btn-dark {
+        width: var(--rdo-button-size);
+        height: var(--rdo-button-height);
+    }
+}
+
+/* Tablet Optimizations (≤992px) */
+@media (max-width: 992px) {
+    .rdo-logo {
+        height: 30px;
+        max-width: 36px;
+    }
+    
+    /* Truncate context indicator on tablet */
+    .context-indicator {
+        max-width: 200px;
+    }
+    
+    .context-name {
+        font-size: 0.8rem;
+    }
+    
+    .navbar-dark-theme {
+        padding: 0.5rem 0;
+    }
+    
+    .action-toolbar-dark {
+        gap: 0.125rem; /* Tighter spacing on tablet */
+    }
+    
+    .toolbar-btn-dark {
+        width: 40px;
+        height: 41px;
+        font-size: 14px;
+    }
+}
+
+/* Mobile Optimizations (≤768px) */
+@media (max-width: 768px) {
+    .task-card {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .toolbar-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .toolbar-btn-dark {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .rdo-radio-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    /* Mobile Logo Adjustments */
+    .rdo-logo {
+        height: 28px;
+        max-width: 32px;
+    }
+    
+    .navbar-brand strong {
+        font-size: 1rem;
+    }
+    
+    /* Hide action toolbar on mobile */
+    .action-toolbar-dark {
+        display: none !important;
+    }
+    
+    /* Hide context indicator on mobile */
+    .navbar-left {
+        display: none !important;
+    }
+    
+    /* Mobile navbar adjustments */
+    .navbar-dark-theme {
+        padding: 0.25rem 0;
+    }
+    
+    .navbar-brand-section {
+        gap: 0.25rem;
+    }
+    
+    .brand-text {
+        font-size: 1rem;
+    }
+    
+    /* Mobile user profile adjustments */
+    .user-profile .nav-link {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Small Mobile Optimizations (≤480px) */
+@media (max-width: 480px) {
+    .navbar-brand-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.125rem;
+    }
+    
+    .rdo-logo {
+        height: 24px;
+        max-width: 28px;
+    }
+    
+    .brand-text {
+        font-size: 0.875rem;
+    }
+    
+    .user-profile .nav-link {
+        font-size: 0.75rem;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Focus Indicators */
+*:focus {
+    outline: 2px solid var(--rdo-secondary);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    :root {
+        --rdo-border: #000000;
+        --rdo-text: #000000;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

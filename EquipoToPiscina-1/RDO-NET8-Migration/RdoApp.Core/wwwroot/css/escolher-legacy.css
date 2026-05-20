@@ -1,0 +1,341 @@
+/* ESCOLHER OBRA - LEGACY CSS (NO BOOTSTRAP) */
+/* Extracted from Gilberto's production system */
+/* Pure CSS - No Bootstrap dependencies */
+
+/* Body Styling */
+.escolher-body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Section Container */
+.escolher-obra-section {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Title */
+.escolher-obra-section h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin: 20px 0 30px 0;
+    font-weight: normal;
+}
+
+/* Filters Container */
+.rdo-filters-section {
+    margin-bottom: 30px;
+}
+
+.rdo-filters-container {
+    text-align: center;
+}
+
+.rdo-selection-title {
+    font-size: 24px;
+    color: #333;
+    margin: 20px 0;
+    font-weight: normal;
+}
+
+.rdo-filters-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.rdo-filter-group {
+    flex: 0 0 300px;
+}
+
+.rdo-filter-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.rdo-filter-input:focus {
+    outline: none;
+    border-color: #00bcd4;
+    box-shadow: 0 0 5px rgba(0, 188, 212, 0.3);
+}
+
+/* Obra Cards Grid */
+.lista-obras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    padding: 0 10px;
+}
+
+/* Individual Card - LEGACY STANDARD: 5 cards per row */
+.lista-obras .item {
+    display: inline-block;
+    float: none;
+    padding: 0 3px;
+    width: auto;
+    flex: 0 0 calc(20% - 20px); /* 5 cards per row: 20% each minus gap */
+    min-width: 250px;
+    max-width: 300px;
+}
+
+.lista-obras .item .btn {
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.lista-obras .item .btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-color: #00bcd4;
+}
+
+/* Icon System - LEGACY STANDARD */
+.lista-obras .item .btn i {
+    font-size: 97px;
+    color: #0088DD; /* Default blue */
+    margin: 0 auto;
+    display: table;
+    text-align: center;
+    margin-bottom: -20px;
+}
+
+.lista-obras .item .btn i:before {
+    top: -14px;
+    position: relative;
+}
+
+/* Icon colors based on type */
+.lista-obras .item .btn i.icon-contratante {
+    color: #00bcd4; /* Cyan for contratante */
+}
+
+.lista-obras .item .btn i.icon-contratada {
+    color: #ff9800; /* Orange for contratada */
+}
+
+/* Hover state - icons turn dark blue */
+.lista-obras .item .btn:hover i,
+.lista-obras .item .btn:focus i,
+.lista-obras .item .btn:active i {
+    color: #28496F;
+}
+
+/* Card Content - LEGACY STANDARD */
+.lista-obras .item h5 {
+    font-family: 'sf-bd', Arial, sans-serif;
+    font-size: 24px;
+    color: #28496F;
+    text-align: center;
+    line-height: 24px;
+    text-transform: none;
+    white-space: normal;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.lista-obras .item .btn p {
+    color: #27486E;
+    font-size: 12px;
+    margin: 0 0;
+    display: block;
+}
+
+.lista-obras .item .btn small {
+    color: #27486E;
+    font-size: 10px;
+    margin-top: 20px;
+    display: block;
+    display: none; /* Legacy hides this */
+}
+
+/* Hover state - text turns white */
+.lista-obras .item .btn:hover h5,
+.lista-obras .item .btn:focus h5,
+.lista-obras .item .btn:active h5 {
+    color: #fff;
+}
+
+.lista-obras .item .btn:hover p,
+.lista-obras .item .btn:focus p,
+.lista-obras .item .btn:active p {
+    color: #fff;
+}
+
+.lista-obras .item .btn:hover small,
+.lista-obras .item .btn:focus small,
+.lista-obras .item .btn:active small {
+    color: #fff;
+}
+
+/* Progress Bar System - LEGACY STANDARD */
+.lista-obras .item .btn .progress.progress-line-info {
+    background: #999;
+    margin: 0 auto;
+    float: none;
+    margin-top: 14px;
+    height: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transform: scaleX(-1); /* Legacy flips the bar */
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #eeeeee;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress .branco {
+    color: #28496f;
+    font-size: 14px;
+    font-weight: bold;
+    position: absolute;
+    left: 9px;
+    z-index: 1;
+    transform: scaleX(-1); /* Flip text back */
+}
+
+.progress .azul {
+    color: #FFF;
+    position: absolute;
+    left: 9px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 1;
+    transform: scaleX(-1); /* Flip text back */
+}
+
+/* Progress Bar Color Classes - LEGACY STANDARD WITH !important */
+.progress.bg-verde {
+    background: #57B257 !important; /* Green - on schedule */
+}
+
+.progress.bg-verde .azul {
+    color: #57B257;
+}
+
+.progress.bg-vermelho {
+    background: #D04541 !important; /* Red - overdue */
+}
+
+.progress.bg-vermelho .azul {
+    color: #D04541;
+}
+
+.progress.bg-cinza {
+    background: #999999 !important; /* Gray - in progress */
+}
+
+.progress.bg-cinza .azul {
+    color: #999999;
+}
+
+.progress.bg-azul {
+    background: #51BCDC !important; /* Blue */
+}
+
+.progress.bg-azul .azul {
+    color: #51BCDC;
+}
+
+.progress.bg-laranja {
+    background: #FF8000 !important; /* Orange */
+}
+
+.progress.bg-laranja .azul {
+    color: #FF8000;
+}
+
+/* Legend Section */
+.area-legenda {
+    margin-top: 40px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.legenda-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.legenda-title {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.legenda {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.legenda .status {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 10px;
+    border-radius: 3px;
+}
+
+.legenda small {
+    font-size: 13px;
+    color: #666;
+}
+
+/* No Obras Message */
+.rdo-no-obras {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .lista-obras .item {
+        flex: 0 0 calc(33.333% - 20px); /* 3 cards per row */
+    }
+}
+
+@media (max-width: 768px) {
+    .lista-obras .item {
+        flex: 0 0 calc(50% - 20px); /* 2 cards per row */
+    }
+    
+    .rdo-filters-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .lista-obras .item {
+        flex: 0 0 100%; /* 1 card per row */
+    }
+}

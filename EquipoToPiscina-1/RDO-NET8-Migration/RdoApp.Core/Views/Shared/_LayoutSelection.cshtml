@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App Piscinas</title>
+    
+    <!-- CRITICAL: Base href required for Blazor Circuit connection -->
+    <base href="~/" />
+    
+    <!-- ANTIFORGERY TOKEN - Required for secure form submissions -->
+    @Html.AntiForgeryToken()
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- RDO Icon Font - CRITICAL: Must load for header icons -->
+    <link rel="stylesheet" href="~/css/fontello.css" asp-append-version="true" />
+    
+    <!-- Unified RDO Theme CSS -->
+    <link rel="stylesheet" href="~/css/rdo-unified-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="tema-azul">
+    <!-- Unified RDO Header: Dynamic content based on context -->
+    <component type="typeof(RdoApp.Core.Components.UnifiedRdoHeader)" render-mode="ServerPrerendered" />
+
+    <!-- Main Content: Where the cards will appear -->
+    <main role="main" class="conteudo">
+        @RenderBody()
+    </main>
+
+    <!-- RDO Obra Cards JavaScript Module -->
+    <script>
+        window.rdoObraCards = {
+            submitObraSelection: function(obraId) {
+                // Create form and submit to server-side action
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/Obra/EscolherObra';
+                
+                // CRITICAL: Include antiforgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token.value;
+                    form.appendChild(tokenInput);
+                }
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'obraId';
+                input.value = obraId;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        };
+    </script>
+    
+    <!-- LIFE SIGN 4: HTML Layout Reached Browser -->
+    <script>
+        console.log('🟢 LIFE SIGN 4: _LayoutSelection.cshtml HTML reached browser');
+        console.log('✅ Main layout loaded, waiting for Blazor circuit connection...');
+        
+        // Check if RenderBody() produced any content
+        const mainContent = document.querySelector('main.conteudo');
+        if (mainContent) {
+            console.log('✅ Main content area found:', mainContent);
+            console.log('📊 Main content HTML length:', mainContent.innerHTML.length);
+            console.log('📊 Main content child elements:', mainContent.children.length);
+            
+            if (mainContent.innerHTML.length === 0) {
+                console.error('❌ CRITICAL: Main content is EMPTY - RenderBody() produced no output');
+            } else if (mainContent.children.length === 0) {
+                console.warn('⚠️ WARNING: Main content has HTML but no child elements');
+            } else {
+                console.log('✅ Main content has', mainContent.children.length, 'child elements');
+            }
+        } else {
+            console.error('❌ CRITICAL: Main content area NOT FOUND');
+        }
+    </script>
+    
+    <!-- CRITICAL: Blazor Server Runtime - MUST load before any component rendering -->
+    <script src="_framework/blazor.server.js"></script>
+    
+    <!-- LIFE SIGN 5: Blazor Circuit Connection -->
+    <script>
+        // Wait for Blazor to fully initialize
+        if (window.Blazor) {
+            window.Blazor.addEventListener('enhancedload', function() {
+                console.log('🟢 LIFE SIGN 5: Blazor circuit connected successfully');
+                
+                // Check if obra cards are rendered
+                const obraCards = document.querySelector('.rdo-obra-cards-container');
+                if (obraCards) {
+                    console.log('✅ Obra cards container found');
+                    
+                    const cardButtons = document.querySelectorAll('.lista-obras .item');
+                    console.log('📊 Total obra cards rendered:', cardButtons.length);
+                    
+                    if (cardButtons.length === 0) {
+                        console.error('❌ CRITICAL: Obra cards container exists but NO CARDS rendered');
+                    } else {
+                        console.log('✅ SUCCESS: All', cardButtons.length, 'obra cards rendered successfully');
+                    }
+                } else {
+                    console.error('❌ CRITICAL: Obra cards container NOT FOUND after Blazor connection');
+                }
+            });
+        } else {
+            console.error('❌ CRITICAL: Blazor object not found - Blazor Server failed to load');
+        }
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

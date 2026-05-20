@@ -1,0 +1,176 @@
+@model List<StatusOption>
+
+<div class="modal fade" id="alterar-status">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="hideStatusMassaModal()">
+                    <i class="icon-close"></i>
+                </button>
+                <div class="panel-heading">
+                    <h4>Alterar Status em Massa</h4>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="form-alterar-status-massa">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group is-empty">
+                            <label class="control-label">Status</label>
+                            <select class="form-control" id="status-massa" name="statusId" required>
+                                <option value="">Selecione o novo status...</option>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var status in Model.Where(s => s.Id > 0))
+                                    {
+                                        <option value="@status.Id">@status.Nome</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <p><strong>Tarefas selecionadas:</strong></p>
+                        <div id="tarefas-selecionadas-lista">
+                            <em>Nenhuma tarefa selecionada</em>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col-xs-12">
+                    <button type="button" class="btn btn-simple" data-dismiss="modal" onclick="hideStatusMassaModal()">
+                        <i class="icon-close" aria-hidden="true"></i>
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-default btn-simple" onclick="executarAlteracaoStatusMassa()">
+                        <i class="icon-check" aria-hidden="true"></i>
+                        Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // MODERN: Helper function to hide status modal
+    function hideStatusMassaModal() {
+        var modalElement = document.getElementById('alterar-status');
+        if (modalElement) {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            modalElement.setAttribute('aria-hidden', 'true');
+            
+            var backdrop = document.getElementById('status-massa-backdrop');
+            if (backdrop) backdrop.remove();
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function abrirAlterarStatusMassa() {
+        // Get selected tasks
+        var checkboxes = document.querySelectorAll('input[name="tarefaSelecionada"]:checked');
+        var tarefasSelecionadas = [];
+        
+        checkboxes.forEach(function(checkbox) {
+            var tarefaId = checkbox.value;
+            var card = checkbox.closest('.card');
+            var descricao = card ? card.querySelector('h5').textContent : 'Tarefa ' + tarefaId;
+            tarefasSelecionadas.push({
+                id: tarefaId,
+                descricao: descricao
+            });
+        });
+        
+        if (tarefasSelecionadas.length === 0) {
+            alert('Selecione pelo menos uma tarefa para alterar o status.');
+            return;
+        }
+        
+        // Update modal content
+        var lista = document.getElementById('tarefas-selecionadas-lista');
+        if (tarefasSelecionadas.length > 0) {
+            lista.innerHTML = '<ul>' + 
+                tarefasSelecionadas.map(t => '<li>' + t.descricao + '</li>').join('') + 
+                '</ul>';
+        } else {
+            lista.innerHTML = '<em>Nenhuma tarefa selecionada</em>';
+        }
+        
+        // Store selected task IDs for later use
+        window.tarefasSelecionadasIds = tarefasSelecionadas.map(t => t.id);
+        
+        // Show modal - MODERN: Pure JavaScript (no jQuery)
+        var modalElement = document.getElementById('alterar-status');
+        if (modalElement) {
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            modalElement.setAttribute('aria-hidden', 'false');
+            
+            // Add backdrop
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'status-massa-backdrop';
+            document.body.appendChild(backdrop);
+            document.body.classList.add('modal-open');
+        }
+    }
+
+    function executarAlteracaoStatusMassa() {
+        var novoStatusId = document.getElementById('status-massa').value;
+        
+        if (!novoStatusId) {
+            alert('Selecione um status para aplicar às tarefas.');
+            return;
+        }
+        
+        if (!window.tarefasSelecionadasIds || window.tarefasSelecionadasIds.length === 0) {
+            alert('Nenhuma tarefa selecionada.');
+            return;
+        }
+        
+        // Confirm action
+        if (!confirm('Tem certeza que deseja alterar o status de ' + window.tarefasSelecionadasIds.length + ' tarefa(s)?')) {
+            return;
+        }
+        
+        // Make AJAX call to update status for multiple tasks
+        fetch('@Url.Action("UpdateMultipleTaskStatus", "Etapa")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                taskIds: window.tarefasSelecionadasIds,
+                statusId: parseInt(novoStatusId)
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // MODERN: Pure JavaScript modal hide
+                var modalElement = document.getElementById('alterar-status');
+                if (modalElement) {
+                    modalElement.style.display = 'none';
+                    modalElement.classList.remove('show');
+                    modalElement.setAttribute('aria-hidden', 'true');
+                    
+                    var backdrop = document.getElementById('status-massa-backdrop');
+                    if (backdrop) backdrop.remove();
+                    document.body.classList.remove('modal-open');
+                }
+                
+                location.reload(); // Refresh to show updated data
+            } else {
+                alert('Erro ao alterar status: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao alterar status das tarefas');
+        });
+    }
+</script>

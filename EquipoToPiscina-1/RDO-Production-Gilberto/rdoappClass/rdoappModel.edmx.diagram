@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="dbbe1cd75b6944b2aa747b97448c3d21" Name="Diagram1" ZoomLevel="47">
+        <EntityTypeShape EntityType="rdoappModel.acao" Width="1.5" PointX="6.75" PointY="8.375" />
+        <EntityTypeShape EntityType="rdoappModel.acidente" Width="1.5" PointX="15" PointY="53.5" />
+        <EntityTypeShape EntityType="rdoappModel.acidente_colaborador" Width="1.5" PointX="17.25" PointY="38" />
+        <EntityTypeShape EntityType="rdoappModel.assinatura_rdo" Width="1.5" PointX="15.75" PointY="16.5" />
+        <EntityTypeShape EntityType="rdoappModel.cargo" Width="1.5" PointX="8.25" PointY="15" />
+        <EntityTypeShape EntityType="rdoappModel.colaborador" Width="1.5" PointX="0.75" PointY="27.375" />
+        <EntityTypeShape EntityType="rdoappModel.efetivo" Width="1.5" PointX="15.75" PointY="20.625" />
+        <EntityTypeShape EntityType="rdoappModel.efetivo_status" Width="1.5" PointX="13.5" PointY="25" />
+        <EntityTypeShape EntityType="rdoappModel.empresa" Width="1.5" PointX="3" PointY="22" />
+        <EntityTypeShape EntityType="rdoappModel.equipamento" Width="1.5" PointX="11.25" PointY="29.625" />
+        <EntityTypeShape EntityType="rdoappModel.etapa" Width="1.5" PointX="10.5" PointY="39.625" />
+        <EntityTypeShape EntityType="rdoappModel.grupo" Width="1.5" PointX="6" PointY="23.375" />
+        <EntityTypeShape EntityType="rdoappModel.grupo_pagina_acao" Width="1.5" PointX="11.25" PointY="23.875" />
+        <EntityTypeShape EntityType="rdoappModel.historico_tarefa_colaborador" Width="1.5" PointX="18" PointY="23.375" />
+        <EntityTypeShape EntityType="rdoappModel.historico_tarefa_equipamento" Width="1.5" PointX="21" PointY="24.375" />
+        <EntityTypeShape EntityType="rdoappModel.historico_tarefa_rdo" Width="1.5" PointX="15.75" PointY="27.125" />
+        <EntityTypeShape EntityType="rdoappModel.imagem" Width="1.5" PointX="15" PointY="50.375" />
+        <EntityTypeShape EntityType="rdoappModel.improdutividade" Width="1.5" PointX="11.25" PointY="13.125" />
+        <EntityTypeShape EntityType="rdoappModel.laudo" Width="1.5" PointX="16.5" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="rdoappModel.licenca" Width="1.5" PointX="0.75" PointY="23.375" />
+        <EntityTypeShape EntityType="rdoappModel.marca" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="rdoappModel.menu" Width="1.5" PointX="3.75" PointY="18.875" />
+        <EntityTypeShape EntityType="rdoappModel.menu_pagina" Width="1.5" PointX="14" PointY="8.5" />
+        <EntityTypeShape EntityType="rdoappModel.modelo" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="rdoappModel.municipio" Width="1.5" PointX="1.5" PointY="34.25" />
+        <EntityTypeShape EntityType="rdoappModel.obra" Width="1.5" PointX="8.25" PointY="18.125" />
+        <EntityTypeShape EntityType="rdoappModel.obra_colaborador" Width="1.5" PointX="10.5" PointY="18.25" />
+        <EntityTypeShape EntityType="rdoappModel.obra_equipamento" Width="1.5" PointX="13.5" PointY="20.25" />
+        <EntityTypeShape EntityType="rdoappModel.obra_tarefa_colaborador" Width="1.5" PointX="15" PointY="31.5" />
+        <EntityTypeShape EntityType="rdoappModel.obra_tarefa_equipamento" Width="1.5" PointX="17.75" PointY="31.5" />
+        <EntityTypeShape EntityType="rdoappModel.pagina" Width="1.5" PointX="6.75" PointY="11.125" />
+        <EntityTypeShape EntityType="rdoappModel.pagina_acao" Width="1.5" PointX="9" PointY="9.875" />
+        <EntityTypeShape EntityType="rdoappModel.parametro" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="rdoappModel.perfil_assinante" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="rdoappModel.ramo" Width="1.5" PointX="0.75" PointY="15.875" />
+        <EntityTypeShape EntityType="rdoappModel.rdo" Width="1.5" PointX="13.5" PointY="13" />
+        <EntityTypeShape EntityType="rdoappModel.rdo_imagem" Width="1.5" PointX="17.25" PointY="34.875" />
+        <EntityTypeShape EntityType="rdoappModel.rdo_tarefa" Width="1.5" PointX="18.75" PointY="27.875" />
+        <EntityTypeShape EntityType="rdoappModel.setor" Width="1.5" PointX="0.75" PointY="19.375" />
+        <EntityTypeShape EntityType="rdoappModel.status_rdo" Width="1.5" PointX="11.25" PointY="10.125" />
+        <EntityTypeShape EntityType="rdoappModel.status_tarefa" Width="1.5" PointX="10.5" PointY="36.375" />
+        <EntityTypeShape EntityType="rdoappModel.tarefa" Width="1.5" PointX="12.75" PointY="36.75" />
+        <EntityTypeShape EntityType="rdoappModel.tarefa_codigo_paralizacao" Width="1.5" PointX="10.5" PointY="45.5" />
+        <EntityTypeShape EntityType="rdoappModel.tipo_equipamento" Width="1.5" PointX="9" PointY="30" />
+        <EntityTypeShape EntityType="rdoappModel.uf" Width="1.5" PointX="1.5" PointY="37.5" />
+        <EntityTypeShape EntityType="rdoappModel.unidade_de_medida" Width="1.5" PointX="10.5" PointY="42.875" />
+        <EntityTypeShape EntityType="rdoappModel.usuario" Width="1.5" PointX="8.25" PointY="26.5" />
+        <EntityTypeShape EntityType="rdoappModel.historico_login" Width="1.5" PointX="4.75" PointY="0.75" />
+        <AssociationConnector Association="rdoappModel.pagina_acao_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.acidente_colaborador_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.acidente_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.acidente_colaborador_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.assinatura_rdo_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.assinatura_rdo_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.obra_colaborador_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.colaborador_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.empresa_ibfk_4" />
+        <AssociationConnector Association="rdoappModel.obra_colaborador_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.obra_ibfk_5" />
+        <AssociationConnector Association="rdoappModel.rdo_ibfk_5" />
+        <AssociationConnector Association="rdoappModel.tarefa_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.efetivo_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.efetivo_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.efetivo_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.empresa_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.empresa_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.empresa_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.empresa_ibfk_5" />
+        <AssociationConnector Association="rdoappModel.laudo_ibfk_4" />
+        <AssociationConnector Association="rdoappModel.obra_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.obra_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.obra_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.equipamento_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.obra_equipamento_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.etapa_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.tarefa_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.grupo_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.grupo_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.grupo_pagina_acao_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.obra_colaborador_ibfk_5" />
+        <AssociationConnector Association="rdoappModel.usuario_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.grupo_pagina_acao_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_colaborador_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_colaborador_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_equipamento_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_equipamento_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_rdo_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_rdo_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.historico_tarefa_rdo_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.imagem_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.rdo_imagem_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.rdo_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.menu_pagina_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.menu_pagina_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.menu_pagina_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.municipio_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.obra_ibfk_4" />
+        <AssociationConnector Association="rdoappModel.obra_colaborador_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.obra_equipamento_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.rdo_ibfk_4" />
+        <AssociationConnector Association="rdoappModel.obra_tarefa_colaborador_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.obra_tarefa_equipamento_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.obra_tarefa_colaborador_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.obra_tarefa_equipamento_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.pagina_acao_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.rdo_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.rdo_imagem_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.rdo_tarefa_ibfk_1" />
+        <AssociationConnector Association="rdoappModel.rdo_tarefa_ibfk_2" />
+        <AssociationConnector Association="rdoappModel.tarefa_ibfk_3" />
+        <AssociationConnector Association="rdoappModel.tarefa_ibfk_4" />
+        <AssociationConnector Association="rdoappModel.tarefa_ibfk_5" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

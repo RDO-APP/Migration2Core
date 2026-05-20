@@ -1,0 +1,110 @@
+@model EtapaFilterViewModel
+
+<div class="collapse col-xs-12 filtro no-padding">
+    <div class="panel">
+        <form asp-action="CardsFilter" method="post" id="filterForm">
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                    <label asp-for="Descricao" class="control-label"></label>
+                    <input asp-for="Descricao" type="text" class="form-control" placeholder="Digite a descrição da tarefa">
+                    <span class="material-input"></span>
+                    <span asp-validation-for="Descricao" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                    <label asp-for="DataInicial" class="control-label"></label>
+                    <input asp-for="DataInicial" type="date" class="form-control">
+                    <span class="material-input"></span>
+                    <span asp-validation-for="DataInicial" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                    <label asp-for="DataFinalPlanejada" class="control-label"></label>
+                    <input asp-for="DataFinalPlanejada" type="date" class="form-control">
+                    <span class="material-input"></span>
+                    <span asp-validation-for="DataFinalPlanejada" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group is-empty">
+                    <label asp-for="StatusTarefa" class="control-label"></label>
+                    <select asp-for="StatusTarefa" class="form-control">
+                        <option value="">Todos</option>
+                        @if (ViewBag.StatusOptions != null)
+                        {
+                            @foreach (var status in (List<StatusOption>)ViewBag.StatusOptions)
+                            {
+                                <option value="@status.Id">@status.Nome</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="StatusTarefa" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                    <label asp-for="DataInicialExecutada" class="control-label"></label>
+                    <input asp-for="DataInicialExecutada" type="date" class="form-control">
+                    <span class="material-input"></span>
+                    <span asp-validation-for="DataInicialExecutada" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group">
+                    <label asp-for="DataFinalExecutada" class="control-label"></label>
+                    <input asp-for="DataFinalExecutada" type="date" class="form-control">
+                    <span class="material-input"></span>
+                    <span asp-validation-for="DataFinalExecutada" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+                <div class="form-group is-empty">
+                    <label asp-for="IdEtapa" class="control-label"></label>
+                    <select asp-for="IdEtapa" class="form-control">
+                        <option value="">Todas</option>
+                        @if (ViewBag.EtapaOptions != null)
+                        {
+                            @foreach (var etapa in (List<EtapaOption>)ViewBag.EtapaOptions)
+                            {
+                                <option value="@etapa.Id">@etapa.Titulo</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="IdEtapa" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-xs-12">
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-blue">
+                        <i class="fa fa-search"></i>
+                        PESQUISAR
+                    </button>
+                    <button type="button" class="btn btn-simple" onclick="limparFiltros()">
+                        <i class="fa fa-times"></i>
+                        LIMPAR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hidden field for obra ID -->
+            <input asp-for="IdObra" type="hidden" />
+        </form>
+    </div>
+</div>
+
+<script>
+    function limparFiltros() {
+        document.getElementById('filterForm').reset();
+        // Optionally submit the form to clear filters
+        document.getElementById('filterForm').submit();
+    }
+</script>

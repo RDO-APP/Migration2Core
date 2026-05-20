@@ -1,0 +1,94 @@
+@model IEnumerable<RdoApp.Core.Models.ViewModels.ObraViewModel>
+@{
+    ViewData["Title"] = "Selecionar Obra";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App</title>
+    
+    <!-- RDO Icon Font -->
+    <link rel="stylesheet" href="~/css/fontello.css" asp-append-version="true" />
+    
+    <!-- Escolher Legacy CSS - Obra Cards -->
+    <link rel="stylesheet" href="~/css/escolher-legacy.css" asp-append-version="true" />
+</head>
+<body>
+
+<section class="escolher-obra-section">
+    @if (Model != null && Model.Any())
+    {
+        <!-- Title Section -->
+        <div class="rdo-filters-section">
+            <div class="rdo-filters-container">
+                <h2 class="rdo-selection-title">Selecione uma das unidades escolares abaixo:</h2>
+            </div>
+        </div>
+        
+        <!-- Obra Cards Grid -->
+        <div class="lista-obras">
+            @foreach (var obra in Model)
+            {
+                <div class="item">
+                    <form method="post" action="/Etapa/Cards">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="obraId" value="@obra.Id" />
+                        <button type="submit" class="btn change-background">
+                            <!-- Icon -->
+                            <i class="icon-@obra.ContratanteContratada"></i>
+                            
+                            <!-- Content -->
+                            <h5>@obra.Descricao</h5>
+                            <p>@obra.CidadeEstado</p>
+                            <p>(@obra.StatusBasicaGratuita)</p>
+                            
+                            <small>STATUS</small>
+                            
+                            <!-- Progress Bar -->
+                            <div class="progress progress-line-info @obra.ClasseStatusCss">
+                                <div class="progress-bar progress-bar-info" 
+                                     role="progressbar" 
+                                     style="width: @(100 - obra.ProgressoPorcentagem)%;">
+                                    <span class="branco">@obra.ProgressoPorcentagem%</span>
+                                </div>
+                                <span class="azul">@obra.ProgressoPorcentagem%</span>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+        
+        <!-- Legend Section -->
+        <div class="area-legenda">
+            <div class="legenda-container">
+                <label class="legenda-title">BARRA DE PROGRESSO DA UNIDADE ESCOLAR:</label>
+                <div class="legenda">
+                    <i class="status bg-verde"></i>
+                    <small>UNIDADE ESCOLAR COM PRAZO ESTIMADO ATINGIDO</small>
+                </div>
+                <div class="legenda">
+                    <i class="status bg-vermelho"></i>
+                    <small>UNIDADE ESCOLAR COM PRAZO ESTIMADO ULTRAPASSADO</small>
+                </div>
+                <div class="legenda">
+                    <i class="status bg-cinza"></i>
+                    <small>UNIDADE ESCOLAR EM ANDAMENTO</small>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="rdo-no-obras">
+            <label>Você deve cadastrar uma unidade escolar para começar a usar o sistema.</label>
+        </div>
+    }
+</section>
+
+</body>
+</html>

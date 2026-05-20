@@ -1,0 +1,296 @@
+@model EtapaCardsViewModel
+@{
+    ViewData["Title"] = "Etapas / Tarefas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/task-cards-compact.css" />
+}
+
+<section class="etapa-tarefa-cards">
+    <!-- Header with actions -->
+    <div class="panel-heading">
+        <h3>Etapas / Tarefas</h3>
+
+        <div class="action pull-right">
+            @if (Model.CanCreateNew && !Model.IsWorkFinalized)
+            {
+                <button onclick="gerarRdo();" class="btn btn-simple" title="Gerar Diário">
+                    <i class="icon-rdo-gerar-novo"></i>
+                </button>
+                <a class="btn btn-simple" title="Editar Obra" onclick="editarObra()">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <button onclick="efetivoDiario();" class="btn btn-simple" title="Efetivo Diário">
+                    <i class="fa fa-list-alt"></i>
+                </button>
+            }
+            <a onclick="irParaLista()" class="fadein-xs fadeout btn btn-simple btn-view btn-card">
+                <i class="fa fa-columns"></i>
+            </a>
+            @if (Model.CanCreateNew && !Model.IsWorkFinalized)
+            {
+                <a class="fadein-xs fadeout btn btn-simple" onclick="novaTarefa()">
+                    <i class="fa fa-clipboard"></i>
+                </a>
+                <a class="fadein-xs fadeout btn btn-simple" onclick="novaEtapa()">
+                    <i class="fa fa-file-o"></i>
+                </a>
+            }
+            <a class="fadein-xs fadeout btn btn-simple" data-toggle="collapse" data-target=".filtro" aria-expanded="false">
+                <i class="fa fa-filter"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Desktop action buttons -->
+    <div class="col-xs-12 no-padding hidden-xs">
+        <div class="col-sm-5 no-padding">
+            <button class="btn btn-simple btn-view btn-card" onclick="irParaLista()">
+                <i class="fa fa-columns"></i>
+                <span>LISTA</span>
+            </button>
+        </div>
+        <div class="col-sm-7 no-padding">
+            <div class="pull-right">
+                <button class="btn btn-dark-blue" type="button" data-toggle="collapse" data-target=".filtro" aria-expanded="false">
+                    <i class="fa fa-filter"></i>
+                    FILTRO
+                </button>
+                @if (Model.CanCreateNew && !Model.IsWorkFinalized)
+                {
+                    <button class="btn btn-blue" onclick="novaTarefa()">
+                        <i class="fa fa-clipboard"></i>
+                        ADICIONAR TAREFA
+                    </button>
+                    <button class="btn btn-blue" onclick="novaEtapa()">
+                        <i class="fa fa-clipboard"></i>
+                        ADICIONAR ETAPA
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Panel -->
+    @await Html.PartialAsync("_FilterPartial", Model.Filter)
+
+    <!-- Error Display -->
+    @if (Model.HasError)
+    {
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i>
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Loading State -->
+    @if (Model.IsLoading)
+    {
+        <div class="text-center">
+            <i class="fa fa-spinner fa-spin fa-2x"></i>
+            <p>Carregando etapas e tarefas...</p>
+        </div>
+    }
+
+    <!-- Main Content -->
+    <div class="lista-tarefas">
+        @if (Model.HasResults)
+        {
+            <!-- Bulk Actions -->
+            <div class="col-xs-12 no-padding">
+                <div id="selecionar-tudo" class="checkbox">
+                    <label>
+                        <input type="checkbox" name="optionsCheckboxes" onchange="selecionarTodos(this)">
+                        SELECIONAR TUDO
+                    </label>
+                </div>
+
+                @if (Model.CanChangeStatus && !Model.IsWorkFinalized)
+                {
+                    <button class="pull-left btn btn-blue btn-menor btn-block-xs" onclick="abrirAlterarStatusMassa()">
+                        <i class="fa fa-play-circle" aria-hidden="true"></i>
+                        alterar status em massa
+                    </button>
+                }
+            </div>
+
+            <!-- Accordion with Etapas -->
+            <div class="panel-group accordion" id="accordion">
+                @if (Model.Etapas != null && Model.Etapas.Any())
+                {
+                    @foreach (var etapa in Model.Etapas)
+                    {
+                        @await Html.PartialAsync("_EtapaAccordionPartial", etapa)
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <label class="col-xs-12 no-padding" style="text-align:center">
+                @if (Model.HasActiveFilters)
+                {
+                    <text>Nenhum registro encontrado com os filtros aplicados.</text>
+                }
+                else
+                {
+                    <text>Nenhuma etapa cadastrada para esta obra.</text>
+                }
+            </label>
+        }
+    </div>
+
+    <!-- Modals -->
+    @await Html.PartialAsync("_HistoricoTarefaModal")
+    @await Html.PartialAsync("_NovaMedicaoModal")
+    @await Html.PartialAsync("_RelatorioHorasModal")
+    @await Html.PartialAsync("_AlterarStatusMassaModal", Model.StatusOptions)
+</section>
+
+@section Scripts {
+    <script>
+        // Basic JavaScript functions to replace AngularJS controller methods
+        function gerarRdo() {
+            window.location.href = '@Url.Action("Gerar", "Rdo")';
+        }
+
+        function editarObra() {
+            window.location.href = '@Url.Action("Editar", "Obra", new { id = Model.CurrentObraId })';
+        }
+
+        function efetivoDiario() {
+            window.location.href = '@Url.Action("EfetivoDiario", "Obra")';
+        }
+
+        function irParaLista() {
+            window.location.href = '@Url.Action("Lista", "Etapa")';
+        }
+
+        function novaTarefa(etapaId = null) {
+            var url = '@Url.Action("Nova", "Tarefa")';
+            if (etapaId) {
+                url += '?etapaId=' + etapaId;
+            }
+            window.location.href = url;
+        }
+
+        function novaEtapa() {
+            window.location.href = '@Url.Action("Nova", "Etapa")';
+        }
+
+        function selecionarTodos(checkbox) {
+            var checkboxes = document.querySelectorAll('input[name="tarefaSelecionada"]');
+            checkboxes.forEach(function(cb) {
+                cb.checked = checkbox.checked;
+            });
+        }
+
+        function abrirAlterarStatusMassa() {
+            // Implementation for bulk status change
+            console.log('Abrir modal alterar status em massa');
+        }
+
+        // Task Card Functions
+        function visualizarTarefa(tarefaId) {
+            window.location.href = '@Url.Action("Visualizar", "Tarefa")' + '/' + tarefaId;
+        }
+
+        function editarTarefa(tarefaId, descricao) {
+            window.location.href = '@Url.Action("Editar", "Tarefa")' + '/' + tarefaId;
+        }
+
+        function deletarTarefa(tarefaId, descricao) {
+            if (confirm('Tem certeza que deseja excluir a tarefa "' + descricao + '"?')) {
+                // Submit delete form or make AJAX call
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("Deletar", "Tarefa")';
+                
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = tarefaId;
+                form.appendChild(input);
+                
+                // Add anti-forgery token
+                var token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    var tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token.value;
+                    form.appendChild(tokenInput);
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function novaMedicao(tarefaId, descricao) {
+            // Open modal or navigate to new measurement page
+            window.location.href = '@Url.Action("NovaMedicao", "Tarefa")' + '/' + tarefaId;
+        }
+
+        function alterarStatus(tarefaId, novoStatusId) {
+            // Make AJAX call to update status
+            fetch('@Url.Action("UpdateTaskStatus", "Etapa")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    taskId: tarefaId,
+                    statusId: novoStatusId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload page or update UI
+                    location.reload();
+                } else {
+                    alert('Erro ao alterar status: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Erro ao alterar status da tarefa');
+            });
+        }
+
+        function abrirHistoricoTarefa(tarefaId) {
+            // Load task history data and populate modal
+            console.log('Opening history for task:', tarefaId);
+        }
+
+        function abrirMenuStatus(tarefaId) {
+            // Show status change menu
+            console.log('Opening status menu for task:', tarefaId);
+        }
+
+        // Initialize page
+        $(document).ready(function() {
+            // DISABLED: Global maskMoney call that crashes the entire page
+            // $('.currency').maskMoney();
+            
+            // DISABLED: Legacy datepicker call that crashes Nuclear Modal System
+            // Initialize date pickers if needed - WRAPPED IN TRY-CATCH FOR SAFETY
+            try {
+                if (typeof $.fn.datepicker !== 'undefined') {
+                    $('.datepicker-here').datepicker({
+                        language: 'pt-BR',
+                        dateFormat: 'dd/mm/yyyy'
+                    });
+                } else {
+                    console.log('⚠️ Datepicker library not loaded - using native HTML5 date inputs');
+                }
+            } catch (error) {
+                console.log('⚠️ Datepicker initialization failed - using native HTML5 date inputs:', error);
+            }
+        });
+    </script>
+}

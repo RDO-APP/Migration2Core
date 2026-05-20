@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App Piscinas</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- RDO Icon Font - Gilberto's Original System -->
+    <link rel="stylesheet" href="/css/fontello.css" asp-append-version="true" />
+    
+    <!-- Navigation Mode CSS -->
+    <link rel="stylesheet" href="~/css/rdo-navigation.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="rdo-navigation-body">
+    <!-- NAVIGATION MODE: Full interface for post-selection pages -->
+    <!-- Rich navigation with circular buttons, user menu, obra context -->
+    
+    <!-- Full Navigation Header -->
+    <component type="typeof(RdoApp.Core.Components.NavigationHeader)" render-mode="ServerPrerendered" 
+               param-CurrentUserName="@ViewBag.UsuarioNome" 
+               param-CurrentObraName="@ViewBag.ObraNome" 
+               param-NavigationItems="@ViewBag.NavigationItems" />
+
+    <!-- Main Content with Header Offset -->
+    <main role="main" class="rdo-navigation-main">
+        @RenderBody()
+    </main>
+
+    <!-- Full JavaScript for Navigation -->
+    <script>
+        // RDO Navigation JavaScript Module
+        window.rdoNavigation = {
+            init: function() {
+                // Mobile menu toggle
+                const menuToggle = document.getElementById('rdo-menu-toggle');
+                const sidebar = document.querySelector('.rdo-mobile-sidebar');
+                
+                if (menuToggle && sidebar) {
+                    menuToggle.addEventListener('change', function() {
+                        sidebar.classList.toggle('active', this.checked);
+                    });
+                }
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.rdo-mobile-menu') && menuToggle && menuToggle.checked) {
+                        menuToggle.checked = false;
+                        sidebar.classList.remove('active');
+                    }
+                });
+                
+                // User dropdown toggle
+                const userButton = document.querySelector('.rdo-user-button');
+                const userDropdown = document.querySelector('.rdo-user-dropdown');
+                
+                if (userButton && userDropdown) {
+                    userButton.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        userDropdown.classList.toggle('active');
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function() {
+                        userDropdown.classList.remove('active');
+                    });
+                }
+                
+                // Navigation button hover effects
+                const navButtons = document.querySelectorAll('.rdo-nav-button');
+                navButtons.forEach(button => {
+                    button.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = '#1C334D'; // Legacy hover color
+                    });
+                    
+                    button.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = '';
+                    });
+                });
+            }
+        };
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', window.rdoNavigation.init);
+        } else {
+            window.rdoNavigation.init();
+        }
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

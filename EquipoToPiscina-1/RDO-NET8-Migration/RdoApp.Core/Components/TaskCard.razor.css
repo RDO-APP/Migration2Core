@@ -1,0 +1,364 @@
+/* TaskCard.razor.css - CRITICAL RECONSTRUCTION - LEGACY STANDARD MATCH */
+/* MANDATORY SPECIFICATIONS: 300px width, 2-tone color hierarchy, single orange progress bar */
+/* HARD LOCK APPLIED: Internal rows constrained to prevent container stretching [2026-01-03] */
+
+/* COMPONENT SPECS: 300px width x 130px height (Legacy Standard) */
+.task-card-container {
+    /* HARD LOCK DIMENSIONS - LEGACY STANDARD RESTORED */
+    width: 300px !important;
+    height: 130px !important;
+    min-width: 300px !important;
+    min-height: 130px !important;
+    max-width: 300px !important;
+    max-height: 130px !important;
+    
+    /* RESET WRAPPERS - GRID COMPATIBLE */
+    display: block !important;
+    margin: 0 !important; /* Remove margin for grid */
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important; /* Prevent flex shrinking */
+    flex-grow: 0 !important; /* Prevent flex growing */
+    flex-basis: 300px !important; /* Force flex basis */
+}
+
+.task-card {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* COLOR ENGINE: @CardColor strictly bound to Latest Status ID */
+.task-card.status-gray {
+    border-left: 4px solid #6c757d;
+}
+
+.task-card.status-blue {
+    border-left: 4px solid #007bff;
+}
+
+.task-card.status-green {
+    border-left: 4px solid #28a745;
+}
+
+.task-card.status-orange {
+    border-left: 4px solid #fd7e14;
+}
+
+.task-card.status-red {
+    border-left: 4px solid #dc3545;
+}
+
+/* STRICT ROW CONTAINMENT - HARD LOCK: Prevent content leaking */
+.task-card-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    overflow: hidden;
+    flex-shrink: 0; /* Prevent rows from shrinking */
+    
+    /* HARD LOCK INTERNAL ROW CONSTRAINTS - LEGACY STANDARD ENFORCEMENT */
+    width: 100% !important;
+    max-width: 284px !important; /* Card 300px minus 8px padding each side */
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+/* ROW 1: Status Icon + Description + Vertical Menu (Theme Color) */
+.row-1 {
+    background-color: #5bc0de; /* Default theme color */
+    color: white;
+    height: 26px;
+    justify-content: space-between;
+    border-radius: 4px 4px 0 0;
+    flex-shrink: 0;
+}
+
+.status-icon-section {
+    flex-shrink: 0;
+    width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-icon-section i {
+    font-size: 13px;
+    color: white;
+}
+
+.task-title-section {
+    flex: 1;
+    min-width: 0;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+}
+
+.task-title {
+    font-weight: 500;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+}
+
+.menu-icon-section {
+    flex-shrink: 0;
+    width: 18px;
+    height: 100%; /* Full height for perfect vertical centering */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-icon-section i {
+    font-size: 11px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ROW 2: Worker/Excavator Icons + 5-Button Toolbar (Darker Shade for 2-tone hierarchy) */
+.row-2 {
+    background: #4a9bb8; /* Darker shade of theme color for 2-tone hierarchy */
+    color: white;
+    height: 26px;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+/* Left: Universal Icons with breathing room */
+.resource-counts {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    color: white;
+    padding-left: 8px; /* Added breathing room for icon visibility */
+}
+
+.resource-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.resource-item i {
+    font-size: 10px;
+}
+
+/* Right: 5-Button Toolbar with individual 1px white borders */
+.action-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+}
+
+.toolbar-btn {
+    background: transparent;
+    border: 1px solid white !important; /* Individual 1px white borders */
+    color: white; /* White color for darker background */
+    padding: 3px 5px; /* Larger toolbar buttons */
+    font-size: 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    width: 26px; /* Increased width for 300px card */
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.toolbar-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border-color: white;
+}
+
+.toolbar-btn i {
+    font-size: 10px;
+}
+
+/* ROW 3: Date Grid with Calendar Icons Only (À character removed, empty space) */
+.row-3 {
+    background: white;
+    height: 36px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+}
+
+.dates-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px !important; /* Reduced gap to prevent border pushing */
+    justify-content: space-between !important; /* Distribute dates evenly */
+}
+
+/* Planning and Execution Date Sections */
+.date-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 0 0 auto; /* Changed from flex: 1 to prevent stretching */
+    min-width: 80px; /* Added minimum width for proper spacing */
+}
+
+.date-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 12px;
+}
+
+.date-item i {
+    font-size: 9px;
+    color: #666;
+    width: 12px;
+    flex-shrink: 0;
+}
+
+.date-value {
+    font-size: 9px;
+    color: #333;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Empty space separator (À character removed as requested) */
+.date-separator-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; /* Reduced from 30px to give more space to dates */
+    height: 100%;
+    flex-shrink: 0;
+    /* Empty space - no content */
+}
+
+/* ROW 4: Single Orange Progress Bar at Bottom */
+.row-4 {
+    background: #f8f9fa;
+    height: 32px;
+    border-radius: 0 0 4px 4px;
+    padding: 6px 8px;
+    flex-shrink: 0;
+}
+
+.progress-bar-section {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.progress-bar-container {
+    width: 100% !important;
+    max-width: 250px !important; /* Flexible but stays within 284px limit */
+    height: 12px; /* Slightly larger for 300px width */
+    background: #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0 auto; /* Center within row */
+    box-sizing: border-box !important;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fd7e14 0%, #ffc107 100%); /* Single orange gradient */
+    transition: width 0.3s ease;
+    border-radius: 6px;
+}
+
+.progress-percentage {
+    position: absolute;
+    right: 8px; /* Positioned over/at end */
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: #333;
+    font-weight: 600;
+    background: rgba(255,255,255,0.9);
+    padding: 1px 4px;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+/* FontAwesome Icon Stability */
+.fas {
+    font-family: "Font Awesome 5 Free" !important;
+    font-style: normal !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Prevent any external CSS from affecting dimensions */
+.task-card-container * {
+    box-sizing: border-box;
+}
+
+/* 2-TONE COLOR HIERARCHY: Row 1 (Theme Color) + Row 2 (Darker Shade) */
+
+/* STATUS GRAY: Row 1 + Row 2 darker shade */
+.task-card.status-gray .row-1 {
+    background-color: #6c757d;
+}
+.task-card.status-gray .row-2 {
+    background-color: #5a6268; /* Darker shade of gray */
+}
+
+/* STATUS BLUE: Row 1 + Row 2 darker shade */
+.task-card.status-blue .row-1 {
+    background-color: #007bff;
+}
+.task-card.status-blue .row-2 {
+    background-color: #0056b3; /* Darker shade of blue */
+}
+
+/* STATUS GREEN: Row 1 + Row 2 darker shade */
+.task-card.status-green .row-1 {
+    background-color: #28a745;
+}
+.task-card.status-green .row-2 {
+    background-color: #1e7e34; /* Darker shade of green */
+}
+
+/* STATUS ORANGE: Row 1 + Row 2 darker shade */
+.task-card.status-orange .row-1 {
+    background-color: #fd7e14;
+}
+.task-card.status-orange .row-2 {
+    background-color: #e55a00; /* Darker shade of orange */
+}
+
+/* STATUS RED: Row 1 + Row 2 darker shade */
+.task-card.status-red .row-1 {
+    background-color: #dc3545;
+}
+.task-card.status-red .row-2 {
+    background-color: #c82333; /* Darker shade of red */
+}
+
+/* FIXED 300PX WIDTH - NO RESPONSIVE OVERRIDE */
+/* Media query removed to maintain "written in stone" 300px width rule */

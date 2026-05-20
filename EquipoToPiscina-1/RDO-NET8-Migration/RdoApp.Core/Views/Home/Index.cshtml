@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Redirect to obra selection only if authenticated -->
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <script>
+        // Only redirect if user is authenticated
+        window.location.href = '@Url.Action("Escolher", "Obra")';
+    </script>
+    
+    <div style="text-align: center; padding: 50px;">
+        <p>Redirecionando para seleção de obras...</p>
+    </div>
+}
+else
+{
+    <div style="text-align: center; padding: 50px;">
+        <p>Carregando...</p>
+    </div>
+}

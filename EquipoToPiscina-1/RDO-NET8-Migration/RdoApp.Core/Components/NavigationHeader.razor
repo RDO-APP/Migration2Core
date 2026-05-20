@@ -1,0 +1,145 @@
+@* HEADER B: POST-SELECTION MODE - Full navigation system *@
+@* For all pages after obra selection - Rich interface *@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@using RdoApp.Core.Models.ViewModels
+@inject IJSRuntime JSRuntime
+
+<header class="rdo-navigation-header">
+    <nav class="rdo-navbar">
+        <div class="rdo-navbar-container">
+            <!-- Logo Section -->
+            <div class="rdo-logo-section">
+                <button class="rdo-logo-button" @onclick="OnLogoClick">
+                    <i class="icon-logo"></i>
+                    <span class="rdo-logo-text">Piscinas</span>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="rdo-mobile-menu">
+                <input id="rdo-menu-toggle" type="checkbox" @bind="IsMobileMenuOpen" />
+                <label for="rdo-menu-toggle" class="rdo-menu-button">
+                    <svg class="rdo-icon-open" viewBox="0 0 24 24">
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                    </svg>
+                    <svg class="rdo-icon-close" viewBox="0 0 100 100">
+                        <path d="M83.288 88.13c-2.114 2.112-5.575 2.112-7.69 0L53.66 66.188c-2.113-2.112-5.572-2.112-7.686 0l-21.72 21.72c-2.114 2.113-5.572 2.113-7.687 0l-4.693-4.692c-2.114-2.114-2.114-5.573 0-7.688l21.72-21.72c2.112-2.115 2.112-5.574 0-7.687L11.87 24.4c-2.114-2.113-2.114-5.57 0-7.686l4.842-4.842c2.113-2.114 5.57-2.114 7.686 0l21.72 21.72c2.114 2.113 5.572 2.113 7.688 0l21.72-21.72c2.115-2.114 5.574-2.114 7.688 0l4.695 4.695c2.112 2.113 2.112 5.57-.002 7.686l-21.72 21.72c-2.112 2.114-2.112 5.573 0 7.686L88.13 75.6c2.112 2.11 2.112 5.572 0 7.687l-4.842 4.84z" />
+                    </svg>
+                </label>
+
+                <!-- Mobile Sidebar -->
+                <div class="rdo-mobile-sidebar @(IsMobileMenuOpen ? "active" : "")">
+                    <div class="rdo-mobile-content">
+                        <!-- User Section -->
+                        <div class="rdo-mobile-user">
+                            <div class="rdo-user-info">
+                                <img src="/Assets/images/user.png" alt="User" class="rdo-user-avatar" />
+                                <p class="rdo-user-name">@CurrentUserName</p>
+                            </div>
+                            <div class="rdo-user-menu">
+                                <button class="rdo-user-menu-item" @onclick="OnChangePassword">TROCAR SENHA</button>
+                                <button class="rdo-user-menu-item" @onclick="OnLogout">SAIR</button>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Items -->
+                        <div class="rdo-mobile-nav">
+                            @if (NavigationItems != null)
+                            {
+                                @foreach (var item in NavigationItems)
+                                {
+                                    <button class="rdo-mobile-nav-item" @onclick="() => HandleNavigationClick(item)">
+                                        <i class="@item.CssClass"></i>
+                                        <span>@item.Titulo</span>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Obra Title Section - Shows selected obra name -->
+            <div class="rdo-title-section">
+                <h2 class="rdo-obra-title">@CurrentObraName?.ToUpper()</h2>
+            </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="rdo-desktop-nav">
+            <!-- User Menu -->
+            <div class="rdo-user-dropdown">
+                <button class="rdo-user-button" @onclick="ToggleUserDropdown">
+                    <img src="/Assets/images/user.png" alt="User" class="rdo-user-avatar" />
+                    <p class="rdo-user-name">@CurrentUserName</p>
+                    <i class="rdo-caret"></i>
+                </button>
+                
+                @if (IsUserDropdownOpen)
+                {
+                    <div class="rdo-user-dropdown-menu">
+                        <button class="rdo-dropdown-item" @onclick="OnChangePassword">TROCAR SENHA</button>
+                        <button class="rdo-dropdown-item" @onclick="OnLogout">SAIR</button>
+                    </div>
+                }
+            </div>
+
+            <!-- Navigation Buttons - Circular 48x49px -->
+            <div class="rdo-nav-buttons">
+                @if (NavigationItems != null)
+                {
+                    @foreach (var item in NavigationItems)
+                    {
+                        <button class="rdo-nav-button" 
+                                title="@item.Titulo" 
+                                @onclick="() => HandleNavigationClick(item)">
+                            <i class="@item.CssClass"></i>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+    </nav>
+</header>
+
+@code {
+    [Parameter] public string? CurrentUserName { get; set; }
+    [Parameter] public string? CurrentObraName { get; set; }
+    [Parameter] public List<NavigationItem>? NavigationItems { get; set; }
+    [Parameter] public EventCallback OnLogoClick { get; set; }
+    [Parameter] public EventCallback OnChangePassword { get; set; }
+    [Parameter] public EventCallback OnLogout { get; set; }
+    [Parameter] public EventCallback<NavigationItem> OnNavigationClick { get; set; }
+
+    private bool IsMobileMenuOpen = false;
+    private bool IsUserDropdownOpen = false;
+
+    private void ToggleUserDropdown()
+    {
+        IsUserDropdownOpen = !IsUserDropdownOpen;
+    }
+
+    private async Task HandleNavigationClick(NavigationItem item)
+    {
+        if (OnNavigationClick.HasDelegate)
+        {
+            await OnNavigationClick.InvokeAsync(item);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("rdoNavigation.init");
+        }
+    }
+
+    public class NavigationItem
+    {
+        public string Titulo { get; set; } = string.Empty;
+        public string CssClass { get; set; } = string.Empty;
+        public string Route { get; set; } = string.Empty;
+    }
+}

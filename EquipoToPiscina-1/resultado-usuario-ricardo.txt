@@ -1,0 +1,3 @@
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : SQL Server Network Interfaces: Erro ao Localizar Servidor/Instância Especificado [xFFFFFFFF]. .
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : O tempo limite do logon expirou.
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Erro relatado pela rede ou específico à instância ao estabelecer conexão com o SQL Server. O servidor não foi encontrado ou não está acessível. Verifique se o nome da instância está correto e se o SQL Server está configurado para permitir conexões remotas. Para obter mais informações, consulte os Manuais Online do SQL Server..

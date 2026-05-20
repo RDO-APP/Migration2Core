@@ -1,0 +1,93 @@
+@model IEnumerable<RdoApp.Core.Models.ViewModels.ObraViewModel>
+@{
+    ViewData["Title"] = "DEBUG: Selecionar Obra - RDO App Piscinas";
+    Layout = "~/Views/Shared/_LayoutSelection.cshtml";
+}
+
+<div style="padding: 20px; background: #f8f9fa; border: 2px solid #007bff; margin: 20px;">
+    <h2 style="color: #007bff;">🔍 DEBUG VIEW - NO BLAZOR COMPONENTS</h2>
+    
+    <!-- Model Validation -->
+    @if (Model != null)
+    {
+        <div style="background: #d4edda; color: #155724; padding: 15px; margin: 10px 0; border: 1px solid #c3e6cb; border-radius: 4px;">
+            <h3>✅ MODEL SUCCESS</h3>
+            <p><strong>Total Obras:</strong> @Model.Count()</p>
+            <p><strong>Model Type:</strong> @Model.GetType().Name</p>
+        </div>
+        
+        <!-- Raw Data Display -->
+        <div style="background: #fff; border: 1px solid #dee2e6; padding: 15px; margin: 10px 0;">
+            <h4>📋 RAW OBRA DATA (First 5)</h4>
+            @foreach (var obra in Model.Take(5))
+            {
+                <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                    <strong>ID:</strong> @obra.Id<br>
+                    <strong>Descrição:</strong> @obra.Descricao<br>
+                    <strong>Cidade/Estado:</strong> @obra.CidadeEstado<br>
+                    <strong>Status:</strong> @obra.StatusBasicaGratuita<br>
+                    <strong>Progresso:</strong> @obra.ProgressoPorcentagem%<br>
+                </div>
+            }
+            
+            @if (Model.Count() > 5)
+            {
+                <p style="color: #6c757d; font-style: italic;">... and @(Model.Count() - 5) more obras</p>
+            }
+        </div>
+        
+        <!-- Simple HTML Cards (No Blazor) -->
+        <div style="background: #fff; border: 1px solid #dee2e6; padding: 15px; margin: 10px 0;">
+            <h4>🎴 SIMPLE HTML CARDS (No Blazor Components)</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                @foreach (var obra in Model.Take(6))
+                {
+                    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #f8f9fa;">
+                        <h5 style="margin: 0 0 10px 0; color: #007bff;">@obra.Descricao</h5>
+                        <p style="margin: 5px 0; color: #6c757d;">📍 @obra.CidadeEstado</p>
+                        <p style="margin: 5px 0; color: #28a745;">📊 @obra.ProgressoPorcentagem% concluído</p>
+                        <p style="margin: 5px 0; font-size: 0.9em;">Status: @obra.StatusBasicaGratuita</p>
+                        <button style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                            Selecionar Obra
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="background: #f8d7da; color: #721c24; padding: 15px; margin: 10px 0; border: 1px solid #f5c6cb; border-radius: 4px;">
+            <h3>❌ MODEL IS NULL</h3>
+            <p>The controller did not pass any data to the view.</p>
+        </div>
+    }
+    
+    <!-- Layout Validation -->
+    <div style="background: #e2e3e5; color: #383d41; padding: 15px; margin: 10px 0; border: 1px solid #d6d8db; border-radius: 4px;">
+        <h4>🏗️ LAYOUT INFORMATION</h4>
+        <p><strong>Current Layout:</strong> @Layout</p>
+        <p><strong>ViewData Title:</strong> @ViewData["Title"]</p>
+        <p><strong>User:</strong> @User.Identity?.Name</p>
+        <p><strong>Is Authenticated:</strong> @User.Identity?.IsAuthenticated</p>
+    </div>
+    
+    <!-- Test Instructions -->
+    <div style="background: #fff3cd; color: #856404; padding: 15px; margin: 10px 0; border: 1px solid #ffeaa7; border-radius: 4px;">
+        <h4>🧪 TEST RESULTS</h4>
+        <p><strong>If you see this page with data:</strong> ✅ View Engine works, Layout works, Controller works</p>
+        <p><strong>If you see this page but no data:</strong> ❌ Controller or Service issue</p>
+        <p><strong>If you see blank page:</strong> ❌ View Engine or Layout issue</p>
+        <p><strong>If you see errors:</strong> ❌ Compilation or runtime issue</p>
+    </div>
+</div>
+
+<!-- Test Navigation -->
+<div style="text-align: center; margin: 20px;">
+    <a href="/Obra/Escolher" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin: 0 10px;">
+        🔄 Test Original View (with Blazor)
+    </a>
+    <a href="/Account/Login" style="background: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin: 0 10px;">
+        🚪 Back to Login
+    </a>
+</div>

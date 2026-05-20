@@ -1,0 +1,90 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="rdo-login-container">
+    <div class="rdo-login-card">
+        <div class="rdo-logo-section">
+            <img src="/images/logo.jpg" alt="RDO App Piscinas" class="rdo-logo" />
+            <h1 class="rdo-app-title">Piscinas</h1>
+        </div>
+        
+        <form method="post" action="/Account/Login">
+            <input type="hidden" name="__RequestVerificationToken" value="@antiForgeryToken" />
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="rdo-error-message">
+                    @errorMessage
+                </div>
+            }
+            
+            <div class="rdo-form-group">
+                <div class="rdo-input-group">
+                    <span class="rdo-input-icon">👤</span>
+                    <input type="text" id="cpf" name="Cpf" class="rdo-input" 
+                           placeholder="000.000.000-00" maxlength="14" required />
+                </div>
+            </div>
+            
+            <div class="rdo-form-group">
+                <div class="rdo-input-group">
+                    <span class="rdo-input-icon">🔒</span>
+                    <input type="@passwordType" id="senha" name="Senha" class="rdo-input" 
+                           placeholder="SENHA" required />
+                    <button type="button" class="rdo-password-toggle" @onclick="TogglePassword">
+                        @(showPassword ? "🙈" : "👁️")
+                    </button>
+                </div>
+            </div>
+            
+            <div class="rdo-checkbox-group">
+                <input type="checkbox" id="lembrarMe" name="LembrarMe" class="rdo-checkbox" value="true" />
+                <label for="lembrarMe" class="rdo-checkbox-label">
+                    Lembrar-me por 30 dias
+                </label>
+            </div>
+            
+            <button type="submit" class="rdo-login-button">
+                <span>ACESSAR</span>
+            </button>
+        </form>
+        
+        <a href="#" class="rdo-forgot-password" @onclick="@(() => ShowMessage("Funcionalidade em desenvolvimento"))">
+            Esqueci a senha
+        </a>
+    </div>
+</div>
+
+@code {
+    private string errorMessage = "";
+    private bool showPassword = false;
+    private string passwordType => showPassword ? "text" : "password";
+    private string antiForgeryToken = "";
+
+    protected override void OnInitialized()
+    {
+        var tokens = Antiforgery.GetAndStoreTokens(HttpContextAccessor.HttpContext!);
+        antiForgeryToken = tokens.RequestToken!;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Apply CPF mask and focus
+            await JSRuntime.InvokeVoidAsync("rdoLogin.initialize");
+        }
+    }
+    
+    private void TogglePassword()
+    {
+        showPassword = !showPassword;
+    }
+    
+    private async Task ShowMessage(string message)
+    {
+        await JSRuntime.InvokeVoidAsync("alert", message);
+    }
+}

@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RDO App Piscinas</title>
+    
+    <!-- LAYOUT IDENTIFICATION: _Layout.cshtml is being used -->
+    <!-- DEBUG: This comment confirms ETAPA TAREFA is using the legacy layout -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/datepicker.css" asp-append-version="true" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- RDO Icon Font - Gilberto's Original System -->
+    <link rel="stylesheet" href="/css/fontello.css" asp-append-version="true" />
+    
+    <!-- Unified RDO Theme CSS -->
+    <link rel="stylesheet" href="~/css/rdo-unified-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/gilberto-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/RdoApp.Core.styles.css" asp-append-version="true" />
+    
+
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="base">
+    <!-- Task Selection Counter (from legacy layout-interno.html) -->
+    <div class="contador-selecionados">
+        <i class="fa fa-clipboard"></i>
+        <strong>0</strong>
+        <span>TAREFA(S) SELECIONADA(S)</span>
+    </div>
+
+    <!-- Unified RDO Header: Dynamic content based on context -->
+    @await Component.InvokeAsync("UnifiedRdoHeader")
+    <div class="conteudo">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>RDO App Piscinas &copy; 2025. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- CRITICAL DEPENDENCIES - MUST LOAD FIRST -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    
+    <!-- MISSING DEPENDENCIES FROM GILBERTO'S SYSTEM -->
+    <script src="~/lib/moment/moment.min.js"></script>
+    <script src="~/lib/datepicker/datepicker.js"></script>
+    <script src="~/lib/datepicker/datepicker.pt-BR.js"></script>
+    <script src="~/lib/jquery.maskMoney/jquery.maskMoney.min.js"></script>
+    
+    <!-- BOOTSTRAP 5 ONLY - NO COMPATIBILITY LAYER -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- APPLICATION SCRIPTS - LOAD AFTER DEPENDENCIES -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Blazor-First Evolution: Auth Bridge JavaScript -->
+    <script src="~/js/rdo-auth-bridge.js" asp-append-version="true"></script>
+    
+
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
