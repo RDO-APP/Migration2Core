@@ -14,7 +14,7 @@
 | `RDO-APP/Equipamentos` | Dimas + Brenda | ASP.NET Framework + AngularJS | Legacy Equipamentos web app — your reference for business logic |
 | `RDO-APP/RDOAppPiscinasMobile` | Carlos | React Native + Expo | Mobile app — already has Apontador variant built in |
 | `RDO-APP/Migration2Core` | Migration team | .NET 8 MVC + EF Core | Backend migration — 48 entities done, API in progress |
-| `RDO-APP/PiscinasToEquipamentos` | — | — | Does not exist yet |
+| `LucioRDOApp/EquipoToPiscina` | Lucio + Kiro | ASP.NET Framework + AngularJS | First migration attempt — RDO adapted for Piscinas. Abandoned Jan 2026. Contains the legacy production code by Gilberto (`RDO-Production-Gilberto/`) which is the source of truth for business logic and navigation patterns. |
 
 ---
 
