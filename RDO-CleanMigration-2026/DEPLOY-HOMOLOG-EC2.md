@@ -129,8 +129,15 @@ Incluir **`homolog.sistema.rdoapp.com.br`** no certificado do listener **Sistema
 
 ---
 
-## Próximo (automação)
+## Automação (CI homolog — somente Migration2Core)
 
-- Workflow GitHub: build + artefato  
-- Deploy SSM (pull + publish na EC2)  
-- `DisableAssinaturaCheck: false` quando testar Loja (Onda 2)
+**Plano passo a passo (AWS OIDC, S3, SSM, GitHub):** [`PLANO-CI-HOMOLOG-EC2.md`](PLANO-CI-HOMOLOG-EC2.md)
+
+| Modo | Como |
+|------|------|
+| **GitHub Actions** | Workflow `.github/workflows/homolog-core-ec2.yml` — push `main` gera artefato; **Run workflow** com deploy liga S3+SSM |
+| **PC com AWS CLI** | `publish-homolog-ec2.ps1` → `deploy-homolog-ec2-ssm.ps1` |
+
+**Nunca** publica em `inetpub\rdoapp` (prod). Secrets só em `appsettings.Staging.json` na EC2.
+
+Próximo produto: `DisableAssinaturaCheck: false` quando testar Loja (Onda 2).

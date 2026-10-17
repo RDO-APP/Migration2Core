@@ -1,0 +1,14 @@
+# Homolog / local secrets
+**/appsettings.Staging.json
+**/appsettings.Production.json
+**/appsettings.*.local.json
+
+# Publish output
+RDO-CleanMigration-2026/publish/
+publish/
+
+# .NET
+bin/
+obj/
+*.user
+.vs/
