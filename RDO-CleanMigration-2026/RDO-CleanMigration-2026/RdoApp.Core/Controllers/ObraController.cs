@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,9 @@ namespace RdoApp.Core.Controllers
             var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
             if (string.IsNullOrEmpty(loginDataJson))
             {
-                _logger.LogWarning("LoginData missing from session, redirecting to login");
+                _logger.LogWarning("LoginData missing from session, signing out and redirecting to login");
+                await HttpContext.SignOutAsync("Cookies");
+                HttpContext.Session.Clear();
                 return RedirectToAction("Login", "Account");
             }
 
@@ -47,7 +50,9 @@ namespace RdoApp.Core.Controllers
             
             if (string.IsNullOrEmpty(colaboradorIdClaim) || !int.TryParse(colaboradorIdClaim, out int colaboradorId))
             {
-                _logger.LogWarning("Invalid colaboradorId in claims, redirecting to login");
+                _logger.LogWarning("Invalid colaboradorId in claims, signing out and redirecting to login");
+                await HttpContext.SignOutAsync("Cookies");
+                HttpContext.Session.Clear();
                 return RedirectToAction("Login", "Account");
             }
 

@@ -6,6 +6,11 @@ using RdoApp.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ALB termina TLS; Kestrel na EC2 escuta só HTTP (ex.: :5081).
+var cookieSecurePolicy = builder.Environment.IsStaging()
+    ? CookieSecurePolicy.SameAsRequest
+    : CookieSecurePolicy.Always;
+
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
@@ -42,7 +47,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromHours(8);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = cookieSecurePolicy;
 });
 
 // Configure Cookie Authentication (instead of Identity)
@@ -55,7 +60,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy = cookieSecurePolicy;
         options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
@@ -69,12 +74,21 @@ app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+}
+
+// HSTS só fora de homolog (Staging atrás do ALB — evita browser preso em HTTPS errado).
+if (!app.Environment.IsDevelopment() && !app.Environment.IsStaging())
+{
     app.UseHsts();
 }
 
 
-app.UseHttpsRedirection();
+// Staging/homolog: não redirecionar para HTTPS no Kestrel (evita loop/414 atrás do ALB).
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 

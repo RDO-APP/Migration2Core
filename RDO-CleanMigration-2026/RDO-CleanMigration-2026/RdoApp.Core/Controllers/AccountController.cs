@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
 using RdoApp.Core.Models.DTOs;
 using RdoApp.Core.Models.ViewModels;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Utils;
 using System.Security.Claims;
 
@@ -31,17 +32,22 @@ namespace RdoApp.Core.Controllers
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string? returnUrl = null)
+        public async Task<IActionResult> Login(string? returnUrl = null)
         {
-            // If user is already authenticated, redirect to obra selection
+            // Homolog: não redirecionar GET /Login → Escolher (evita loop com cookie/sessão inconsistentes).
+            // Limpa auth órfã; após POST login o fluxo segue para Escolher como no legado.
             if (User.Identity?.IsAuthenticated == true)
             {
-                _logger.LogInformation("User {UserName} already authenticated, redirecting to obra selection", User.Identity.Name);
-                return RedirectToAction("Escolher", "Obra");
+                var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
+                if (string.IsNullOrEmpty(loginDataJson))
+                {
+                    await HttpContext.SignOutAsync("Cookies");
+                    HttpContext.Session.Clear();
+                }
             }
 
             ViewData["ReturnUrl"] = returnUrl;
-            ViewData["Title"] = "Login - RDO App Piscinas";
+            ViewData["Title"] = "Login - RDO App Equipamentos";
             
             _logger.LogInformation("Displaying login page");
             
@@ -58,7 +64,7 @@ namespace RdoApp.Core.Controllers
         public async Task<IActionResult> Login(LoginDto model, string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            ViewData["Title"] = "Login - RDO App Piscinas";
+            ViewData["Title"] = "Login - RDO App Equipamentos";
 
             _logger.LogInformation("Processing login attempt for CPF: {Cpf}", 
                 model.Cpf?.Length > 3 ? model.Cpf.Substring(0, 3) + "***" : "***");

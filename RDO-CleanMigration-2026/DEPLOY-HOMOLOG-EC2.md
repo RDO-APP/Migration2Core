@@ -3,7 +3,7 @@
 **URL:** `https://homolog.sistema.rdoapp.com.br`  
 **Fase W1 (atual):** EC2 **Windows** `(Equipamentos)` · IIS porta **5081** · TG `tg-equipamentos-homolog-5081`  
 **Fase L1 (depois):** EC2 **Linux** dedicada — **mesma URL/TG** após gatilho G1–G2 em `Equipamentos/docs/plano-preparacao-migracao-homolog.md` **§11**.  
-**Banco:** catálogo homolog compartilhado (política A) — connection string **só na EC2**, nunca no Git.
+**Banco:** **`homol_rdoapp`** (homolog Equipamentos) — connection string **só na EC2**, nunca no Git. Script DDL: `scripts/homol_rdoapp-sync-tables-from-prod.sql`.
 
 **Clique a clique (3 etapas):** `Equipamentos/docs/trilha-core-homolog-clique-a-clique.md`  
 Infra AWS: `Equipamentos/docs/plano-homolog-sistema-clique-a-clique.md`.
@@ -64,7 +64,7 @@ Modelo (preencha com o mesmo host/catálogo homolog do legado — copie do `Web.
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=SEU_RDS;Database=piscinas_rdoapp_homologa;User=...;Password=...;SslMode=None;"
+    "DefaultConnection": "Server=SEU_RDS;Database=homol_rdoapp;User=...;Password=...;SslMode=None;"
   }
 }
 ```

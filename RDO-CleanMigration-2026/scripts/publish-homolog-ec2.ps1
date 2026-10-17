@@ -21,7 +21,12 @@ try {
 
     Write-Host ""
     Write-Host "Publish OK." -ForegroundColor Green
-    Write-Host "Proximo passo: copiar pasta para EC2:" -ForegroundColor Yellow
+    $ZipPath = Join-Path (Split-Path $OutDir -Parent) "rdoapp_core.zip"
+    if (Test-Path $ZipPath) { Remove-Item -Force $ZipPath }
+    Compress-Archive -Path (Join-Path $OutDir "*") -DestinationPath $ZipPath -Force
+
+    Write-Host "Zip:     $ZipPath" -ForegroundColor Green
+    Write-Host "Proximo passo: copiar para EC2 (preservar appsettings.Staging.json com senha):" -ForegroundColor Yellow
     Write-Host "  C:\inetpub\wwwroot\homologacao\rdoapp_core"
     Write-Host "Guia: RDO-CleanMigration-2026\DEPLOY-HOMOLOG-EC2.md"
 }
