@@ -2,7 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
+using RdoApp.Core.Models.ViewModels;
+using RdoApp.Core.Services;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace RdoApp.Core.Controllers
 {
@@ -14,11 +18,13 @@ namespace RdoApp.Core.Controllers
     public class ObraController : Controller
     {
         private readonly RdoDbContext _context;
+        private readonly LoginObraService _loginObraService;
         private readonly ILogger<ObraController> _logger;
 
-        public ObraController(RdoDbContext context, ILogger<ObraController> logger)
+        public ObraController(RdoDbContext context, LoginObraService loginObraService, ILogger<ObraController> logger)
         {
             _context = context;
+            _loginObraService = loginObraService;
             _logger = logger;
         }
 
@@ -30,7 +36,7 @@ namespace RdoApp.Core.Controllers
         public async Task<IActionResult> Escolher()
         {
             // Validate session has LoginData (routes and permissions)
-            var loginDataJson = HttpContext.Session.GetString("LoginData");
+            var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
             if (string.IsNullOrEmpty(loginDataJson))
             {
                 _logger.LogWarning("LoginData missing from session, redirecting to login");
@@ -74,7 +80,7 @@ namespace RdoApp.Core.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Selecionar(int idObra)
+        public async Task<IActionResult> Selecionar(int idObra, CancellationToken cancellationToken)
         {
             var colaboradorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
@@ -84,20 +90,36 @@ namespace RdoApp.Core.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            if (idObra <= 0)
+            {
+                TempData["ObraError"] = "Obra inválida.";
+                return RedirectToAction(nameof(Escolher));
+            }
+
+            LoginViewModel? existingLogin = null;
+            var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
+            if (!string.IsNullOrEmpty(loginDataJson))
+            {
+                existingLogin = JsonSerializer.Deserialize<LoginViewModel>(loginDataJson);
+            }
+
             _logger.LogInformation("Colaborador {ColaboradorId} selecting obra {IdObra}", colaboradorId, idObra);
 
-            // Store selected obra in session
-            HttpContext.Session.SetInt32("ObraId", idObra);
+            var result = await _loginObraService.SelectObraAsync(colaboradorId, idObra, existingLogin, cancellationToken);
+            if (!result.Success)
+            {
+                TempData["ObraError"] = result.ErrorMessage;
+                return RedirectToAction(nameof(Escolher));
+            }
 
-            // TODO: Implement full LoginObra logic:
-            // - Query obra_colaborador
-            // - Build full context with permissions
-            // - Verify license
-            // - Log to historico_login with obra info
+            HttpContext.Session.SetString(SessionKeys.LoginData, JsonSerializer.Serialize(result.LoginData));
+            HttpContext.Session.SetInt32(SessionKeys.ObraId, result.ObraId);
+            HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome ?? string.Empty);
+            HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, result.ObraColaboradorId);
 
-            _logger.LogInformation("Obra {IdObra} selected successfully, redirecting to home", idObra);
+            _logger.LogInformation("Obra {IdObra} selected, redirecting to task cards", idObra);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Cards", "Tarefa");
         }
     }
 }

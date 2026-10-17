@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models;
 using RdoApp.Core.Data;
 
@@ -21,7 +22,12 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return RedirectToAction("Escolher", "Obra");
+        }
+
+        return RedirectToAction("Cards", "Tarefa");
     }
 
     public IActionResult Privacy()

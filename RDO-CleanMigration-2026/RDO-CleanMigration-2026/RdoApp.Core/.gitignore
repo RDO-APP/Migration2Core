@@ -1,0 +1,10 @@
+# Local overrides (connection strings, secrets)
+appsettings.Local.json
+appsettings.*.local.json
+**/secrets.json
+
+# Build / IDE
+bin/
+obj/
+.vs/
+*.user

@@ -45,7 +45,7 @@ If Visual Studio still doesn't work, use the command line:
 2. Run these commands:
 
 ```powershell
-cd C:\Dev\RDO-CleanMigration-2026\RDO-CleanMigration-2026\RdoApp.Core
+cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\RDO-CleanMigration-2026\RdoApp.Core
 dotnet run
 ```
 
@@ -153,7 +153,7 @@ If none of these solutions work, please share:
 Try this quick test to see if the project works:
 
 ```powershell
-cd C:\Dev\RDO-CleanMigration-2026\RDO-CleanMigration-2026\RdoApp.Core
+cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\RDO-CleanMigration-2026\RdoApp.Core
 dotnet build
 dotnet run
 ```
