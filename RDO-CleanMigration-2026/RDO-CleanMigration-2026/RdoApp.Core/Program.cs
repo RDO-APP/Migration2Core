@@ -23,6 +23,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<RbacRouteService>();
 builder.Services.AddScoped<LoginObraService>();
 builder.Services.AddScoped<HistoricoLoginWriter>();
+builder.Services.AddScoped<CardsQueryService>();
 
 // Configure DbContext with MySQL (Pomelo)
 builder.Services.AddDbContext<RdoDbContext>(options =>
@@ -104,6 +105,8 @@ app.MapGet("/", context =>
     context.Response.Redirect("/Account/Login");
     return Task.CompletedTask;
 });
+
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

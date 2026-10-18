@@ -1,0 +1,78 @@
+.cards-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #1a1a1a;
+}
+
+.cards-header h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem;
+}
+
+.muted {
+  color: #555;
+}
+
+.muted.small,
+.small {
+  font-size: 0.875rem;
+}
+
+.error {
+  color: #b00020;
+}
+
+.etapa-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+
+.etapa-block {
+  background: #f6f7f9;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.etapa-block h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.etapa-ordem {
+  color: #666;
+  margin-right: 0.25rem;
+}
+
+.tarefa-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tarefa-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid #e0e3e8;
+}
+
+.tarefa-item:first-child {
+  border-top: none;
+}
+
+.tarefa-status {
+  font-size: 0.8rem;
+  background: #e8eef5;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.cards-footer {
+  margin-top: 2rem;
+}
