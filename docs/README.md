@@ -10,7 +10,7 @@
 | API compartilhada EQ-R/EQ-M | [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md) · [`api-client/`](api-client/) |
 | Git push (agente) | [`migracao/git-push-checklist.md`](migracao/git-push-checklist.md) |
 | CI homolog (código) | [`../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md`](../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md) |
-| Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** |
+| Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** · stub [`editais-fapesc/README.md`](editais-fapesc/README.md) |
 | Regra Cursor (cópia) | [`cursor-rules/orquestrador-migracao-impacto.mdc`](cursor-rules/orquestrador-migracao-impacto.mdc) |
 
 Workspace Cursor **Equipamentos** (OneDrive) pode espelhar estes arquivos — **editar e commitar aqui**, não no repo legado `Equipamentos`.
