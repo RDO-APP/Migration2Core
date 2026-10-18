@@ -75,7 +75,7 @@ public class LoginObraService
         {
             Email = assignment.c.ColDsEmail,
             Id = assignment.c.ColIdColaborador,
-            Senha = Seguranca.DecryptTripleDES(assignment.c.ColDsSenha),
+            Senha = TryDecryptColaboradorSenha(assignment.c.ColDsSenha),
             NomeUsuario = assignment.c.ColNmColaborador,
             IdGrupo = assignment.oc.OcoIdGrupo
         };
@@ -144,5 +144,22 @@ public class LoginObraService
             .FirstOrDefaultAsync(cancellationToken);
 
         return !string.IsNullOrWhiteSpace(token);
+    }
+
+    private static string TryDecryptColaboradorSenha(string? stored)
+    {
+        if (string.IsNullOrWhiteSpace(stored))
+        {
+            return string.Empty;
+        }
+
+        try
+        {
+            return Seguranca.DecryptTripleDES(stored);
+        }
+        catch (Exception)
+        {
+            return string.Empty;
+        }
     }
 }

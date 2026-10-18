@@ -33,10 +33,11 @@ public class RbacRouteService
             }).ToListAsync(cancellationToken);
 
         var routes = rows
-            .GroupBy(r => r.PagDsUrl)
+            .Where(r => !string.IsNullOrWhiteSpace(r.PagDsUrl))
+            .GroupBy(r => r.PagDsUrl!)
             .Select(g => new RouteViewModel
             {
-                Name = g.First().PagNmTitulo,
+                Name = g.First().PagNmTitulo ?? string.Empty,
                 Path = g.Key,
                 Permissions = g.Select(x => x.Alias).Where(a => !string.IsNullOrEmpty(a)).Distinct().ToList()
             })
