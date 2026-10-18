@@ -7,8 +7,6 @@ using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.ViewModels;
 using RdoApp.Core.Services;
 using System.Security.Claims;
-using System.Text.Json;
-
 namespace RdoApp.Core.Controllers
 {
     /// <summary>
@@ -87,44 +85,49 @@ namespace RdoApp.Core.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Selecionar(int idObra, CancellationToken cancellationToken)
         {
-            var colaboradorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
-            if (string.IsNullOrEmpty(colaboradorIdClaim) || !int.TryParse(colaboradorIdClaim, out int colaboradorId))
+            try
             {
-                _logger.LogWarning("Invalid colaboradorId in claims, redirecting to login");
-                return RedirectToAction("Login", "Account");
-            }
+                var colaboradorIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (idObra <= 0)
+                if (string.IsNullOrEmpty(colaboradorIdClaim) || !int.TryParse(colaboradorIdClaim, out int colaboradorId))
+                {
+                    _logger.LogWarning("Invalid colaboradorId in claims, redirecting to login");
+                    return RedirectToAction("Login", "Account");
+                }
+
+                if (idObra <= 0)
+                {
+                    TempData["ObraError"] = "Obra inválida.";
+                    return RedirectToAction(nameof(Escolher));
+                }
+
+                var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
+                var existingLogin = LoginSessionJson.TryDeserialize(loginDataJson);
+
+                _logger.LogInformation("Colaborador {ColaboradorId} selecting obra {IdObra}", colaboradorId, idObra);
+
+                var result = await _loginObraService.SelectObraAsync(colaboradorId, idObra, existingLogin, cancellationToken);
+                if (!result.Success || result.LoginData == null)
+                {
+                    TempData["ObraError"] = result.ErrorMessage ?? "Não foi possível selecionar a obra.";
+                    return RedirectToAction(nameof(Escolher));
+                }
+
+                HttpContext.Session.SetString(SessionKeys.LoginData, LoginSessionJson.Serialize(result.LoginData));
+                HttpContext.Session.SetInt32(SessionKeys.ObraId, result.ObraId);
+                HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome ?? string.Empty);
+                HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, result.ObraColaboradorId);
+
+                _logger.LogInformation("Obra {IdObra} selected, redirecting to task cards", idObra);
+
+                return RedirectToAction("Cards", "Tarefa");
+            }
+            catch (Exception ex)
             {
-                TempData["ObraError"] = "Obra inválida.";
+                _logger.LogError(ex, "Unhandled error in Obra/Selecionar for obra {IdObra}", idObra);
+                TempData["ObraError"] = "Erro ao selecionar a obra. Tente novamente ou contate o suporte.";
                 return RedirectToAction(nameof(Escolher));
             }
-
-            LoginViewModel? existingLogin = null;
-            var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
-            if (!string.IsNullOrEmpty(loginDataJson))
-            {
-                existingLogin = JsonSerializer.Deserialize<LoginViewModel>(loginDataJson);
-            }
-
-            _logger.LogInformation("Colaborador {ColaboradorId} selecting obra {IdObra}", colaboradorId, idObra);
-
-            var result = await _loginObraService.SelectObraAsync(colaboradorId, idObra, existingLogin, cancellationToken);
-            if (!result.Success)
-            {
-                TempData["ObraError"] = result.ErrorMessage;
-                return RedirectToAction(nameof(Escolher));
-            }
-
-            HttpContext.Session.SetString(SessionKeys.LoginData, JsonSerializer.Serialize(result.LoginData));
-            HttpContext.Session.SetInt32(SessionKeys.ObraId, result.ObraId);
-            HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome ?? string.Empty);
-            HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, result.ObraColaboradorId);
-
-            _logger.LogInformation("Obra {IdObra} selected, redirecting to task cards", idObra);
-
-            return RedirectToAction("Cards", "Tarefa");
         }
     }
 }

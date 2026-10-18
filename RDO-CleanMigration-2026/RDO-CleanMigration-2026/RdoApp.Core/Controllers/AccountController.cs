@@ -146,7 +146,7 @@ namespace RdoApp.Core.Controllers
 
                 // Store colaboradorId and login data in session
                 HttpContext.Session.SetInt32("ColaboradorId", colaborador.ColIdColaborador);
-                HttpContext.Session.SetString("LoginData", System.Text.Json.JsonSerializer.Serialize(loginViewModel));
+                HttpContext.Session.SetString(SessionKeys.LoginData, LoginSessionJson.Serialize(loginViewModel));
 
                 _logger.LogInformation("User {Nome} (ID: {ColaboradorId}) logged in successfully", 
                     colaborador.ColNmColaborador, colaborador.ColIdColaborador);

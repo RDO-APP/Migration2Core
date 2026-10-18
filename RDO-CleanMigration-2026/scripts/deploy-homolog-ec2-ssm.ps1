@@ -31,6 +31,10 @@ Write-Host "Upload $ZipPath -> $s3Uri" -ForegroundColor Cyan
 & aws s3 cp $ZipPath $s3Uri --region $AwsRegion
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+$presignedUrl = aws s3 presign $s3Uri --expires-in 7200 --region $AwsRegion
+if ($LASTEXITCODE -ne 0 -or -not $presignedUrl) { throw 'aws s3 presign failed' }
+$presignedUrl = $presignedUrl.Trim()
+
 $scriptPath = Join-Path $PSScriptRoot 'ec2-apply-rdoapp-core.ps1'
 if (-not (Test-Path $scriptPath)) { throw "Missing $scriptPath" }
 $remoteScript = Get-Content -Raw -Path $scriptPath
@@ -43,12 +47,14 @@ $commands = @(
 $remoteScript
 '@
 Set-Content -Path `$env:TEMP\ec2-apply-rdoapp-core.ps1 -Value `$script -Encoding UTF8
-& `$env:TEMP\ec2-apply-rdoapp-core.ps1 -S3Bucket '$S3Bucket' -S3Key '$S3Key' -SitePath '$SitePath' -AwsRegion '$AwsRegion' $poolArg
+& `$env:TEMP\ec2-apply-rdoapp-core.ps1 -S3Bucket '$S3Bucket' -PresignedZipUrl '$presignedUrl' -SitePath '$SitePath' -AwsRegion '$AwsRegion' $poolArg
 "@
 )
 
 $paramPath = Join-Path $env:TEMP "ssm-homolog-core-$timestamp.json"
-@{ commands = $commands } | ConvertTo-Json | Set-Content -Path $paramPath -Encoding UTF8
+$paramJson = @{ commands = $commands } | ConvertTo-Json -Depth 5
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($paramPath, $paramJson, $utf8NoBom)
 
 Write-Host "SSM SendCommand -> $InstanceId" -ForegroundColor Cyan
 $commandId = aws ssm send-command `

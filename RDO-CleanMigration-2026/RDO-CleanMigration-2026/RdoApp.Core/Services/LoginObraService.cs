@@ -69,8 +69,17 @@ public class LoginObraService
         var grupoLower = grupoNome.ToLowerInvariant();
 
         var loginData = existingLogin ?? new LoginViewModel();
-        loginData.Routes = await _rbac.GetRoutesForGroupAsync(assignment.oc.OcoIdGrupo, cancellationToken);
-        loginData.Menu = await _rbac.GetMenuForGroupAsync(assignment.oc.OcoIdGrupo, cancellationToken);
+        try
+        {
+            loginData.Routes = await _rbac.GetRoutesForGroupAsync(assignment.oc.OcoIdGrupo, cancellationToken);
+            loginData.Menu = await _rbac.GetMenuForGroupAsync(assignment.oc.OcoIdGrupo, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "RBAC load failed for grupo {GrupoId}; keeping default routes/menu", assignment.oc.OcoIdGrupo);
+            loginData.Routes ??= new List<RouteViewModel>();
+            loginData.Menu ??= new MenuViewModel();
+        }
         loginData.Usuario = new UsuarioViewModel
         {
             Email = assignment.c.ColDsEmail,

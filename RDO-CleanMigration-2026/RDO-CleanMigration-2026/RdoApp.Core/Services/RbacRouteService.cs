@@ -65,7 +65,14 @@ public class RbacRouteService
             join p in _context.Paginas on mp.MpaIdPagina equals p.PagIdPagina
             where mp.MpaIdMenu == grupo.GruIdMenu
             orderby mp.MpaVlOrdem
-            select new MenuPaginaRow(mp.MpaIdMenuPagina, mp.MpaIdPaginaPai, mp.MpaVlOrdem, mp.MpaDsClass, p.PagIdPagina, p.PagNmTitulo, p.PagDsUrl)
+            select new MenuPaginaRow(
+                mp.MpaIdMenuPagina,
+                mp.MpaIdPaginaPai,
+                mp.MpaVlOrdem,
+                mp.MpaDsClass ?? string.Empty,
+                p.PagIdPagina,
+                p.PagNmTitulo ?? string.Empty,
+                p.PagDsUrl ?? string.Empty)
         ).ToListAsync(cancellationToken);
 
         var result = new MenuViewModel

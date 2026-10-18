@@ -3,8 +3,9 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$S3Bucket,
 
-    [Parameter(Mandatory = $true)]
-    [string]$S3Key,
+    [string]$S3Key = '',
+
+    [string]$PresignedZipUrl = '',
 
     [string]$SitePath = 'C:\inetpub\wwwroot\homologacao\rdoapp_core',
 
@@ -41,10 +42,26 @@ if (Test-Path $stagingPath) {
 }
 
 $zipPath = Join-Path $env:TEMP 'rdoapp_core-deploy.zip'
-$s3Uri = "s3://$S3Bucket/$S3Key"
-Write-Output "Downloading $s3Uri ..."
-& aws s3 cp $s3Uri $zipPath --region $AwsRegion
-if ($LASTEXITCODE -ne 0) { throw "aws s3 cp failed ($LASTEXITCODE)" }
+if ($PresignedZipUrl) {
+    Write-Output 'Downloading deploy zip via presigned URL ...'
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri $PresignedZipUrl -OutFile $zipPath -UseBasicParsing
+} else {
+    if (-not $S3Key) { throw 'Provide S3Key or PresignedZipUrl' }
+    $s3Uri = "s3://$S3Bucket/$S3Key"
+    Write-Output "Downloading $s3Uri ..."
+    $awsExe = @(
+        (Join-Path $env:ProgramFiles 'Amazon\AWSCLIV2\aws.exe'),
+        (Join-Path ${env:ProgramFiles(x86)} 'Amazon\AWSCLIV2\aws.exe')
+    ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if (-not $awsExe) {
+        $awsCmd = Get-Command aws -ErrorAction SilentlyContinue
+        if ($awsCmd) { $awsExe = $awsCmd.Source }
+    }
+    if (-not $awsExe) { throw 'aws CLI not found on EC2; redeploy with PresignedZipUrl from your PC' }
+    & $awsExe s3 cp $s3Uri $zipPath --region $AwsRegion
+    if ($LASTEXITCODE -ne 0) { throw "aws s3 cp failed ($LASTEXITCODE)" }
+}
 
 $extractRoot = Join-Path $env:TEMP 'rdoapp_core_extract'
 if (Test-Path $extractRoot) { Remove-Item -Recurse -Force $extractRoot }
@@ -59,6 +76,25 @@ if ($AppPoolName -and (Get-Module WebAdministration)) {
         Start-Sleep -Seconds 2
     }
 }
+
+Write-Output 'Stopping RdoApp.Core (Kestrel homolog)...'
+function Stop-HomologCoreProcess {
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'SilentlyContinue'
+    cmd /c "taskkill /F /IM RdoApp.Core.exe >nul 2>&1"
+    Get-Process -Name 'RdoApp.Core' -ErrorAction SilentlyContinue | Stop-Process -Force
+    $ErrorActionPreference = $prev
+}
+Stop-HomologCoreProcess
+$deadline = (Get-Date).AddSeconds(45)
+while (Get-Process -Name 'RdoApp.Core' -ErrorAction SilentlyContinue) {
+    if ((Get-Date) -gt $deadline) {
+        throw 'RdoApp.Core still running; cannot overwrite binaries'
+    }
+    Start-Sleep -Seconds 2
+    Stop-HomologCoreProcess
+}
+Start-Sleep -Seconds 2
 
 Get-ChildItem -Path $extractRoot -Force | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $SitePath -Recurse -Force
@@ -75,6 +111,19 @@ if ($AppPoolName -and (Get-Module WebAdministration)) {
         Write-Output "Starting app pool $AppPoolName"
         Start-WebAppPool -Name $AppPoolName -ErrorAction SilentlyContinue
     }
+}
+
+$coreExe = Join-Path $SitePath 'RdoApp.Core.exe'
+if (Test-Path $coreExe) {
+    Write-Output 'Starting RdoApp.Core (Kestrel homolog)...'
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = $coreExe
+    $psi.WorkingDirectory = $SitePath
+    $psi.UseShellExecute = $false
+    $psi.EnvironmentVariables['ASPNETCORE_ENVIRONMENT'] = 'Staging'
+    $psi.EnvironmentVariables['ASPNETCORE_URLS'] = "http://*:$SmokePort"
+    [void][System.Diagnostics.Process]::Start($psi)
+    Start-Sleep -Seconds 5
 }
 
 $smokeUrl = "http://127.0.0.1:$SmokePort/Account/Login"
