@@ -85,7 +85,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M2** — Cards com dados (**EQ-R**) — [`m2-execucao-checklist.md`](m2-execucao-checklist.md).
+**Marco ativo:** **M2** — Cards com dados (**EQ-R**) — [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md).
 
 **Histórico:** **M1** FECHADO 2026-10-17 ([`m1-execucao-checklist.md`](m1-execucao-checklist.md) · [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)). **M0** PARCIAL PASS — [`m0-registro-encerramento.md`](m0-registro-encerramento.md).
 
@@ -172,7 +172,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 |:-----:|:------:|-----|
 | M0 | PARCIAL PASS | [`m0-registro-encerramento.md`](m0-registro-encerramento.md) |
 | M1 | FECHADO | [`m1-execucao-checklist.md`](m1-execucao-checklist.md) |
-| M2 | **em curso** | [`m2-execucao-checklist.md`](m2-execucao-checklist.md) |
+| M2 | **em curso** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 
 ---
 

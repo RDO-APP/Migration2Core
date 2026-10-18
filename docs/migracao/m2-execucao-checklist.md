@@ -1,7 +1,7 @@
 # M2 — Cards homolog (EQ-R)
 
 **Início:** 2026-10-17 · **Trilha:** EQ-R (backend BFF mínimo **EQ-W/R** no Core)  
-**Pré-requisito:** M1 fechado — [`m1-execucao-checklist.md`](m1-execucao-checklist.md) · contrato [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)
+**Pré-requisito:** M1 fechado — [`../m1-execucao-checklist.md`](../m1-execucao-checklist.md) · contrato [`../api-client-equipamentos-v1.md`](../api-client-equipamentos-v1.md)
 
 ---
 
@@ -41,17 +41,17 @@ Operador autenticado vê **etapas/tarefas com dados** na UI **React** (paridade 
 | ID | Item | Trilha |
 |----|------|--------|
 | EQ-W0.5 | Redeploy EC2 + branding Equipamentos + fix `POST /Obra/Selecionar` | EQ-W + **I** |
-| M3 | Assinar [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) fluxo completo | Lucio |
+| M3 | Assinar [`../e2e-fase0-checklist.md`](../e2e-fase0-checklist.md) fluxo completo | Lucio |
 
 ---
 
 ## Critério de fechamento M2
 
 - [ ] Lucio (ou agente + Lucio confirma) vê **≥1 etapa** com dados reais para obra de teste após login homolog.
-- [ ] Código + docs M2 commitados em **`RDO-APP/Migration2Core`** (quando Lucio pedir push).
+- [x] Código M2 commitados em **`RDO-APP/Migration2Core`** (`89adbe4`); docs orquestrador neste push.
 
 ---
 
 ## Pendências herdadas (não são M2 sozinhas)
 
-Ver [`m0-registro-encerramento.md`](m0-registro-encerramento.md) §5 · E2E localhost E2 · workshop Dimas (async doc only).
+Ver [`../m0-registro-encerramento.md`](../m0-registro-encerramento.md) §5 · E2E localhost E2 · workshop Dimas (async doc only).
