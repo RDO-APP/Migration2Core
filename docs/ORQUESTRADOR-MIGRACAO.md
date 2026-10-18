@@ -1,7 +1,9 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-17 — **Marco M2** ativo · M1 FECHADO · M0 PARCIAL PASS  
+**Atualizado:** 2026-10-18 — **Marco M2** ativo · M1 FECHADO · M0 PARCIAL PASS  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
+
+**Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
 
 ### Repositório Git (canônico)
 

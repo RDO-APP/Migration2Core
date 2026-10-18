@@ -1,0 +1,45 @@
+---
+description: Orquestrador migração — ler ORQUESTRADOR e declarar mapa de impacto antes de mudar código/docs
+alwaysApply: true
+---
+
+# Orquestrador — impacto antes de mudar
+
+Canônico: `docs/ORQUESTRADOR-MIGRACAO.md` (trilhas **EQ-L / EQ-R / EQ-M / EQ-W**, **F**, **I**).
+
+## Início de sessão (Migração / Equipamentos)
+
+1. Ler `docs/ORQUESTRADOR-MIGRACAO.md` (fase atual, gap #1, decisões).
+2. Classificar o pedido do usuário em **uma sub-trilha** (ou **F** / **I**).
+
+## Antes de editar código ou doc de migração
+
+Declarar explicitamente (não pular):
+
+- **Sub-trilha:** EQ-R | EQ-M | EQ-W | EQ-L | F | I
+- **Repos/paths:** onde o diff vai (ex. `Migration2Core`, `Equipamentos`, `EquipamentosMobile`, `docs/…`)
+- **Impacto cruzado:** outras trilhas, RDS (`homol_rdoapp` / `novo_rdoapp`), Apontador, CI homolog, chat **FAPESC** / **Loja** se aplicável
+- **Fora de escopo:** o que **não** será tocado nesta sessão
+
+Usar a tabela **Mapa de impacto** em `ORQUESTRADOR-MIGRACAO.md`. Em dúvida, preferir **EQ-R** para UI web nova; **EQ-W** só bugfix ponte.
+
+## Regras rápidas
+
+| Pedido | Trilha | Não fazer |
+|--------|--------|-----------|
+| Cards / telas web | EQ-R | Feature nova em Razor (EQ-W) |
+| API mobile / Expo | EQ-M | Assumir Core homolog sem E3 |
+| Hotfix prod IIS | EQ-L | Deploy Core em `:80` prod |
+| OIDC/S3/SSM homolog | I | CI antes gate E6 (Cards EQ-R) |
+| PoC blockchain / Termo | — | Redirecionar chat FAPESC Execução |
+
+## Git (Lucio — canônico)
+
+- **Migration2Core:** homolog Core, `client/`, CI, orquestrador, M0/M1, api-client docs.
+- **Equipamentos:** legado prod (**EQ-L**) — **não** commitar pacote migração homolog/orquestrador.
+- **EquipamentosMobile:** **EQ-M**.
+- **Push (agente):** seguir § **Git push** em `ORQUESTRADOR-MIGRACAO.md` / `docs/migracao/git-push-checklist.md` — conferir stage antes de commit; PowerShell usa `;`.
+
+## Ao fechar sessão
+
+Se houve marco ou decisão: atualizar **Próxima ação** em `ORQUESTRADOR-MIGRACAO.md` (cópia versionada no **Migration2Core** quando houver commit).
