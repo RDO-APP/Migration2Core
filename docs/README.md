@@ -5,12 +5,16 @@
 | O quê | Onde |
 |-------|------|
 | Orquestrador (ler primeiro) | [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) |
+| Manual UI 5 vetores (M0′) | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| Matriz 4 páginas prod | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
+| Manual Kiro (pastas + código) | [`migracao/manual-conhecimento-kiro-equipamentos.md`](migracao/manual-conhecimento-kiro-equipamentos.md) |
+| Deploy homolog (Lucio) | [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) |
 | Marcos M0–M2 | `m0-*`, `m1-*`, [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 | Estudos E0–E6 | arquivos `migracao-*.md`, `plano-execucao-migracao-v1.md`, `estudo-ci-homolog-readiness-e6.md` |
 | API compartilhada EQ-R/EQ-M | [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md) · [`api-client/`](api-client/) |
 | Git push (agente) | [`migracao/git-push-checklist.md`](migracao/git-push-checklist.md) |
 | CI homolog (código) | [`../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md`](../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md) |
-| Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** · stub [`editais-fapesc/README.md`](editais-fapesc/README.md) |
+| Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** |
 | Regra Cursor (cópia) | [`cursor-rules/orquestrador-migracao-impacto.mdc`](cursor-rules/orquestrador-migracao-impacto.mdc) |
 
 Workspace Cursor **Equipamentos** (OneDrive) pode espelhar estes arquivos — **editar e commitar aqui**, não no repo legado `Equipamentos`.

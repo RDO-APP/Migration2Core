@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-18 — **Marco M2** ativo · M1 FECHADO · M0 PARCIAL PASS  
+**Atualizado:** 2026-10-19 — **M0′** manual **5 vetores** (GitHub/RDS + diagrama + Login→Nova medição) · matriz 4 páginas · M1 FECHADO · M0 PARCIAL PASS · M2 produto **bloqueado** (paridade Cards) · **4 páginas × M** § abaixo  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -10,8 +10,10 @@
 | O quê | Repo | Não commitar aqui |
 |-------|------|-------------------|
 | Core homolog, `client/`, CI, **docs M0/M1/orquestrador** | **`RDO-APP/Migration2Core`** | — |
-| Legado prod IIS / AngularJS | `RDO-APP/Equipamentos` | docs de migração homolog |
-| Apontador | `RDO-APP/EquipamentosMobile` | — |
+| Legado prod obras IIS / AngularJS (**EQ-L**) | **`RDO-APP/Equipamentos`** · `novo_rdoapp` | docs de migração homolog |
+| Legado prod Piscinas web (**PQ-L**) | **`RDO-APP/EquipoToPiscina`** · `piscinas.rdoapp.com.br` · `piscinas_rdoapp` | ≠ `Equipamentos` · ≠ `Migration2Core/EquipoToPiscina-1/` |
+| Apontador (**EQ-M**) | **`RDO-APP/EquipamentosMobile`** | — |
+| Piscineiro (**PQ-M**) | **`RDO-APP/RDOAppPiscinasMobile`** (ref. `PiscinasMobile`) | — |
 
 Workspace Cursor **Equipamentos** (OneDrive) pode ter cópia local dos `.md` — **push = Migration2Core** (`C:\Dev\Migration2Core`). Clone legado Equipamentos = referência **EQ-L** somente.
 
@@ -87,18 +89,24 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M2** — Cards com dados (**EQ-R**) — [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md).
+**Marco ativo:** **M0′** — matriz **prod × Kiro × mobile** (4 páginas) — [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md). **Cruzamento com marcos M:** § [4 páginas × marcos M](#4-páginas--marcos-m-visão-única).
 
-**Histórico:** **M1** FECHADO 2026-10-17 ([`m1-execucao-checklist.md`](m1-execucao-checklist.md) · [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)). **M0** PARCIAL PASS — [`m0-registro-encerramento.md`](m0-registro-encerramento.md).
+**Manual front-end (5 vetores — M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **diagrama Mermaid** · tabela **GitHub + RDS** (①–⑤) · tabelas **§0–§4** (casca → Login → Escolher → Cards → Nova medição) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
-**Dívida paralela:** **EQ-W0.5** (redeploy + branding + `Selecionar`) — gate **M3** E2E assinado, não bloqueia codar M2 local.
+**Próxima ação (ordem):** (1) Lucio OK restante manual §10 (RDS/homolog PQ) + Network prod 4 telas obras · (2) **M2.1** BFF agrupador + UI Cards (paridade ①) · (3) **I0** deploy [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) · (4) gate M3 parcial E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md).
+
+**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS — [`m0-registro-encerramento.md`](m0-registro-encerramento.md). **M2** código (BFF + React) em branch; **não** declarar M2 fechado até gate M3 parcial.
+
+**Deploy:** agente **não** executa SSM full; Lucio ou **I0** (hotfix/CI). Roteiro: [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
 ### Pendências por marco (snapshot)
 
 | Marco | Feito | Ainda pendente |
 |-------|--------|----------------|
-| **M0** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher (7 obras); docs E0–E6/orquestrador | E2E **Selecionar→Cards** FAIL; branding Piscinas no ar; Escolher CSS; E2 localhost completo; **Dimas** workshop (substituído por doc async) |
-| **M1** | Cenário **A**; v1 endpoints; tipos TS Auth/Obra/Cards; mapa Core vs legado; orquestrador | Pacote npm publicado; EQ-M ainda não consome tipos; arquivos **só OneDrive** até commit **Migration2Core** |
+| **M0** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher (7 obras); docs E0–E6/orquestrador | branding homolog; Escolher CSS STRATEGY-2; E2 localhost completo |
+| **M0′** | Matriz 4 páginas; **manual 5 vetores**; **EquipoToPiscina** fechado (PQ-L) | OK §10 manual (RDS/homolog PQ); capturas Network prod |
+| **M1** | Cenário **A**; v1 endpoints; tipos TS Auth/Obra/Cards; mapa Core vs legado | Pacote npm publicado; EQ-M ainda não consome tipos |
+| **W0.5 / E2E** | **Selecionar** + sessão obra; Cards com **dados** BFF (smoke obra 42) | Paridade **UI** Cards vs `cards.html`; agrupador BFF |
 
 ---
 
@@ -114,6 +122,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **M2 BFF Cards:** **homolog-only** (EF `homol_rdoapp`) — não proxy prod API (ids de obra divergem).
 - Branch CI: `ci/homolog-ec2-s3-ssm`.
 - Prod web: **EQ-L** até cutover Onda 6.
+- **PQ-L** web Piscinas prod: repo **`EquipoToPiscina`** · RDS **`piscinas_rdoapp`** — manual M0′ § referência rápida.
 
 ---
 
@@ -129,6 +138,11 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 ---
 
 ## Entregáveis estudo (índice)
+
+| Marco / doc | Documento |
+|:----:|-----------|
+| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · repos + RDS · páginas §0–§5 |
+| M0′ matriz 4 telas | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 
 | Fase | Documento |
 |:----:|-----------|
@@ -162,9 +176,28 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ---
 
+## 4 páginas × marcos M (visão única)
+
+**Propósito:** cada **página operador** não é um marco M separado; entra como **critério**, **dono de trilha** ou **passo E2E** nos marcos abaixo. **E0–E6** = estudo; **M\*** = execução. **M0′** não substitui M0–M10 — é **gate de realinhamento** antes de declarar M2/M3 produto.
+
+**Legenda colunas M:** ● = foco principal do marco · ○ = pré-requisito ou smoke · — = fora do escopo · ✅ = já coberto na ponte · ❌ = dívida ativa
+
+| # | Página (prod EQ-L) | E2E | Dono alvo | M0 | M0′ | M1 | I0 | M2 | M3 | M4 | M5 | M6 | M7+ | M9 (D*) |
+|---|-------------------|:---:|-----------|:--:|:---:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:---:|:-------:|
+| **1** | **Login** (`#/login` · `LoginUser`) | 1 | EQ-W → EQ-R | ○ EQ-W login homolog OK | ● comparar prod/Kiro/mobile | ● contrato `LoginUser` / tipos | ○ smoke pós-deploy | ○ pré passo 1 | ● passo 1 assinado | ○ EQ-R assume UI | ○ app login prod | ○ JWT homolog | ○ RBAC pós-login | **D1** início · **D2** branding |
+| **2** | **Escolher** (`#/obra/escolher` · **LoginObra**) | 2–3 | EQ-W → EQ-R | ○ lista 7 obras | ● matriz + **W0.5** Selecionar | ● `LoginObra` no api-client | — | ○ bloqueado se Selecionar ❌ | ● passos 2–3 | ○ EQ-R opcional | ● mobile LoginObra ref | ○ mesma API | ○ filtros/RBAC header | **D1** meio |
+| **3** | **Etapas / Cards** (`#/tarefa/cards`) | 4 | **EQ-R** (+ BFF) | — placeholder citado | ● gap Cards vs `cards.html` | ● etapa/Get no contrato | — | ● **foco M2** React+BFF | ● passo 4 E2E | ● critério encerrar EQ-W | ● fluxo campo espelho | ○ auth API | ○ strangler +1 tela | **D1** fim |
+| **4** | **Nova medição** (modal em `cards.html`) | — (pós-M3) | EQ-R / Onda 2 | — | ○ escopo prod vs Kiro laudo | ○ endpoints medição | — | — | — fora gate M3 | — | ● regras EQ-M | ○ API | ● **M7+** web modal | fora D1–D2 |
+
+**Ordem de gates (não mudou a direção React+RN):** M0 (parcial) → M1 (fechado) → **M0′** (matriz) → **Selecionar (W0.5)** + **I0** → **M2** produto → **M3** → **M4** (congela EQ-W) → M5–M9.
+
+Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · sequência marcos: [`plano-execucao-migracao-v1.md`](plano-execucao-migracao-v1.md) §3.
+
+---
+
 ## Gap técnico #1
 
-**M2:** Cards **com dados** (**EQ-R**) via contrato M1 (`etapa/Get`). EQ-W placeholder + clique instável — **EQ-W0.5** antes de M3 E2E assinado.
+**EQ-W0.5 / página 2:** **`POST /Obra/Selecionar`** (= LoginObra web) — ver [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md). **M2 Cards** bloqueado até passo 3 do gate E2E.
 
 ---
 
@@ -174,13 +207,15 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 |:-----:|:------:|-----|
 | M0 | PARCIAL PASS | [`m0-registro-encerramento.md`](m0-registro-encerramento.md) |
 | M1 | FECHADO | [`m1-execucao-checklist.md`](m1-execucao-checklist.md) |
-| M2 | **em curso** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
+| M0′ | **ativo** | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| I0 | pendente | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) |
+| M2 | código branch; produto **pausado** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 
 ---
 
 ## Próxima ação (1)
 
-**M2.5:** Lucio — `npm run build` em `client/` · `dotnet run` Core · login → obra → `/Tarefa/Cards` com etapas. **EQ-W0.5** (Selecionar + redeploy) se homolog EC2 ainda falhar antes do M3.
+Ver **§ Fase atual** acima (fonte única). Resumo: **M2 paridade Cards** · **I0** · E2E obras passos 1–4 [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md).
 
 ---
 
@@ -189,6 +224,8 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | | |
 |--|--|
 | E2E | `e2e-fase0-checklist.md` |
+| Manual UI 5 vetores | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
+| Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |
 | RDS | `rds-equipamentos-governanca-catalogos.md` |
 | Chats | `CURSOR_MAPA_CHATS.md` |
 | CI (I) | `PLANO-CI-HOMOLOG-EC2.md` |
