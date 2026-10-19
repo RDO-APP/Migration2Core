@@ -12,7 +12,11 @@ export async function fetchCardsContext(): Promise<CardsContext> {
 
   if (!res.ok) {
     const text = await res.text()
-    throw new Error(text || `Erro ${res.status} ao carregar tarefas.`)
+    const short =
+      text.includes('<!DOCTYPE') || text.includes('<html')
+        ? `Erro ${res.status} no servidor ao carregar tarefas (homolog).`
+        : text || `Erro ${res.status} ao carregar tarefas.`
+    throw new Error(short)
   }
 
   return res.json() as Promise<CardsContext>
