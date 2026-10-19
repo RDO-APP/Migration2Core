@@ -32,88 +32,68 @@ Hosts produto: ① `https://sistema.rdoapp.com.br` · ② `https://homolog.siste
 
 ---
 
-## Diagrama — vetores produto + FAPESC (fluxo operador §1–4)
+## Diagrama — vetores produto + FAPESC (arquitetura correta)
 
-**Legenda fluxo:** Login → Escolher → Cards → Nova medição (web modal ou tela mobile).
+**Correção (apps):** **③ Apontador** e **⑤ Piscineiro** **não** ficam acima do web nem “dentro” das telas Login→Cards. São **clientes móveis** (Expo/RN) que chamam o **mesmo host/API** que o browser: `sistema…` (obras) e `piscinas…` (piscinas). Cenário **A** (M1): mobile **não** aponta para homolog Core (②).
+
+**Paridade §1–4:** só **web ①** vs **homolog ②** (strangler). Mobile replica **fluxo de negócio** com **UI RN**, via **`/api/*`** do legado prod.
 
 ```mermaid
 flowchart TB
-  subgraph RDS["RDS us-east-2 · equipamentos.cslrikufb7hm"]
+  subgraph UI["Camada UI — clientes"]
+    direction LR
+    subgraph COL_OBRAS["Obras"]
+      W1["① Web AngularJS<br/>Equipamentos"]
+      M3["③ Apontador APK<br/>EquipamentosMobile"]
+    end
+    subgraph COL_PISC["Piscinas"]
+      W4["④ Web AngularJS<br/>EquipoToPiscina"]
+      M5["⑤ Piscineiro APK<br/>RDOAppPiscinasMobile"]
+    end
+    W2["② Homolog web<br/>Migration2Core MVC+React"]
+  end
+
+  subgraph API["Camada host / Web API"]
+    S1["sistema.rdoapp.com.br"]
+    S2["homolog.sistema.rdoapp.com.br :5081"]
+    S4["piscinas.rdoapp.com.br"]
+  end
+
+  subgraph RDS["RDS · equipamentos.cslrikufb7hm"]
     N["novo_rdoapp"]
     H["homol_rdoapp"]
     P["piscinas_rdoapp"]
-    PH["piscinas_rdoapp_homologa"]
   end
 
-  subgraph V1["① EQ-L · produção obras"]
-    R1["GitHub Equipamentos"]
-    U1["sistema.rdoapp.com.br"]
-    A1["AngularJS + Web API"]
-    R1 --> U1 --> A1 --> N
+  subgraph F6["⑥ FAPESC · Trilha F"]
+    RB["rdo-blockchain"]
+    TT["testnet L2 PoC"]
+    RB --> TT
   end
 
-  subgraph V2["② EQ-W/R · homolog Core"]
-    R2["GitHub Migration2Core"]
-    U2["homolog.sistema.rdoapp.com.br"]
-    W2["MVC cookie + React Cards"]
-    R2 --> U2 --> W2 --> H
+  W1 --> S1
+  M3 -->|"HTTPS /api/* prod"| S1
+  W2 --> S2
+  W4 --> S4
+  M5 -->|"HTTPS /api/* prod"| S4
+
+  S1 --> N
+  S2 --> H
+  S4 --> P
+
+  S1 -.->|"RDO assinado → hash"| RB
+  N -.->|"tabela aditiva rdo_ancoragem"| RB
+
+  subgraph TELAS["Referência paridade telas web (① ↔ ②)"]
+    direction LR
+    T1[Login] --> T2[Escolher] --> T3[Cards] --> T4[Nova medição]
   end
 
-  subgraph V3["③ EQ-M · Apontador"]
-    R3["GitHub EquipamentosMobile"]
-    M3["Expo RN · APK"]
-    M3 -->|"API prod"| U1
-  end
-
-  subgraph V4["④ PQ-L · produção Piscinas web"]
-    R4["GitHub EquipoToPiscina"]
-    U4["piscinas.rdoapp.com.br"]
-    A4["AngularJS + Web API · Laudo"]
-    R4 --> U4 --> A4 --> P
-  end
-
-  subgraph V5["⑤ PQ-M · Piscineiro"]
-    R5["GitHub RDOAppPiscinasMobile"]
-    M5["Expo RN · appPiscinas"]
-    M5 -->|"API prod"| U4
-  end
-
-  A1 --> F1["1 Login"]
-  F1 --> F2["2 Escolher obra"]
-  F2 --> F3["3 Etapas / Cards"]
-  F3 --> F4["4 Nova medição"]
-
-  W2 -.->|"paridade alvo"| F1
-  W2 -.-> F2
-  W2 -.-> F3
-  W2 -.-> F4
-
-  M3 -.-> F1
-  M3 -.-> F2
-  M3 -.-> F3
-  M3 -.-> F4
-
-  A4 -.-> F1
-  A4 -.-> F2
-  A4 -.-> F3
-  A4 -.-> F4
-
-  M5 -.-> F1
-  M5 -.-> F2
-  M5 -.-> F3
-  M5 -.-> F4
-
-  subgraph V6["⑥ FAPESC · Trilha F"]
-    R6["GitHub rdo-blockchain"]
-    T6["testnet L2 PoC"]
-    R6 --> T6
-  end
-
-  A1 -.->|"RDO assinado · hash"| R6
-  N -.->|"metadados futuros rdo_ancoragem"| R6
+  W1 -.-> TELAS
+  W2 -.->|"EQ-R alvo"| TELAS
 ```
 
-**Leitura:** duas **linhas de produção** web (① obras · ④ piscinas); homolog Equipamentos (②) **só** `homol_rdoapp`; apps ③⑤ consomem API do respectivo host prod. **⑥** ancora **depois** do fechamento/assinatura no **①** — não passa por Login/Escolher/Cards do operador de campo.
+**Leitura:** duas **stacks prod** (obras · piscinas), cada uma **web + app** no **mesmo backend**. **②** isola `homol_rdoapp`. **⑥** dispara **depois** do RDO fechado no **①**, independente do operador mobile.
 
 ---
 

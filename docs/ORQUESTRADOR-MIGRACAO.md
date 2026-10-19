@@ -31,35 +31,43 @@ flowchart TB
 
   U --> O --> A
 
-  A --> EQ[Trilha EQ — produto Equipamentos]
-  A --> F[Trilha F — ponte FAPESC]
+  A --> EQ[Trilha EQ — obras]
+  A --> F[Trilha F — FAPESC]
   A --> I[Trilha I — infra homolog CI]
 
-  subgraph EQsub [Trilha EQ]
-    EQL[EQ-L — legado prod]
-    EQW[EQ-W — ponte Razor W1]
-    EQR[EQ-R — web React alvo]
-    EQM[EQ-M — Apontador RN]
+  subgraph PROD_OBRAS [Prod obras · host sistema]
+    EQLd[EQ-L Equipamentos<br/>AngularJS + Web API]
+    EQLd --> RDSN[(novo_rdoapp)]
   end
 
-  EQ --> EQL
-  EQ --> EQW
-  EQ --> EQR
-  EQ --> EQM
+  subgraph HOMOLOG [Homolog Core]
+    EQWd[EQ-W/R Migration2Core]
+    EQWd --> RDSH[(homol_rdoapp)]
+  end
 
-  EQR <-->|api-client · OpenAPI · JWT| EQM
+  EQM[EQ-M Apontador<br/>EquipamentosMobile]
+  EQM -->|"API prod cenário A"| EQLd
 
-  EQL --> EQLd[Equipamentos · AngularJS + api/* prod]
-  EQW --> EQWd[Migration2Core Razor · homolog :5081]
-  EQR --> EQRd[React Vite strangler · TSK-10+ · homolog]
-  EQM --> EQMd[EquipamentosMobile · Expo/RN]
+  EQR[EQ-R React strangler]
+  EQR --> EQWd
+  EQW[EQ-W ponte Razor] --> EQWd
+  EQW -.->|encerrar| EQR
 
-  F --> Fd[anexo E4 · marcos Ondas U]
-  I --> Id[ci/homolog-ec2-s3-ssm · pausado]
-  Fd -.-> FC[Chat FAPESC Execução]
+  EQR <-.->|tipos · OpenAPI · JWT alvo| EQM
 
-  EQW -.->|encerrar quando EQ-R E2E OK| EQR
+  subgraph FAPESC [Trilha F]
+    FBC[rdo-blockchain]
+    FBC --> TEST[testnet PoC]
+  end
+
+  F --> FAPESC
+  F -.-> FC[Chat FAPESC Execução]
+  EQLd -.->|RDO assinado| FBC
+
+  I --> Id[ci/homolog-ec2-s3-ssm]
 ```
+
+**Apps (EQ-M):** cliente do **EQ-L** (`/api/*` prod) — **não** filho visual do homolog; **não** substituem telas Angular. Ver manual M0′ diagrama § arquitetura.
 
 | Sigla | Papel | Foco | Repo / doc |
 |:-----:|-------|------|------------|
