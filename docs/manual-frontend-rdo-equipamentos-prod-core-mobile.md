@@ -1,6 +1,6 @@
-# Manual técnico e gráfico (front-end) — RDO App · 5 vetores
+# Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
-**Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)**  
+**Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
 **Data:** 2026-10-19 · **Status:** rascunho — col. ④ **EquipoToPiscina** confirmada (Lucio) · demais itens §10  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
@@ -8,9 +8,9 @@
 
 ---
 
-## Referência rápida — repositórios e bancos (5 vetores)
+## Referência rápida — repositórios e bancos (produto ①–⑤ + FAPESC ⑥)
 
-Hosts: ① `https://sistema.rdoapp.com.br` · ② `https://homolog.sistema.rdoapp.com.br` (:5081) · ③ APK **Apontador** · ④ `https://piscinas.rdoapp.com.br` · ⑤ APK **Piscineiro**
+Hosts produto: ① `https://sistema.rdoapp.com.br` · ② `https://homolog.sistema.rdoapp.com.br` (:5081) · ③ APK **Apontador** · ④ `https://piscinas.rdoapp.com.br` · ⑤ APK **Piscineiro** · ⑥ **PoC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) (sem host operador tipo Login)
 
 | | **① Equipamentos · produção (EQ-L)** | **② Migration → Core · homolog (EQ-W/R)** | **③ App Apontador (EQ-M)** | **④ Piscinas · web produção (PQ-L)** | **⑤ Piscineiro (PQ-M)** |
 |---|------|------|------|------|------|
@@ -19,9 +19,20 @@ Hosts: ① `https://sistema.rdoapp.com.br` · ② `https://homolog.sistema.rdoap
 
 **Notas RDS:** não usar `homol_rdoapp` para Piscinas nem `piscinas_rdoapp*` para Core Equipamentos. CPF teste Equipamentos homolog: `53821963549` / `homol_rdoapp` — **não** confundir com dataset Piscinas/Kiro (`567.065.455-20`).
 
+### ⑥ FAPESC · Trilha F (imutabilidade — fora do fluxo Login→Cards)
+
+| | **⑥ FAPESC · PoC imutabilidade (Trilha F)** |
+|---|------|
+| **Repositório GitHub** | https://github.com/RDO-APP/rdo-blockchain · contratos/API PoC (ex. `RdoAnchor.sol`) |
+| **Docs (não substituem o repo)** | [`docs/imutabilidade/`](imutabilidade/README.md) · stub [`docs/editais-fapesc/README.md`](editais-fapesc/README.md) · dossiê local Mercado/FAPESC · chat **Edital FAPESC — Execução** |
+| **Banco / persistência** | **Sem** catálogo MySQL próprio do PoC · **origem do documento:** RDO fechado no SaaS (**`novo_rdoapp`**, web **Equipamentos**) · **PoC:** testnet (ex. Base Sepolia / Polygon Amoy — ver `imutabilidade/02_REDES_BLOCKCHAIN.md`) · **futuro prod:** tabela **aditiva** `rdo_ancoragem` (hash, `tx_id`, rede) — **não** reescrever grafo RDO |
+| **EDI / token pós-Termo** | Chat **EDI · Smart contract · Token** · [`docs/edi-token-projeto/`](edi-token-projeto/README.md) — **≠** entregáveis FAPESC M1–M3 |
+
+**Fronteira:** PoC e commits **Termo** → chat FAPESC + `rdo-blockchain`. Migração Core (este chat) **não** implementa blockchain em produção.
+
 ---
 
-## Diagrama — 5 vetores e fluxo operador (até Nova Medição)
+## Diagrama — vetores produto + FAPESC (fluxo operador §1–4)
 
 **Legenda fluxo:** Login → Escolher → Cards → Nova medição (web modal ou tela mobile).
 
@@ -91,9 +102,18 @@ flowchart TB
   M5 -.-> F2
   M5 -.-> F3
   M5 -.-> F4
+
+  subgraph V6["⑥ FAPESC · Trilha F"]
+    R6["GitHub rdo-blockchain"]
+    T6["testnet L2 PoC"]
+    R6 --> T6
+  end
+
+  A1 -.->|"RDO assinado · hash"| R6
+  N -.->|"metadados futuros rdo_ancoragem"| R6
 ```
 
-**Leitura:** duas **linhas de produção** web (① obras · ④ piscinas); homolog Equipamentos (②) **só** `homol_rdoapp`; apps ③⑤ consomem API do respectivo host prod.
+**Leitura:** duas **linhas de produção** web (① obras · ④ piscinas); homolog Equipamentos (②) **só** `homol_rdoapp`; apps ③⑤ consomem API do respectivo host prod. **⑥** ancora **depois** do fechamento/assinatura no **①** — não passa por Login/Escolher/Cards do operador de campo.
 
 ---
 
@@ -106,6 +126,7 @@ flowchart TB
 | **Apontador** | EQ-M | Expo / RN · API prod (cenário **A** M1) | `EquipamentosMobile` |
 | **Piscinas web** | PQ-L | Mesma família SPA legado (AngularJS) · IIS `piscinas` · `piscinas_rdoapp` | Repo col. ④ · EC2 `Web.config` |
 | **Piscineiro** | PQ-M | Expo / RN · variant `appPiscinas` · API `piscinas.rdoapp.com.br` | `RDOAppPiscinasMobile` (base); evolução Apontador em `EquipamentosMobile` |
+| **FAPESC PoC** | **F** | Solidity + API verify · testnet · gatilho pós-assinatura RDO | **`RDO-APP/rdo-blockchain`** |
 
 **Legenda de paridade:** ✅ alinhado · 🟡 parcial · ⬜ não feito · 🔀 equivalente intencional · ❌ divergência crítica · **—** não aplicável ao produto
 
@@ -198,6 +219,22 @@ flowchart TB
 
 ---
 
+## 4b. Trilha F — fluxo PoC imutabilidade (⑥ · não substitui §1–4)
+
+**Gatilho:** RDO **fechado** (assinatura contratada + contratante) no web **Equipamentos** — ver [`imutabilidade/05_ATORES_ASSINATURA.md`](imutabilidade/05_ATORES_ASSINATURA.md).
+
+| Etapa (PoC) | Onde vive | ① EQ-L | ⑥ FAPESC |
+|-------------|-----------|--------|----------|
+| Operador campo (Login→Medição) | §1–4 deste manual | ✅ | — (só gera dado que vira RDO) |
+| Gerar / assinar PDF RDO | Web Equipamentos | ✅ | — |
+| Hash documento fechado | Pipeline PoC / API | origem `novo_rdoapp` | ✅ `rdo-blockchain` |
+| Registrar âncora (tx) | Testnet | — | ✅ |
+| Verificar integridade | API verify / explorer | link UI futuro | ✅ |
+| TCE / MP / CREA conferem | Explorer / API (sem login RDO) | — | ✅ plano obj. 4 |
+| EDI adaptadores | Pós-Termo | — | chat **EDI · Token** |
+
+---
+
 ## 5. Páginas satélite
 
 | Função | ① | ② | ③ | ④ | ⑤ |
@@ -231,6 +268,7 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 | **STRATEGY-2** | ①② Escolher cards |
 | **EQ-M** | ③ gaps ícone obra, Apontamentos |
 | **PQ** (futuro) | ④⑤ · **PQ-R** espelha EQ-R |
+| **F (FAPESC)** | ⑥ · M1–M3 Termo · **`rdo-blockchain`** |
 
 ---
 
@@ -243,6 +281,7 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 | ③ | `EquipamentosMobile` · [`analise-apontador-dimas-v1.md`](estudos-lucio-apps-plano-migracao-core/analise-apontador-dimas-v1.md) |
 | ④ | https://github.com/RDO-APP/EquipoToPiscina · IIS `piscinas\Web.config` |
 | ⑤ | `RDOAppPiscinasMobile` · variant `appPiscinas` · [`storytelling-unificado-dimas-migracao-fapesc.md`](estudos-lucio-apps-plano-migracao-core/storytelling-unificado-dimas-migracao-fapesc.md) §5 |
+| ⑥ | https://github.com/RDO-APP/rdo-blockchain · [`imutabilidade/`](imutabilidade/README.md) · chat FAPESC [`CURSOR_MAPA_CHATS.md`](CURSOR_MAPA_CHATS.md) |
 
 ---
 
@@ -266,5 +305,6 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 | Catálogos RDS § tabela inicial | ☐ | |
 | Colunas ④⑤ nas páginas §1–§5 | ☐ | |
 | Host homolog Piscinas | ☐ | |
+| Vetor ⑥ `rdo-blockchain` + RDS âncora | ☑ | incluído 2026-10-19 |
 
 Documentos irmãos: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md).

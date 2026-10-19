@@ -5,7 +5,8 @@
 | O quê | Onde |
 |-------|------|
 | Orquestrador (ler primeiro) | [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) |
-| Manual UI 5 vetores (M0′) | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| Manual UI + FAPESC ⑥ (M0′) | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| FAPESC imutabilidade (Trilha F) | [`imutabilidade/README.md`](imutabilidade/README.md) · repo [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) |
 | Matriz 4 páginas prod | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 | Manual Kiro (pastas + código) | [`migracao/manual-conhecimento-kiro-equipamentos.md`](migracao/manual-conhecimento-kiro-equipamentos.md) |
 | Deploy homolog (Lucio) | [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) |

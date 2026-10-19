@@ -14,6 +14,7 @@
 | Legado prod Piscinas web (**PQ-L**) | **`RDO-APP/EquipoToPiscina`** · `piscinas.rdoapp.com.br` · `piscinas_rdoapp` | ≠ `Equipamentos` · ≠ `Migration2Core/EquipoToPiscina-1/` |
 | Apontador (**EQ-M**) | **`RDO-APP/EquipamentosMobile`** | — |
 | Piscineiro (**PQ-M**) | **`RDO-APP/RDOAppPiscinasMobile`** (ref. `PiscinasMobile`) | — |
+| FAPESC 031/2026 · PoC imutabilidade (**F**) | **`RDO-APP/rdo-blockchain`** · docs [`imutabilidade/`](imutabilidade/README.md) · [`editais-fapesc/`](editais-fapesc/README.md) | **≠** Migration2Core prod · **≠** chat Migração (implementar PoC) |
 
 Workspace Cursor **Equipamentos** (OneDrive) pode ter cópia local dos `.md` — **push = Migration2Core** (`C:\Dev\Migration2Core`). Clone legado Equipamentos = referência **EQ-L** somente.
 
@@ -91,7 +92,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Marco ativo:** **M0′** — matriz **prod × Kiro × mobile** (4 páginas) — [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md). **Cruzamento com marcos M:** § [4 páginas × marcos M](#4-páginas--marcos-m-visão-única).
 
-**Manual front-end (5 vetores — M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **diagrama Mermaid** · tabela **GitHub + RDS** (①–⑤) · tabelas **§0–§4** (casca → Login → Escolher → Cards → Nova medição) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
+**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§0–§4 Login→Nova medição) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) (§4b · diagrama) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
 **Próxima ação (ordem):** (1) Lucio OK restante manual §10 (RDS/homolog PQ) + Network prod 4 telas obras · (2) **M2.1** BFF agrupador + UI Cards (paridade ①) · (3) **I0** deploy [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) · (4) gate M3 parcial E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md).
 
@@ -158,10 +159,13 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Ponte FAPESC (Trilha F)
 
-- Chat: **Edital FAPESC — Execução** (`6a7186f9-…`)
-- Cronograma: `estudos-lucio-apps-plano-migracao-core/estudo-migracao-fapesc-9-meses.md`
-- Anexo: `estudo-migracao-fapesc-anexo-2026-q4.md`
-- **Não** implementar PoC blockchain neste chat.
+- Chat: **Edital FAPESC — Execução** (`6a7186f9-…`) · mapa [`CURSOR_MAPA_CHATS.md`](CURSOR_MAPA_CHATS.md)
+- **Repo PoC:** [**`RDO-APP/rdo-blockchain`**](https://github.com/RDO-APP/rdo-blockchain) (contratos + API verify; testnet)
+- **Docs hub:** [`imutabilidade/README.md`](imutabilidade/README.md) · stub edital [`editais-fapesc/README.md`](editais-fapesc/README.md)
+- **Dados:** RDO assinado origina **`novo_rdoapp`** (web **Equipamentos**); âncora = metadados + tx (tabela aditiva `rdo_ancoragem` — plano PoC)
+- **EDI / token pós-Termo:** chat **EDI · Smart contract · Token** (`9b8c1df2-…`) · [`edi-token-projeto/README.md`](edi-token-projeto/README.md)
+- Cronograma: `estudos-lucio-apps-plano-migracao-core/estudo-migracao-fapesc-9-meses.md` · anexo `estudo-migracao-fapesc-anexo-2026-q4.md`
+- **Não** implementar PoC blockchain neste chat (**Migração**).
 
 ---
 
@@ -224,7 +228,9 @@ Ver **§ Fase atual** acima (fonte única). Resumo: **M2 paridade Cards** · **I
 | | |
 |--|--|
 | E2E | `e2e-fase0-checklist.md` |
-| Manual UI 5 vetores | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
+| Manual UI + FAPESC ⑥ | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
+| Imutabilidade FAPESC | `imutabilidade/README.md` |
+| Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |
 | Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |
 | RDS | `rds-equipamentos-governanca-catalogos.md` |
 | Chats | `CURSOR_MAPA_CHATS.md` |
