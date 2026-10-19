@@ -28,6 +28,31 @@ public static class LoginSessionJson
         }
     }
 
-    public static string Serialize(LoginViewModel model) =>
-        JsonSerializer.Serialize(model, Options);
+    public static string Serialize(LoginViewModel model)
+    {
+        StripSecretsForSession(model);
+        return JsonSerializer.Serialize(model, Options);
+    }
+
+    public static bool TrySerialize(LoginViewModel model, out string json)
+    {
+        json = string.Empty;
+        try
+        {
+            json = Serialize(model);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    private static void StripSecretsForSession(LoginViewModel model)
+    {
+        if (model.Usuario != null)
+        {
+            model.Usuario.Senha = string.Empty;
+        }
+    }
 }

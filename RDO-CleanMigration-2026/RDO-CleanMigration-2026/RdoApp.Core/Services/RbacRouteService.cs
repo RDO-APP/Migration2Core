@@ -52,18 +52,19 @@ public class RbacRouteService
         var grupo = await _context.Grupos.AsNoTracking()
             .FirstOrDefaultAsync(g => g.GruIdGrupo == idGrupo, cancellationToken);
 
-        if (grupo == null)
+        if (grupo == null || grupo.GruIdMenu <= 0)
         {
             return new MenuViewModel();
         }
 
+        var menuId = grupo.GruIdMenu;
         var menu = await _context.Menus.AsNoTracking()
-            .FirstOrDefaultAsync(m => m.MenIdMenu == grupo.GruIdMenu, cancellationToken);
+            .FirstOrDefaultAsync(m => m.MenIdMenu == menuId, cancellationToken);
 
         var menuPaginas = await (
             from mp in _context.MenuPaginas
             join p in _context.Paginas on mp.MpaIdPagina equals p.PagIdPagina
-            where mp.MpaIdMenu == grupo.GruIdMenu
+            where mp.MpaIdMenu == menuId
             orderby mp.MpaVlOrdem
             select new MenuPaginaRow(
                 mp.MpaIdMenuPagina,
@@ -77,7 +78,7 @@ public class RbacRouteService
 
         var result = new MenuViewModel
         {
-            Id = grupo.GruIdMenu,
+            Id = menuId,
             Titulo = menu?.MenNmTitulo ?? string.Empty,
             ListaPagina = new List<PaginaViewModel>()
         };

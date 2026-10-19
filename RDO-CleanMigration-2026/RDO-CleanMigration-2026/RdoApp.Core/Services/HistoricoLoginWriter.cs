@@ -25,6 +25,9 @@ public class HistoricoLoginWriter
     {
         try
         {
+            var cpfSql = string.IsNullOrEmpty(cpf) ? "NULL" : $"'{cpf.Replace("'", "''")}'";
+            var nomeSql = string.IsNullOrEmpty(nome) ? "NULL" : $"'{nome.Replace("'", "''")}'";
+            var emailSql = string.IsNullOrEmpty(email) ? "NULL" : $"'{email.Replace("'", "''")}'";
             var obraIdSql = obraId.HasValue ? obraId.Value.ToString() : "NULL";
             var obraDsSql = obraNome != null ? $"'{obraNome.Replace("'", "''")}'" : "NULL";
 
@@ -33,9 +36,9 @@ public class HistoricoLoginWriter
                 (col_id_colaborador, col_nr_cpf, col_nm_colaborador, col_ds_email, obr_id_obra, obr_ds_obra, data_login)
                 VALUES (
                     {colaboradorId},
-                    '{cpf.Replace("'", "''")}',
-                    '{nome.Replace("'", "''")}',
-                    '{email.Replace("'", "''")}',
+                    {cpfSql},
+                    {nomeSql},
+                    {emailSql},
                     {obraIdSql},
                     {obraDsSql},
                     '{DateTime.Now:yyyy-MM-dd HH:mm:ss}'

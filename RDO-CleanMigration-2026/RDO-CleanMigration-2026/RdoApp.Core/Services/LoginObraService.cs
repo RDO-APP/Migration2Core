@@ -19,6 +19,31 @@ public sealed class LoginObraResult
 
 public class LoginObraService
 {
+    /// <summary>Flat row from join — COALESCE in SQL avoids DBNull on legacy nullable columns.</summary>
+    private sealed class ObraSelectionRow
+    {
+        public int OcoIdObraColaborador { get; init; }
+        public int OcoIdObra { get; init; }
+        public int OcoIdColaborador { get; init; }
+        public int OcoIdGrupo { get; init; }
+        public int OcoIdCargo { get; init; }
+        public DateTime? OcoDtContratacao { get; init; }
+        public int ObrIdObra { get; init; }
+        public string ObrDsObra { get; init; } = string.Empty;
+        public int? ObrIdDono { get; init; }
+        public int? ObrIdEmpresaContratante { get; init; }
+        public int? ObrIdEmpresaContratada { get; init; }
+        public DateTime? ObrDtFim { get; init; }
+        public int? ObrIdColaborador { get; init; }
+        public int ColIdColaborador { get; init; }
+        public string ColNmColaborador { get; init; } = string.Empty;
+        public string? ColDsEmail { get; init; }
+        public string ColDsSenha { get; init; } = string.Empty;
+        public string ColNrCpf { get; init; } = string.Empty;
+        public string GruNmNome { get; init; } = string.Empty;
+        public int? GruIdLicenca { get; init; }
+    }
+
     private readonly RdoDbContext _context;
     private readonly RbacRouteService _rbac;
     private readonly HistoricoLoginWriter _historico;
@@ -45,93 +70,114 @@ public class LoginObraService
         LoginViewModel? existingLogin,
         CancellationToken cancellationToken = default)
     {
-        var assignment = await (
+        var row = await (
             from oc in _context.ObraColaboradores
             join o in _context.Obras on oc.OcoIdObra equals o.ObrIdObra
             join c in _context.Colaboradores on oc.OcoIdColaborador equals c.ColIdColaborador
             join g in _context.Grupos on oc.OcoIdGrupo equals g.GruIdGrupo
             where oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == idObra
-            select new { oc, o, c, g }
+            select new ObraSelectionRow
+            {
+                OcoIdObraColaborador = oc.OcoIdObraColaborador,
+                OcoIdObra = oc.OcoIdObra,
+                OcoIdColaborador = oc.OcoIdColaborador,
+                OcoIdGrupo = oc.OcoIdGrupo,
+                OcoIdCargo = oc.OcoIdCargo,
+                OcoDtContratacao = oc.OcoDtContratacao,
+                ObrIdObra = o.ObrIdObra,
+                ObrDsObra = o.ObrDsObra ?? string.Empty,
+                ObrIdDono = o.ObrIdDono,
+                ObrIdEmpresaContratante = o.ObrIdEmpresaContratante,
+                ObrIdEmpresaContratada = o.ObrIdEmpresaContratada,
+                ObrDtFim = o.ObrDtFim,
+                ObrIdColaborador = o.ObrIdColaborador,
+                ColIdColaborador = c.ColIdColaborador,
+                ColNmColaborador = c.ColNmColaborador ?? string.Empty,
+                ColDsEmail = c.ColDsEmail,
+                ColDsSenha = c.ColDsSenha ?? string.Empty,
+                ColNrCpf = c.ColNrCpf ?? string.Empty,
+                GruNmNome = g.GruNmNome ?? string.Empty,
+                GruIdLicenca = g.GruIdLicenca
+            }
         ).FirstOrDefaultAsync(cancellationToken);
 
-        if (assignment == null)
+        if (row == null)
         {
             _logger.LogWarning("Obra {ObraId} not assigned to colaborador {ColaboradorId}", idObra, colaboradorId);
             return LoginObraResult.Fail("Você não tem permissão para acessar esta obra.");
         }
 
-        if (!await IsLicenseActiveAsync(assignment.o.ObrIdDono, cancellationToken))
+        if (!await IsLicenseActiveAsync(row.ObrIdDono, cancellationToken))
         {
             return LoginObraResult.Fail("Não foi possível acessar esta obra. Verifique a assinatura da empresa.");
         }
 
-        var grupoNome = assignment.g.GruNmNome ?? string.Empty;
-        var grupoLower = grupoNome.ToLowerInvariant();
+        var grupoLower = row.GruNmNome.ToLowerInvariant();
 
         var loginData = existingLogin ?? new LoginViewModel();
         try
         {
-            loginData.Routes = await _rbac.GetRoutesForGroupAsync(assignment.oc.OcoIdGrupo, cancellationToken);
-            loginData.Menu = await _rbac.GetMenuForGroupAsync(assignment.oc.OcoIdGrupo, cancellationToken);
+            loginData.Routes = await _rbac.GetRoutesForGroupAsync(row.OcoIdGrupo, cancellationToken);
+            loginData.Menu = await _rbac.GetMenuForGroupAsync(row.OcoIdGrupo, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "RBAC load failed for grupo {GrupoId}; keeping default routes/menu", assignment.oc.OcoIdGrupo);
+            _logger.LogError(ex, "RBAC load failed for grupo {GrupoId}; keeping default routes/menu", row.OcoIdGrupo);
             loginData.Routes ??= new List<RouteViewModel>();
             loginData.Menu ??= new MenuViewModel();
         }
         loginData.Usuario = new UsuarioViewModel
         {
-            Email = assignment.c.ColDsEmail,
-            Id = assignment.c.ColIdColaborador,
-            Senha = TryDecryptColaboradorSenha(assignment.c.ColDsSenha),
-            NomeUsuario = assignment.c.ColNmColaborador,
-            IdGrupo = assignment.oc.OcoIdGrupo
+            Email = row.ColDsEmail,
+            Id = row.ColIdColaborador,
+            Senha = TryDecryptColaboradorSenha(row.ColDsSenha),
+            NomeUsuario = row.ColNmColaborador,
+            IdGrupo = row.OcoIdGrupo
         };
         loginData.ObraColaborador = new ObraColaboradorViewModel
         {
-            IdObraColaborador = assignment.oc.OcoIdObraColaborador,
-            NomeObra = assignment.o.ObrDsObra,
-            NomeColaborador = assignment.c.ColNmColaborador,
-            IdObra = assignment.oc.OcoIdObra,
-            IdColaborador = assignment.oc.OcoIdColaborador,
-            IdGrupo = assignment.oc.OcoIdGrupo,
-            IdCargo = assignment.oc.OcoIdCargo,
+            IdObraColaborador = row.OcoIdObraColaborador,
+            NomeObra = row.ObrDsObra,
+            NomeColaborador = row.ColNmColaborador,
+            IdObra = row.OcoIdObra,
+            IdColaborador = row.OcoIdColaborador,
+            IdGrupo = row.OcoIdGrupo,
+            IdCargo = row.OcoIdCargo,
             ContratanteContratada = grupoLower.Contains("contratante") ? "t" : "d",
-            DataContratacao = assignment.oc.OcoDtContratacao ?? DateTime.MinValue,
+            DataContratacao = row.OcoDtContratacao ?? DateTime.MinValue,
             TipoLicencaColaboradorGrupo = grupoLower.Contains("basica") ? "basica" : "gratuita",
-            IdLicenca = assignment.g.GruIdLicenca ?? int.MinValue
+            IdLicenca = row.GruIdLicenca ?? int.MinValue
         };
 
-        var fim = assignment.o.ObrDtFim;
+        var fim = row.ObrDtFim;
         loginData.Obra = new ObraViewModel
         {
-            IdObra = assignment.o.ObrIdObra,
-            Descricao = assignment.o.ObrDsObra,
-            idDono = assignment.o.ObrIdDono ?? 0,
-            idContratante = assignment.o.ObrIdEmpresaContratante ?? 0,
-            idContratada = assignment.o.ObrIdEmpresaContratada ?? 0,
+            IdObra = row.ObrIdObra,
+            Descricao = row.ObrDsObra,
+            idDono = row.ObrIdDono ?? 0,
+            idContratante = row.ObrIdEmpresaContratante ?? 0,
+            idContratada = row.ObrIdEmpresaContratada ?? 0,
             DataFim = fim?.ToString() ?? string.Empty,
             ObraFinalizada = fim.HasValue && fim.Value.Date != DateTime.MinValue.Date,
-            idColaborador = assignment.o.ObrIdColaborador ?? 0
+            idColaborador = row.ObrIdColaborador ?? 0
         };
 
         await _historico.RecordAsync(
-            assignment.c.ColIdColaborador,
-            assignment.c.ColNrCpf,
-            assignment.c.ColNmColaborador,
-            assignment.c.ColDsEmail ?? string.Empty,
-            assignment.o.ObrIdObra,
-            assignment.o.ObrDsObra,
+            row.ColIdColaborador,
+            row.ColNrCpf,
+            row.ColNmColaborador,
+            row.ColDsEmail ?? string.Empty,
+            row.ObrIdObra,
+            row.ObrDsObra,
             cancellationToken);
 
         return new LoginObraResult
         {
             Success = true,
             LoginData = loginData,
-            ObraId = assignment.o.ObrIdObra,
-            ObraNome = assignment.o.ObrDsObra,
-            ObraColaboradorId = assignment.oc.OcoIdObraColaborador
+            ObraId = row.ObrIdObra,
+            ObraNome = row.ObrDsObra,
+            ObraColaboradorId = row.OcoIdObraColaborador
         };
     }
 

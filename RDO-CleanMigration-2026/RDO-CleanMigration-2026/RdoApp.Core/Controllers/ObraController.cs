@@ -18,12 +18,18 @@ namespace RdoApp.Core.Controllers
     {
         private readonly RdoDbContext _context;
         private readonly LoginObraService _loginObraService;
+        private readonly IWebHostEnvironment _env;
         private readonly ILogger<ObraController> _logger;
 
-        public ObraController(RdoDbContext context, LoginObraService loginObraService, ILogger<ObraController> logger)
+        public ObraController(
+            RdoDbContext context,
+            LoginObraService loginObraService,
+            IWebHostEnvironment env,
+            ILogger<ObraController> logger)
         {
             _context = context;
             _loginObraService = loginObraService;
+            _env = env;
             _logger = logger;
         }
 
@@ -63,7 +69,7 @@ namespace RdoApp.Core.Controllers
                               select new
                               {
                                   IdObra = oc.OcoIdObra,
-                                  NomeObra = o.ObrDsObra,
+                                  NomeObra = o.ObrDsObra ?? string.Empty,
                                   IdObraColaborador = oc.OcoIdObraColaborador
                               }).ToListAsync();
 
@@ -113,10 +119,18 @@ namespace RdoApp.Core.Controllers
                     return RedirectToAction(nameof(Escolher));
                 }
 
-                HttpContext.Session.SetString(SessionKeys.LoginData, LoginSessionJson.Serialize(result.LoginData));
                 HttpContext.Session.SetInt32(SessionKeys.ObraId, result.ObraId);
                 HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome ?? string.Empty);
                 HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, result.ObraColaboradorId);
+
+                if (!LoginSessionJson.TrySerialize(result.LoginData, out var loginJson))
+                {
+                    _logger.LogWarning("LoginData JSON failed for obra {IdObra}; obra session keys saved", idObra);
+                }
+                else
+                {
+                    HttpContext.Session.SetString(SessionKeys.LoginData, loginJson);
+                }
 
                 _logger.LogInformation("Obra {IdObra} selected, redirecting to task cards", idObra);
 
@@ -125,7 +139,9 @@ namespace RdoApp.Core.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled error in Obra/Selecionar for obra {IdObra}", idObra);
-                TempData["ObraError"] = "Erro ao selecionar a obra. Tente novamente ou contate o suporte.";
+                TempData["ObraError"] = _env.IsStaging()
+                    ? $"Erro ao selecionar a obra: {ex.Message}"
+                    : "Erro ao selecionar a obra. Tente novamente ou contate o suporte.";
                 return RedirectToAction(nameof(Escolher));
             }
         }
