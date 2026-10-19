@@ -10,6 +10,8 @@
 
 **Manual gráfico ampliado (5 vetores):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — inclui **Piscinas web (PQ-L)** e **Piscineiro (PQ-M)** + tabela **GitHub / RDS** no topo.
 
+**M0′ Fase A (evidências):** [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md)
+
 **Docs Kiro relacionados:**  
 `RDO-CleanMigration-2026/4-CRITICAL-PAGES-IMPLEMENTATION-PLAN.md` · `FEBRUARY-2026-COMPLETE-SUMMARY-AND-NEXT-PLAN.md` · `ESCOLHER-OBRA-TECHNICAL-BLUEPRINT.md` · `STRATEGY-2-OBRA-CARDS-IMPLEMENTATION-PLAN.md` · `docs/migracao-kiro-mapa-estudo.md`
 

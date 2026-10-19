@@ -102,7 +102,19 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§0–§4 Login→Nova medição) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) (§4b · diagrama) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
-**Próxima ação (ordem):** (1) Lucio OK restante manual §10 (RDS/homolog PQ) + Network prod 4 telas obras · (2) **M2.1** BFF agrupador + UI Cards (paridade ①) · (3) **I0** deploy [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) · (4) gate M3 parcial E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md).
+### Plano de execução (A → E)
+
+| Fase | Marco | Passos | Status |
+|------|-------|--------|--------|
+| **A** | **M0′** doc | A1 RDS/hosts · A2 smoke prod + evidências · A3 aceite | **A executada** — ver [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · HAR API ○ opcional |
+| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **próximo** |
+| **C** | **M2 produto** | C1 BFF agrupador · C2 DTO card · C3 React accordion/cards · C5 redeploy | pendente |
+| **D** | **M3** | D1–D4 E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · D5 assinatura | pendente |
+| **E** | **M4+** | E1 congela EQ-W · E2 M5 Apontador · E3 M6+ | pendente |
+
+**Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
+
+**Próxima ação (ordem):** **B1** deploy homolog [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · depois **C1** M2.1 agrupador · **Lucio:** HAR prod (A2+) quando quiser fechar M0′ **FECHADO** formal.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS — [`m0-registro-encerramento.md`](m0-registro-encerramento.md). **M2** código (BFF + React) em branch; **não** declarar M2 fechado até gate M3 parcial.
 
@@ -113,7 +125,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | Marco | Feito | Ainda pendente |
 |-------|--------|----------------|
 | **M0** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher (7 obras); docs E0–E6/orquestrador | branding homolog; Escolher CSS STRATEGY-2; E2 localhost completo |
-| **M0′** | Matriz 4 páginas; **manual 5 vetores**; **EquipoToPiscina** fechado (PQ-L) | OK §10 manual (RDS/homolog PQ); capturas Network prod |
+| **M0′** | Matriz; manual ①–⑥; diagrama; **Fase A** PASS doc ([`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md)) | M0′ **FECHADO** formal opcional: HAR API prod Lucio |
 | **M1** | Cenário **A**; v1 endpoints; tipos TS Auth/Obra/Cards; mapa Core vs legado | Pacote npm publicado; EQ-M ainda não consome tipos |
 | **W0.5 / E2E** | **Selecionar** + sessão obra; Cards com **dados** BFF (smoke obra 42) | Paridade **UI** Cards vs `cards.html`; agrupador BFF |
 
@@ -151,6 +163,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | Marco / doc | Documento |
 |:----:|-----------|
 | **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · repos + RDS · páginas §0–§5 |
+| M0′ Fase A evidências | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) |
 | M0′ matriz 4 telas | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 
 | Fase | Documento |
@@ -219,7 +232,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 |:-----:|:------:|-----|
 | M0 | PARCIAL PASS | [`m0-registro-encerramento.md`](m0-registro-encerramento.md) |
 | M1 | FECHADO | [`m1-execucao-checklist.md`](m1-execucao-checklist.md) |
-| M0′ | **ativo** | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| M0′ | **PASS doc** (Fase A) · ativo até HAR opcional | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · matriz · manual |
 | I0 | pendente | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) |
 | M2 | código branch; produto **pausado** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 
@@ -227,7 +240,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ## Próxima ação (1)
 
-Ver **§ Fase atual** acima (fonte única). Resumo: **M2 paridade Cards** · **I0** · E2E obras passos 1–4 [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md).
+**Fase B (I0)** — deploy homolog. Ver tabela **Plano A → E** em § Fase atual.
 
 ---
 

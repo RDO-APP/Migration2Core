@@ -282,9 +282,11 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 | Item | OK? | Observação |
 |------|:---:|------------|
 | Linha GitHub col. ④ (`RDO-APP/EquipoToPiscina`) | ☑ | Lucio 2026-10-19 |
-| Catálogos RDS § tabela inicial | ☐ | |
-| Colunas ④⑤ nas páginas §1–§5 | ☐ | |
-| Host homolog Piscinas | ☐ | |
+| Catálogos RDS § tabela inicial | ☑ | conferido [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · Fase A 2026-10-19 |
+| Colunas ④⑤ nas páginas §1–§5 | ☑ | manual §1–§5 · Fase A |
+| Host homolog Piscinas | ☑ | `homologacao.piscinas.rdoapp.com.br` + `piscinas_rdoapp_homologa` (legado PQ; ≠ Core obras) |
 | Vetor ⑥ `rdo-blockchain` + RDS âncora | ☑ | incluído 2026-10-19 |
+| Smoke HTTP prod 4 telas (A2) | ☑ | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) |
+| HAR Network API prod (A2+) | ○ | opcional Lucio |
 
 Documentos irmãos: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md).
