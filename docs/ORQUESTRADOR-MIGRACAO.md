@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-19 — **M0′** manual **5 vetores** (GitHub/RDS + diagrama + Login→Nova medição) · matriz 4 páginas · M1 FECHADO · M0 PARCIAL PASS · M2 produto **bloqueado** (paridade Cards) · **4 páginas × M** § abaixo  
+**Atualizado:** 2026-10-19 — **C5 homolog OK** (SSM Success ~1,4 min · obra 42 · C3 accordion/cards) · **M2** quase fechado (falta M3 passo 4) · **I0** B1/B2 OK · M1 FECHADO · **4 páginas × M** § abaixo  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -98,7 +98,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M0′** — matriz **prod × Kiro × mobile** (4 páginas) — [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md). **Cruzamento com marcos M:** § [4 páginas × marcos M](#4-páginas--marcos-m-visão-única).
+**Marco ativo:** **M2 (EQ-R Cards)** — BFF agrupador + UI React paridade mínima `cards.html` (accordion + card head/datas/%/status). **Gate M3** ainda não fechado. Referência doc: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · § [4 páginas × marcos M](#4-páginas--marcos-m-visão-única).
 
 **Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§0–§4 Login→Nova medição) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) (§4b · diagrama) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
@@ -107,16 +107,16 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | Fase | Marco | Passos | Status |
 |------|-------|--------|--------|
 | **A** | **M0′** doc | A1 RDS/hosts · A2 smoke prod + evidências · A3 aceite | **A executada** — ver [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · HAR API ○ opcional |
-| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **próximo** |
-| **C** | **M2 produto** | C1 BFF agrupador · C2 DTO card · C3 React accordion/cards · C5 redeploy | pendente |
+| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **parcial** — B1/B2 OK 2026-10-19 (`CommandId` `11328550-efa5-436f-86ba-21b8fe508e19` · zip `rdoapp_core-20261019-175555`); B3 hotfix runway pendente |
+| **C** | **M2 produto** | C1 BFF agrupador · C2 DTO card · C3 React accordion/cards · C5 redeploy | **C1–C3 + C5 homolog OK** — `/Tarefa/Cards` obra 42: 3 etapas · **13** tarefas · head/datas/%/status; **M2.5+** toolbar/ações · **M3** gate |
 | **D** | **M3** | D1–D4 E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · D5 assinatura | pendente |
 | **E** | **M4+** | E1 congela EQ-W · E2 M5 Apontador · E3 M6+ | pendente |
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** **B1** deploy homolog [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · depois **C1** M2.1 agrupador · **Lucio:** HAR prod (A2+) quando quiser fechar M0′ **FECHADO** formal.
+**Próxima ação (ordem):** **M3** — [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) passos 1–4 assinados (Login → Escolher → Selecionar → Cards React) · **commit/push** Migration2Core quando Lucio pedir · opcional HAR prod (M0′ formal).
 
-**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS — [`m0-registro-encerramento.md`](m0-registro-encerramento.md). **M2** código (BFF + React) em branch; **não** declarar M2 fechado até gate M3 parcial.
+**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** I0 deploy + **C3** homolog evidenciado (prints obra 42). **M2** C1/C2 + RDS [`scripts/cards-agrupador-rds-homol-prod.sql`](scripts/cards-agrupador-rds-homol-prod.sql); declarar **M2 FECHADO** só após M3 passo 4.
 
 **Deploy:** agente **não** executa SSM full; Lucio ou **I0** (hotfix/CI). Roteiro: [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
@@ -127,7 +127,8 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M0** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher (7 obras); docs E0–E6/orquestrador | branding homolog; Escolher CSS STRATEGY-2; E2 localhost completo |
 | **M0′** | Matriz; manual ①–⑥; diagrama; **Fase A** PASS doc ([`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md)) | M0′ **FECHADO** formal opcional: HAR API prod Lucio |
 | **M1** | Cenário **A**; v1 endpoints; tipos TS Auth/Obra/Cards; mapa Core vs legado | Pacote npm publicado; EQ-M ainda não consome tipos |
-| **W0.5 / E2E** | **Selecionar** + sessão obra; Cards com **dados** BFF (smoke obra 42) | Paridade **UI** Cards vs `cards.html`; agrupador BFF |
+| **W0.5 / E2E** | Selecionar + Cards **React** homolog (obra 42, 13 cards) | M3 checklist assinado; toolbar/ações card |
+| **M2** | C1–C3 + C5 homolog; BFF agrupador; RDS script | M2.5 ações; **M3** passo 4; commit GitHub pendente |
 
 ---
 
@@ -222,7 +223,9 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ## Gap técnico #1
 
-**EQ-W0.5 / página 2:** **`POST /Obra/Selecionar`** (= LoginObra web) — ver [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md). **M2 Cards** bloqueado até passo 3 do gate E2E.
+**Página 3 Cards (EQ-R):** paridade visual/funcional vs prod `cards.html` — **C3** entrega accordion + grid de cards (head `classeStatusCss`, datas, %, status); **pendente** toolbar (RDO, filtros, nova tarefa/etapa), ícones recursos, botões status/ações e modal nova medição (**M7+**). **Selecionar obra (W0.5)** OK — não bloqueia M2 UI.
+
+**Dados homol vs prod:** contagem de cards por agrupador pode divergir entre `homol_rdoapp` e `novo_rdoapp` (ex. obra 42: 13 vs 8) — comparar UI com o **mesmo RDS** alvo.
 
 ---
 
@@ -233,14 +236,14 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | M0 | PARCIAL PASS | [`m0-registro-encerramento.md`](m0-registro-encerramento.md) |
 | M1 | FECHADO | [`m1-execucao-checklist.md`](m1-execucao-checklist.md) |
 | M0′ | **PASS doc** (Fase A) · ativo até HAR opcional | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · matriz · manual |
-| I0 | pendente | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) |
-| M2 | código branch; produto **pausado** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
+| I0 | **parcial** (B1/B2 OK 2026-10-19) | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) · [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) |
+| M2 | **C3 homolog OK** · gate **M3** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 
 ---
 
 ## Próxima ação (1)
 
-**Fase B (I0)** — deploy homolog. Ver tabela **Plano A → E** em § Fase atual.
+**M3 E2E** — assinar passos 1–4 em [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · depois **commit/push** `Migration2Core` (Core C1/C2, client C3, scripts publish/SSM, docs).
 
 ---
 

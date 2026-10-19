@@ -7,6 +7,11 @@ public sealed class TarefaCardDto
     public int Status { get; init; }
     public string NomeStatus { get; init; } = "";
     public int IdEtapa { get; init; }
+    public string DataInicio { get; init; } = "";
+    public string DataPrevisaoFim { get; init; } = "";
+    public double PercentualConcluido { get; init; }
+    public string PercentualExtrapolado { get; init; } = "true";
+    public string ClasseStatusCss { get; init; } = "bg-cinza";
 }
 
 public sealed class EtapaComTarefasDto

@@ -14,6 +14,22 @@ if (Test-Path $OutDir) {
 }
 New-Item -ItemType Directory -Path $OutDir | Out-Null
 
+# client/ fica ao lado de scripts/ (nao dentro de RDO-CleanMigration-2026/RdoApp.Core)
+$ClientRoot = Join-Path $PSScriptRoot "..\client"
+if (-not (Test-Path $ClientRoot)) {
+    throw "Pasta client nao encontrada: $ClientRoot"
+}
+$ClientRoot = (Resolve-Path $ClientRoot).Path
+Push-Location $ClientRoot
+try {
+    Write-Host "Client:  $ClientRoot" -ForegroundColor Cyan
+    npm run build
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
+finally {
+    Pop-Location
+}
+
 Push-Location $ProjectRoot
 try {
     dotnet publish -c Release -r win-x64 --self-contained true -o $OutDir

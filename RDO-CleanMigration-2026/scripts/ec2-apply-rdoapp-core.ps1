@@ -45,7 +45,7 @@ $zipPath = Join-Path $env:TEMP 'rdoapp_core-deploy.zip'
 if ($PresignedZipUrl) {
     Write-Output 'Downloading deploy zip via presigned URL ...'
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest -Uri $PresignedZipUrl -OutFile $zipPath -UseBasicParsing
+    Invoke-WebRequest -Uri $PresignedZipUrl -OutFile $zipPath -UseBasicParsing -TimeoutSec 900
 } else {
     if (-not $S3Key) { throw 'Provide S3Key or PresignedZipUrl' }
     $s3Uri = "s3://$S3Bucket/$S3Key"
@@ -66,7 +66,9 @@ if ($PresignedZipUrl) {
 $extractRoot = Join-Path $env:TEMP 'rdoapp_core_extract'
 if (Test-Path $extractRoot) { Remove-Item -Recurse -Force $extractRoot }
 New-Item -ItemType Directory -Path $extractRoot -Force | Out-Null
+Write-Output 'Expand-Archive (pode levar varios minutos)...'
 Expand-Archive -Path $zipPath -DestinationPath $extractRoot -Force
+Write-Output 'Expand-Archive OK'
 
 Import-Module WebAdministration -ErrorAction SilentlyContinue
 if ($AppPoolName -and (Get-Module WebAdministration)) {
@@ -96,9 +98,11 @@ while (Get-Process -Name 'RdoApp.Core' -ErrorAction SilentlyContinue) {
 }
 Start-Sleep -Seconds 2
 
+Write-Output "Copy-Item -> $SitePath (pode levar varios minutos)..."
 Get-ChildItem -Path $extractRoot -Force | ForEach-Object {
     Copy-Item -Path $_.FullName -Destination $SitePath -Recurse -Force
 }
+Write-Output 'Copy-Item OK'
 
 if (Test-Path $stagingBackup) {
     Copy-Item -Path $stagingBackup -Destination $stagingPath -Force
@@ -116,13 +120,25 @@ if ($AppPoolName -and (Get-Module WebAdministration)) {
 $coreExe = Join-Path $SitePath 'RdoApp.Core.exe'
 if (Test-Path $coreExe) {
     Write-Output 'Starting RdoApp.Core (Kestrel homolog)...'
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = $coreExe
-    $psi.WorkingDirectory = $SitePath
-    $psi.UseShellExecute = $false
-    $psi.EnvironmentVariables['ASPNETCORE_ENVIRONMENT'] = 'Staging'
-    $psi.EnvironmentVariables['ASPNETCORE_URLS'] = "http://*:$SmokePort"
-    [void][System.Diagnostics.Process]::Start($psi)
+    # Detached start: logs no console do SSM geravam Status=Failed com deploy OK.
+    $startArgs = @{
+        FilePath         = $coreExe
+        WorkingDirectory = $SitePath
+        WindowStyle      = 'Hidden'
+        PassThru         = $true
+    }
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        $startArgs['Environment'] = @{
+            ASPNETCORE_ENVIRONMENT = 'Staging'
+            ASPNETCORE_URLS        = "http://*:$SmokePort"
+        }
+    }
+    else {
+        $env:ASPNETCORE_ENVIRONMENT = 'Staging'
+        $env:ASPNETCORE_URLS = "http://*:$SmokePort"
+    }
+    $proc = Start-Process @startArgs
+    if (-not $proc) { throw 'Failed to start RdoApp.Core.exe' }
     Start-Sleep -Seconds 5
 }
 
@@ -133,3 +149,4 @@ Write-Output "Smoke status: $($response.StatusCode)"
 if ($response.StatusCode -ne 200) { exit 1 }
 
 Write-Output 'Deploy homolog Core OK'
+exit 0

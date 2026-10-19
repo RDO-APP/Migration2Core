@@ -8,6 +8,11 @@ export interface TarefaCard {
   status: number
   nomeStatus: string
   idEtapa: number
+  dataInicio?: string
+  dataPrevisaoFim?: string
+  percentualConcluido?: number
+  percentualExtrapolado?: string
+  classeStatusCss?: string
 }
 
 export interface EtapaComTarefas {

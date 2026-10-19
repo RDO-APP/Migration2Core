@@ -110,7 +110,7 @@ Plano assume **A + Fase 5 (serviço)**.
 
 ## Fase 2 — Publish framework-dependent
 
-### 2.1 Novo script (a criar no repo)
+### 2.1 Script no repo
 
 `RDO-CleanMigration-2026/scripts/publish-homolog-ec2-fdd.ps1`:
 
@@ -134,7 +134,7 @@ Plano assume **A + Fase 5 (serviço)**.
 
 ## Fase 3 — Hotfix SSM (dll + SPA)
 
-### 3.1 Novo script (a criar)
+### 3.1 Scripts no repo
 
 `RDO-CleanMigration-2026/scripts/publish-homolog-hotfix.ps1`:
 
@@ -145,9 +145,9 @@ Plano assume **A + Fase 5 (serviço)**.
   - `wwwroot/app/**` (build Vite)
 - **Não** incluir `appsettings.Staging.json`
 
-### 3.2 Novo apply na EC2 (a criar)
+### 3.2 Apply na EC2
 
-`ec2-apply-rdoapp-core-hotfix.ps1`:
+`ec2-apply-rdoapp-core-hotfix.ps1` · wrapper SSM: `deploy-homolog-hotfix-ssm.ps1`:
 
 1. Presigned URL → baixar zip pequeno  
 2. **`Stop-Service RdoAppCoreHomolog`** (Fase 5) ou `taskkill`  
@@ -218,7 +218,7 @@ Evita DLL presa (problema visto no deploy full) e restart em **segundos**.
 
 ### 5.2 One-time via SSM (esboço)
 
-Script `scripts/ec2-install-rdoapp-core-service.ps1` (a criar):
+Script `scripts/ec2-install-rdoapp-core-service.ps1`:
 
 1. Verificar dotnet no PATH  
 2. Instalar/registrar serviço  

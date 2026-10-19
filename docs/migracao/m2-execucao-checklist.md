@@ -29,9 +29,9 @@ Operador autenticado vê **etapas/tarefas com dados** na UI **React** (paridade 
 |---|------|:--:|-------|
 | M2.1 | BFF etapas no Core (sessão obra + idObra) | ☑ | `CardsQueryService` + `BffEtapasController` |
 | M2.2 | Copiar tipos M1 para `client/src/api/` | ☑ | |
-| M2.3 | Página React **Cards** (lista etapas + contagem tarefas) | ☑ | `client/src/App.tsx` |
+| M2.3 | Página React **Cards** (accordion + cards: head, datas, %, status) | ☑ | `client/src/App.tsx` · homolog 2026-10-19 obra 42 |
 | M2.4 | Servir build Vite no Core (`wwwroot/app`) | ☑ | `TarefaController.Cards` → `PhysicalFile` |
-| M2.5 | Entrada E2E: URL homolog abre React Cards **com dados** | ☐ | Lucio — após `npm run build` + deploy/run local |
+| M2.5 | Entrada E2E: URL homolog abre React Cards **com dados** | ☑ | Lucio 2026-10-19 — `/Tarefa/Cards` · SSM `11328550-efa5-436f-86ba-21b8fe508e19` |
 | M2.6 | Doc: atualizar orquestrador + gap #1 | ☑ | |
 
 ---
@@ -47,8 +47,8 @@ Operador autenticado vê **etapas/tarefas com dados** na UI **React** (paridade 
 
 ## Critério de fechamento M2
 
-- [ ] Lucio (ou agente + Lucio confirma) vê **≥1 etapa** com dados reais para obra de teste após login homolog.
-- [x] Código M2 commitados em **`RDO-APP/Migration2Core`** (`89adbe4`); docs orquestrador neste push.
+- [x] Lucio vê **≥1 etapa** com dados reais (obra 42: 3 etapas · 13 cards) após login homolog — 2026-10-19.
+- [ ] Código M2 (C1/C2/C3 + scripts I0) **commit/push** em **`RDO-APP/Migration2Core`** — pendente pedido Lucio.
 
 ---
 

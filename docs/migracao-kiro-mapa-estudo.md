@@ -5,6 +5,8 @@
 **Atualizado (E0):** 2026-10-17 — homolog `homol_rdoapp`, Selecionar/Cards, estudos E1–E6  
 **Objetivo:** Ordem de leitura e cruzamento com **Ondas U** / **TSK Dimas**, sem depender da pasta OneDrive Kiro.
 
+**Matriz operador (4 páginas prod × Kiro × mobile):** [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) — **M0′**.
+
 ---
 
 ## 1. Qual fonte usar

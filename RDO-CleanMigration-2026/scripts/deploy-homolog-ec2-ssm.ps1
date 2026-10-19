@@ -14,7 +14,13 @@ param(
 
     [string]$AppPoolName = '',
 
-    [string]$AwsRegion = 'us-east-2'
+    [string]$AwsRegion = 'us-east-2',
+
+    [switch]$NoWait,
+
+    [int]$PollIntervalSeconds = 15,
+
+    [int]$TimeoutMinutes = 45
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,4 +73,22 @@ $commandId = aws ssm send-command `
 
 if (-not $commandId) { throw 'SSM send-command failed' }
 Write-Host "CommandId: $commandId" -ForegroundColor Green
-Write-Host "Poll: aws ssm get-command-invocation --command-id $commandId --instance-id $InstanceId --region $AwsRegion"
+
+if ($NoWait) {
+    Write-Host "NoWait: poll manual:" -ForegroundColor DarkYellow
+    Write-Host "  .\wait-ssm-homolog-command.ps1 -CommandId `"$commandId`" -InstanceId `"$InstanceId`" -AwsRegion $AwsRegion"
+    exit 0
+}
+
+$waitScript = Join-Path $PSScriptRoot 'wait-ssm-homolog-command.ps1'
+if (-not (Test-Path $waitScript)) { throw "Missing $waitScript" }
+
+& $waitScript `
+    -CommandId $commandId `
+    -InstanceId $InstanceId `
+    -AwsRegion $AwsRegion `
+    -PollIntervalSeconds $PollIntervalSeconds `
+    -TimeoutMinutes $TimeoutMinutes
+
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Write-Host 'Proximo passo: browser B2 - https://homolog.sistema.rdoapp.com.br/Account/Login' -ForegroundColor Cyan
