@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-20 — **M4.1** OperadorShell Cards no Git (`07f946d`) · **deploy homolog pendente** · **M3 FECHADO** · **I0** B1/B2 OK · scripts **FDD/serviço** no repo (`b1fd2f8`) · **ops** [`docs/ops/`](ops/README.md) · HEAD `d9dce0b` · **4 páginas × M** § abaixo  
+**Atualizado:** 2026-10-20 — **M4.3 deploy OK** (SSM ~1,4 min · `fb301c23-…` · zip `20261020-100219`) · validar **OperadorShell** no browser · **M4.4** Escolher React · **I0** B1/B2 OK · scripts **FDD/serviço** no repo (`b1fd2f8`) · **ops** [`docs/ops/`](ops/README.md) · HEAD `d9dce0b` · **4 páginas × M** § abaixo  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).

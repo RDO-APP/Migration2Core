@@ -16,7 +16,7 @@ Operador vê **mesmo chrome** prod (header, footer, fundo) nas telas React; redu
 |---|------|:--:|-------|
 | M4.1 | **OperadorShell** em Cards (logo, obra no header, usuário, ícones) | ☑ | código 2026-10-20 · deploy homolog pendente |
 | M4.2 | BFF expõe `usuarioNome` no contexto Cards | ☑ | |
-| M4.3 | Build Vite → `wwwroot/app` + deploy homolog | ☐ | zip gerado 2026-10-20 · Lucio Passos E–G roteiro |
+| M4.3 | Build Vite → `wwwroot/app` + deploy homolog | ☑ | SSM **Success** ~1,4 min 2026-10-20 · `CommandId` `fb301c23-379e-48c6-bbd1-a79e84e15811` · zip `rdoapp_core-20261020-100219` · smoke EC2 200 · **browser M4.1** Lucio |
 | M4.4 | **Escolher React** + filtros Obra/Município | ☐ | |
 | M4.5 | Login React ou último Razor dentro SPA | ☐ | |
 | M4.6 | Declarar EQ-W congelado (só bugfix) | ☐ | orquestrador |
