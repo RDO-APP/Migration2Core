@@ -24,6 +24,7 @@ builder.Services.AddScoped<RbacRouteService>();
 builder.Services.AddScoped<LoginObraService>();
 builder.Services.AddScoped<HistoricoLoginWriter>();
 builder.Services.AddScoped<CardsQueryService>();
+builder.Services.AddScoped<ObrasQueryService>();
 
 // Configure DbContext with MySQL (Pomelo)
 builder.Services.AddDbContext<RdoDbContext>(options =>

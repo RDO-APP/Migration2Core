@@ -75,6 +75,12 @@ namespace RdoApp.Core.Controllers
 
             _logger.LogInformation("Found {Count} obras for colaborador {ColaboradorId}", obras.Count, colaboradorId);
 
+            var spaIndex = Path.Combine(_env.WebRootPath, "app", "index.html");
+            if (System.IO.File.Exists(spaIndex))
+            {
+                return PhysicalFile(spaIndex, "text/html");
+            }
+
             ViewData["Title"] = "Escolher Obra - RDO App Piscinas";
             ViewData["ColaboradorId"] = colaboradorId;
             ViewData["NomeColaborador"] = User.Identity?.Name ?? "Usuário";

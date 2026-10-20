@@ -19,8 +19,8 @@ Homolog **②** aproxima **①** por **blocos de UI** (header, cards, accordion,
 | M4.1 | **OperadorShell** no Cards (**P2 · header**) | ☑ | P2 | homolog 2026-10-20 |
 | M4.2 | BFF `usuarioNome` | ☑ | P2 | |
 | M4.3 | Deploy homolog (zip + SSM) | ☑ | — | `fb301c23-…` · `20261020-100219` |
-| **M4.4** | **P1** Escolher React — header + **card obra** + filtros + legenda | ☐ | P1 | **próximo** · não Razor |
-| **M4.5** | **P2** toolbar + **accordion etapa** prod | ☐ | P2 | gap #1 |
+| **M4.4** | **P1** Escolher React — header + **card obra** + filtros + legenda | ☑ | P1 | código · BFF `GET/POST /api/bff/obras` · **deploy** homolog pendente |
+| **M4.5** | **P2** toolbar + **accordion etapa** prod | ☐ | P2 | **próximo** · gap #1 |
 | **M4.6** | **P2** **card tarefa** + placeholder “Adicionar nova tarefa” | ☐ | P2 | gap #1 |
 | M4.7 / M4.8 | Login SPA + congela EQ-W | ☐ | matriz #1 | critério M4 fim |
 | — | Nova medição modal | — | matriz #4 | **M7+** |

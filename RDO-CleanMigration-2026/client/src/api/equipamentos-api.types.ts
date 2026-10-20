@@ -30,3 +30,27 @@ export interface CardsContext {
   usuarioNome?: string
   etapas: EtapaComTarefas[]
 }
+
+export interface ObraListItem {
+  idObra: number
+  idColaborador: number
+  descricao: string
+  cidadeEstado?: string
+  contratanteContratada?: string
+  statusBasicaGratuita?: string
+  progressoPorcentagem?: number
+  classeStatusCss?: string
+  obraFinalizada?: boolean
+}
+
+export interface EscolherContext {
+  colaboradorId: number
+  usuarioNome?: string
+  obras: ObraListItem[]
+}
+
+export interface SelecionarObraResponse {
+  success: boolean
+  errorMessage?: string
+  redirectUrl?: string
+}

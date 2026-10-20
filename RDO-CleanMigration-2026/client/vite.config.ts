@@ -26,6 +26,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/Tarefa': {
+        target: 'https://localhost:7176',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 })

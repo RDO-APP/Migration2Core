@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-10-20 · **Status:** **§10 paridade P1/P2** (blocos vs prod) · pós-M4.1 homolog · Escolher **filtros** (§2.1) · Razor encerrável (§2.3)  
+**Data:** 2026-10-20 · **Status:** **M4.4** Escolher React (código) · §10 matriz **3 páginas** · **M4.5** Cards toolbar — próximo  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
@@ -288,7 +288,7 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 | Vetor | Onde ler |
 |-------|----------|
 | ① | `Equipamentos/rdoappProject/Client/` · `Api/Models/EtapaModel.cs` |
-| ② | `Migration2Core/.../RdoApp.Core/` · `client/src/App.tsx` · **não** expandir Razor Escolher |
+| ② | `client/src/pages/EscolherPage.tsx` · `WorkCardObra.tsx` · BFF `/api/bff/obras` · `CardsPage.tsx` |
 | ③ | `EquipamentosMobile/src/components/screens/normal-dasboard.tsx` · `workCard.tsx` |
 | ④ | `EquipoToPiscina/.../Client/Views/Obra/escolher.html` (filtros + cards) |
 | ⑤ | `RDOAppPiscinasMobile` · variant `appPiscinas` · [`storytelling-unificado-dimas-migracao-fapesc.md`](estudos-lucio-apps-plano-migracao-core/storytelling-unificado-dimas-migracao-fapesc.md) §5 |
@@ -314,14 +314,31 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 **Escopo:** só **web Equipamentos** ① vs ② (não Apontador/Piscinas, salvo referência de filtros).  
 **Orquestrador:** espelho executivo em [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) § Paridade visual blocos P1/P2 · checklist [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
 
-### 10.1 Numeração e rotas
+### 10.1 Três páginas E2E (#1–#3) — rotas e blocos
 
-| Nome | Fluxo pós-login | Matriz E2E (orquestrador) | Rota homolog ② | Template prod ① |
-|------|-----------------|---------------------------|----------------|-----------------|
-| **P1** | 1ª tela após login — escolher obra | Linha **#2** Escolher | `/Obra/Escolher` | `escolher.html` |
-| **P2** | Etapas e tarefas da obra | Linha **#3** Cards | `/Tarefa/Cards` (React `/app/`) | `cards.html` |
+| Página | Nome | Rota homolog ② | Blocos (ordem) | Dono UI ② | Prod ① |
+|:------:|------|----------------|----------------|-----------|--------|
+| **#1** | Login | `/Account/Login` | chrome externo (sem header operador) | EQ-W Razor | `Login/index.html` |
+| **#2** | **P1** Escolher | `/Obra/Escolher` | **header → título → filtros → card obra → legenda** | EQ-R SPA | `escolher.html` |
+| **#3** | **P2** Cards | `/Tarefa/Cards` | **header → toolbar → accordion → card tarefa** | EQ-R SPA | `cards.html` |
 
-Login (matriz **#1**) e Nova medição (**#4**) não entram neste capítulo — marcos **M4.8** e **M7+**.
+Nova medição = matriz **#4** (**M7+**). Detalhe item a item: §10.3–10.4 · resumo executivo §10.1b.
+
+### 10.1b Status por página e bloco (homolog ②)
+
+**Legenda:** ✅ ≈ prod · 🟡 parcial · ⬜ pendente
+
+| Página | Bloco | ② após M4.4 (código) | Marco |
+|:------:|-------|----------------------|-------|
+| **#1 Login** | Formulário / branding | 🟡 | **M4.8** |
+| **#2 P1** | Header | 🟡 OperadorShell | **M4.4** ✅ |
+| **#2 P1** | Filtros Obra + Município | ✅ | **M4.4** ✅ |
+| **#2 P1** | Card de obra | ✅ | **M4.4** ✅ |
+| **#2 P1** | Legenda progresso | ✅ | **M4.4** ✅ |
+| **#3 P2** | Header | 🟡 | **M4.1** ✅ |
+| **#3 P2** | Toolbar | ⬜ | **M4.5** |
+| **#3 P2** | Accordion etapa | 🟡 | **M4.5** |
+| **#3 P2** | Card tarefa | 🟡 | **M4.6** |
 
 ### 10.2 Estratégia de implementação (M4)
 
@@ -338,20 +355,20 @@ Ordem visual de cima para baixo: **header → chrome da lista → filtros → gr
 
 | Bloco | Item (comparar print) | Prod ① | Homolog ② (evidência) | Marco | Ver também |
 |-------|------------------------|--------|------------------------|-------|------------|
-| **Header** | Barra superior (logo, menu, ícones, perfil) | `layout-interno` / `nav.html` | Razor EQ-W; label EQUIPAMENTOS; **≠** prod | **M4.4** | §2.2 |
+| **Header** | Barra superior (logo, menu, ícones, perfil) | `layout-interno` / `nav.html` | **OperadorShell** React (🟡 RBAC) | **M4.4** ✅ | §2.2 |
 | **Header** | Nome da obra no topo | N/A (obra ainda não escolhida) | N/A | — | |
-| **Header** | Ícones gráfico, grid, relatório, + | Conforme RBAC | Reduzidos ou ausentes | **M4.4** | §1 shell |
-| **Chrome** | Título “Selecione uma das obras abaixo:” | Centrado, fundo azul | Similar; menos polish | **M4.4** | §2.2 |
-| **Filtros** | Campo Obra + Município | ⬜ em ①; **alvo ②** | **Ausente** | **M4.4** | §2.1 · ③④ |
-| **Card de obra** | Ícone obra (`icon-*` / capacete) | ✅ | **Ausente** | **M4.4** | `workCard` ③ |
-| **Card de obra** | Título da obra | No card | **Título + ID** apenas | **M4.4** | §2.2 |
-| **Card de obra** | `cidadeEstado` + papel + licença | ✅ | **Ausente** | **M4.4** | API M1 |
-| **Card de obra** | Barra % + `classeStatusCss` | ✅ | **Ausente** | **M4.4** | STRATEGY-2 |
-| **Legenda** | Significado das cores de status | ✅ rodapé/lista | **Ausente** | **M4.4** | §2.2 |
-| **Grid** | Densidade (várias obras por linha) | ~5 colunas | Poucos cards, cards brancos simples | **M4.4** | |
-| **Fluxo** | Clique → Selecionar → P2 | ✅ | ✅ (**M3**) | — | E2E passo 2–3 |
+| **Header** | Ícones gráfico, grid, relatório, + | Conforme RBAC | Parcial (chart, +) | **M4.5+** | §1 shell |
+| **Chrome** | Título “Selecione uma das obras abaixo:” | Centrado, fundo azul | ✅ React | **M4.4** ✅ | §2.2 |
+| **Filtros** | Campo Obra + Município | ⬜ em ①; **alvo ②** | ✅ filtro cliente | **M4.4** ✅ | §2.1 · ③④ |
+| **Card de obra** | Ícone obra (`icon-*` / capacete) | ✅ | ✅ | **M4.4** ✅ | `WorkCardObra` |
+| **Card de obra** | Título da obra | No card | ✅ (sem ID solto) | **M4.4** ✅ | §2.2 |
+| **Card de obra** | `cidadeEstado` + papel + licença | ✅ | ✅ BFF | **M4.4** ✅ | `/api/bff/obras` |
+| **Card de obra** | Barra % + `classeStatusCss` | ✅ | ✅ | **M4.4** ✅ | STRATEGY-2 |
+| **Legenda** | Significado das cores de status | ✅ rodapé/lista | ✅ React | **M4.4** ✅ | §2.2 |
+| **Grid** | Densidade (várias obras por linha) | ~5 colunas | ✅ `lista-obras` | **M4.4** ✅ | |
+| **Fluxo** | Clique → Selecionar → P2 | ✅ | ✅ BFF selecionar | — | E2E passo 2–3 |
 
-**Componente alvo EQ-R:** `WorkCardObra` (espelhar ① + dados M1 `ObterObras`).
+**Implementado EQ-R:** `EscolherPage` · `WorkCardObra` · `GET/POST /api/bff/obras`.
 
 ### 10.4 P2 — Etapas / Cards (blocos na página)
 

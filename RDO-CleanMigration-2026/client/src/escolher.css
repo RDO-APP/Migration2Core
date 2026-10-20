@@ -1,0 +1,141 @@
+.escolher-page h2 {
+  color: #fff;
+  text-align: center;
+  font-family: 'sf-md', system-ui, sans-serif;
+  margin: 0 0 1.25rem;
+  font-size: 1.35rem;
+}
+
+.escolher-loading,
+.escolher-empty {
+  color: #fff;
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.escolher-filtros {
+  margin-bottom: 1.25rem;
+}
+
+.escolher-filtros label {
+  color: #fff;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.lista-obras .item .btn i {
+  display: block;
+  font-size: 48px;
+  color: #28496f;
+  margin: 0 auto 8px;
+  text-align: center;
+}
+
+.lista-obras .item .btn p {
+  text-align: center;
+  color: #28496f;
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.lista-obras .item .btn small {
+  display: block;
+  text-align: center;
+  color: #888;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.progress.progress-line-info {
+  position: relative;
+  height: 22px;
+  margin-top: 6px;
+  background: #e8eef5;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress.progress-line-info .progress-bar {
+  height: 100%;
+  float: left;
+}
+
+.progress.progress-line-info .branco,
+.progress.progress-line-info .azul {
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.progress.progress-line-info .azul {
+  position: absolute;
+  right: 6px;
+  top: 0;
+  color: #28496f;
+}
+
+.progress.bg-verde {
+  background-color: #57b257;
+}
+
+.progress.bg-vermelho {
+  background-color: #d04541;
+}
+
+.progress.bg-cinza {
+  background-color: #999;
+}
+
+.bg-verde {
+  background-color: #57b257;
+}
+
+.bg-vermelho {
+  background-color: #d04541;
+}
+
+.bg-cinza {
+  background-color: #999;
+}
+
+.area-legenda {
+  margin-top: 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+.area-legenda label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.area-legenda .legenda {
+  display: inline-block;
+  margin: 0 0.75rem 0.5rem;
+  vertical-align: top;
+}
+
+.area-legenda .status {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.area-legenda small {
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+.icon-contratada:before {
+  content: '\e807';
+}
+
+.icon-contratante:before {
+  content: '\e815';
+}

@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-20 — **M4.1/M4.3 OK** · paridade **P1/P2 por blocos** (manual **§10**) · foco **M4.4** · **I0** B1/B2 OK · **ops** [`docs/ops/`](ops/README.md) · **4 páginas × M** § abaixo  
+**Atualizado:** 2026-10-20 — **M4.4 código OK** (Escolher React + BFF obras) · foco **M4.5** P2 · matriz **3 páginas** manual **§10.1b** · **I0** B1/B2 OK · **ops** [`docs/ops/`](ops/README.md)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -100,7 +100,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M4 (paridade visual + SPA)** — fluxo **M3** OK · **M4.1/M4.3** shell **P2 header** OK · **dívida:** **P1** (header + card obra) e **P2** (toolbar + accordion + card tarefa) **≠ prod ①** até M4.4–M4.6. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · § [Paridade visual blocos P1/P2](#paridade-visual-prod--homolog--blocos-por-tela).
+**Marco ativo:** **M4** — **M4.4** P1 Escolher React (**código**; validar pós-deploy) · **dívida:** **P2** toolbar/accordion/card (**M4.5–M4.6**) · manual **§10.1b** (páginas **#1–#3** por bloco). Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
 
 **Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4 Login→Nova medição) · **§10 paridade P1/P2** · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
@@ -288,7 +288,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ## Gap técnico #2 — P1 (Escolher · matriz #2)
 
-**Blocos pendentes:** **header** alinhado ao shell prod · **card de obra** (`WorkCardObra`) · filtros · legenda. Escolher EQ-W: lista funcional (M3) mas **não** paridade. **M4.4** consome `ObterObras`/M1 + filtros locais. Até ship: homolog P1 **continuará** ≠ prod — **não** bug. Itens: manual **§10.3**.
+**M4.4 (código):** SPA em `/Obra/Escolher` · `GET/POST /api/bff/obras` · `WorkCardObra`. **Pendente homolog:** deploy + smoke Lucio. Ajuste fino header/RBAC → **M4.5+**. Itens: manual **§10.3** · resumo **§10.1b**.
 
 **Dados homol vs prod:** contagem de cards por agrupador pode divergir entre `homol_rdoapp` e `novo_rdoapp` (ex. obra 42: 13 vs 8) — comparar UI com o **mesmo RDS** alvo.
 
@@ -318,8 +318,8 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **2** | ~~**M2/M3 FECHADO**~~ | docs | — | **✅** |
 | **3** | ~~Commit docs M3/M4.1~~ | — | — | **✅ `d9dce0b`** |
 | **4** | ~~**M4.3** deploy~~ | Lucio | — | **✅ 20261020-100219** |
-| **5** | **M4.4** Escolher React — **card obra** + filtros (pág. 2 = prod) | **EQ-R** | — | **foco** |
-| **6** | **M4.5–M4.6** Cards toolbar + accordion prod (pág. 3) | **EQ-R** | — | após 5 |
+| **5** | ~~**M4.4** Escolher React~~ | **EQ-R** | — | **✅ código** · deploy homolog |
+| **6** | **M4.5–M4.6** Cards toolbar + accordion + card tarefa (**#3**) | **EQ-R** | — | **foco** |
 | **7** | **M4.7** card tarefa completo + **M4.8** Login SPA / congela EQ-W | **EQ-R** | — | |
 | **8** | **M7+** Nova medição · RBAC fino · **I0 B3** FDD | várias | não | paralelo |
 
@@ -329,7 +329,7 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 
 ## Próxima ação (1)
 
-**M4.4** — **P1** Escolher React: header + **card obra** + filtros/legenda. Depois **M4.5–M4.6** blocos **P2**. Ver § [Paridade visual blocos P1/P2](#paridade-visual-prod--homolog--blocos-por-tela).
+**M4.5** — **P2** (#3): toolbar + accordion prod. Depois **M4.6** card tarefa. Deploy **M4.4** antes do smoke P1. Manual **§10.1b** (páginas #1–#3).
 
 ---
 
