@@ -2,7 +2,7 @@
 
 **Trilha:** **I0** · **Quem executa:** Lucio (PowerShell + browser). **Agente:** não roda SSM/deploy (só código/docs no Git).  
 **Plano técnico:** [`../homolog-core-deploy-rapido-plano.md`](../homolog-core-deploy-rapido-plano.md)  
-**Atualizado:** 2026-10-19 (lições login AWS, path clone, um passo por vez)
+**Atualizado:** 2026-10-20 · **M4.3** deploy OperadorShell (`a29b9cc`+)
 
 ---
 
@@ -143,11 +143,15 @@ Alternativa legada (uma consulta, sem loop): `aws ssm get-command-invocation ...
 
 ---
 
-### Passo G — Teste produto
+### Passo G — Teste produto (M3 + **M4.1**)
 
 1. `https://homolog.sistema.rdoapp.com.br/Account/Login`  
-2. CPF teste homolog · Escolher obra · clicar obra.  
-3. OK → `/Tarefa/Cards`. Erro → **texto completo** do banner vermelho (Staging mostra `ex.Message` após deploy com código novo).
+2. CPF teste homolog · Escolher obra · clicar obra (ex. **42**).  
+3. OK → `/Tarefa/Cards` com dados (accordion).  
+4. **M4.1:** header azul **igual Escolher** (logo Equipamentos, **nome da obra** no centro, seu nome à direita, ícones gráfico/+). Footer copyright. DevTools → `GET /api/bff/etapas` **200**; resposta JSON com `usuarioNome`.  
+5. Erro → banner vermelho completo; anotar `CommandId` se SSM falhou.
+
+Marcar **M4.3** em [`m4-execucao-checklist.md`](m4-execucao-checklist.md) após PASS.
 
 ---
 
