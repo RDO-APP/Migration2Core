@@ -12,3 +12,7 @@ bin/
 obj/
 *.user
 .vs/
+
+# Trilha F — não commitar rascunhos blockchain na raiz (arquivo em FAPESC/_arquivo-migration2core)
+/BLOCKCHAIN-COST-ESTIMATION-METHODOLOGY.md
+/RDO-LAUDO-PDF-SIGNATURE-ANALYSIS-AND-BLOCKCHAIN-PROPOSAL.md
