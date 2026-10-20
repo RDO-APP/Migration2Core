@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-19 — **M3 PASS** (Lucio · fluxo Login→Escolher→Cards React obra 42) · **M2 FECHADO** · **M4** próximo (shell + layout) · **I0** B1/B2 OK · M1 FECHADO · **4 páginas × M** § abaixo  
+**Atualizado:** 2026-10-20 — **M4.1** OperadorShell Cards no Git (`07f946d`) · **deploy homolog pendente** · **M3 FECHADO** · **I0** B1/B2 OK · scripts **FDD/serviço** no repo (`b1fd2f8`) · **ops** [`docs/ops/`](ops/README.md) · HEAD `d9dce0b` · **4 páginas × M** § abaixo  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -14,7 +14,7 @@
 | Legado prod Piscinas web (**PQ-L**) | **`RDO-APP/EquipoToPiscina`** · `piscinas.rdoapp.com.br` · `piscinas_rdoapp` | ≠ `Equipamentos` · ≠ `Migration2Core/EquipoToPiscina-1/` |
 | Apontador (**EQ-M**) | **`RDO-APP/EquipamentosMobile`** | — |
 | Piscineiro (**PQ-M**) | **`RDO-APP/RDOAppPiscinasMobile`** (ref. `PiscinasMobile`) | — |
-| FAPESC 031/2026 · PoC imutabilidade (**F**) | **`RDO-APP/rdo-blockchain`** · docs [`imutabilidade/`](imutabilidade/README.md) · [`editais-fapesc/`](editais-fapesc/README.md) | **≠** Migration2Core prod · **≠** chat Migração (implementar PoC) |
+| FAPESC 031/2026 · PoC imutabilidade (**F**) | **`RDO-APP/rdo-blockchain`** · docs [`imutabilidade/`](imutabilidade/README.md) · [`editais-fapesc/`](editais-fapesc/README.md) | **≠** Migration2Core prod · **≠** chat Migração · rascunhos MD FAPESC **fora** da raiz deste repo (`.gitignore`) |
 
 Workspace Cursor **Equipamentos** (OneDrive) pode ter cópia local dos `.md` — **push = Migration2Core** (`C:\Dev\Migration2Core`). Clone legado Equipamentos = referência **EQ-L** somente.
 
@@ -67,6 +67,8 @@ flowchart TB
   I --> Id[ci/homolog-ec2-s3-ssm]
 ```
 
+**Diagrama (2026-10-20):** topologia **inalterada** — homolog continua **EQ-W** (Login/Escolher Razor) + **EQ-R** (Cards React + BFF `homol_rdoapp`). M4.1 só adiciona **shell React na rota Cards**; seta EQ-W → encerrar → EQ-R segue válida quando SPA cobrir as 3 telas. Diagrama **5 vetores** (prod/mobile): [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) §0 — **não** muda com M4.1.
+
 **Apps (EQ-M):** cliente do **EQ-L** (`/api/*` prod) — **não** filho visual do homolog; **não** substituem telas Angular. Ver manual M0′ diagrama § arquitetura.
 
 | Sigla | Papel | Foco | Repo / doc |
@@ -98,7 +100,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M4 (EQ-R shell + Escolher React + layout)** — fluxo **M3** assinado (páginas **1–3** operacionais; **dívida gráfica** header/layout prod · **página 4** Nova medição = **M7+**). Referência: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · § [4 páginas × marcos M](#4-páginas--marcos-m-visão-única).
+**Marco ativo:** **M4 (EQ-R shell + Escolher React + layout)** — **M4.1** código OK · **M4.3** deploy EC2 · **M4.4** Escolher React. Págs. **1–2** ainda **EQ-W**; pág. **3** React com header prod (parcial). Pág. **4** = **M7+**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
 
 **Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§0–§4 Login→Nova medição) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) (§4b · diagrama) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
@@ -107,7 +109,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | Fase | Marco | Passos | Status |
 |------|-------|--------|--------|
 | **A** | **M0′** doc | A1 RDS/hosts · A2 smoke prod + evidências · A3 aceite | **A executada** — ver [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · HAR API ○ opcional |
-| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **parcial** — B1/B2 OK 2026-10-19 (`CommandId` `11328550-efa5-436f-86ba-21b8fe508e19` · zip `rdoapp_core-20261019-175555`); B3 hotfix runway pendente |
+| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **parcial** — B1/B2 OK 2026-10-19; **scripts FDD + serviço** versionados (`publish-homolog-ec2-fdd.ps1` · `ec2-install-rdoapp-core-service.ps1`); B3 execução EC2 pendente |
 | **C** | **M2 produto** | C1 BFF agrupador · C2 DTO card · C3 React accordion/cards · C5 redeploy | **C1–C3 + C5 homolog OK** — `/Tarefa/Cards` obra 42: 3 etapas · **13** tarefas · head/datas/%/status; **M2.5+** toolbar/ações · **M3** gate |
 | **D** | **M3** | D1–D4 E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · D5 assinatura | **PASS 2026-10-19** (passos 1–5 · Lucio) |
 | **E** | **M4+** | E1 congela EQ-W · E2 M5 Apontador · E3 M6+ | **E1 ativo** — shell/layout · Escolher React |
@@ -116,7 +118,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Próxima ação (ordem confirmada 2026-10-19):** ver § [Próximos passos (ordem)](#próximos-passos-ordem) — **agora:** **M4** (app shell + header/nav prod nas 3 telas · Escolher React com filtros · polish Cards).
 
-**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** I0 deploy + **C3** homolog · **M3 PASS** (E2E Lucio) · **M2 FECHADO** · Git produto **`d18cf8f`** (`ci/homolog-ec2-s3-ssm`).
+**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-20** M4.1 + ops/I0 scripts · Git **`d18cf8f`** (M2 deploy) → **`d9dce0b`** (`ci/homolog-ec2-s3-ssm`).
 
 **Deploy:** agente **não** executa SSM full; Lucio ou **I0** (hotfix/CI). Roteiro: [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
@@ -127,9 +129,10 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M0** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher (7 obras); docs E0–E6/orquestrador | branding homolog; Escolher CSS STRATEGY-2; E2 localhost completo |
 | **M0′** | Matriz; manual ①–⑥; diagrama; **Fase A** PASS doc ([`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md)) | M0′ **FECHADO** formal opcional: HAR API prod Lucio |
 | **M1** | Cenário **A**; v1 endpoints; tipos TS Auth/Obra/Cards; mapa Core vs legado | Pacote npm publicado; EQ-M ainda não consome tipos |
-| **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações card · layout/header M4 |
-| **M2** | **FECHADO** — C1–C3 + C5; BFF; M3 gate | M2.5 ☑ EC2 com dados · polish M4+ |
-| **M3** | **FECHADO** — E2E passos 1–5 | passos 6–7 opcional; **pág. 4** fora gate |
+| **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações · M4.4 Escolher React |
+| **M2** | **FECHADO** | — |
+| **M3** | **FECHADO** | passos 6–7 E2E opcional |
+| **M4** | **M4.1/M4.2** OperadorShell + `usuarioNome` BFF | M4.3 deploy · M4.4–M4.6 |
 
 ---
 
@@ -237,9 +240,10 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | M0 | PARCIAL PASS | [`m0-registro-encerramento.md`](m0-registro-encerramento.md) |
 | M1 | FECHADO | [`m1-execucao-checklist.md`](m1-execucao-checklist.md) |
 | M0′ | **PASS doc** (Fase A) · ativo até HAR opcional | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · matriz · manual |
-| I0 | **parcial** (B1/B2 OK 2026-10-19) | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) · [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) |
+| I0 | **parcial** (B1/B2 OK · scripts B3 no repo) | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) |
 | M2 | **FECHADO** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
-| M3 | **FECHADO** (E2E 1–5) | [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) |
+| M3 | **FECHADO** | [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) |
+| M4 | **M4.1 ativo** (deploy ○) | [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) |
 
 ---
 
@@ -251,9 +255,9 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 |---|------|------|:------------:|:---------:|
 | **1** | ~~**M3** E2E~~ | Lucio | — | **✅ 2026-10-19** |
 | **2** | ~~**M2/M3 FECHADO**~~ | docs | — | **✅** |
-| **3** | **Commit/push** docs M3 + orquestrador | agente/Lucio | não | **agora** |
-| **4** | **I0 B3** — runway deploy &lt;2 min | Lucio · **I** | não | paralelo |
-| **5** | **M4** — **shell/header** nas 3 telas · **Escolher React** (filtros) · layout prod | **EQ-R** | — | **foco** |
+| **3** | ~~Commit docs M3/M4.1~~ | — | — | **✅ `d9dce0b`** |
+| **4** | **M4.3** deploy homolog M4.1 + **I0 B3** FDD/serviço (quando for) | Lucio · **I** | — | paralelo |
+| **5** | **M4.4–M4.6** Escolher React · Login SPA · congela EQ-W | **EQ-R** | — | **foco** |
 | **6** | **Gap #1** toolbar Cards · **página 4 Nova medição** | **EQ-R** / **M7+** | não | toolbar M4–M7 · modal **M7+** |
 
 **Por que não inverter:** M4 antes de M3 viola critério de encerramento EQ-W (M2+M3 OK). I0 B3 antes de M3 **não** é necessário (B1/B2 já OK). Toolbar Escolher/Cards **antes** do shell M4 gera UI solta — estratégia acordada: **shell → Escolher → Cards polish**.
@@ -262,7 +266,7 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 
 ## Próxima ação (1)
 
-**M4 EQ-R** — shell operador (header/nav como prod ①) unificando Login + Escolher + Cards; Escolher em React com filtros; depois toolbar Cards. **Nova medição (pág. 4):** marco **M7+**, não bloqueia M4.
+**M4.3** — Lucio: `publish-homolog-ec2.ps1` + smoke Cards com **OperadorShell**. **M4.4** — Escolher React + filtros. **Nova medição (pág. 4):** **M7+**.
 
 ---
 

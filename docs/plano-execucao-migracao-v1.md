@@ -50,7 +50,7 @@
 | **M9** | Pacote homolog v1 | Fechar critérios D1–D7 | EQ-R, EQ-M, I | Todos D* abaixo ✅; orquestrador atualizado | Hub B2G evidências se pedido |
 | **M10** | Onda 2 / L1 prep | Preparar expansão pós-v1 | EQ-R, EQ-M, docs | Backlog telas Onda 2; doc trilha Linux L1; **sem** cutover prod | FAPESC marcos (F) paralelos |
 
-**Marco atual (2026-10-19):** **M2** produto homolog OK · gate **M3** E2E pendente · **I0** parcial (B1/B2 OK). **M1:** FECHADO · **M0:** PARCIAL PASS · **M0′:** PASS doc. Detalhe: [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) § Próximos passos.
+**Marco atual (2026-10-20):** **M4** (M4.1 shell Cards no Git · deploy homolog pendente) · **M3 FECHADO** · **I0** parcial (scripts FDD no repo). Detalhe: [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md).
 
 ---
 
