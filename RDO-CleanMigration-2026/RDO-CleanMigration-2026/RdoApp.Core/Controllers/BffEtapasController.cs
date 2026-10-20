@@ -37,6 +37,7 @@ public class BffEtapasController : ControllerBase
             return NotFound(new { message = "Obra não encontrada." });
         }
 
+        payload.UsuarioNome = User.Identity?.Name ?? string.Empty;
         return Ok(payload);
     }
 }

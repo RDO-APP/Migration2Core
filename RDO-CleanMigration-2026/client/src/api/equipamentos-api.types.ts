@@ -27,5 +27,6 @@ export interface EtapaComTarefas {
 export interface CardsContext {
   obraId: number
   obraNome: string
+  usuarioNome?: string
   etapas: EtapaComTarefas[]
 }

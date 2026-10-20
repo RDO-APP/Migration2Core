@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchCardsContext } from './api/cardsApi'
 import type { EtapaComTarefas, TarefaCard } from './api/equipamentos-api.types'
+import { OperadorShell } from './components/OperadorShell'
 import './App.css'
 
 function formatDateBr(iso?: string): string {
@@ -99,21 +100,24 @@ function App() {
 
   if (loading) {
     return (
-      <main className="cards-page">
-        <p className="muted">Carregando tarefas…</p>
-      </main>
+      <OperadorShell>
+        <div className="cards-page">
+          <p className="muted cards-loading">Carregando tarefas…</p>
+        </div>
+      </OperadorShell>
     )
   }
 
   if (error) {
     return (
-      <main className="cards-page">
-        <h1>Etapas / Tarefas</h1>
-        <p className="error">{error}</p>
-        <p>
-          <a href="/Obra/Escolher">Escolher obra</a>
-        </p>
-      </main>
+      <OperadorShell>
+        <div className="cards-page">
+          <p className="error">{error}</p>
+          <p>
+            <a href="/Obra/Escolher">Escolher obra</a>
+          </p>
+        </div>
+      </OperadorShell>
     )
   }
 
@@ -122,14 +126,13 @@ function App() {
   }
 
   return (
-    <main className="cards-page">
-      <header className="cards-header">
-        <h1>Etapas / Tarefas</h1>
-        <p className="muted">
-          Obra: <strong>{data.obraNome}</strong> · {data.etapas.length} etapa(s) · {totalTarefas}{' '}
-          tarefa(s)
-        </p>
-      </header>
+    <OperadorShell obraNome={data.obraNome} usuarioNome={data.usuarioNome}>
+      <div className="cards-page">
+        <header className="cards-subheader">
+          <p className="cards-meta muted">
+            {data.etapas.length} etapa(s) · {totalTarefas} tarefa(s) · EQ-R M4
+          </p>
+        </header>
 
       {data.etapas.length === 0 ? (
         <p className="muted cards-empty">Nenhum registro encontrado.</p>
@@ -169,10 +172,8 @@ function App() {
         </div>
       )}
 
-      <footer className="cards-footer muted small">
-        RDO App Equipamentos · EQ-R M2 · C3 accordion/cards (somente leitura)
-      </footer>
-    </main>
+      </div>
+    </OperadorShell>
   )
 }
 

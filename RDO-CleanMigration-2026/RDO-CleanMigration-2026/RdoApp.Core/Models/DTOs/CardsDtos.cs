@@ -28,5 +28,6 @@ public sealed class CardsContextDto
 {
     public int ObraId { get; init; }
     public string ObraNome { get; init; } = "";
+    public string UsuarioNome { get; set; } = "";
     public IReadOnlyList<EtapaComTarefasDto> Etapas { get; init; } = Array.Empty<EtapaComTarefasDto>();
 }

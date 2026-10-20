@@ -1,17 +1,28 @@
+.operador-app .operador-conteudo {
+  padding-top: 64px;
+  min-height: calc(100vh - 120px);
+}
+
 .cards-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1rem 1rem 2rem;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: #1a1a1a;
-  background: #eee;
-  min-height: 100vh;
 }
 
-.cards-header h1 {
-  font-size: 1.35rem;
-  margin: 0 0 0.25rem;
-  font-weight: 600;
+.cards-loading {
+  text-align: center;
+  padding: 2rem;
+}
+
+.cards-subheader {
+  margin-bottom: 0.5rem;
+}
+
+.cards-meta {
+  margin: 0;
+  font-size: 0.875rem;
 }
 
 .muted {
@@ -194,6 +205,3 @@
   border-radius: 3px;
 }
 
-.cards-footer {
-  margin-top: 2rem;
-}
