@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-20 — **M4.1/M4.3 OK** (header Cards ≈ prod · SSM `fb301c23-…`) · **paridade card obra/tarefa** = **M4.4–M4.7** + **M7** · foco **M4.4** pág. 2 · **I0** B1/B2 OK · scripts **FDD/serviço** no repo (`b1fd2f8`) · **ops** [`docs/ops/`](ops/README.md) · HEAD `d9dce0b` · **4 páginas × M** § abaixo  
+**Atualizado:** 2026-10-20 — **M4.1/M4.3 OK** · paridade **P1/P2 por blocos** (manual **§10**) · foco **M4.4** · **I0** B1/B2 OK · **ops** [`docs/ops/`](ops/README.md) · **4 páginas × M** § abaixo  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -100,9 +100,9 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M4 (paridade visual + SPA)** — fluxo **M3** OK · **M4.1/M4.3** header/shell Cards OK no homolog · **dívida:** pág. **2** card obra e pág. **3** card tarefa **≠ prod ①** (esperado até M4.4–M7). Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · § [Paridade visual pág. 2–3](#paridade-visual-prod--homolog-pág-2–3).
+**Marco ativo:** **M4 (paridade visual + SPA)** — fluxo **M3** OK · **M4.1/M4.3** shell **P2 header** OK · **dívida:** **P1** (header + card obra) e **P2** (toolbar + accordion + card tarefa) **≠ prod ①** até M4.4–M4.6. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · § [Paridade visual blocos P1/P2](#paridade-visual-prod--homolog--blocos-por-tela).
 
-**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§0–§4 Login→Nova medição) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) (§4b · diagrama) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
+**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4 Login→Nova medição) · **§10 paridade P1/P2** · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
 ### Plano de execução (A → E)
 
@@ -167,7 +167,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 | Marco / doc | Documento |
 |:----:|-----------|
-| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · repos + RDS · páginas §0–§5 |
+| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · §1–§4 · **§10 paridade P1/P2** |
 | M0′ Fase A evidências | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) |
 | M0′ matriz 4 telas | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 
@@ -225,30 +225,70 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ---
 
-## Paridade visual prod ① vs homolog ② (pág. 2–3)
+## Paridade visual prod ① vs homolog ② (blocos por tela)
 
-**Estratégia (fechada):** **não** investir STRATEGY-2 / CSS pesado em **Razor Escolher** — substituir pág. 2 por **React** (M4.4). Pág. 3 evolui no **mesmo `client/`** (componentes compartilhados com Escolher). Referência de markup/CSS: prod **`escolher.html`** · **`cards.html`** (repo **Equipamentos** EQ-L); filtros UX: Apontador/Piscinas (manual §2).
+**Numeração desta seção (pós-login):** **P1** = Escolher obra · **P2** = Etapas/Cards. Cruzar com matriz [4 páginas × M](#4-páginas--marcos-m-visão-única): **P1 = linha #2** · **P2 = linha #3**. Login (#1) e Nova medição (#4) ficam fora da tabela abaixo — **M4.8** / **M7+**.
 
-| Página | Prod ① (alvo) | Homolog ② hoje | Gap principal | Marco / fase |
-|--------|---------------|----------------|---------------|--------------|
-| **2 Escolher** | `workCard`: ícone obra, título, cidade/UF, papel/licença, **barra %**, legenda status | Razor: grid título + **ID**; sem filtros | Card obra + filtros + legenda | **M4.4** (EQ-R) |
-| **3 Cards** | Header nav + **toolbar** (FILTRO, + tarefa/etapa) + accordion **azul escuro** + card: efetivo/equip, ícones ação, checkbox, barra % | React: header OK (**M4.1**); accordion/cards **M2 mínimo** (sem toolbar, card simplificado) | Toolbar + template card + ações | **M4.5–M4.7** · modal medição **M7+** |
-| **1 Login** | layout externo | Razor Kiro OK funcional | SPA unificada | **M4.8** (ou M4.5 doc) |
-| **4 Nova medição** | modal em Cards | inexistente | API + modal | **M7+** |
+**Estratégia (fechada):** **não** investir STRATEGY-2 / CSS pesado em **Razor Escolher** — **P1** vira **React** (M4.4). **P2** evolui no **mesmo `client/`** (`OperadorShell` compartilhado). Referência: prod **`escolher.html`** · **`cards.html`** (EQ-L); capítulo UX completo: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) **§10**.
 
-**Ordem de implementação (não trocar):** M4.4 **Escolher React** (pág. 2) → M4.5 **toolbar + accordion prod** (pág. 3) → M4.6 **card tarefa** (ícones/linhas/ações) → M4.7 **Login na SPA** + congela EQ-W → M7 toolbar restante / medição / RBAC fino.
+### Resumo por bloco
+
+| Tela | Blocos (ordem na página) | Marco principal |
+|------|--------------------------|-----------------|
+| **P1** Escolher | header → chrome lista → filtros → **card de obra** → legenda | **M4.4** |
+| **P2** Cards | header → toolbar → **accordion etapa** → **card de tarefa** → placeholder nova tarefa | **M4.1** (header) · **M4.5–M4.6** |
+
+### Detalhe por item (evidência prints homolog 2026-10-20)
+
+**P1 — Escolher** (`/Obra/Escolher` · matriz #2)
+
+| Bloco | Item | Prod ① | Homolog ② | Marco |
+|-------|------|--------|-----------|-------|
+| Header | Barra logo, menu, ícones, perfil | `layout-interno` | Header “EQUIPAMENTOS”; **≠** nav prod | **M4.4** |
+| Header | Ícones gráfico / grid / relatório | Presentes | Ausentes ou reduzidos | **M4.4** |
+| Chrome | Fundo + “Selecione uma das obras abaixo:” | Sim | Layout simplificado | **M4.4** |
+| Filtros | Obra + Município (alvo ②; ref. §2.1) | ① sem UI; alvo = filtros | **Ausente** | **M4.4** |
+| **Card de obra** | Ícone (capacete / obra) | Sim | **Ausente** | **M4.4** |
+| **Card de obra** | Título | No card | Título + **ID** solto | **M4.4** |
+| **Card de obra** | Cidade/UF + papel + licença | Sim | **Ausente** | **M4.4** |
+| **Card de obra** | Barra progresso + % | Sim | **Ausente** | **M4.4** |
+| Legenda | Cores / status obras | Sim | **Ausente** | **M4.4** |
+| Grid | Colunas de cards | ~5 colunas prod | Poucos cards, visual lista branca | **M4.4** |
+
+**P2 — Etapas / Cards** (`/Tarefa/Cards` · matriz #3)
+
+| Bloco | Item | Prod ① | Homolog ② | Marco |
+|-------|------|--------|-----------|-------|
+| Header | Nome da obra no topo | Sim | **≈ prod** (**M4.1** ✅) | **M4.1** ✅ |
+| Header | Ícones nav completos + RBAC | Sim | Parcial | **M4.5+** |
+| Toolbar | “Etapas / Tarefas” + lista/grid | Sim | **Ausente** | **M4.5** |
+| Toolbar | FILTRO · + tarefa · + etapa | Sim | **Ausente** | **M4.5** |
+| Toolbar | LISTA · SELECIONAR TUDO | Sim | **Ausente** | **M4.5** |
+| Accordion | Faixa azul escuro + **+ / −** | Sim | Accordion M2; estilo **≠** | **M4.5** |
+| Accordion | Títulos etapa (CIVIL, …) | Sim | Dados OK; visual diferente | **M4.5** |
+| **Card tarefa** | Faixa verde + mão + menu ⋮ | Sim | Verde + **só título** | **M4.6** |
+| **Card tarefa** | Contadores efetivo / equipamento | Sim | **Ausente** | **M4.6** |
+| **Card tarefa** | Ícones ação (olho, relógio, …) | Sim | **Ausente** | **M4.6** · API **M7+** |
+| **Card tarefa** | Datas + ícone calendário | Sim | Datas sem ícones | **M4.6** |
+| **Card tarefa** | Status + checkbox + barra % | Sim | % sim; **sem** checkbox | **M4.6** |
+| **Card tarefa** | Placeholder “Adicionar nova tarefa” | Sim | **Ausente** | **M4.6** |
+| Dados | “N etapa(s) M tarefa(s)” | Pode divergir por RDS | BFF OK — **não** confundir com gap visual | **M2** ✅ |
+
+**Fora P1/P2 (matriz):** Login (#1) → **M4.8** · Nova medição (#4) → **M7+**.
+
+**Ordem de implementação (não trocar):** **M4.4** P1 (Escolher React: header + card obra + filtros) → **M4.5** P2 (toolbar + accordion) → **M4.6** P2 (card tarefa + placeholder) → **M4.7/M4.8** Login SPA + congela EQ-W → **M7+** ações/medição/RBAC fino.
 
 **Gate vs pixel-perfect:** **M3** exigiu **fluxo + dados**; **M9 (D1)** exige paridade **operável** web — não exige clone pixel a pixel antes de M4.7.
 
 ---
 
-## Gap técnico #1 (pág. 3 — detalhe)
+## Gap técnico #1 — P2 (Cards · matriz #3)
 
-**Cards EQ-R:** M2/C3 = dados + accordion mínimo. **Pendente** vs `cards.html`: toolbar, cabeçalho etapa prod, ícones efetivo/equipamento, fila de ações (olho/relógio/editar/…), “Adicionar nova tarefa”, checkbox seleção, estilo barra %. **Nova medição** = **M7+**. BFF agrupador **OK** — gap é **UI**, não RDS.
+**Blocos pendentes:** toolbar · accordion etapa prod · **card de tarefa** completo · slot “Adicionar nova tarefa”. M2/C3 entregou **dados + accordion mínimo**. **Nova medição** = **M7+**. BFF agrupador **OK** — gap é **UI**, não RDS. Itens: manual **§10.4**.
 
-## Gap técnico #2 (pág. 2 — detalhe)
+## Gap técnico #2 — P1 (Escolher · matriz #2)
 
-**Escolher EQ-W:** lista funcional (M3) mas **não** é paridade prod. **M4.4** consome `ObterObras`/M1, filtros locais Obra+Município, componente **`WorkCardObra`** espelhando ①. Até M4.4 ship: homolog pág. 2 **continuará** diferente de prod — **não** bug.
+**Blocos pendentes:** **header** alinhado ao shell prod · **card de obra** (`WorkCardObra`) · filtros · legenda. Escolher EQ-W: lista funcional (M3) mas **não** paridade. **M4.4** consome `ObterObras`/M1 + filtros locais. Até ship: homolog P1 **continuará** ≠ prod — **não** bug. Itens: manual **§10.3**.
 
 **Dados homol vs prod:** contagem de cards por agrupador pode divergir entre `homol_rdoapp` e `novo_rdoapp` (ex. obra 42: 13 vs 8) — comparar UI com o **mesmo RDS** alvo.
 
@@ -289,7 +329,7 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 
 ## Próxima ação (1)
 
-**M4.4** — Escolher React: **workCard** prod (ícone, %, legenda) + filtros. Depois **M4.5–M4.7** pág. 3. Ver § Paridade visual pág. 2–3.
+**M4.4** — **P1** Escolher React: header + **card obra** + filtros/legenda. Depois **M4.5–M4.6** blocos **P2**. Ver § [Paridade visual blocos P1/P2](#paridade-visual-prod--homolog--blocos-por-tela).
 
 ---
 
