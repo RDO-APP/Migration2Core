@@ -50,7 +50,7 @@
 | **M9** | Pacote homolog v1 | Fechar critérios D1–D7 | EQ-R, EQ-M, I | Todos D* abaixo ✅; orquestrador atualizado | Hub B2G evidências se pedido |
 | **M10** | Onda 2 / L1 prep | Preparar expansão pós-v1 | EQ-R, EQ-M, docs | Backlog telas Onda 2; doc trilha Linux L1; **sem** cutover prod | FAPESC marcos (F) paralelos |
 
-**Marco atual:** **M0′** (realinhamento) — matriz 4 páginas · **Selecionar** + **I0** antes de fechar M2/M3. **M1:** FECHADO · **M0:** PARCIAL PASS — [`m0-registro-encerramento.md`](m0-registro-encerramento.md). Código M2 existe; **produto** M2 bloqueado até gates acima.
+**Marco atual (2026-10-19):** **M2** produto homolog OK · gate **M3** E2E pendente · **I0** parcial (B1/B2 OK). **M1:** FECHADO · **M0:** PARCIAL PASS · **M0′:** PASS doc. Detalhe: [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) § Próximos passos.
 
 ---
 
@@ -116,4 +116,4 @@ E1 · E2 · E3 · E4 · E6 — pasta `docs/`.
 
 ## 9. Próxima ação
 
-**M0′:** validar [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · **EQ-W0.5** `Selecionar` · **I0** [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) (hotfix SSM — Lucio).
+**M3:** [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) + [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · depois **M4** (shell + Escolher React). Ordem completa: orquestrador § Próximos passos.

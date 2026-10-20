@@ -1,8 +1,11 @@
 # E2E Fase 0 — Checklist (Migration2Core)
 
+**Marco:** **M3** · Runbook: [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md)  
 **Homolog Equipamentos (Core / `homol_rdoapp`):** autorizado 2026-10-17  
 **Schema RDS:** **47** tabelas (= prod) desde DDL 2026-10-17 — validar login grava `historico_login` após redeploy Core.  
-**Fluxo:** Login → Escolher obra → POST Selecionar → `/Tarefa/Cards`
+**Fluxo:** Login → Escolher obra → POST Selecionar → `/Tarefa/Cards` (**React** + `/api/bff/etapas`)
+
+**Smoke informal (2026-10-19, pré-M3 formal):** obra 42 · 3 etapas · 13 cards — repetir e assinar tabela abaixo para **M3 FECHADO**.
 
 ### Usuários de teste homolog RDS (Lucio — só homolog)
 
@@ -34,15 +37,17 @@ Não commitar connection strings com senha de produção.
 
 | # | Passo | OK | Falha | Data | Notas |
 |---|--------|:--:|:-----:|------|-------|
-| 1 | Abrir URL Login homolog **ou** localhost — página carrega | | | | |
-| 2 | Login com usuário homolog | | | | CPF/senha seus de teste |
-| 3 | Redireciona para `/Obra/Escolher` | | | | |
-| 4 | Lista exibe obras (>0 ou esperado) | | | | |
-| 5 | Selecionar obra → `/Tarefa/Cards` | | | | |
-| 6 | `/` (Home) respeita sessão (Cards ou Escolher) | | | | |
+| 1 | Abrir URL Login homolog **ou** localhost — página carrega | ☑ | | 2026-10-19 | `homolog.sistema…/Account/Login` (HTTP homolog) |
+| 2 | Login com usuário homolog | ☑ | | 2026-10-19 | CPF Equipamentos § acima |
+| 3 | Redireciona para `/Obra/Escolher` | ☑ | | 2026-10-19 | |
+| 4 | Lista exibe obras (>0 ou esperado) | ☑ | | 2026-10-19 | 7 obras em grid |
+| 5 | Selecionar obra → `/Tarefa/Cards` | ☑ | | 2026-10-19 | Obra **42** · React C3 · 3 etapas · 13 tarefas · BFF OK |
+| 6 | `/` (Home) respeita sessão (Cards ou Escolher) | | | | não testado nesta rodada |
 | 7 | Logout e novo login repetem fluxo | | | | opcional |
 
-**Resultado geral:** ☐ PASS · ☐ FAIL — responsável: ___________
+**Resultado geral:** ☑ **PASS** (gate M3: passos 1–5) · ☐ FAIL — responsável: **Lucio Félix** · 2026-10-19
+
+**Ressalva (não reprova M3):** paridade **gráfica** (header unificado, layout prod) e **página 4 Nova medição** ficam **fora** deste gate — ver orquestrador gap #1 · M4 · M7+.
 
 ---
 
