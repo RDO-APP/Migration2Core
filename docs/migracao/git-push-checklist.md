@@ -24,7 +24,7 @@ Se editou no espelho OneDrive: gravar o **mesmo** conteúdo em `C:\Dev\Migration
 4. `git status` → deve listar **Changes to be committed**.
 5. `git commit` · `git push origin <branch>`
 6. Output do push deve mostrar hash novo (`abc1234..def5678`).
-7. **`pwsh -File docs/migracao/sync-docs-onedrive-from-git.ps1`** (a partir de `C:\Dev\Migration2Core` ou path absoluto).
+7. **`powershell -File C:\Dev\Migration2Core\docs\migracao\sync-docs-onedrive-from-git.ps1`**
 
 ## PowerShell
 
