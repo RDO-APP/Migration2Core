@@ -5,7 +5,8 @@
 | O quê | Onde |
 |-------|------|
 | Orquestrador (ler primeiro) | [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) |
-| Manual front ①–⑤ + **paridade P1/P2 (§10)** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| Manual front ①–⑤ + **paridade P1–P4 (§10)** · stack **§10.7** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) |
+| Pendências melhorias UI (P1–P4 stack · UI-M3 adiado) | [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) |
 | Marcos M0–M3 · M0′ · I0 | `m0-*`, `m1-*`, [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md), [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md), [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md), [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) |
 | Estudos E0–E6 | arquivos `migracao-*.md`, `plano-execucao-migracao-v1.md`, `estudo-ci-homolog-readiness-e6.md` |
 | API compartilhada EQ-R/EQ-M | [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md) · [`api-client/`](api-client/) |

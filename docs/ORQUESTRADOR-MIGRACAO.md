@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-20 — **M4.4 código OK** (Escolher React + BFF obras) · foco **M4.5** P2 · matriz **3 páginas** manual **§10.1b** · **I0** B1/B2 OK · **ops** [`docs/ops/`](ops/README.md)  
+**Atualizado:** 2026-10-21 — **Pacote P2+P3** deploy homolog · manual **§6b** (cinco vetores P2/P3) · **M4.8** **P1** Login · **P4** **M7+** · **I0** B1/B2 OK · **ops** [`docs/ops/`](ops/README.md)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core**.
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -100,9 +100,11 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M4** — **M4.4** P1 Escolher React (**código**; validar pós-deploy) · **dívida:** **P2** toolbar/accordion/card (**M4.5–M4.6**) · manual **§10.1b** (páginas **#1–#3** por bloco). Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
+**Marco ativo:** **M4** — **M4.4 polish P2** + **M4.5–M4.6 P3** **deploy homolog 2026-10-21** · smoke Lucio **P2/P3** · **P1** = **M4.8** · **P4** = **M7+**. Cruzamento web+apps: manual **§6b**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · runbook [`migracao/pacote-p2-p3-execucao-20261021.md`](migracao/pacote-p2-p3-execucao-20261021.md).
 
-**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4 Login→Nova medição) · **§10 paridade P1/P2** · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
+**Numeração P (canônica):** **P1** Login · **P2** Escolher/cards obra · **P3** Etapas/Tarefas · **P4** Nova medição (= matriz **#1–#4**).
+
+**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4 Login→Nova medição) · **§6b cruzamento P2/P3 (web + Apontador + Piscineiro)** · **§10 paridade ①↔②** · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
 ### Plano de execução (A → E)
 
@@ -116,11 +118,11 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem confirmada 2026-10-19):** ver § [Próximos passos (ordem)](#próximos-passos-ordem) — **agora:** **M4** (app shell + header/nav prod nas 3 telas · Escolher React com filtros · polish Cards).
+**Próxima ação (ordem confirmada 2026-10-21):** ver § [Próximos passos (ordem)](#próximos-passos-ordem) — **agora:** smoke **P2/P3** pós-deploy · depois **M4.8** Login SPA · **M6** contratos compartilhados (§6b.3).
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-20** M4.1 + ops/I0 scripts · Git **`d18cf8f`** (M2 deploy) → **`d9dce0b`** (`ci/homolog-ec2-s3-ssm`).
 
-**Deploy:** agente **não** executa SSM full; Lucio ou **I0** (hotfix/CI). Roteiro: [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pré-check `Test-Path C:\Dev\Migration2Core`.
+**Deploy:** roteiro [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pacote P2+P3 **2026-10-21** (ver runbook) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
 ### Pendências por marco (snapshot)
 
@@ -132,7 +134,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações · M4.4 Escolher React |
 | **M2** | **FECHADO** | — |
 | **M3** | **FECHADO** | passos 6–7 E2E opcional |
-| **M4** | **M4.1–M4.3** shell + deploy | **M4.4** pág. 2 · **M4.5–M4.7** pág. 3 · M4.8 EQ-W |
+| **M4** | **M4.1–M4.3** shell + deploy | **M4.4** **P2** · **M4.5–M4.7** **P3** · **M4.8** **P1** EQ-W |
 
 ---
 
@@ -167,7 +169,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 | Marco / doc | Documento |
 |:----:|-----------|
-| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · §1–§4 · **§10 paridade P1/P2** |
+| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · §1–§4 · **§10 paridade P2/P3** (**P1**–**P4** canônico) |
 | M0′ Fase A evidências | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) |
 | M0′ matriz 4 telas | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 
@@ -227,20 +229,20 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ## Paridade visual prod ① vs homolog ② (blocos por tela)
 
-**Numeração desta seção (pós-login):** **P1** = Escolher obra · **P2** = Etapas/Cards. Cruzar com matriz [4 páginas × M](#4-páginas--marcos-m-visão-única): **P1 = linha #2** · **P2 = linha #3**. Login (#1) e Nova medição (#4) ficam fora da tabela abaixo — **M4.8** / **M7+**.
+**Numeração P (canônica):** **P1** Login (#1) · **P2** Escolher (#2) · **P3** Etapas/Cards (#3) · **P4** Nova medição (#4). Tabela abaixo foca **P2–P3** (M4); **P1** → **M4.8** · **P4** → **M7+**. Matriz: [4 páginas × M](#4-páginas--marcos-m-visão-única).
 
-**Estratégia (fechada):** **não** investir STRATEGY-2 / CSS pesado em **Razor Escolher** — **P1** vira **React** (M4.4). **P2** evolui no **mesmo `client/`** (`OperadorShell` compartilhado). Referência: prod **`escolher.html`** · **`cards.html`** (EQ-L); capítulo UX completo: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) **§10**.
+**Estratégia (fechada):** **não** investir STRATEGY-2 / CSS pesado em **Razor Escolher** — **P2** vira **React** (M4.4). **P3** evolui no **mesmo `client/`** (`OperadorShell` compartilhado). Referência: prod **`escolher.html`** · **`cards.html`** (EQ-L); capítulo UX: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) **§10**.
 
 ### Resumo por bloco
 
 | Tela | Blocos (ordem na página) | Marco principal |
 |------|--------------------------|-----------------|
-| **P1** Escolher | header → chrome lista → filtros → **card de obra** → legenda | **M4.4** |
-| **P2** Cards | header → toolbar → **accordion etapa** → **card de tarefa** → placeholder nova tarefa | **M4.1** (header) · **M4.5–M4.6** |
+| **P2** Escolher | header → chrome lista → filtros → **card de obra** → legenda | **M4.4** |
+| **P3** Cards | header → toolbar → **accordion etapa** → **card de tarefa** → placeholder nova tarefa | **M4.1** (header) · **M4.5–M4.6** |
 
 ### Detalhe por item (evidência prints homolog 2026-10-20)
 
-**P1 — Escolher** (`/Obra/Escolher` · matriz #2)
+**P2 — Escolher** (`/Obra/Escolher` · matriz #2)
 
 | Bloco | Item | Prod ① | Homolog ② | Marco |
 |-------|------|--------|-----------|-------|
@@ -255,7 +257,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | Legenda | Cores / status obras | Sim | **Ausente** | **M4.4** |
 | Grid | Colunas de cards | ~5 colunas prod | Poucos cards, visual lista branca | **M4.4** |
 
-**P2 — Etapas / Cards** (`/Tarefa/Cards` · matriz #3)
+**P3 — Etapas / Cards** (`/Tarefa/Cards` · matriz #3)
 
 | Bloco | Item | Prod ① | Homolog ② | Marco |
 |-------|------|--------|-----------|-------|
@@ -274,21 +276,21 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | **Card tarefa** | Placeholder “Adicionar nova tarefa” | Sim | **Ausente** | **M4.6** |
 | Dados | “N etapa(s) M tarefa(s)” | Pode divergir por RDS | BFF OK — **não** confundir com gap visual | **M2** ✅ |
 
-**Fora P1/P2 (matriz):** Login (#1) → **M4.8** · Nova medição (#4) → **M7+**.
+**P1 / P4 (fora desta tabela):** **P1** Login → **M4.8** · **P4** Nova medição → **M7+**.
 
-**Ordem de implementação (não trocar):** **M4.4** P1 (Escolher React: header + card obra + filtros) → **M4.5** P2 (toolbar + accordion) → **M4.6** P2 (card tarefa + placeholder) → **M4.7/M4.8** Login SPA + congela EQ-W → **M7+** ações/medição/RBAC fino.
+**Ordem de implementação (não trocar):** **M4.4** **P2** (Escolher React: header + card obra + filtros) → **M4.5–M4.6** **P3** (toolbar + accordion + card tarefa) → **M4.7/M4.8** **P1** Login SPA + congela EQ-W → **M7+** ações/**P4** medição/RBAC fino.
 
 **Gate vs pixel-perfect:** **M3** exigiu **fluxo + dados**; **M9 (D1)** exige paridade **operável** web — não exige clone pixel a pixel antes de M4.7.
 
 ---
 
-## Gap técnico #1 — P2 (Cards · matriz #3)
+## Gap técnico #1 — P3 (Cards · matriz #3)
 
 **Blocos pendentes:** toolbar · accordion etapa prod · **card de tarefa** completo · slot “Adicionar nova tarefa”. M2/C3 entregou **dados + accordion mínimo**. **Nova medição** = **M7+**. BFF agrupador **OK** — gap é **UI**, não RDS. Itens: manual **§10.4**.
 
-## Gap técnico #2 — P1 (Escolher · matriz #2)
+## Gap técnico #2 — P2 (Escolher · matriz #2)
 
-**M4.4 (código):** SPA em `/Obra/Escolher` · `GET/POST /api/bff/obras` · `WorkCardObra`. **Pendente homolog:** deploy + smoke Lucio. Ajuste fino header/RBAC → **M4.5+**. Itens: manual **§10.3** · resumo **§10.1b**.
+**M4.4 (2026-10-21):** polish — sem h2 convite; empty “+”; header dropdown prod; deploy homolog. Ajuste fino pixel/RBAC → pós-smoke. Itens: manual **§10.3** · cruzamento apps **§6b.1**.
 
 **Dados homol vs prod:** contagem de cards por agrupador pode divergir entre `homol_rdoapp` e `novo_rdoapp` (ex. obra 42: 13 vs 8) — comparar UI com o **mesmo RDS** alvo.
 
@@ -304,7 +306,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | I0 | **parcial** (B1/B2 OK · scripts B3 no repo) | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) |
 | M2 | **FECHADO** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 | M3 | **FECHADO** | [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) |
-| M4 | **M4.1/M4.3 OK** · **M4.4–M4.7** paridade pág. 2–3 | [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) |
+| M4 | **M4.1/M4.3 OK** · **M4.4–M4.7** paridade **P2–P3** | [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) |
 
 ---
 
@@ -318,8 +320,8 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **2** | ~~**M2/M3 FECHADO**~~ | docs | — | **✅** |
 | **3** | ~~Commit docs M3/M4.1~~ | — | — | **✅ `d9dce0b`** |
 | **4** | ~~**M4.3** deploy~~ | Lucio | — | **✅ 20261020-100219** |
-| **5** | ~~**M4.4** Escolher React~~ | **EQ-R** | — | **✅ código** · deploy homolog |
-| **6** | **M4.5–M4.6** Cards toolbar + accordion + card tarefa (**#3**) | **EQ-R** | — | **foco** |
+| **5** | ~~**M4.4** Escolher React + polish~~ | **EQ-R** | — | **✅ deploy 2026-10-21** |
+| **6** | ~~**M4.5–M4.6** P3 toolbar + accordion fix~~ | **EQ-R** | — | **✅ deploy 2026-10-21** · smoke Lucio |
 | **7** | **M4.7** card tarefa completo + **M4.8** Login SPA / congela EQ-W | **EQ-R** | — | |
 | **8** | **M7+** Nova medição · RBAC fino · **I0 B3** FDD | várias | não | paralelo |
 
@@ -327,9 +329,25 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 
 **Paralelo seguro:** HAR prod (M0′ formal) · trilha **F** · **PQ** — não alteram a ordem 1→5.
 
+---
+
+## Pendências — melhorias (stack UI)
+
+**Doc canônico:** [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) — tabela **P1–P4** (legado / moderno / híbrido), backlog **UI-M1…UI-M6**, regra **anti-Kiro** para **UI-M3** (redesign sem BS/legado — **só pós-M4.7 + M7**, não big-bang).
+
+| Prioridade | IDs | O quê |
+|:----------:|-----|--------|
+| **Agora (M4.7)** | UI-M1, UI-M2, UI-M2b | FA completo, flex card, barra % — paridade com pele legado |
+| **Em seguida** | M4.8, UI-M5 | Login SPA / Esqueci senha smoke |
+| **Adiado** | **UI-M3** (+ M3a/M3b) | Tirar Bootstrap/classes BS3 da SPA — **não parar M4** por isso |
+
+Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **CSS + nomes de classe** copiados de `cards.html` / `escolher.html`. Manual **§10.7** · lição Kiro documentada no link acima.
+
+---
+
 ## Próxima ação (1)
 
-**M4.5** — **P2** (#3): toolbar + accordion prod. Depois **M4.6** card tarefa. Deploy **M4.4** antes do smoke P1. Manual **§10.1b** (páginas #1–#3).
+**M4.7** — fechar paridade card P3 (UI-M1/M2/M2b) + smoke **P2/P3** pós-deploy (Ctrl+F5). Depois **M4.8** Login SPA. Manual **§10.4** · **§10.7** · [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
 
 ---
 
@@ -339,6 +357,7 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 |--|--|
 | E2E | `e2e-fase0-checklist.md` |
 | Manual UI + FAPESC ⑥ | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
+| Pendências stack UI (P1–P4 · UI-M3 adiado) | `migracao/pendencias-melhorias-ui-stack.md` |
 | Imutabilidade FAPESC | `imutabilidade/README.md` |
 | Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |
 | Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |

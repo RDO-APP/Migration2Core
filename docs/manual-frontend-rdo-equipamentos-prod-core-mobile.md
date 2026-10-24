@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-10-20 · **Status:** **M4.4** Escolher React (código) · §10 matriz **3 páginas** · **M4.5** Cards toolbar — próximo  
+**Data:** 2026-10-24 · **Status:** **M4.7** paridade card P3 (híbrido React + pele legado) · §**6b** cinco vetores · §**10** paridade · §**10.7** stack L/M/H · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
@@ -123,7 +123,7 @@ flowchart TB
 | Logo / trocar contexto | `mudarObra()` | Escolher MVC | Lista obras | 🔀 trocar unidade/obra | Lista obras/unidades |
 | Menu RBAC | `userData.menu.listaPagina` | 🟡 Escolher | Reduzido | 🔀 | Reduzido |
 | Usuário (senha / sair) | Dropdown | ✅ cookie MVC | Auth context | 🔀 | Auth context |
-| Stack UI | Bootstrap 3, FA, fontello | Bootstrap + React cru | RN Paper / lucide | 🔀 Bootstrap/fontello | 🔀 compartilhado ~94% c/ ③ |
+| Stack UI | Bootstrap 3, FA 4.7, fontello, AngularJS | **H:** React 19 + Vite; BS **5.3 CSS** + classes BS3 prod; **sem** Angular/jQuery na SPA — §**10.7** | RN Paper / lucide | 🔀 Bootstrap/fontello | 🔀 compartilhado ~94% c/ ③ |
 
 ---
 
@@ -269,6 +269,66 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 
 ---
 
+## 6b. Cruzamento P2/P3 — cinco vetores + reuso web × apps (2026-10-21)
+
+**Objetivo:** uma leitura única do que cada produto usa em **Escolher (P2)** e **Etapas/Tarefas (P3)**, para mudanças futuras em **dados/contrato** (todos) vs **UI web admin** (só ①②).
+
+**Legenda vetores:** ① EQ-L prod obras · ② EQ-R/EQ-W homolog · ③ Apontador · ④ Piscinas web · ⑤ Piscineiro.
+
+### 6b.1 P2 — Escolher obra / unidade
+
+| Dimensão | ① EQ-L | ② Migration | ③ Apontador | ④ Piscinas web | ⑤ Piscineiro |
+|----------|--------|-------------|-------------|----------------|--------------|
+| **UI** | `escolher.html` — grid cards, legenda, **sem** filtros Obra/Município | `EscolherPage.tsx` — cards + **filtros** (ref. ③④) | `normal-dasboard.tsx` + `workCard.tsx` | `escolher.html` + filtros Unidade/Município | dashboard + filtros (labels PQ) |
+| **Lista** | `POST ObterObras` | `GET /api/bff/obras` (`homol_rdoapp`) | `POST ObterObras` → **sistema** prod | `ObterObras` → **piscinas** | idem piscinas |
+| **Clique** | `LoginObra` → `#/tarefa/cards` | `POST /api/bff/obras/selecionar` → `/Tarefa/Cards` | `LoginObra` → detalhe obra | `LoginObra` | `LoginObra` → cards limpeza |
+| **Empty 0 obras** | mensagem cadastrar obra | **“+” no cabeçalho** (sem filtros) | idem fluxo API | copy unidade escolar | idem padrão PQ |
+
+**Fluxo comum:** Login → listar contextos do colaborador → **LoginObra** (sessão + RBAC) → tela de tarefas. Só mudam host, RDS e rótulos (obra vs unidade).
+
+**Forças:** `ObraListItem` + filtros cliente já documentados em M1; ③④⑤ são **referência de UX filtros**; ① é **referência visual** card/legenda.
+
+**Fraquezas:** ② usa **BFF + cookie**; ③⑤ usam **cenário A** (`/api/*` prod) — mesma regra de negócio, **dois caminhos HTTP** até M6 API espelhada no Core.
+
+### 6b.2 P3 — Etapas / tarefas (cards)
+
+| Dimensão | ① EQ-L | ② Migration | ③ Apontador | ④ Piscinas web | ⑤ Piscineiro |
+|----------|--------|-------------|-------------|----------------|--------------|
+| **UI** | `cards.html` — toolbar admin, accordion BS3, agrupador | `CardsPage.tsx` + BFF | `normal-work-details` + `taskCard` | cards/lista PQ | cards LIMPEZA / contexto piscina |
+| **Dados** | `ObterEtapaTarefa` / `etapa/Get` | `GET /api/bff/etapas` (agrupador M2) | prod **ObterEtapaTarefa** | API piscinas | API piscinas |
+| **Toolbar web** | Gerar RDO, Efetivo, FILTRO, + tarefa/etapa, LISTA | paridade em evolução (stub M7+) | **não** replica toolbar admin | 🔀 | **não** |
+| **Accordion** | BS3 + jQuery | React state (**sem** `.collapse.in` BS5) | todas etapas abertas (RN) | 🔀 | accordion limpeza |
+| **Card** | 1 card = **agrupador** | `TaskCardAgrupador` | `taskCard` | domínio laudo/limpeza | química/limpeza |
+
+**Apps não replicam** `nav.html` nem toolbar de `cards.html`; replicam **etapas + cards + medição de campo**.
+
+### 6b.3 O que “todos” podem compartilhar vs o que não
+
+| Camada | Compartilhável entre ①–⑤? | Como hoje | Alvo (M6+) |
+|--------|---------------------------|-----------|------------|
+| **Tipos TS** (`ObraListItem`, `EtapaComTarefas`, `TarefaCard`) | ✅ sim | [`equipamentos-api.types.ts`](api-client/equipamentos-api.types.ts) | pacote npm `@rdo/equipamentos-contracts` |
+| **Operações** LoginObra, ObterObras, agrupador | ✅ sim | paths legado `/api/*` | Core **API v1** espelhada + homolog mobile |
+| **Filtro Obra/Município** (função pura) | ✅ sim | duplicado web/app | extrair TS compartilhado |
+| **Componentes visuais JSX** | ❌ não direto | React **DOM** (②) vs **RN** (③⑤) | ver §6b.4 |
+| **Toolbar Gerar RDO / efetivo** | só web ①② | admin operador | fora escopo app |
+
+### 6b.4 React web vs React Native — “dois pacotes de UI”
+
+Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + Bootstrap legado**) vs mobile (**View/Text + StyleSheet**). Não é impossível unificar; **não é o desenho atual**.
+
+| Abordagem | Viável? | Nota RDO |
+|-----------|---------|----------|
+| Copiar JSX do Apontador no Vite Core | ❌ sem adaptação | primitivos incompatíveis |
+| **RN Web** (um código UI web+app) | ✅ com refactor grande | paridade pixel `escolher.html`/`cards.html` difícil; strangler EQ-R já em DOM |
+| **Só lógica + tipos compartilhados** | ✅ **recomendado** | alinha orquestrador: API · tipos · pacotes TS |
+| Piscinas | 🔀 futuro **PQ-R** | espelhar contratos TS como obras |
+
+**Decisão de produto (2026-10-21):** pacote **M4 P2+P3** continua **EQ-R DOM** espelhando prod Angular; Apontador/Piscineiro permanecem **cenário A** na API prod até **M6**.
+
+**Runbook implementação:** [`migracao/pacote-p2-p3-execucao-20261021.md`](migracao/pacote-p2-p3-execucao-20261021.md).
+
+---
+
 ## 7. Marcos
 
 | Marco | Vetores |
@@ -276,7 +336,7 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 | **M0′** | Este manual + [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 | **EQ-W0.5 / M2** | ①②③ §2–§3 |
 | **STRATEGY-2 + filtros Escolher** | ① cards + legenda · **④③⑤** filtros Obra/Unidade+Município → **② EQ-R** (não Razor) |
-| **M4** | Shell operador + paridade **§10** (P1/P2) + **retirada Razor** Login/Escolher/Cards view · [`m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) |
+| **M4** | Shell operador + paridade **§10** (**P2/P3**; **P1** Login · **P4** medição) + **retirada Razor** Login/Escolher/Cards view · [`m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) |
 | **EQ-M** | ③ `normal-dasboard.tsx` = spec filtros+cards obras |
 | **PQ** (futuro) | ④⑤ · **PQ-R** espelha EQ-R |
 | **F (FAPESC)** | ⑥ · M1–M3 Termo · **`rdo-blockchain`** |
@@ -299,57 +359,61 @@ Tipos Equipamentos: [`equipamentos-api.types.ts`](api-client/equipamentos-api.ty
 ## 9. Checklist QA (Equipamentos — gate homolog)
 
 1. Login ① vs ②  
-2. **P1 Escolher:** percorrer **§10.3** bloco a bloco (header, card obra, filtros, legenda)  
-3. **P2 Cards:** percorrer **§10.4** (toolbar, accordion, card tarefa)  
-4. Contagem cards = **agrupador**, não rows DB  
-5. Medição: ③ ou modal ① — escopo apartado (**M7+** web)
+2. **P1 Login:** branding/formulário vs prod  
+3. **P2 Escolher:** percorrer **§10.3** bloco a bloco (header, card obra, filtros, legenda)  
+4. **P3 Cards:** percorrer **§10.4** (toolbar, accordion, card tarefa)  
+5. Contagem cards = **agrupador**, não rows DB  
+6. **P4** medição: ③ ou modal ① — escopo apartado (**M7+** web)
 
 **Piscinas / Piscineiro:** repetir checklist em prod ④⑤ com CPF/dataset **Piscinas** (não misturar com obra 42 Equipamentos).
 
 ---
 
-## 10. Paridade visual homolog ② vs prod ① — blocos P1 / P2
+## 10. Paridade visual homolog ② vs prod ① — blocos P2 / P3
+
+**Numeração P (canônica):** **P1** Login · **P2** Escolher · **P3** Etapas/Cards · **P4** Nova medição (= matriz **#1–#4**).
 
 **Público:** UX, EQ-R, QA, product owner comparando prints lado a lado.  
 **Escopo:** só **web Equipamentos** ① vs ② (não Apontador/Piscinas, salvo referência de filtros).  
-**Orquestrador:** espelho executivo em [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) § Paridade visual blocos P1/P2 · checklist [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
+**Orquestrador:** espelho executivo em [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) § Paridade visual · checklist [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
 
-### 10.1 Três páginas E2E (#1–#3) — rotas e blocos
+### 10.1 Quatro páginas E2E (#1–#4) — rotas e blocos
 
-| Página | Nome | Rota homolog ② | Blocos (ordem) | Dono UI ② | Prod ① |
-|:------:|------|----------------|----------------|-----------|--------|
-| **#1** | Login | `/Account/Login` | chrome externo (sem header operador) | EQ-W Razor | `Login/index.html` |
-| **#2** | **P1** Escolher | `/Obra/Escolher` | **header → título → filtros → card obra → legenda** | EQ-R SPA | `escolher.html` |
-| **#3** | **P2** Cards | `/Tarefa/Cards` | **header → toolbar → accordion → card tarefa** | EQ-R SPA | `cards.html` |
+| P | Matriz | Nome | Rota homolog ② | Blocos (ordem) | Dono UI ② | Prod ① |
+|:-:|:-:|------|----------------|----------------|-----------|--------|
+| **P1** | **#1** | Login | `/Account/Login` | chrome externo (sem header operador) | EQ-W Razor | `Login/index.html` |
+| **P2** | **#2** | Escolher | `/Obra/Escolher` | **header → título → filtros → card obra → legenda** | EQ-R SPA | `escolher.html` |
+| **P3** | **#3** | Etapas / Cards | `/Tarefa/Cards` | **header → toolbar → accordion → card tarefa** | EQ-R SPA | `cards.html` |
+| **P4** | **#4** | Nova medição | modal em Cards | formulário medição | — | modal em `cards.html` · **M7+** |
 
-Nova medição = matriz **#4** (**M7+**). Detalhe item a item: §10.3–10.4 · resumo executivo §10.1b.
+Detalhe item a item **P2–P3**: §10.3–10.4 · resumo §10.1b. **P1** → **M4.8** · **P4** → **M7+**.
 
 ### 10.1b Status por página e bloco (homolog ②)
 
 **Legenda:** ✅ ≈ prod · 🟡 parcial · ⬜ pendente
 
-| Página | Bloco | ② após M4.4 (código) | Marco |
-|:------:|-------|----------------------|-------|
-| **#1 Login** | Formulário / branding | 🟡 | **M4.8** |
-| **#2 P1** | Header | 🟡 OperadorShell | **M4.4** ✅ |
-| **#2 P1** | Filtros Obra + Município | ✅ | **M4.4** ✅ |
-| **#2 P1** | Card de obra | ✅ | **M4.4** ✅ |
-| **#2 P1** | Legenda progresso | ✅ | **M4.4** ✅ |
-| **#3 P2** | Header | 🟡 | **M4.1** ✅ |
-| **#3 P2** | Toolbar | ⬜ | **M4.5** |
-| **#3 P2** | Accordion etapa | 🟡 | **M4.5** |
-| **#3 P2** | Card tarefa | 🟡 | **M4.6** |
+| P | Bloco | ② após M4.4 (código) | Marco |
+|:-:|-------|----------------------|-------|
+| **P1** | Formulário / branding | 🟡 | **M4.8** |
+| **P2** | Header | 🟡 OperadorShell | **M4.4** ✅ |
+| **P2** | Filtros Obra + Município | ✅ | **M4.4** ✅ |
+| **P2** | Card de obra | ✅ | **M4.4** ✅ |
+| **P2** | Legenda progresso | ✅ | **M4.4** ✅ |
+| **P3** | Header | 🟡 | **M4.1** ✅ |
+| **P3** | Toolbar | ⬜ | **M4.5** |
+| **P3** | Accordion etapa | 🟡 | **M4.5** |
+| **P3** | Card tarefa | 🟡 | **M4.6** |
 
 ### 10.2 Estratégia de implementação (M4)
 
-1. **Não** polir Razor de Escolher (EQ-W congelado para produto) — **P1 inteira** migra para React (**M4.4**).
-2. **P2** compartilha **`OperadorShell`** e CSS de header com P1 quando Escolher React existir.
-3. Ordem: **M4.4** P1 → **M4.5** P2 (toolbar + accordion) → **M4.6** P2 (card tarefa) → **M4.7/M4.8** Login SPA.
+1. **Não** polir Razor de Escolher (EQ-W congelado para produto) — **P2 inteira** migra para React (**M4.4**).
+2. **P3** compartilha **`OperadorShell`** e CSS de header com **P2** quando Escolher React existir.
+3. Ordem: **M4.4** **P2** → **M4.5–M4.6** **P3** → **M4.7/M4.8** **P1** Login SPA → **M7+** **P4**.
 4. **M3** validou **fluxo + dados**; este capítulo valida **UI operável** até **M9 (D1)** — não exige pixel-perfect antes de M4.8.
 
 **Mapa para §2–§3:** elementos de Escolher continuam catalogados em **§2.2**; Cards em **§3.1–3.3**. **§10** é a **matriz de gaps homolog 2026-10-20** com marco M4 por item.
 
-### 10.3 P1 — Escolher obra (blocos na página)
+### 10.3 P2 — Escolher obra (blocos na página)
 
 Ordem visual de cima para baixo: **header → chrome da lista → filtros → grid de cards de obra → legenda**.
 
@@ -366,11 +430,11 @@ Ordem visual de cima para baixo: **header → chrome da lista → filtros → gr
 | **Card de obra** | Barra % + `classeStatusCss` | ✅ | ✅ | **M4.4** ✅ | STRATEGY-2 |
 | **Legenda** | Significado das cores de status | ✅ rodapé/lista | ✅ React | **M4.4** ✅ | §2.2 |
 | **Grid** | Densidade (várias obras por linha) | ~5 colunas | ✅ `lista-obras` | **M4.4** ✅ | |
-| **Fluxo** | Clique → Selecionar → P2 | ✅ | ✅ BFF selecionar | — | E2E passo 2–3 |
+| **Fluxo** | Clique → Selecionar → **P3** | ✅ | ✅ BFF selecionar | — | E2E passo 2–3 |
 
 **Implementado EQ-R:** `EscolherPage` · `WorkCardObra` · `GET/POST /api/bff/obras`.
 
-### 10.4 P2 — Etapas / Cards (blocos na página)
+### 10.4 P3 — Etapas / Cards (blocos na página)
 
 Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (+ placeholder)**.
 
@@ -394,18 +458,40 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 
 **Componentes alvo EQ-R:** toolbar `CardsToolbar` · `EtapaAccordion` · `TaskCardAgrupador` (nomes indicativos — ver `client/src/`).
 
-### 10.5 Fora de P1/P2 (referência rápida)
+### 10.5 P1 e P4 (referência rápida)
 
-| Matriz # | Tela | Gap vs prod | Marco |
-|:--------:|------|-------------|-------|
-| 1 | Login | Layout externo; SPA unificada | **M4.8** |
-| 4 | Nova medição (modal) | Inexistente no homolog | **M7+** |
+| P | Tela | Gap vs prod | Marco |
+|:-:|------|-------------|-------|
+| **P1** | Login | Layout externo; SPA unificada | **M4.8** |
+| **P4** | Nova medição (modal) | Inexistente no homolog | **M7+** |
+
+### 10.7 Stack front homolog ② — legado, moderno, híbrido (P1–P4)
+
+**Resumo:** a SPA operador (**P2/P3**) é **moderna** (React + BFF Core). O que ainda “cheira” prod é **visual** — CSS recortado (`header.css`, `escolher.css`, `cards-page.css`), **Font Awesome 4.7** parcial, markup copiado de `escolher.html` / `cards.html` (`panel-*`, `col-xs-*`, `btn-simple`).
+
+| Stack | Significado | Exemplos homolog |
+|:-----:|-------------|------------------|
+| **M** | Runtime / API atuais | React 19, cookie MVC, BFF `/api/bff/*`, EF Core |
+| **H** | React com pele legado | Accordion em `useState` + classes BS3; card tarefa ≈ `cards.html` |
+| **L** | Só prod (EQ-L) | AngularJS, jQuery modal P4 — **não** shippar no M4 |
+
+**Não roda na SPA:** AngularJS · jQuery · Bootstrap 3 JS · `ng-*`. jQuery/BS bundle ficam só em Razor fallback (`_LayoutEscolher`).
+
+**Backlog melhorias (orquestrador):**
+
+| Fase | IDs | Conteúdo |
+|------|-----|----------|
+| **Agora** | UI-M1, UI-M2, UI-M2b | Ícones FA, flex ações card, barra % — **M4.7** |
+| **Depois** | M4.8, UI-M5, UI-M6 | Login SPA / Esqueci senha |
+| **Adiado** | **UI-M3** (+ a/b) | Redesign sem BS/legado — **pós-M4.7 + M7**; regra **anti-Kiro** (sem big-bang CSS) |
+
+Tabela completa camada a camada: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
 
 ### 10.6 Como usar em review (Lucio / QA)
 
 1. Abrir **prod ①** e **homolog ②** na mesma obra (ex. 42 — FACHADA OESTE SHOPPING BARRA).
-2. **P1:** marcar cada linha §10.3 — ✅ paridade · 🟡 parcial · ⬜ pendente.
-3. **P2:** idem §10.4.
+2. **P2:** marcar cada linha §10.3 — ✅ paridade · 🟡 parcial · ⬜ pendente.
+3. **P3:** idem §10.4.
 4. Divergência de **contagem** de tarefas: conferir **mesmo catálogo RDS** antes de abrir bug UI ([`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) nota homol vs prod).
 
 ---
@@ -421,6 +507,6 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 | Vetor ⑥ `rdo-blockchain` + RDS âncora | ☑ | incluído 2026-10-19 |
 | Smoke HTTP prod 4 telas (A2) | ☑ | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) |
 | HAR Network API prod (A2+) | ○ | opcional Lucio |
-| Capítulo **§10** paridade P1/P2 (prints homolog) | ☑ | Lucio 2026-10-20 |
+| Capítulo **§10** paridade P2/P3 (prints homolog) | ☑ | Lucio 2026-10-20 |
 
-Documentos irmãos: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) · [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
+Documentos irmãos: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) · [`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) · [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
