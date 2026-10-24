@@ -16,4 +16,4 @@
 | Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** · stub [`editais-fapesc/README.md`](editais-fapesc/README.md) |
 | Regra Cursor (cópia) | [`cursor-rules/orquestrador-migracao-impacto.mdc`](cursor-rules/orquestrador-migracao-impacto.mdc) |
 
-Workspace Cursor **Equipamentos** (OneDrive) pode espelhar estes arquivos — **editar e commitar aqui**, não no repo legado `Equipamentos`.
+**OneDrive ↔ Git:** espelho Cursor em `…/Equipamentos/docs/` deve ficar **100% alinhado** ao clone `C:\Dev\Migration2Core` após cada push/pull — script [`migracao/sync-docs-onedrive-from-git.ps1`](migracao/sync-docs-onedrive-from-git.ps1). **Commit/push só Migration2Core**; repo legado `Equipamentos` **não** recebe docs M* / orquestrador.

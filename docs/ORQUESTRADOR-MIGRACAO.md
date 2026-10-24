@@ -16,7 +16,7 @@
 | Piscineiro (**PQ-M**) | **`RDO-APP/RDOAppPiscinasMobile`** (ref. `PiscinasMobile`) | — |
 | FAPESC 031/2026 · PoC imutabilidade (**F**) | **`RDO-APP/rdo-blockchain`** · docs [`imutabilidade/`](imutabilidade/README.md) · [`editais-fapesc/`](editais-fapesc/README.md) | **≠** Migration2Core prod · **≠** chat Migração · rascunhos MD FAPESC **fora** da raiz deste repo (`.gitignore`) |
 
-Workspace Cursor **Equipamentos** (OneDrive) pode ter cópia local dos `.md` — **push = Migration2Core** (`C:\Dev\Migration2Core`). Clone legado Equipamentos = referência **EQ-L** somente.
+Workspace Cursor **Equipamentos** (OneDrive) espelha `docs/` — **fonte da verdade = Git** `C:\Dev\Migration2Core`. **Regra:** OneDrive **100% alinhado** ao Git após cada push/pull de docs ([`sync-docs-onedrive-from-git.ps1`](migracao/sync-docs-onedrive-from-git.ps1)). Clone repo legado **Equipamentos** = **EQ-L** somente — **não** commitar docs migração lá.
 
 Plano mestre: [`plano-estudo-execucao-migracao-fapesc-mobile.md`](plano-estudo-execucao-migracao-fapesc-mobile.md) · execução: [`plano-execucao-migracao-v1.md`](plano-execucao-migracao-v1.md) · M0 sem Dimas: [`m0-duvidas-dimas-solucoes.md`](m0-duvidas-dimas-solucoes.md)
 
@@ -412,5 +412,6 @@ Repo de execução: `C:\Dev\Migration2Core` · detalhe: [`migracao/git-push-chec
 | 3 | Se `add` falhar, **não** commitar nem dizer “push feito”. |
 | 4 | PowerShell: **`;`** entre comandos (não `&&`). |
 | 5 | Só avisar Lucio após push OK; branch explícita (ex. `ci/homolog-ec2-s3-ssm`). |
+| 6 | **OneDrive:** após push/pull de `docs/`, executar [`migracao/sync-docs-onedrive-from-git.ps1`](migracao/sync-docs-onedrive-from-git.ps1) — espelho Cursor = Git (obrigatório). |
 
 **Incidente 2026-10-18:** `git add` com doc inexistente → stage vazio → push “up-to-date” sem commit — não repetir.
