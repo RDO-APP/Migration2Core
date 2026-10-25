@@ -2,7 +2,7 @@
 
 **Trilha:** **I0** · **Quem executa:** Lucio (PowerShell + browser). **Agente:** não roda SSM/deploy (só código/docs no Git).  
 **Plano técnico:** [`../homolog-core-deploy-rapido-plano.md`](../homolog-core-deploy-rapido-plano.md)  
-**Atualizado:** 2026-10-20 · **M4.3** deploy OperadorShell (`a29b9cc`+)
+**Atualizado:** 2026-10-25 · **M4.7d** P3 toolbar + menu hambúrguer · branch `ci/homolog-ec2-s3-ssm` · ref Git **`4c4bb5b`**
 
 ---
 
@@ -67,6 +67,15 @@ Test-Path C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts\publish-homolog-
 
 **Esperado:** `True`.
 
+### Passo A2 — Atualizar clone (se `Test-Path` = True, **antes de cada deploy**) · **[PC]**
+
+```powershell
+git -C C:\Dev\Migration2Core fetch origin ci/homolog-ec2-s3-ssm; git -C C:\Dev\Migration2Core pull origin ci/homolog-ec2-s3-ssm
+```
+
+**Serve:** garantir publish com o mesmo commit que está no GitHub (ex. `4c4bb5b`).  
+**Esperado:** `Already up to date` ou fast-forward sem conflito.
+
 ---
 
 ### Passo B — Login CLI (sempre que credencial expirar) · **[PC]**
@@ -104,8 +113,9 @@ aws sts get-caller-identity --region us-east-2
 cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts; .\publish-homolog-ec2.ps1
 ```
 
-**Serve:** `dotnet publish` + `rdoapp_core.zip` local.  
-**Esperado:** `Publish OK` e `Zip: ...\publish\rdoapp_core.zip` (vários minutos).
+**Serve:** `npm run build` (SPA em `wwwroot/app`) + `dotnet publish` self-contained + `rdoapp_core.zip` local.  
+**Esperado:** build Vite OK · `Publish OK` · `Zip: ...\publish\rdoapp_core.zip` (vários minutos).  
+**Smoke bundle (pós-`4c4bb5b`):** `index-DzoPbagL.js` · `index-CzeteI0O.css` — hash muda a cada build; conferir em DevTools → Network após deploy.
 
 ---
 
@@ -143,15 +153,25 @@ Alternativa legada (uma consulta, sem loop): `aws ssm get-command-invocation ...
 
 ---
 
-### Passo G — Teste produto (M3 + **M4.1**)
+### Passo G — Teste produto (E2E + **M4.7b/c/d**)
 
-1. `https://homolog.sistema.rdoapp.com.br/Account/Login`  
-2. CPF teste homolog · Escolher obra · clicar obra (ex. **42**).  
-3. OK → `/Tarefa/Cards` com dados (accordion).  
-4. **M4.1:** header azul **igual Escolher** (logo Equipamentos, **nome da obra** no centro, seu nome à direita, ícones gráfico/+). Footer copyright. DevTools → `GET /api/bff/etapas` **200**; resposta JSON com `usuarioNome`.  
-5. Erro → banner vermelho completo; anotar `CommandId` se SSM falhou.
+Use **Ctrl+F5** (hard refresh) após SSM Success.
 
-Marcar **M4.3** em [`m4-execucao-checklist.md`](m4-execucao-checklist.md) após PASS.
+| # | O quê | Esperado |
+|---|--------|----------|
+| G1 | `https://homolog.sistema.rdoapp.com.br/Account/Login` → CPF homolog | Login OK |
+| G2 | **P2** `/Obra/Escolher` · selecionar obra (ex. **42**) | Cards obra · Selecionar → **P3** |
+| G3 | **P3** `/Tarefa/Cards` | Accordion com etapas/tarefas (BFF) |
+| G4 | Header | Logo · **nome da obra** · usuário + dropdown · ícones chart/+ (RBAC) |
+| G5 | **Menu hambúrguer** (M4.7d) | Ícone ☰ à esquerda do título (paridade prod) · drawer abre · itens de `GET /api/bff/shell` · Trocar senha / Sair |
+| G6 | Toolbar linha título | **RDO · Editar obra · Efetivo** (ícones, **não** na faixa FILTRO) |
+| G7 | Toolbar faixa | LISTA · FILTRO · ADICIONAR TAREFA · ADICIONAR ETAPA |
+| G8 | Navegação meio-termo (M4.7b) | Clique RDO → `/Rdo/Cadastro` (Em migração) · Chart → `/Chart` · ícone card → rota MVC |
+| G9 | DevTools Network | `GET /api/bff/etapas` **200** · SPA JS carregado (hash atual, ex. `index-DzoPbagL.js`) |
+
+Erro → banner vermelho ou tela em branco; anotar `CommandId` se SSM falhou → chat Migração.
+
+Após PASS: marcar **M4.7c/d** smoke em [`m4-execucao-checklist.md`](m4-execucao-checklist.md) · botões: [`p3-botoes-habilitacao-m7.md`](p3-botoes-habilitacao-m7.md).
 
 ---
 
@@ -193,11 +213,14 @@ Enquanto EC2 usa **só** `RdoApp.Core.exe` self-contained **sem** .NET instalado
 
 ---
 
-## 7. Checklist rápido (colar no chat antes de deploy)
+## 7. Checklist rápido (colar no chat antes/depois de deploy)
 
 - [ ] `Test-Path C:\Dev\Migration2Core` = True  
+- [ ] `git pull` branch `ci/homolog-ec2-s3-ssm` (commit alvo anotado, ex. `4c4bb5b`)  
 - [ ] `publish-homolog-ec2.ps1` existe  
 - [ ] `aws sts get-caller-identity` OK  
-- [ ] Publish gerou zip  
+- [ ] Publish gerou zip (+ `npm run build` no log)  
 - [ ] SSM Success  
-- [ ] E2E login → Escolher → Selecionar
+- [ ] G1–G3 login → Escolher → Cards com dados  
+- [ ] G5 hambúrguer + G6 ícones toolbar título  
+- [ ] G8 pelo menos um clique → Em migração
