@@ -9,6 +9,9 @@ namespace RdoApp.Core.Controllers;
 public class RdoController : Controller
 {
     [HttpGet]
+    [HttpGet("/Rdo")]
+    [HttpGet("/rdo/index")]
+    [HttpGet("/rdo/listagem")]
     public IActionResult Index()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))

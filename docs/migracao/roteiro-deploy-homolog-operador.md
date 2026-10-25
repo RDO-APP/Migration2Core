@@ -2,7 +2,7 @@
 
 **Trilha:** **I0** · **Quem executa:** Lucio (PowerShell + browser). **Agente:** não roda SSM/deploy (só código/docs no Git).  
 **Plano técnico:** [`../homolog-core-deploy-rapido-plano.md`](../homolog-core-deploy-rapido-plano.md)  
-**Atualizado:** 2026-10-25 · **M4.7g** RBAC toolbar P3 · branch `ci/homolog-ec2-s3-ssm` · ref Git **`fe0713f`** (confirmar `git pull` antes do publish)
+**Atualizado:** 2026-10-25 · **M4.7i** drawer z-index · **M4.7g/h** toolbar RBAC + menu · branch `ci/homolog-ec2-s3-ssm` · ref Git **`1970030+`** (sempre **A2 pull** → **D publish** → **E deploy** — nunca E sem D)
 
 ---
 
@@ -163,7 +163,7 @@ Use **Ctrl+F5** (hard refresh) após SSM Success.
 | G2 | **P2** `/Obra/Escolher` · selecionar obra (ex. **42**) | Cards obra · Selecionar → **P3** |
 | G3 | **P3** `/Tarefa/Cards` | Accordion com etapas/tarefas (BFF) |
 | G4 | Header | Logo · **nome da obra** · usuário + dropdown · ícones chart/+ (RBAC) |
-| G5 | **Menu hambúrguer** (M4.7d) | Ícone ☰ à esquerda do título (paridade prod) · drawer abre · itens de `GET /api/bff/shell` · Trocar senha / Sair |
+| G5 | **Menu hambúrguer** (M4.7d/**i**) | Drawer **opaco**, links **brancos**, accordion **não** aparece por cima do menu · itens de `GET /api/bff/shell` · Trocar senha / Sair |
 | G6 | Toolbar linha título | **RDO · Efetivo** (2 ícones se perfil **sem** `editarObra` — paridade prod **M4.7g**) · DevTools → `GET /api/bff/shell` → `showEditarObra` / `showGerarRdo` |
 | G7 | Toolbar faixa | LISTA · FILTRO · ADICIONAR TAREFA · ADICIONAR ETAPA |
 | G8 | Navegação meio-termo (M4.7b) | Clique RDO → `/Rdo/Cadastro` (Em migração) · Chart → `/Chart` · ícone card → rota MVC |
@@ -186,6 +186,9 @@ Após PASS: marcar **M4.7c/d** smoke em [`m4-execucao-checklist.md`](m4-execucao
 | SSM `InProgress` 20+ min (timeout do wait) | Deploy anterior / DLL presa / download travado | Console SSM → cancelar; Session Manager: processos `RdoApp.Core`; redeploy |
 | SSM **`Failed`** mas stdout tem **`Deploy homolog Core OK`** + **`Smoke status: 200`** | **Falso negativo** — Core escreveu log no console SSM (`invalid argument`) | Tratar como **Success**; testar browser; proximo deploy usa `ec2-apply` com start detached |
 | Agente “faz deploy” | Regra de sessão | **Lucio** roda Passos D–F; agente só documenta/codifica |
+| Deploy OK mas **UI igual** | Publish **sem** `git pull` · **SSM sem publish** (re-upload zip velho) · cache browser | **Um ciclo só:** `git pull` → `git log -1` → **publish** → **deploy** → Ctrl+F5 · Network: hash JS/CSS **≠** deploy anterior |
+| Menu **transparente** / etapas **atrás** do drawer | `header.css` sidebar `z-index:2` dentro de `.topo` | **M4.7i** (`operador-menu-open`) — precisa bundle novo pós-fix |
+| **3 ícones** toolbar (RDO+edit+efetivo) vs prod **2** | `GET /api/bff/shell` → `showEditarObra:true` (permissão homolog) ou Core **sem** campos RBAC | Comparar JSON com prod (mesmo CPF) · não é bug de deploy se BFF devolve `true` |
 
 ---
 

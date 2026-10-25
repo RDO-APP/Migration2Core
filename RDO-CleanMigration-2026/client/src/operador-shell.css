@@ -93,6 +93,32 @@
   left: 0;
 }
 
+/* header.css: sidebar z-index 2 dentro de .topo z-index 10 — accordion dos cards passava por cima */
+.operador-app.operador-menu-open .topo {
+  z-index: 3000 !important;
+}
+
+.operador-app.operador-menu-open .operador-menu-backdrop {
+  z-index: 2990;
+}
+
+.menu-lateral .nav-mobile .menu-container .menu-sidebar {
+  z-index: 3001;
+}
+
+.topo .menu-lateral .menu-sidebar a.collapsed-menu,
+.topo .menu-lateral .menu-sidebar .multi-collapse li a,
+.topo .menu-lateral .menu-sidebar .user > li > a {
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.operador-app .menu-lateral .nav-mobile #menu-toggle.active ~ .menu-button:after,
+.operador-app .menu-lateral .nav-mobile #menu-toggle:checked ~ .menu-button:after {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .operador-menu-backdrop {
   position: fixed;
   inset: 0;

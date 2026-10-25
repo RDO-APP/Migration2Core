@@ -111,7 +111,7 @@ export function CardsPage() {
         onEfetivoDiario={() => goOperador(P3_NAV.toolbar.efetivoDiario)}
         onEditarObra={() => goOperador(P3_NAV.toolbar.editarObra)}
         showGerarRdo={
-          shell != null && typeof shell.showGerarRdo === 'boolean' ? shell.showGerarRdo : true
+          shell != null && typeof shell.showGerarRdo === 'boolean' ? shell.showGerarRdo : false
         }
         showEditarObra={
           shell != null && typeof shell.showEditarObra === 'boolean' ? shell.showEditarObra : false

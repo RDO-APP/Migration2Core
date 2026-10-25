@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.ViewModels;
 using System.Text.Json;
 
@@ -21,7 +22,7 @@ namespace RdoApp.Core.Utils
         /// <returns>True if user has permission for route, false otherwise</returns>
         public static bool HasPermission(HttpContext context, string permission, string route)
         {
-            var loginDataJson = context.Session.GetString("LoginData");
+            var loginDataJson = context.Session.GetString(SessionKeys.LoginData);
             
             if (string.IsNullOrEmpty(loginDataJson))
             {

@@ -85,14 +85,20 @@ public class ShellContextService
             return "#";
         }
 
-        var path = caminho.Trim().ToLowerInvariant();
+        var path = caminho.Trim();
+        if (path.StartsWith("#/", StringComparison.Ordinal))
+        {
+            path = path[1..];
+        }
+
+        path = path.ToLowerInvariant();
         return path switch
         {
-            "/chart" or "/chart/index" => "/Chart",
+            "/chart" or "/chart/index" => "/Chart/Index",
             "/obra/cadastro" or "/obra/cadastro/index" => "/Obra/Cadastro",
-            "/dashboard/index" => "/Dashboard",
+            "/dashboard/index" => "/Dashboard/Index",
             "/tarefa/cards" or "/tarefa/cards/index" => "/Tarefa/Cards",
-            "/rdo/index" or "/rdo/listagem" => "/Rdo",
+            "/rdo/index" or "/rdo/listagem" => "/Rdo/Index",
             "/efetivo/index" or "/efetivo" => "/Efetivo",
             "/tarefa/paralizacoes/index" or "/tarefa/paralizacoes/cadastro" => "/Tarefa/Paralizacoes",
             "/tarefa/index" => "/Tarefa/Index",

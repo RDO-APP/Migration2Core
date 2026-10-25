@@ -78,7 +78,11 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
   }
 
   return (
-    <div className={`operador-app base ${variant === 'escolher' ? 'tema-azul' : 'tema-azul-claro'}`}>
+    <div
+      className={`operador-app base ${variant === 'escolher' ? 'tema-azul' : 'tema-azul-claro'}${
+        mobileMenuOpen ? ' operador-menu-open' : ''
+      }`}
+    >
       {mobileMenuOpen ? (
         <button
           type="button"

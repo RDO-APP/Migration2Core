@@ -8,6 +8,9 @@ namespace RdoApp.Core.Controllers;
 public class ChartController : Controller
 {
     [HttpGet]
+    [HttpGet("/Chart")]
+    [HttpGet("/chart")]
+    [HttpGet("/chart/index")]
     public IActionResult Index()
     {
         return EmMigracaoPage.Render(

@@ -17,10 +17,10 @@ export const P3_NAV = {
   header: {
     logoEscolher: '/Obra/Escolher',
     trocarSenha: '/Account/ChangePassword',
-    dashboardObra: '/Dashboard',
-    rdoListagem: '/Rdo',
+    dashboardObra: '/Dashboard/Index',
+    rdoListagem: '/Rdo/Index',
     tarefaCards: '/Tarefa/Cards',
-    chartGeral: '/Chart',
+    chartGeral: '/Chart/Index',
     novaObraCadastro: '/Obra/Cadastro',
   },
   /** 2) Toolbar — CardsToolbar + selecionar tudo */
