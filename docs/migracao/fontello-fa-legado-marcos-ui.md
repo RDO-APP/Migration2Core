@@ -105,6 +105,20 @@ Sempre que fechar um sub-marco de ícones/CSS (ex. M4.7d, M4.7f) ou **mover** a 
 
 ---
 
+## Pós-smoke homolog (Lucio · 2026-10-25) — o que vai em qual marco
+
+| Item | Sintoma | Marco | ID / nota |
+|------|---------|-------|-----------|
+| Gap logo ↔ menu ☰ | Distância maior que prod | **UI-M3** (layout) ou **M4.7g** se quick CSS | **UI-M2d** |
+| Menu 9 opções | Contagem OK em um build; formato link azul sublinhado | CSS drawer **M4.7g** · links **M5-nav** | Falta subset `custom.css` drawer; stubs MVC por path |
+| Toolbar 3 ícones | RDO · **Editar obra** · Efetivo | **M4.7** + RBAC BFF | Prod: **2 ícones** se sem `editarObra` na rota `/tarefa/cards`; homolog exibia 3 sem RBAC → **M4.7g** `showEditarObra` / `showGerarRdo` |
+| FILTRO / ADICIONAR / ETAPA | Tamanho/alinhamento vs prod | **UI-M3** (Fase B) | Rotas/clique já mapeados em `p3-botoes-habilitacao-m7.md` |
+| SELECIONAR TUDO | Checkbox não marca cards | **M7** | Estado React stub; ligar checkboxes + massa **M7** |
+
+**Ordem de produto (alinhada ao orquestrador):** (1) **mesmos botões** visíveis · (2) **cada clique** com destino previsível (`EmMigracao` ou SPA) · (3) **M5/M7** telas reais · (4) **UI-M3** polish visual global.
+
+---
+
 ## O que **não** fazer no meio da Fase A
 
 - Regenerar fontello ou trocar família de ícones “por limpeza” antes de **M4.7 ☑**.

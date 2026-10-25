@@ -39,6 +39,8 @@ public class ShellContextService
             ShowChart = PermissionHelper.HasPermission(context, "visualizar", "/chart"),
             ShowNovaObra = PermissionHelper.HasPermission(context, "visualizar", "/obra/cadastro"),
             ShowDashboardObra = PermissionHelper.HasPermission(context, "acessarDashboard", "/dashboard/index"),
+            ShowGerarRdo = PermissionHelper.HasPermission(context, "gerarRdo", "/tarefa/cards"),
+            ShowEditarObra = PermissionHelper.HasPermission(context, "editarObra", "/tarefa/cards"),
             MenuPaginas = menu,
             AntiforgeryFieldName = tokens.FormFieldName,
             AntiforgeryToken = tokens.RequestToken,

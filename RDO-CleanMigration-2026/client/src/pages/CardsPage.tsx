@@ -110,6 +110,8 @@ export function CardsPage() {
         onGerarRdo={() => goOperador(P3_NAV.toolbar.gerarRdo)}
         onEfetivoDiario={() => goOperador(P3_NAV.toolbar.efetivoDiario)}
         onEditarObra={() => goOperador(P3_NAV.toolbar.editarObra)}
+        showGerarRdo={shell?.showGerarRdo ?? false}
+        showEditarObra={shell?.showEditarObra ?? false}
       />
 
       {data.etapas.length === 0 ? (

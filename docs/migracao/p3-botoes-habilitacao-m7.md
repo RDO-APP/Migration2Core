@@ -65,9 +65,9 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 
 | Botão | Prod | Rota homolog | Marco |
 |-------|------|--------------|-------|
-| Gerar RDO | `cadastroRdo()` → `#/rdo/cadastro` | `/Rdo/Cadastro` | ⏳ M7 API + `gerarRdo` |
-| Editar obra | `editarObra()` → `#/obra/cadastro` | `/Obra/Cadastro` | ⏳ M5/M7 |
-| Efetivo diário | `#/efetivo/index` | `/Efetivo` | ⏳ M7 |
+| Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** em `/tarefa/cards` | `/Rdo/Cadastro` | Visível se `shell.showGerarRdo` (BFF) · API **M7** |
+| Editar obra | `editarObra()` · **`permission="editarObra"`** em `/tarefa/cards` | `/Obra/Cadastro` | Visível se `shell.showEditarObra` · tela **M5/M7** |
+| Efetivo diário | `#/efetivo/index` · **sem** `permission` | `/Efetivo` | Sempre visível (prod e homolog) · API **M7** |
 | Lista | `#/tarefa/index` | `/Tarefa/Index` | ⏳ M7 lista EQ-R |
 | Adicionar tarefa | `#/tarefa/cadastro` | `/Tarefa/Cadastro` | ⏳ M7 CRUD |
 | Adicionar etapa | `#/etapa/cadastro` | `/Etapa/Cadastro` | ⏳ M7 CRUD |

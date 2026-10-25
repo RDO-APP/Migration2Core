@@ -371,6 +371,8 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 
 **UI-M3 (Fase B — aposentar fontello/BS legado na SPA):** **não** abrir até M4.7 ☑ + M7 estável — ver gates no doc fontello; atualizar **esta seção** ao mudar data.
 
+**Smoke 2026-10-25 (Lucio):** gap logo/menu → **UI-M2d** / UI-M3 · menu drawer sem pele prod + links legado → **M4.7g/M5-nav** · SELECIONAR TUDO → **M7** (não UI-M3). Próximo incremento código: **M4.7g** (CSS drawer + stubs menu MVC) — ver [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md) tabela pós-smoke.
+
 ---
 
 ## Links canônicos

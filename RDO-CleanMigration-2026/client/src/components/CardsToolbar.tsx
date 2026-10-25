@@ -7,6 +7,8 @@ type CardsToolbarProps = {
   onGerarRdo: () => void
   onEfetivoDiario: () => void
   onEditarObra: () => void
+  showGerarRdo?: boolean
+  showEditarObra?: boolean
 }
 
 /** M4.5 / M4.7c — paridade cards.html (ícones linha título + faixa LISTA/FILTRO). */
@@ -19,29 +21,35 @@ export function CardsToolbar({
   onGerarRdo,
   onEfetivoDiario,
   onEditarObra,
+  showGerarRdo = false,
+  showEditarObra = false,
 }: CardsToolbarProps) {
   return (
     <>
       <div className="panel-heading cards-toolbar-heading">
         <h3>Etapas / Tarefas</h3>
         <div className="action pull-right cards-toolbar-heading-actions">
-          {/* Prod: RDO · editar · efetivo sempre visíveis (mobile + desktop); demais .fadein-xs no prod */}
-          <button
-            type="button"
-            className="btn btn-simple cards-toolbar-primary-action"
-            title="Gerar RDO"
-            onClick={onGerarRdo}
-          >
-            <i className="icon-rdo-gerar-novo" aria-hidden />
-          </button>
-          <button
-            type="button"
-            className="btn btn-simple cards-toolbar-primary-action"
-            title="Editar Obra"
-            onClick={onEditarObra}
-          >
-            <i className="fa fa-edit" aria-hidden />
-          </button>
+          {/* Prod cards.html: gerarRdo e editarObra com permission; efetivo sem permission */}
+          {showGerarRdo ? (
+            <button
+              type="button"
+              className="btn btn-simple cards-toolbar-primary-action"
+              title="Gerar RDO"
+              onClick={onGerarRdo}
+            >
+              <i className="icon-rdo-gerar-novo" aria-hidden />
+            </button>
+          ) : null}
+          {showEditarObra ? (
+            <button
+              type="button"
+              className="btn btn-simple cards-toolbar-primary-action"
+              title="Editar Obra"
+              onClick={onEditarObra}
+            >
+              <i className="fa fa-edit" aria-hidden />
+            </button>
+          ) : null}
           <button
             type="button"
             className="btn btn-simple cards-toolbar-primary-action"

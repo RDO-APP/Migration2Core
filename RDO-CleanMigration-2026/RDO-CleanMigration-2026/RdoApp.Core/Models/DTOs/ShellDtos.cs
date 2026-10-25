@@ -15,6 +15,10 @@ public sealed class ShellContextDto
     public bool ShowChart { get; init; }
     public bool ShowNovaObra { get; init; }
     public bool ShowDashboardObra { get; init; }
+    /// <summary>P3 toolbar — paridade cards.html <c>permission="gerarRdo"</c> em /tarefa/cards.</summary>
+    public bool ShowGerarRdo { get; init; }
+    /// <summary>P3 toolbar — paridade cards.html <c>permission="editarObra"</c> em /tarefa/cards.</summary>
+    public bool ShowEditarObra { get; init; }
     public IReadOnlyList<ShellNavItemDto> MenuPaginas { get; init; } = Array.Empty<ShellNavItemDto>();
     public string? AntiforgeryFieldName { get; init; }
     public string? AntiforgeryToken { get; init; }

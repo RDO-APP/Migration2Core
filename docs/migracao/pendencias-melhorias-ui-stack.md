@@ -57,7 +57,11 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M2** | Layout faixa ações card: flex puro, remover dependência `col-xs-*` / `pull-right` onde quebra BS5 | P | **M4.7** | 🟡 em curso |
 | **UI-M2b** | Barra progresso P2/P3: cores `custom.css` (`#28496f` / `#eee`), % legível | P | **M4.7** | 🟡 em curso |
 | **UI-M4** | Documentar hashes SPA pós-build no runbook deploy | P | I0 / ops | ☐ |
+| **UI-M2d** | **Drawer menu mobile:** CSS prod (`custom.css` § `.menu-sidebar` / `.ball-hover`) — ícone + texto branco, sem `<a>` sublinhado; gap **logo ↔ ☰** (paridade prod) | P | **M4.7g** ou polish **UI-M3** | ☐ smoke 2026-10-25 |
+| **UI-M4-layout** | Faixa desktop **FILTRO / ADICIONAR TAREFA / ETAPA** — alinhamento e tamanho vs prod (Lucio aceita menor hoje; refinamento no redesign) | P | **UI-M3** (Fase B) | ⏸ |
 | **UI-M5** | Login: smoke Esqueci senha SMTP homolog | P | M4.8 | ☐ |
+| **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core (hoje vários paths `/colaborador/index` etc. **404** ou pass-through) | M | **M5** + trilha **M4.7g** stubs | ☐ |
+| **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod `main.js` + modal) | M | **M7** · não UI-M3 | ☐ |
 
 **Adiado de propósito (não fazer no meio do M4):**
 
