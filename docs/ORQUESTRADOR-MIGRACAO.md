@@ -1,7 +1,7 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-21 — **Pacote P2+P3** deploy homolog · manual **§6b** (cinco vetores P2/P3) · **M4.8** **P1** Login · **P4** **M7+** · **I0** B1/B2 OK · **ops** [`docs/ops/`](ops/README.md)  
-**Ler primeiro** em toda sessão do chat **Migração .NET Core**.
+**Atualizado:** 2026-10-25 — **M4** (M4.7b/c + rastreio Dimas) · **Pacote P2+P3** deploy homolog · **M4.8** **P1** · **P4** **M7+** · **I0** B1/B2 · [`docs/ops/`](ops/README.md)  
+**Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
 
@@ -18,7 +18,7 @@
 
 Workspace Cursor **Equipamentos** (OneDrive) espelha `docs/` — **fonte da verdade = Git** `C:\Dev\Migration2Core`. **Regra:** OneDrive **100% alinhado** ao Git após cada push/pull de docs ([`sync-docs-onedrive-from-git.ps1`](migracao/sync-docs-onedrive-from-git.ps1)). Clone repo legado **Equipamentos** = **EQ-L** somente — **não** commitar docs migração lá.
 
-Plano mestre: [`plano-estudo-execucao-migracao-fapesc-mobile.md`](plano-estudo-execucao-migracao-fapesc-mobile.md) · execução: [`plano-execucao-migracao-v1.md`](plano-execucao-migracao-v1.md) · M0 sem Dimas: [`m0-duvidas-dimas-solucoes.md`](m0-duvidas-dimas-solucoes.md)
+Plano mestre: [`plano-estudo-execucao-migracao-fapesc-mobile.md`](plano-estudo-execucao-migracao-fapesc-mobile.md) · execução: [`plano-execucao-migracao-v1.md`](plano-execucao-migracao-v1.md) · **TSK Dimas × M\*:** [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) · M0 sem Dimas: [`m0-duvidas-dimas-solucoes.md`](m0-duvidas-dimas-solucoes.md)
 
 **Modelo:** orquestrador → agente (mesmo chat) → **uma sub-trilha por sessão**.  
 **Web + App:** stack de produto = **React** (web **EQ-R** + Apontador **EQ-M**); compartilhar API, tipos e pacotes TS — não o mesmo bundle de componentes DOM/RN.
@@ -141,6 +141,8 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 ## Decisões fechadas
 
 - **UI web de produto** = **React (EQ-R)**, compartilhada com **EQ-M** via API/contratos TS (não duplicar regra em Razor).
+- **Ordem de execução** = **marcos M\*** ([`plano-execucao-migracao-v1.md`](plano-execucao-migracao-v1.md)); backlog **TSK Dimas** = referência técnica + gap check ([`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md)) — **não** inverter para Sprint linear 346 h até reunião explícita.
+- **Dimas no time** = **incerto** (2026-10-25); homolog v1 pode fechar **sem** Dimas; entrada dele = revalidar TSK/issues, **sem** trocar M4→M8 de dono automaticamente.
 - **EQ-W (Razor)** = ponte W1 no `Migration2Core` — **sem** roadmap de features novas.
 - **Migration2Core** = homolog only até Linux L1; backend + host; **sem** prod `:80`.
 - RDS homolog Core: **`homol_rdoapp`** (47 tbl).
@@ -310,6 +312,21 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ---
 
+## Rastreio Dimas (TSK) — vigilância vs plano M*
+
+**Canônico:** [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) · cruzamento TSK-01…56: [`estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md).
+
+| Quando | Agente / Lucio |
+|--------|----------------|
+| **Início de sessão EQ-R/I** | Ler snapshot §3 do rastreio — saber **gap TSK** do cluster touched |
+| **Fechou marco M\*** | Atualizar §3 + **Próxima ação** aqui |
+| **Entrega cobre TSK** | Marcar ◐→☑ no rastreio (1 linha) |
+| **Descobriu lacuna U/TSK sem M\*** | Registrar §4; **não** desviar M4/M4.8 salvo pedido Lucio |
+
+**Regra:** seguir **M\***; usar Dimas para **não esquecer escopo** (ETL, JWT, domínio apontamento, gestor), não para **repriorizar** big-bang.
+
+---
+
 ## Próximos passos (ordem)
 
 Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 páginas e decisão **não** expandir EQ-W antes do E2E.
@@ -358,6 +375,7 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 | E2E | `e2e-fase0-checklist.md` |
 | Manual UI + FAPESC ⑥ | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
 | Pendências stack UI (P1–P4 · UI-M3 adiado) | `migracao/pendencias-melhorias-ui-stack.md` |
+| Dimas TSK × marcos M* (rastreio) | `migracao/dimas-tsk-rastreio-m.md` |
 | Imutabilidade FAPESC | `imutabilidade/README.md` |
 | Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |
 | Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |

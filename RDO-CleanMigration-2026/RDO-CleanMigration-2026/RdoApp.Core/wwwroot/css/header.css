@@ -199,10 +199,118 @@
     color: #fff;
 }
 
-/* =====================MOBILE MENU========================== */
+/* =====================MOBILE MENU (nav.html · custom.css) ========================== */
 
 .nav-mobile #menu-toggle {
     display: none;
+}
+
+.menu-lateral .nav-mobile {
+    display: block;
+    width: 63px;
+    height: 46px;
+    color: #fff;
+    padding: 0;
+    margin: 0;
+    cursor: auto;
+    font-size: 18px;
+    list-style-type: none;
+    float: left;
+}
+
+.menu-lateral .nav-mobile:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.menu-lateral .nav-mobile svg {
+    height: 45px;
+    width: 65px;
+    padding: 9px;
+    top: 10px;
+    cursor: pointer;
+    z-index: 9;
+    border-right: 1px dashed rgba(255, 255, 255, 0.5);
+}
+
+.menu-lateral .nav-mobile svg path {
+    fill: #fff;
+}
+
+.menu-lateral .nav-mobile svg.icon-close {
+    display: none;
+    padding: 15px;
+}
+
+.menu-lateral .nav-mobile .menu-button:after {
+    opacity: 0;
+    top: 70px;
+    width: 100vw;
+    display: block;
+    position: fixed;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0, 0, 0.3, 1);
+    transition-delay: 0.1s;
+    right: 0;
+}
+
+.menu-lateral .nav-mobile #menu-toggle.active ~ .menu-button .icon-close,
+.nav-mobile #menu-toggle:checked ~ .menu-button .icon-close {
+    display: block;
+}
+
+.menu-lateral .nav-mobile #menu-toggle.active ~ .menu-button .icon-open,
+.nav-mobile #menu-toggle:checked ~ .menu-button .icon-open {
+    display: none;
+}
+
+.menu-lateral .nav-mobile #menu-toggle.active ~ .menu-button:after,
+.nav-mobile #menu-toggle:checked ~ .menu-button:after {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s cubic-bezier(0, 0, 0.3, 1);
+}
+
+.menu-lateral .nav-mobile #menu-toggle.active ~ .menu-sidebar,
+.nav-mobile #menu-toggle:checked ~ .menu-sidebar {
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(0, 0, 0.3, 1);
+    left: 0;
+}
+
+.menu-lateral .nav-mobile .menu-container .menu-sidebar {
+    max-width: 380px;
+    display: block;
+    bottom: 0;
+    background: rgba(28, 51, 77, 0.95);
+    position: fixed;
+    transform: translateX(-405px);
+    transition: transform 0.3s cubic-bezier(0, 0, 0.3, 1);
+    top: 70px;
+    z-index: 2;
+    list-style-type: none;
+    padding: 0;
+    left: -90%;
+}
+
+.topo .menu-lateral .navbar .navbar-nav.ball-hover > li > a span {
+    display: inline-block;
+    padding-left: 8px;
+}
+
+.topo .menu-lateral .navbar .navbar-nav.ball-hover > li > a {
+    color: #fff;
+    position: relative;
+}
+
+.topo .menu-lateral .navbar .navbar-nav.ball-hover > li > a i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .menu-lateral .navbar-nav {
@@ -295,18 +403,36 @@
         display: none;
     }
 
-    .nav-mobile {
-        display: block !important;
+    .topo h2 {
+        position: absolute;
+        left: 146px;
+        height: auto;
+        padding: 0;
+        top: 0;
+        bottom: 0;
+        display: table;
+        margin: auto;
+        font-size: 12px;
+    }
+
+    .menu-lateral .nav-mobile .menu-container .menu-sidebar {
+        top: 0;
+        width: calc(100% - 59px);
+        max-width: 100%;
+        min-width: 260px;
+    }
+
+    .menu-lateral .nav-mobile {
+        float: right;
+    }
+
+    .menu-lateral .nav-mobile svg {
+        right: 0;
+        position: absolute;
     }
 
     .menu-lateral h2 {
         font-size: 12px;
         padding: 16px 0 0 10px;
-    }
-}
-
-@media (min-width: 768px) {
-    .nav-mobile {
-        display: none;
     }
 }

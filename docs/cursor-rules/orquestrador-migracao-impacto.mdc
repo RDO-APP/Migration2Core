@@ -10,7 +10,8 @@ Canônico: `docs/ORQUESTRADOR-MIGRACAO.md` (trilhas **EQ-L / EQ-R / EQ-M / EQ-W*
 ## Início de sessão (Migração / Equipamentos)
 
 1. Ler `docs/ORQUESTRADOR-MIGRACAO.md` (fase atual, gap #1, decisões).
-2. Classificar o pedido do usuário em **uma sub-trilha** (ou **F** / **I**).
+2. Ler `docs/migracao/dimas-tsk-rastreio-m.md` — snapshot TSK × M* do cluster da sessão (execução = plano **M***, Dimas = gap check).
+3. Classificar o pedido do usuário em **uma sub-trilha** (ou **F** / **I**).
 
 ## Antes de editar código ou doc de migração
 
