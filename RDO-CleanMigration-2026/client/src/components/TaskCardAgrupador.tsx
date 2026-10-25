@@ -116,9 +116,8 @@ export function TaskCardAgrupador({ tarefa, etapaId }: TaskCardAgrupadorProps) {
               aria-valuemin={0}
               aria-valuemax={100}
               style={{ width: `${restante}%` }}
-            >
-              <span className="branco">{pct}%</span>
-            </div>
+              aria-label={`${pct}% concluído`}
+            />
             <span className="azul">{pct}%</span>
           </div>
         </div>

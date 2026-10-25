@@ -351,15 +351,16 @@
 .lista-tarefas .item .head a.bt-status,
 .lista-tarefas .item .head button.bt-status {
   position: absolute;
-  right: 0;
+  right: 4px;
   top: 0;
   width: 39px;
   font-size: 20px;
   color: #fff;
-  padding: 18px 0;
+  padding: 18px 4px;
   line-height: 1;
   border: none;
   background: transparent;
+  box-sizing: border-box;
 }
 
 /* FontAwesome 4.7 — escolher.css só declara fa-plus/th/chart; cards precisam do resto */
@@ -441,6 +442,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  padding-left: 10px;
 }
 
 .lista-tarefas .item .head .icones .actions .pull-right {
@@ -660,5 +662,42 @@
 
   .lista-tarefas .item {
     flex-basis: 100%;
+  }
+
+  .cards-toolbar-heading {
+    flex-wrap: wrap;
+  }
+
+  .cards-toolbar-heading h3 {
+    width: 100%;
+    float: none;
+  }
+
+  .cards-toolbar-heading-actions {
+    width: 100%;
+    height: 50px;
+    border-top: 1px solid #28496f;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .cards-toolbar-heading-actions .cards-toolbar-primary-action,
+  .cards-toolbar-heading-actions .btn.cards-toolbar-mobile-only {
+    width: 18%;
+    min-width: 52px;
+    height: auto;
+    padding: 19px 0;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .cards-toolbar-heading-actions .cards-toolbar-primary-action .icon-rdo-gerar-novo:before {
+    font-size: 31px !important;
+  }
+
+  .cards-toolbar-heading-actions .cards-toolbar-primary-action .fa {
+    font-size: 23px !important;
+    top: 9px !important;
   }
 }

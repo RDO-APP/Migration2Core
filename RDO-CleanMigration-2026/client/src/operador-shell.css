@@ -2,8 +2,9 @@
 .topo .menu-lateral {
   display: flex;
   align-items: center;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  gap: 0;
 }
 
 .operador-menu-bar {
@@ -11,6 +12,7 @@
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
+  justify-content: flex-end;
 }
 
 .operador-menu-bar > .navbar-nav.navbar-right {
@@ -84,4 +86,27 @@
   color: #fff;
   display: block;
   padding: 10px 15px 10px 48px;
+}
+
+.menu-lateral .nav-mobile .menu-sidebar.menu-sidebar-open {
+  transform: translateX(0);
+  left: 0;
+}
+
+/* M4.7e — hambúrguer colado ao logo (prod); header.css mobile float:right quebrava gap */
+@media (max-width: 767px) {
+  .topo .menu-lateral .nav-mobile {
+    float: left !important;
+    width: 63px;
+    flex-shrink: 0;
+  }
+
+  .topo .menu-lateral .nav-mobile svg {
+    position: relative !important;
+    right: auto !important;
+  }
+
+  .topo .menu-lateral h2 {
+    padding-left: 10px;
+  }
 }

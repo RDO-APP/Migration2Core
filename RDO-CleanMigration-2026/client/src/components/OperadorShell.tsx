@@ -106,7 +106,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                     </svg>
                   </label>
 
-                  <div className="menu-sidebar">
+                  <div className={`menu-sidebar${mobileMenuOpen ? ' menu-sidebar-open' : ''}`}>
                     <div className="scrollbar-inner">
                       <ul className="nav navbar-nav navbar-right user">
                         <li className={mobileUserOpen ? 'open' : undefined}>
@@ -178,6 +178,44 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
           </div>
           <div className="no-padding">
             <div className="navbar-collapse menu operador-menu-bar">
+              <ul className="nav navbar-nav navbar-right ball-hover">
+                {variant === 'cards' ? (
+                  <>
+                    {showDashboard ? (
+                      <li className="btn-tooltip pointer" title="DASHBOARD DA OBRA">
+                        <a href={P3_NAV.header.dashboardObra} onClick={navClick(P3_NAV.header.dashboardObra)}>
+                          <i className="icon-dashboard" aria-hidden />
+                        </a>
+                      </li>
+                    ) : null}
+                    <li className="btn-tooltip pointer" title="RDO's">
+                      <a href={P3_NAV.header.rdoListagem} onClick={navClick(P3_NAV.header.rdoListagem)}>
+                        <i className="icon-rdo-novo_2" aria-hidden />
+                      </a>
+                    </li>
+                    <li className="btn-tooltip pointer" title="TAREFAS">
+                      <a href={P3_NAV.header.tarefaCards} onClick={navClick(P3_NAV.header.tarefaCards)}>
+                        <i className="fa fa-th" aria-hidden />
+                      </a>
+                    </li>
+                  </>
+                ) : null}
+                {showChart ? (
+                  <li className="btn-tooltip pointer" title="DASHBOARD GERAL">
+                    <a href={P3_NAV.header.chartGeral} onClick={navClick(P3_NAV.header.chartGeral)}>
+                      <i className="fa fa-bar-chart" aria-hidden />
+                    </a>
+                  </li>
+                ) : null}
+                {showNovaObra ? (
+                  <li className="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
+                    <a href={P3_NAV.header.novaObraCadastro} onClick={navClick(P3_NAV.header.novaObraCadastro)}>
+                      <i className="fa fa-plus" aria-hidden />
+                    </a>
+                  </li>
+                ) : null}
+              </ul>
+
               <ul className="nav navbar-nav navbar-right user">
                 <li ref={userRef} className={userOpen ? 'dropdown open' : 'dropdown'}>
                   <a
@@ -199,7 +237,9 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                   {userOpen ? (
                     <ul className="dropdown-menu">
                       <li>
-                        <a href={P3_NAV.header.trocarSenha}>TROCAR SENHA</a>
+                        <a href={P3_NAV.header.trocarSenha} onClick={navClick(P3_NAV.header.trocarSenha)}>
+                          TROCAR SENHA
+                        </a>
                       </li>
                       <li>
                         <form action="/Account/Logout" method="post" onSubmit={submitLogout}>
@@ -214,44 +254,6 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                     </ul>
                   ) : null}
                 </li>
-              </ul>
-
-              <ul className="nav navbar-nav navbar-right ball-hover">
-                {variant === 'cards' ? (
-                  <>
-                    {showDashboard ? (
-                      <li className="btn-tooltip pointer" title="DASHBOARD DA OBRA">
-                        <a href={P3_NAV.header.dashboardObra} onClick={navClick(P3_NAV.header.dashboardObra)}>
-                          <i className="icon-dashboard" aria-hidden />
-                        </a>
-                      </li>
-                    ) : null}
-                    <li className="btn-tooltip pointer" title="RDO's">
-                      <a href={P3_NAV.header.rdoListagem} onClick={navClick(P3_NAV.header.rdoListagem)}>
-                        <i className="icon-rdo-novo_2" aria-hidden />
-                      </a>
-                    </li>
-                    <li className="btn-tooltip pointer" title="TAREFAS">
-                      <a href={P3_NAV.header.tarefaCards}>
-                        <i className="fa fa-th" aria-hidden />
-                      </a>
-                    </li>
-                  </>
-                ) : null}
-                {showChart ? (
-                  <li className="btn-tooltip pointer" title="DASHBOARD GERAL">
-                    <a href={P3_NAV.header.chartGeral} onClick={navClick(P3_NAV.header.chartGeral)}>
-                      <i className="fa fa-bar-chart" aria-hidden />
-                    </a>
-                  </li>
-                ) : null}
-                {showNovaObra ? (
-                  <li className="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
-                    <a href={P3_NAV.header.novaObraCadastro} onClick={navClick(P3_NAV.header.novaObraCadastro)}>
-                      <i className="fa fa-plus" aria-hidden />
-                    </a>
-                  </li>
-                ) : null}
               </ul>
             </div>
           </div>

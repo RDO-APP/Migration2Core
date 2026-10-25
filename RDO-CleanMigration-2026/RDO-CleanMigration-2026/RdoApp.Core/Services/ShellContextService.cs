@@ -23,11 +23,11 @@ public class ShellContextService
         var login = TryReadLogin(context);
 
         var menu = login?.Menu?.ListaPagina?
-            .Where(p => !string.IsNullOrWhiteSpace(p.CssClass))
+            .Where(p => !string.IsNullOrWhiteSpace(p.Titulo))
             .Select(p => new ShellNavItemDto
             {
                 Titulo = p.Titulo ?? "",
-                CssClass = p.CssClass ?? "fa fa-circle",
+                CssClass = string.IsNullOrWhiteSpace(p.CssClass) ? "fa fa-circle" : p.CssClass.Trim(),
                 Href = MapLegacyPath(p.Caminho),
             })
             .ToList() ?? new List<ShellNavItemDto>();
@@ -80,6 +80,7 @@ public class ShellContextService
             "/dashboard/index" => "/Dashboard",
             "/tarefa/cards" or "/tarefa/cards/index" => "/Tarefa/Cards",
             "/rdo/index" or "/rdo/listagem" => "/Rdo",
+            "/efetivo/index" or "/efetivo" => "/Efetivo",
             _ when path.StartsWith('/') => path,
             _ => "#",
         };

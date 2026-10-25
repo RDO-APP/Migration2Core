@@ -25,14 +25,29 @@ export function CardsToolbar({
       <div className="panel-heading cards-toolbar-heading">
         <h3>Etapas / Tarefas</h3>
         <div className="action pull-right cards-toolbar-heading-actions">
-          {/* Prod desktop: RDO · editar obra · efetivo (sem .fadeout) */}
-          <button type="button" className="btn btn-simple" title="Gerar RDO" onClick={onGerarRdo}>
+          {/* Prod: RDO · editar · efetivo sempre visíveis (mobile + desktop); demais .fadein-xs no prod */}
+          <button
+            type="button"
+            className="btn btn-simple cards-toolbar-primary-action"
+            title="Gerar RDO"
+            onClick={onGerarRdo}
+          >
             <i className="icon-rdo-gerar-novo" aria-hidden />
           </button>
-          <button type="button" className="btn btn-simple" title="Editar Obra" onClick={onEditarObra}>
+          <button
+            type="button"
+            className="btn btn-simple cards-toolbar-primary-action"
+            title="Editar Obra"
+            onClick={onEditarObra}
+          >
             <i className="fa fa-edit" aria-hidden />
           </button>
-          <button type="button" className="btn btn-simple" title="Efetivo Diário" onClick={onEfetivoDiario}>
+          <button
+            type="button"
+            className="btn btn-simple cards-toolbar-primary-action"
+            title="Efetivo Diário"
+            onClick={onEfetivoDiario}
+          >
             <i className="fa fa-list-alt" aria-hidden />
           </button>
           {/* Prod: .fadein-xs.fadeout — só mobile na linha do título */}
