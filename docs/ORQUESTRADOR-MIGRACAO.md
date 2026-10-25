@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-25 — **M4** (M4.7 paridade ícones · doc **fontello/FA marcos**) · **Pacote P2+P3** deploy homolog · **M4.8** **P1** · **P4** **M7+** · **I0** B1/B2 · [`docs/ops/`](ops/README.md)  
+**Atualizado:** 2026-10-25 — **M4** (M4.7 paridade · **execução Lucio+Cursor sem Dimas**) · **M4.8** **P1** · [`dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md) · **I0** B1/B2 · [`docs/ops/`](ops/README.md)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -143,6 +143,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **UI web de produto** = **React (EQ-R)**, compartilhada com **EQ-M** via API/contratos TS (não duplicar regra em Razor).
 - **Ordem de execução** = **marcos M\*** ([`plano-execucao-migracao-v1.md`](plano-execucao-migracao-v1.md)); backlog **TSK Dimas** = referência técnica + gap check ([`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md)) — **não** inverter para Sprint linear 346 h até reunião explícita.
 - **Dimas no time** = **incerto** (2026-10-25); homolog v1 pode fechar **sem** Dimas; entrada dele = revalidar TSK/issues, **sem** trocar M4→M8 de dono automaticamente.
+- **Execução até nova decisão (2026-10-25):** **Lucio + Cursor** seguem **marcos M\*** (EQ-R homolog → M4.8 → M5…). **Dimas não é pré-requisito.** Se entrar depois: trabalho **em paralelo e independente** (Application, OpenAPI, U-05, revisão Core) **reutilizando** BFF/React/homolog já no Git — ver § [Rastreio Dimas](#rastreio-dimas-tsk--vigilância-vs-plano-m) e [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md). Pós-cutover operador: “adaptar ao PDF Dimas” = refator/hardening (**M6+**), não re-migrar front — ver doc acima § imposto Dimas.
 - **EQ-W (Razor)** = ponte W1 no `Migration2Core` — **sem** roadmap de features novas.
 - **Migration2Core** = homolog only até Linux L1; backend + host; **sem** prod `:80`.
 - RDS homolog Core: **`homol_rdoapp`** (47 tbl).
@@ -325,6 +326,8 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 **Regra:** seguir **M\***; usar Dimas para **não esquecer escopo** (ETL, JWT, domínio apontamento, gestor), não para **repriorizar** big-bang.
 
+**Modo atual (2026-10-25):** **sem Dimas na execução** — dono homolog operador = **Lucio + Cursor**. Dimas (se vier) **não substitui** M4.7/M4.8; encaixa em **M5/M6** (domínio, API v1, mobile) ou trilha **EQ-L** prod. Checklist entrada: [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md).
+
 ---
 
 ## Próximos passos (ordem)
@@ -384,6 +387,7 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 | Pendências stack UI (P1–P4 · UI-M3 adiado) | `migracao/pendencias-melhorias-ui-stack.md` |
 | Fontello + FA — Fase A (M4.7) vs Fase B (UI-M3) | `migracao/fontello-fa-legado-marcos-ui.md` |
 | Dimas TSK × marcos M* (rastreio) | `migracao/dimas-tsk-rastreio-m.md` |
+| Dimas entrada paralela / pós-Core sem Dimas | `migracao/dimas-entrada-paralela-pos-m4.md` |
 | Imutabilidade FAPESC | `imutabilidade/README.md` |
 | Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |
 | Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |

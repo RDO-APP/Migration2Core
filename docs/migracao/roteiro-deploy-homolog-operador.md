@@ -2,7 +2,7 @@
 
 **Trilha:** **I0** · **Quem executa:** Lucio (PowerShell + browser). **Agente:** não roda SSM/deploy (só código/docs no Git).  
 **Plano técnico:** [`../homolog-core-deploy-rapido-plano.md`](../homolog-core-deploy-rapido-plano.md)  
-**Atualizado:** 2026-10-25 · **M4.7d** P3 toolbar + menu hambúrguer · branch `ci/homolog-ec2-s3-ssm` · ref Git **`4c4bb5b`**
+**Atualizado:** 2026-10-25 · **M4.7g** RBAC toolbar P3 · branch `ci/homolog-ec2-s3-ssm` · ref Git **`fe0713f`** (confirmar `git pull` antes do publish)
 
 ---
 
@@ -115,7 +115,7 @@ cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts; .\publish-homolog-ec2.
 
 **Serve:** `npm run build` (SPA em `wwwroot/app`) + `dotnet publish` self-contained + `rdoapp_core.zip` local.  
 **Esperado:** build Vite OK · `Publish OK` · `Zip: ...\publish\rdoapp_core.zip` (vários minutos).  
-**Smoke bundle (pós-`4c4bb5b`):** `index-DzoPbagL.js` · `index-CzeteI0O.css` — hash muda a cada build; conferir em DevTools → Network após deploy.
+**Smoke bundle (pós-`fe0713f`):** `index-Dte8_yr6.js` · `index-D5QSC4UY.css` — hash muda a cada build; conferir em DevTools → Network após deploy. **M4.7g** exige **Core DLL** (BFF `showEditarObra`) **e** SPA — publish completo (Passo D), não só hotfix DLL.
 
 ---
 
@@ -164,7 +164,7 @@ Use **Ctrl+F5** (hard refresh) após SSM Success.
 | G3 | **P3** `/Tarefa/Cards` | Accordion com etapas/tarefas (BFF) |
 | G4 | Header | Logo · **nome da obra** · usuário + dropdown · ícones chart/+ (RBAC) |
 | G5 | **Menu hambúrguer** (M4.7d) | Ícone ☰ à esquerda do título (paridade prod) · drawer abre · itens de `GET /api/bff/shell` · Trocar senha / Sair |
-| G6 | Toolbar linha título | **RDO · Editar obra · Efetivo** (ícones, **não** na faixa FILTRO) |
+| G6 | Toolbar linha título | **RDO · Efetivo** (2 ícones se perfil **sem** `editarObra` — paridade prod **M4.7g**) · DevTools → `GET /api/bff/shell` → `showEditarObra` / `showGerarRdo` |
 | G7 | Toolbar faixa | LISTA · FILTRO · ADICIONAR TAREFA · ADICIONAR ETAPA |
 | G8 | Navegação meio-termo (M4.7b) | Clique RDO → `/Rdo/Cadastro` (Em migração) · Chart → `/Chart` · ícone card → rota MVC |
 | G9 | DevTools Network | `GET /api/bff/etapas` **200** · SPA JS carregado (hash atual, ex. `index-DzoPbagL.js`) |
