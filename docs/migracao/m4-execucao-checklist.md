@@ -34,6 +34,7 @@ Homolog **②** aproxima **①** por **blocos de UI** (header, cards, accordion,
 | **M4.5** | **P3** toolbar + **accordion** + ícones nav obra | ☑ | P3 | pacote P2+P3 · deploy **2026-10-21** |
 | **M4.6** | **P3** **card tarefa** + placeholder “Adicionar nova tarefa” | ☑ | P3 | BFF colab/equip · ícones ação stub M7 |
 | M4.7 / M4.8 | **P1** Login SPA + congela EQ-W | ☐ | P1 | critério M4 fim |
+| **M4.7b** | **P3** navegação botões → rotas MVC (`p3-operador-routes.ts` + EmMigracao) | ☑ | P3 | smoke: Chart/Dashboard em migração |
 | — | **P4** Nova medição modal | — | P4 | **M7+** |
 
 ---

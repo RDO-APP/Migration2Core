@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RdoApp.Core.Models.ViewModels;
+using RdoApp.Core.Infrastructure;
 
 namespace RdoApp.Core.Controllers;
 
@@ -10,11 +10,12 @@ public class ChartController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View("EmMigracao", new EmMigracaoViewModel
-        {
-            Titulo = "Dashboard geral (gráficos)",
-            Descricao = "Módulo de gráficos em migração para .NET Core (M5+).",
-            VoltarUrl = "/Obra/Escolher",
-        });
+        return EmMigracaoPage.Render(
+            this,
+            "Dashboard geral (gráficos)",
+            "Módulo de gráficos em migração (M5+).",
+            voltarUrl: "/Tarefa/Cards",
+            voltarRotulo: "Voltar para tarefas",
+            prodRef: "#/chart");
     }
 }

@@ -16,12 +16,10 @@ public class DashboardController : Controller
             return RedirectToAction(nameof(ObraController.Escolher), "Obra");
         }
 
-        return View("EmMigracao", new EmMigracaoViewModel
-        {
-            Titulo = "Dashboard da obra",
-            Descricao = "Painel da obra em migração (M5+).",
-            VoltarUrl = "/Tarefa/Cards",
-            VoltarRotulo = "Voltar para tarefas",
-        });
+        return EmMigracaoPage.Render(
+            this,
+            "Dashboard da obra",
+            "Painel da obra em migração (M5+).",
+            prodRef: "#/dashboard/index");
     }
 }

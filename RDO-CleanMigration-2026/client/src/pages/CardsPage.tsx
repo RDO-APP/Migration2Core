@@ -5,10 +5,12 @@ import { AddTarefaPlaceholder, TaskCardAgrupador } from '../components/TaskCardA
 import { CardsToolbar } from '../components/CardsToolbar'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
+import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
 import '../cards-page.css'
 
-function stubAction(label: string) {
-  window.alert(`${label} — em breve (M7+).`)
+function filtroFromUrl(): boolean {
+  if (typeof window === 'undefined') return false
+  return new URLSearchParams(window.location.search).get('filtro') === '1'
 }
 
 export function CardsPage() {
@@ -17,8 +19,12 @@ export function CardsPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [openEtapas, setOpenEtapas] = useState<Set<number>>(() => new Set())
-  const [filtroOpen, setFiltroOpen] = useState(false)
+  const [filtroOpen, setFiltroOpen] = useState(filtroFromUrl)
   const [selectAll, setSelectAll] = useState(false)
+
+  useEffect(() => {
+    setFiltroOpen(filtroFromUrl())
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -49,6 +55,19 @@ export function CardsPage() {
       else next.add(id)
       return next
     })
+  }
+
+  function onToggleFiltro() {
+    if (filtroOpen) {
+      setFiltroOpen(false)
+      window.history.replaceState({}, '', '/Tarefa/Cards')
+      return
+    }
+    goOperador(P3_NAV.toolbar.filtroQuery)
+  }
+
+  function onSelectAllChange(checked: boolean) {
+    setSelectAll(checked)
   }
 
   const shellWrap = (body: ReactNode) => (
@@ -84,13 +103,13 @@ export function CardsPage() {
     <section className="cards-page">
       <CardsToolbar
         filtroOpen={filtroOpen}
-        onToggleFiltro={() => setFiltroOpen((v) => !v)}
-        onNovaTarefa={() => stubAction('Adicionar tarefa')}
-        onNovaEtapa={() => stubAction('Adicionar etapa')}
-        onLista={() => stubAction('Visualização lista')}
-        onGerarRdo={() => stubAction('Gerar RDO')}
-        onEfetivoDiario={() => stubAction('Efetivo Diário')}
-        onEditarObra={() => stubAction('Editar obra')}
+        onToggleFiltro={onToggleFiltro}
+        onNovaTarefa={() => goOperador(P3_NAV.toolbar.adicionarTarefa)}
+        onNovaEtapa={() => goOperador(P3_NAV.toolbar.adicionarEtapa)}
+        onLista={() => goOperador(P3_NAV.toolbar.listaTarefas)}
+        onGerarRdo={() => goOperador(P3_NAV.toolbar.gerarRdo)}
+        onEfetivoDiario={() => goOperador(P3_NAV.toolbar.efetivoDiario)}
+        onEditarObra={() => goOperador(P3_NAV.toolbar.editarObra)}
       />
 
       {data.etapas.length === 0 ? (
@@ -102,7 +121,7 @@ export function CardsPage() {
               <input
                 type="checkbox"
                 checked={selectAll}
-                onChange={(e) => setSelectAll(e.target.checked)}
+                onChange={(e) => onSelectAllChange(e.target.checked)}
               />
               SELECIONAR TUDO
             </label>
@@ -125,13 +144,16 @@ export function CardsPage() {
                       <div className="panel-etapa-body">
                         <div className="panel-body">
                           {etapa.tarefas.length === 0 ? (
-                            <div className="etapa-empty-msg">Nenhuma tarefa adicionada nesta etapa.</div>
+                            <>
+                              <div className="etapa-empty-msg">Nenhuma tarefa adicionada nesta etapa.</div>
+                              <AddTarefaPlaceholder etapaId={etapa.id} />
+                            </>
                           ) : (
                             <>
                               {etapa.tarefas.map((t) => (
-                                <TaskCardAgrupador key={t.id} tarefa={t} />
+                                <TaskCardAgrupador key={t.id} tarefa={t} etapaId={etapa.id} />
                               ))}
-                              <AddTarefaPlaceholder onClick={() => stubAction('Adicionar nova tarefa')} />
+                              <AddTarefaPlaceholder etapaId={etapa.id} />
                             </>
                           )}
                         </div>

@@ -82,7 +82,7 @@ export function CardsToolbar({
         <div className="col-xs-12 filtro no-padding cards-filtro-stub">
           <div className="panel">
             <p className="cards-filtro-msg">
-              Filtros avançados — disponível na próxima onda (M7). Use a busca por etapa no accordion.
+              Filtros avançados — UI prod em M7 (`/Tarefa/Cards?filtro=1`). Enquanto isso, expanda a etapa no accordion.
             </p>
           </div>
         </div>

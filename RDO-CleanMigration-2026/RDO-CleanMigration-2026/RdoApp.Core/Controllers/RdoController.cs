@@ -16,12 +16,25 @@ public class RdoController : Controller
             return RedirectToAction(nameof(ObraController.Escolher), "Obra");
         }
 
-        return View("EmMigracao", new EmMigracaoViewModel
+        return EmMigracaoPage.Render(
+            this,
+            "RDO's",
+            "Listagem de RDO em migração (M5+).",
+            prodRef: "#/rdo/index");
+    }
+
+    [HttpGet]
+    public IActionResult Cadastro()
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
         {
-            Titulo = "RDO's",
-            Descricao = "Listagem e cadastro de RDO em migração (M5+).",
-            VoltarUrl = "/Tarefa/Cards",
-            VoltarRotulo = "Voltar para tarefas",
-        });
+            return RedirectToAction(nameof(ObraController.Escolher), "Obra");
+        }
+
+        return EmMigracaoPage.Render(
+            this,
+            "Gerar RDO",
+            "Cadastro RDO (`cadastroRdo`) · **M7+** · permission gerarRdo.",
+            prodRef: "#/rdo/cadastro");
     }
 }

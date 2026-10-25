@@ -157,12 +157,13 @@ namespace RdoApp.Core.Controllers
         [HttpGet]
         public IActionResult Cadastro()
         {
-            return View("EmMigracao", new EmMigracaoViewModel
-            {
-                Titulo = "Nova obra / cadastro",
-                Descricao = "Cadastro de obra em migração (M5+).",
-                VoltarUrl = "/Obra/Escolher",
-            });
+            return EmMigracaoPage.Render(
+                this,
+                "Nova obra / cadastro",
+                "Cadastro ou edição de obra (`editarObra`) · **M5+**.",
+                voltarUrl: "/Tarefa/Cards",
+                voltarRotulo: "Voltar para tarefas",
+                prodRef: "#/obra/cadastro");
         }
     }
 }

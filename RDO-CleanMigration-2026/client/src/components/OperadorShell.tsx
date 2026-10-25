@@ -1,6 +1,21 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEventHandler,
+  type ReactNode,
+} from 'react'
 import type { ShellContext } from '../api/equipamentos-api.types'
+import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
 import '../operador-shell.css'
+
+function navClick(url: string): MouseEventHandler<HTMLAnchorElement> {
+  return (e) => {
+    e.preventDefault()
+    goOperador(url)
+  }
+}
 
 export type OperadorShellVariant = 'escolher' | 'cards'
 
@@ -21,7 +36,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
   const userRef = useRef<HTMLLIElement>(null)
   const nome = mergeNome(shell, usuarioNome)
   const tituloObra = (obraNome ?? shell?.obraNome)?.trim().toUpperCase() ?? ''
-  const logoHref = variant === 'escolher' ? '/Obra/Escolher' : '/Obra/Escolher'
+  const logoHref = P3_NAV.header.logoEscolher
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -79,7 +94,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                   {userOpen ? (
                     <ul className="dropdown-menu">
                       <li>
-                        <a href="/Account/ChangePassword">TROCAR SENHA</a>
+                        <a href={P3_NAV.header.trocarSenha}>TROCAR SENHA</a>
                       </li>
                       <li>
                         <form action="/Account/Logout" method="post" onSubmit={submitLogout}>
@@ -101,18 +116,18 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                   <>
                     {showDashboard ? (
                       <li className="btn-tooltip pointer" title="DASHBOARD DA OBRA">
-                        <a href="/Dashboard">
+                        <a href={P3_NAV.header.dashboardObra} onClick={navClick(P3_NAV.header.dashboardObra)}>
                           <i className="icon-dashboard" aria-hidden />
                         </a>
                       </li>
                     ) : null}
                     <li className="btn-tooltip pointer" title="RDO's">
-                      <a href="/Rdo">
+                      <a href={P3_NAV.header.rdoListagem} onClick={navClick(P3_NAV.header.rdoListagem)}>
                         <i className="icon-rdo-novo_2" aria-hidden />
                       </a>
                     </li>
                     <li className="btn-tooltip pointer" title="TAREFAS">
-                      <a href="/Tarefa/Cards">
+                      <a href={P3_NAV.header.tarefaCards}>
                         <i className="fa fa-th" aria-hidden />
                       </a>
                     </li>
@@ -120,14 +135,14 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                 ) : null}
                 {showChart ? (
                   <li className="btn-tooltip pointer" title="DASHBOARD GERAL">
-                    <a href="/Chart">
+                    <a href={P3_NAV.header.chartGeral} onClick={navClick(P3_NAV.header.chartGeral)}>
                       <i className="fa fa-bar-chart" aria-hidden />
                     </a>
                   </li>
                 ) : null}
                 {showNovaObra ? (
                   <li className="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
-                    <a href="/Obra/Cadastro">
+                    <a href={P3_NAV.header.novaObraCadastro} onClick={navClick(P3_NAV.header.novaObraCadastro)}>
                       <i className="fa fa-plus" aria-hidden />
                     </a>
                   </li>

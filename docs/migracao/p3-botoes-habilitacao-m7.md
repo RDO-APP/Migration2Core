@@ -1,92 +1,86 @@
-# P3 — Etapas / Tarefas (`/Tarefa/Cards`) — botões e o que falta para habilitar
+# P3 — Etapas / Tarefas (`/Tarefa/Cards`) — botões, rotas e o que falta
 
-**Trilha:** EQ-R · **Prod ref:** `rdoappProject/Client/Views/Tarefa/cards.html` · **Homolog:** `CardsPage.tsx` + `OperadorShell` + `CardsToolbar` + `TaskCardAgrupador`  
-**Atualizado:** 2026-10-24 · **Marco ações reais:** **M7+** (RBAC + rotas/modais/API)
+**Trilha:** EQ-R · **Prod ref:** `rdoappProject/Client/Views/Tarefa/cards.html` · **Homolog:** React + BFF  
+**Atualizado:** 2026-10-25 · **Código rotas:** `client/src/nav/p3-operador-routes.ts` · **Placeholders MVC:** `EmMigracao.cshtml`
 
-Legenda **Homolog hoje:** ✅ clicável / navega · 🟡 alert stub · ⛔ disabled · 👁 oculto (RBAC prod) · — não existe na UI homolog
+Legenda **Homolog:**
 
----
-
-## 1) Header (`OperadorShell` · faixa azul)
-
-| Botão / ação | Prod (permission / rota) | Homolog hoje | Falta para habilitar (M7+) |
-|--------------|--------------------------|--------------|----------------------------|
-| **Logo** → Escolher | `mudarObra` / `#/obra/escolher` | ✅ `href=/Obra/Escolher` | — |
-| **Título obra** (centro) | Nome da obra sessão | ✅ `h2#tituloObra` | — |
-| **Usuário** (dropdown) | Menu sessão | ✅ abre menu | — |
-| → **Trocar senha** | Rota alterar senha | ✅ `/Account/ChangePassword` | Paridade SPA **M4.8** (opcional) |
-| → **Sair** | POST logout + antiforgery | ✅ se BFF `shell` token OK | Token antiforgery sempre no BFF |
-| **Dashboard da obra** | Menu obra / RBAC | 🟡 link `/Dashboard` se `showDashboardObra` | **M5:** `DashboardController` real (hoje placeholder EmMigracao) |
-| **RDO's** (ícone) | Nav obra | 🟡 `/Rdo` | **M5:** fluxo RDO web Core |
-| **Tarefas** (grade) | `#/tarefa/cards` | ✅ `/Tarefa/Cards` (atual) | — |
-| **Dashboard geral** (gráfico) | `#/chart` · RBAC | 🟡 `/Chart` se `showChart` | **M5:** Chart real + permissão menu |
-| **Nova obra** (+) | `#/obra/cadastro` · RBAC | 🟡 `/Obra/Cadastro` se `showNovaObra` | **M5:** cadastro obra Core + `PermissionHelper` |
-
-**BFF:** `GET /api/bff/shell` — flags `showChart`, `showNovaObra`, `showDashboardObra` (parcial vs menu Angular `listaPagina`).
+| Símbolo | Significado |
+|---------|-------------|
+| 🔗 | Navega (`window.location`) → rota Core abaixo · tela **Em migração** até M5/M7 |
+| ✅ | Funcional (dados/UI local) |
+| ⏳ | Rota existe · falta tela/API real (**M5** / **M7+**) |
+| 👁 | Oculto ou read-only de propósito |
 
 ---
 
-## 2) Toolbar — Filtro / adicionar / lista (`CardsToolbar` + faixa abaixo)
+## Por que `/Chart` e `/Dashboard` “não mudavam” antes (M4.7b)
 
-| Botão | Prod | Homolog hoje | Falta para habilitar |
-|-------|------|--------------|----------------------|
-| **Gerar RDO** | `permission="gerarRdo"` · `cadastroRdo()` | 🟡 alert M7 | API/post RDO · RBAC `gerarRdo` · desabilitar se `desabilitarSalvar` |
-| **Editar obra** | `permission="editarObra"` · `editarObra()` | 🟡 alert M7 | Rota edição obra · RBAC |
-| **Efetivo diário** | `efetivoDiario()` (sem permission no HTML) | 🟡 alert M7 | Tela/API efetivo (fora v1 Dimas) ou rota legado |
-| **Lista** (colunas) | `lista()` → `#/tarefa/index` | 🟡 alert M7 | Página lista tarefas EQ-R ou redirect |
-| **Adicionar tarefa** (ícone + botão azul) | `permission="criarNovo"` · `novaTarefa()` | 🟡 alert M7 | Fluxo cadastro tarefa · RBAC · `desabilitarSalvar` |
-| **Adicionar etapa** | `permission="criarNovo"` + route `/etapa/index` | 🟡 alert M7 | CRUD etapa · RBAC |
-| **Filtro** (ícone + FILTRO) | Collapse `.filtro` + campos busca | 🟡 abre stub texto | UI filtro prod + query BFF/listagem |
-| **SELECIONAR TUDO** (abaixo toolbar) | Checkbox + alterar status massa | ⛔ checkbox UI sem lógica | Ligar checkboxes card · modal `#alterar-status` · `aterarStatusEmMassa` |
+Rotas como `/Chart` **não tinham action MVC**. O host devolvia o `index.html` da SPA; o React trata qualquer path ≠ Escolher como **Cards** — parecia que o clique não funcionava.
 
-**Accordion etapa:** botão título etapa — ✅ **habilitado** (expand/collapse React).
+**Correção:** actions MVC + `goOperador()` (full page) em ícones de header e toolbar.
 
 ---
 
-## 3) Card de tarefa (`TaskCardAgrupador` + placeholder)
+## Mapa canônico — prod Angular → homolog Core
 
-### 3.1 Cabeçalho do card (faixa verde/azul)
+Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3-operador-routes.ts`
 
-| Elemento | Prod | Homolog hoje | Falta para habilitar |
-|----------|------|--------------|----------------------|
-| **⋮ Alterar status** | `permission="editar"` · abre `.status.active` | ⛔ disabled | Toggle painel status · `listaStatusPermitidos` no BFF · `changeStatus` API |
-| **Colaboradores / equipamentos** (contadores) | Exibição | ✅ dados BFF | — |
+### 1) Header (`OperadorShell`)
 
-### 3.2 Faixa de ícones (ações)
+| Botão / ação | Prod (`TarefaController.js` / menu) | Rota homolog (M4.7b) | Marco tela real |
+|--------------|--------------------------------------|----------------------|-----------------|
+| Logo → Escolher | `#/obra/escolher` | `/Obra/Escolher` | ✅ SPA P2 |
+| Título obra | sessão | (texto) | ✅ |
+| Trocar senha | alterar senha | `/Account/ChangePassword` | M4.8 SPA opcional |
+| Sair | logout | `POST /Account/Logout` | ✅ |
+| Dashboard da obra | `#/dashboard/index` | `/Dashboard` | ⏳ **M5** · ícone se `showDashboardObra` |
+| RDO's | `#/rdo/index` | `/Rdo` | ⏳ **M5** |
+| Tarefas (grade) | `#/tarefa/cards` | `/Tarefa/Cards` | ✅ SPA P3 |
+| Dashboard geral | `#/chart` | `/Chart` | ⏳ **M5** · se `showChart` |
+| Nova obra (+) | `#/obra/cadastro` | `/Obra/Cadastro` | ⏳ **M5** · se `showNovaObra` |
 
-| Ícone | Prod permission | Homolog M4.7 | Falta para habilitar |
-|-------|-----------------|--------------|----------------------|
-| **Olho** (visualizar) | `visualizarRegistro` | ⛔ disabled | `visualizar(tarefa)` · rota/modal read-only |
-| **Relógio** (histórico medições) | — (modal) | ⛔ disabled | Modal `#historico-tarefa` + API histórico |
-| **Lixeira** (excluir) | `deletar` | 👁 **oculto** M4.7 | Mostrar só com RBAC · `deletar(tarefa)` API |
-| **Lápis** (editar) | `editar` | ⛔ disabled | `editar(id)` cadastro tarefa |
-| **Impressora** (rel. horas equip.) | — | ⛔ disabled | Modal relatório + Excel/PDF |
-| **+** (nova medição) | `editar` · `editar(..., true)` | ⛔ disabled | **P4 / M7+** modal medição rápida |
+### 2) Toolbar (`CardsToolbar`)
 
-### 3.3 Corpo do card
+| Botão | Prod | Rota homolog | Marco |
+|-------|------|--------------|-------|
+| Gerar RDO | `cadastroRdo()` → `#/rdo/cadastro` | `/Rdo/Cadastro` | ⏳ M7 API + `gerarRdo` |
+| Editar obra | `editarObra()` → `#/obra/cadastro` | `/Obra/Cadastro` | ⏳ M5/M7 |
+| Efetivo diário | `#/efetivo/index` | `/Efetivo` | ⏳ M7 |
+| Lista | `#/tarefa/index` | `/Tarefa/Index` | ⏳ M7 lista EQ-R |
+| Adicionar tarefa | `#/tarefa/cadastro` | `/Tarefa/Cadastro` | ⏳ M7 CRUD |
+| Adicionar etapa | `#/etapa/cadastro` | `/Etapa/Cadastro` | ⏳ M7 CRUD |
+| FILTRO | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ⏳ M7 UI filtro + BFF |
+| SELECIONAR TUDO | modal `#alterar-status` | (checkbox local) · destino massa: `/Tarefa/AlterarStatusEmMassa` | ⏳ M7 |
 
-| Elemento | Prod | Homolog | Falta |
-|----------|------|---------|-------|
-| Datas planejada / executada | ✅ | ✅ BFF | — |
-| **Checkbox** seleção | Usado p/ status massa | ⛔ readOnly | Ligar a `selectAll` + ids |
-| **Barra %** | ✅ | ✅ | Ajuste fino % (M4.7 UI) |
-| **Faixa texto status** (“FINALIZADA”) | 👁 oculta (`.status` height 0) | ❌ removido M4.7 | No M7: painel status via ⋮, não rodapé fixo |
+**Accordion etapa:** ✅ expand/collapse (sem rota).
 
-### 3.4 Dentro da etapa (grid)
+### 3) Card de tarefa (`TaskCardAgrupador`)
 
-| Botão | Prod | Homolog | Falta |
-|-------|------|---------|-------|
-| **Adicionar nova tarefa** (card tracejado) | `permission="criarNovo"` · `novaTarefa(etapaId)` | 🟡 alert stub | Mesmo que toolbar adicionar tarefa + etapaId |
+Substituir `{id}` pelo `tarefa.id` do BFF.
+
+| Controle | Prod | Rota homolog | Marco |
+|----------|------|--------------|-------|
+| ⋮ Alterar status | painel `.status` | `/Tarefa/AlterarStatus?id={id}` | ⏳ M7 |
+| Olho | `visualizar` → cadastro read-only | `/Tarefa/Cadastro?id={id}&modo=visualizar` | ⏳ M7 |
+| Relógio | modal `#historico-tarefa` | `/Tarefa/HistoricoMedicao?id={id}` | ⏳ M7 |
+| Lápis | `#/tarefa/cadastro` | `/Tarefa/Cadastro?id={id}` | ⏳ M7 |
+| Impressora | modal horas equipamento | `/Tarefa/RelatorioHorasEquipamento?id={id}` | ⏳ M7 |
+| + medição | `editar(..., true)` | `/Tarefa/Cadastro?id={id}&novaMedicao=1` | ⏳ **P4 / M7+** |
+| Lixeira | `deletar` | `/Tarefa/Excluir?id={id}` (não no card M4.7 UI) | ⏳ M7 RBAC |
+| Checkbox card | seleção massa | (local) | ⏳ M7 |
+| Adicionar nova tarefa | `novaTarefa(etapaId)` | `/Tarefa/Cadastro?etapaId={etapaId}` | ⏳ M7 |
 
 ---
 
 ## Resumo por marco
 
-| Marco | Escopo botões |
-|-------|----------------|
-| **M4.7** | Layout card (sem status pill, sem lixeira visível); ícones ainda stub |
-| **M4.8** | Login SPA (header senha opcional) |
-| **M5** | Header Chart / RDO / Cadastro obra reais |
-| **M7+** | Toolbar + card ações + RBAC + modais (medição P4, histórico, delete condicional) |
+| Marco | Escopo |
+|-------|--------|
+| **M4.7** | Layout card · FA · sem pill status / lixeira no card |
+| **M4.7b** | **Todas as ações acima navegam** · placeholder Razor **Em migração** |
+| **M4.8** | Login SPA |
+| **M5** | Dashboard / Chart / RDO listagem reais |
+| **M7+** | Formulários, modais, RBAC, APIs · **P4** medição |
 
-**Doc irmão:** [`pendencias-melhorias-ui-stack.md`](pendencias-melhorias-ui-stack.md) · manual **§10.4**
+**Doc irmão:** [`pendencias-melhorias-ui-stack.md`](pendencias-melhorias-ui-stack.md) · manual **§10.4** · orquestrador gap P3.

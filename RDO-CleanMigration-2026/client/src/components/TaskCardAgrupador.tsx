@@ -1,7 +1,9 @@
 import type { TarefaCard } from '../api/equipamentos-api.types'
+import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
 
 type TaskCardAgrupadorProps = {
   tarefa: TarefaCard
+  etapaId?: number
 }
 
 function formatPair(inicio?: string, fim?: string): string {
@@ -10,14 +12,15 @@ function formatPair(inicio?: string, fim?: string): string {
   return `${a} À ${b}`
 }
 
-/** M4.7 — markup alinhado a Client/Views/Tarefa/cards.html (ações disabled até M7). */
-export function TaskCardAgrupador({ tarefa }: TaskCardAgrupadorProps) {
+/** M4.7 layout · M4.7b navegação → rotas MVC (EmMigracao até M7). */
+export function TaskCardAgrupador({ tarefa, etapaId }: TaskCardAgrupadorProps) {
   const pct = Math.min(100, Math.max(0, tarefa.percentualConcluido ?? 0))
   const headClass = tarefa.classeStatusCss?.trim() || 'bg-cinza'
   const percentualExtrapolado = tarefa.percentualExtrapolado === 'false'
   const restante = Math.max(0, 100 - pct)
   const colab = tarefa.quantidadeColaboradores ?? 0
   const equip = tarefa.quantidadeEquipamentos ?? 0
+  const nav = P3_NAV.card(tarefa.id, etapaId)
 
   return (
     <div className="item">
@@ -25,7 +28,12 @@ export function TaskCardAgrupador({ tarefa }: TaskCardAgrupadorProps) {
         <div className={`head ${headClass}`}>
           <i className="icon-" aria-hidden="true" />
           <h5>{tarefa.descricao}</h5>
-          <button type="button" className="fa fa-ellipsis-v btn btn-simple bt-status" title="Alterar Status" disabled />
+          <button
+            type="button"
+            className="fa fa-ellipsis-v btn btn-simple bt-status"
+            title="Alterar Status"
+            onClick={() => goOperador(nav.alterarStatus)}
+          />
           <div className="icones">
             <div className="inf no-padding-right">
               <i className="fa fa-male" aria-hidden="true" title="Colaboradores" />
@@ -35,20 +43,44 @@ export function TaskCardAgrupador({ tarefa }: TaskCardAgrupadorProps) {
             </div>
             <div className="actions no-padding">
               <div className="pull-right">
-                <button type="button" className="btn btn-simple" title="Visualizar Tarefa" disabled>
+                <button
+                  type="button"
+                  className="btn btn-simple"
+                  title="Visualizar Tarefa"
+                  onClick={() => goOperador(nav.visualizar)}
+                >
                   <i className="fa fa-eye" aria-hidden="true" />
                 </button>
-                <button type="button" className="btn btn-simple" title="Histórico de Medições" disabled>
+                <button
+                  type="button"
+                  className="btn btn-simple"
+                  title="Histórico de Medições"
+                  onClick={() => goOperador(nav.historicoMedicao)}
+                >
                   <i className="fa fa-clock-o" aria-hidden="true" />
                 </button>
-                {/* Lixeira: prod só com permission deletar (M7 RBAC); oculta no stub M4.7 */}
-                <button type="button" className="btn btn-simple" title="Editar Tarefa" disabled>
+                <button
+                  type="button"
+                  className="btn btn-simple"
+                  title="Editar Tarefa"
+                  onClick={() => goOperador(nav.editar)}
+                >
                   <i className="fa fa-pencil" aria-hidden="true" />
                 </button>
-                <button type="button" className="btn btn-simple" title="Relatório de Controle de Horas por Equipamento" disabled>
+                <button
+                  type="button"
+                  className="btn btn-simple"
+                  title="Relatório de Controle de Horas por Equipamento"
+                  onClick={() => goOperador(nav.relatorioHorasEquipamento)}
+                >
                   <i className="fa fa-print" aria-hidden="true" />
                 </button>
-                <button type="button" className="btn btn-simple" title="Nova Medição" disabled>
+                <button
+                  type="button"
+                  className="btn btn-simple"
+                  title="Nova Medição"
+                  onClick={() => goOperador(nav.novaMedicao)}
+                >
                   <i className="fa fa-plus" aria-hidden="true" />
                 </button>
               </div>
@@ -95,10 +127,12 @@ export function TaskCardAgrupador({ tarefa }: TaskCardAgrupadorProps) {
   )
 }
 
-export function AddTarefaPlaceholder({ onClick }: { onClick?: () => void }) {
+export function AddTarefaPlaceholder({ etapaId }: { etapaId?: number }) {
+  const url =
+    etapaId != null ? P3_NAV.card(0, etapaId).adicionarNovaTarefa : P3_NAV.toolbar.adicionarTarefa
   return (
     <div className="item add-tarefa">
-      <button type="button" className="btn" onClick={onClick}>
+      <button type="button" className="btn" onClick={() => goOperador(url)}>
         <i className="fa fa-plus" aria-hidden="true" />
         <span>Adicionar nova tarefa</span>
       </button>
