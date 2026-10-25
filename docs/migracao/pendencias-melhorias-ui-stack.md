@@ -1,7 +1,9 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-10-24  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-10-25  
 **Contexto:** paridade **P1–P3** (M4) usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + smoke — **não** big-bang no meio da paridade.
+
+**Fontello + FA 4.7 (legado → Core):** cronologia e gates em **[`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md)** — Fase A = **M4.7** (copiar glifos); Fase B = **UI-M3** (aposentar fontes legado na SPA).
 
 **Lição Kiro (2025–2026):** tentativa de substituir de uma vez Bootstrap/legado quebrou fluxo crítico (modal, scope, init). **Decisão:** strangler por **marco** (M4 pixel/dados → M7 ações → **UI-M3** redesign), não “parar tudo e refazer CSS”.
 
@@ -19,7 +21,7 @@ Legenda **Stack:** **L** = legado prod (EQ-L) · **M** = moderno Core · **H** =
 | **P2** | Escolher obra | UI runtime | Angular `escolher.html` | React SPA (`/app/`) servida em `/Obra/Escolher` | **M** | Sem `ng-view` |
 | P2 | Escolher | JS libs na rota | BS3 + jQuery + Angular | React 19 + Vite; **sem** jQuery/Angular no `index.html` | **M** | |
 | P2 | Escolher | CSS | `custom.css` + BS3 + FA 4.7 + fontello | BS **5.3** (link) + `header.css` + `escolher.css` (recorte prod) | **H** | **UI-M1:** BS5 + classes BS3 (`col-xs`, etc.) |
-| P2 | Escolher | Ícones | FA + fontello completos | FA **parcial** em `escolher.css` + bundle | **H** | **UI-M2:** glifos card/toolbar |
+| P2 | Escolher | Ícones | FA + fontello completos | FA **parcial** + fontello **subset** em `escolher.css` | **H** | **UI-M1** (FA) · **UI-M2c** (fontello) — ver [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) |
 | P2 | Escolher | Dados | `LoginObra` Web API | BFF `GET/POST /api/bff/obras` | **M** | |
 | P2 | Escolher | Fallback Razor | — | `_LayoutEscolher` + jQuery + BS bundle (se SPA ausente) | **H** | Morto em deploy normal; manter até cutover |
 | **P3** | Cards tarefa | UI runtime | Angular `cards.html` | React `CardsPage` + BFF agrupador | **M** | |
@@ -51,6 +53,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | ID | Melhoria | Esforço | Marco | Status |
 |----|----------|---------|-------|--------|
 | **UI-M1** | Completar glifos **Font Awesome 4.7** (P3 card + toolbar) em `escolher.css` + bundle | P | **M4.7** | 🟡 em curso |
+| **UI-M2c** | Completar **fontello** (codepoints `\e8xx` do prod) — header + toolbar P3; inventário em [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) | P | **M4.7** | 🟡 em curso (M4.7f+) |
 | **UI-M2** | Layout faixa ações card: flex puro, remover dependência `col-xs-*` / `pull-right` onde quebra BS5 | P | **M4.7** | 🟡 em curso |
 | **UI-M2b** | Barra progresso P2/P3: cores `custom.css` (`#28496f` / `#eee`), % legível | P | **M4.7** | 🟡 em curso |
 | **UI-M4** | Documentar hashes SPA pós-build no runbook deploy | P | I0 / ops | ☐ |
@@ -60,8 +63,8 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 
 | ID | Melhoria | Esforço | Marco | Status |
 |----|----------|---------|-------|--------|
-| **UI-M3** | **Redesign stack front operador:** tirar BS da SPA; CSS modules/design tokens; **sem** copiar `panel-*`/`col-xs`; opcionalmente um único `fonts.css` recortado | **G** | **Pós-M4.7** + gate M7 estável | ⏸ **adiado** |
-| **UI-M3a** | Sub-item: eliminar `escolher.css` monolítico — extrair `@rdoapp/ui-tokens` ou pasta `client/src/legacy-parity/` explícita | G | com UI-M3 | ⏸ |
+| **UI-M3** | **Redesign stack front operador:** tirar BS da SPA; CSS modules/design tokens; **sem** copiar `panel-*`/`col-xs`; **aposentar fontello + FA parcial** na SPA | **G** | **Pós-M4.7 ☑** + **M7** estável — gates em [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) | ⏸ **adiado** |
+| **UI-M3a** | Sub-item: eliminar `escolher.css` monolítico — extrair `@rdoapp/ui-tokens` ou pasta `client/src/legacy-parity/` explícita; **substituir** dependência de `Assets/Fonts/fontello.*` legado | G | com UI-M3 | ⏸ |
 | **UI-M3b** | Sub-item: remover jQuery/BS JS dos layouts Razor mortos (`_LayoutEscolher`) após 100% SPA | M | pós UI-M3 | ⏸ |
 | **UI-M6** | Unificar P1 Login na SPA (M4.8) **sem** refazer visual — só rota | M | M4.8 | ☐ planejado |
 
@@ -82,9 +85,9 @@ flowchart LR
   M7 --> UIM3
 ```
 
-1. **Agora:** UI-M1, UI-M2, UI-M2b (terminar “parecer prod” com híbrido).  
+1. **Agora:** UI-M1, **UI-M2c**, UI-M2, UI-M2b (terminar “parecer prod” com híbrido — **copiar** legado, não modernizar ícones).  
 2. **Depois:** M4.8, M7 (comportamento).  
-3. **Por último:** UI-M3 (trocar motor visual) — o item que **não** pausar o resto.
+3. **Por último:** UI-M3 (trocar motor visual + **Fase B** fontello/FA) — o item que **não** pausar o resto.
 
 ---
 

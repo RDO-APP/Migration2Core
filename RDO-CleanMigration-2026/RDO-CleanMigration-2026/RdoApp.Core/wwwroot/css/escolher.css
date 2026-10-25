@@ -90,6 +90,7 @@
 .icon-logo:before { content: '\e80c'; }
 .icon-dashboard:before { content: '\e808'; }
 .icon-rdo-novo_2:before { content: '\e825'; }
+.icon-rdo-gerar-novo:before { content: '\e824'; }
 
 /* Font Awesome Base */
 .fa {
@@ -116,6 +117,12 @@
 .fa-print:before { content: "\f02f"; }
 .fa-ellipsis-v:before { content: "\f142"; }
 .fa-exclamation-triangle:before { content: "\f071"; }
+.fa-edit:before { content: "\f044"; }
+.fa-list-alt:before { content: "\f022"; }
+.fa-filter:before { content: "\f0b0"; }
+.fa-clipboard:before { content: "\f0ea"; }
+.fa-file-o:before { content: "\f016"; }
+.fa-columns:before { content: "\f0db"; }
 
 /* ==================== BASE STYLES ==================== */
 

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using RdoApp.Core.Infrastructure;
@@ -22,7 +21,7 @@ public class ShellContextService
         var tokens = _antiforgery.GetAndStoreTokens(context);
         var login = TryReadLogin(context);
 
-        var menu = login?.Menu?.ListaPagina?
+        var menu = FlattenMenuPages(login?.Menu?.ListaPagina)
             .Where(p => !string.IsNullOrWhiteSpace(p.Titulo))
             .Select(p => new ShellNavItemDto
             {
@@ -30,7 +29,7 @@ public class ShellContextService
                 CssClass = string.IsNullOrWhiteSpace(p.CssClass) ? "fa fa-circle" : p.CssClass.Trim(),
                 Href = MapLegacyPath(p.Caminho),
             })
-            .ToList() ?? new List<ShellNavItemDto>();
+            .ToList();
 
         return new ShellContextDto
         {
@@ -49,18 +48,30 @@ public class ShellContextService
     private static LoginViewModel? TryReadLogin(HttpContext context)
     {
         var json = context.Session.GetString(SessionKeys.LoginData);
-        if (string.IsNullOrEmpty(json))
+        return LoginSessionJson.TryDeserialize(json);
+    }
+
+    /// <summary>Prod Angular lista páginas folha; pais agrupadores só têm filhos em <see cref="PaginaViewModel.Paginas"/>.</summary>
+    private static IEnumerable<PaginaViewModel> FlattenMenuPages(IEnumerable<PaginaViewModel>? tops)
+    {
+        if (tops == null)
         {
-            return null;
+            yield break;
         }
 
-        try
+        foreach (var top in tops)
         {
-            return JsonSerializer.Deserialize<LoginViewModel>(json);
-        }
-        catch (JsonException)
-        {
-            return null;
+            if (top.Paginas is { Count: > 0 })
+            {
+                foreach (var child in top.Paginas.Where(c => !string.IsNullOrWhiteSpace(c.Titulo)))
+                {
+                    yield return child;
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(top.Titulo))
+            {
+                yield return top;
+            }
         }
     }
 
@@ -81,6 +92,7 @@ public class ShellContextService
             "/tarefa/cards" or "/tarefa/cards/index" => "/Tarefa/Cards",
             "/rdo/index" or "/rdo/listagem" => "/Rdo",
             "/efetivo/index" or "/efetivo" => "/Efetivo",
+            "/tarefa/paralizacoes/index" or "/tarefa/paralizacoes/cadastro" => "/Tarefa/Paralizacoes",
             _ when path.StartsWith('/') => path,
             _ => "#",
         };

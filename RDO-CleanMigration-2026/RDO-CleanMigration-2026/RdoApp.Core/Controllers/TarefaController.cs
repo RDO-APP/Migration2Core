@@ -114,6 +114,18 @@ public class TarefaController : Controller
             prodRef: "cards.html · SELECIONAR TUDO");
     }
 
+    [HttpGet("/tarefa/paralizacoes/index")]
+    [HttpGet("/Tarefa/Paralizacoes")]
+    [HttpGet("/Tarefa/Paralizacoes/Index")]
+    public IActionResult Paralizacoes()
+    {
+        return RequireObraOrRedirect() ?? EmMigracaoPage.Render(
+            this,
+            "Códigos de paralizações",
+            "Listagem `#/tarefa/paralizacoes/index` · **M7+**.",
+            prodRef: "#/tarefa/paralizacoes/index");
+    }
+
     private IActionResult? RequireObraOrRedirect()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))

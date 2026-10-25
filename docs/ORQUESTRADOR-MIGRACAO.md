@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-25 — **M4** (M4.7b/c + rastreio Dimas) · **Pacote P2+P3** deploy homolog · **M4.8** **P1** · **P4** **M7+** · **I0** B1/B2 · [`docs/ops/`](ops/README.md)  
+**Atualizado:** 2026-10-25 — **M4** (M4.7 paridade ícones · doc **fontello/FA marcos**) · **Pacote P2+P3** deploy homolog · **M4.8** **P1** · **P4** **M7+** · **I0** B1/B2 · [`docs/ops/`](ops/README.md)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -350,21 +350,26 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 
 ## Pendências — melhorias (stack UI)
 
-**Doc canônico:** [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) — tabela **P1–P4** (legado / moderno / híbrido), backlog **UI-M1…UI-M6**, regra **anti-Kiro** para **UI-M3** (redesign sem BS/legado — **só pós-M4.7 + M7**, não big-bang).
+**Docs canônicos:**
+
+- [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) — tabela **P1–P4**, backlog **UI-M1…UI-M6**, regra **anti-Kiro** para **UI-M3**.
+- [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md) — **quando** copiar legado (Fase A **M4.7**) vs **quando** aposentar fontello/FA na SPA (Fase B **UI-M3**); inventário toolbar; checklist de atualização de marcos.
 
 | Prioridade | IDs | O quê |
 |:----------:|-----|--------|
-| **Agora (M4.7)** | UI-M1, UI-M2, UI-M2b | FA completo, flex card, barra % — paridade com pele legado |
+| **Agora (M4.7)** | UI-M1, **UI-M2c**, UI-M2, UI-M2b | **Copiar** FA + **fontello** do prod; flex card; barra % — paridade híbrida (**não** trocar motor de ícone) |
 | **Em seguida** | M4.8, UI-M5 | Login SPA / Esqueci senha smoke |
-| **Adiado** | **UI-M3** (+ M3a/M3b) | Tirar Bootstrap/classes BS3 da SPA — **não parar M4** por isso |
+| **Adiado** | **UI-M3** (+ M3a/M3b) | Redesign SPA **sem** BS3/`panel-*` **e sem** fontello/FA parcial — **só após M4.7 ☑ + M7** (gates no doc fontello) |
 
-Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **CSS + nomes de classe** copiados de `cards.html` / `escolher.html`. Manual **§10.7** · lição Kiro documentada no link acima.
+Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **CSS + fontes (fontello/FA) + nomes de classe** copiados de `cards.html` / `escolher.html`. Manual **§10.7** · lição Kiro nos links acima.
 
 ---
 
 ## Próxima ação (1)
 
-**M4.7** — fechar paridade card P3 (UI-M1/M2/M2b) + smoke **P2/P3** pós-deploy (Ctrl+F5). Depois **M4.8** Login SPA. Manual **§10.4** · **§10.7** · [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
+**M4.7** — fechar paridade P3 (**UI-M1 + UI-M2c** fontello/FA toolbar · UI-M2/M2b) + deploy **Core+SPA** + smoke Lucio (menu 9 itens, ícones Gerar RDO/Efetivo, header → Em migração). Doc marcos ícones: [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md). Depois **M4.8** Login SPA. Manual **§10.4** · **§10.7** · [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
+
+**UI-M3 (Fase B — aposentar fontello/BS legado na SPA):** **não** abrir até M4.7 ☑ + M7 estável — ver gates no doc fontello; atualizar **esta seção** ao mudar data.
 
 ---
 
@@ -375,6 +380,7 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 | E2E | `e2e-fase0-checklist.md` |
 | Manual UI + FAPESC ⑥ | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
 | Pendências stack UI (P1–P4 · UI-M3 adiado) | `migracao/pendencias-melhorias-ui-stack.md` |
+| Fontello + FA — Fase A (M4.7) vs Fase B (UI-M3) | `migracao/fontello-fa-legado-marcos-ui.md` |
 | Dimas TSK × marcos M* (rastreio) | `migracao/dimas-tsk-rastreio-m.md` |
 | Imutabilidade FAPESC | `imutabilidade/README.md` |
 | Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |

@@ -208,7 +208,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                   </li>
                 ) : null}
                 {showNovaObra ? (
-                  <li className="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
+                  <li className="btn-tooltip pointer" title="NOVA OBRA">
                     <a href={P3_NAV.header.novaObraCadastro} onClick={navClick(P3_NAV.header.novaObraCadastro)}>
                       <i className="fa fa-plus" aria-hidden />
                     </a>

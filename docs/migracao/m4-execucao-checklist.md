@@ -75,6 +75,7 @@ Inventário botões P3 (header / toolbar / card): [`p3-botoes-habilitacao-m7.md`
 
 | ID | Resumo | Quando |
 |----|--------|--------|
-| UI-M1–M2b | FA, flex card, progress — fechar paridade híbrida | **M4.7** |
-| UI-M3 | Redesign sem BS3/legado na SPA | **⏸ pós-M4.7 + M7** (lição Kiro: não big-bang) |
+| UI-M1, UI-M2c | FA 4.7 + **fontello** (subset → paridade prod) — inventário [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) | **M4.7** |
+| UI-M2–M2b | Flex card, progress — paridade híbrida | **M4.7** |
+| UI-M3 | Redesign sem BS3/legado **e sem fontello/FA na SPA** | **⏸ pós-M4.7 ☑ + M7** — gates em [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) |
 | UI-M5–M6 | Esqueci senha smoke · Login SPA | M4.8 |

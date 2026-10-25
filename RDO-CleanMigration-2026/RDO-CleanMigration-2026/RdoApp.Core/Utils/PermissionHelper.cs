@@ -37,7 +37,8 @@ namespace RdoApp.Core.Utils
                     return false;
                 }
 
-                var foundRoute = loginData.Routes.FirstOrDefault(r => r.Path == route);
+                var foundRoute = loginData.Routes.FirstOrDefault(r =>
+                    string.Equals(r.Path, route, StringComparison.OrdinalIgnoreCase));
                 if (foundRoute == null)
                 {
                     return false;

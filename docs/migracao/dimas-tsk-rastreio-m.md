@@ -43,9 +43,9 @@ Legenda: **☑** coberto pelo M* em curso/fechado · **◐** parcial · **☐** 
 | Mobile greenfield | 46…56 | M5, M6 | ⏸ | **Não rebuild** — integrar RN existente |
 | Onda 0 (só Lucio) | U-01…08 | M5, M1 | ◐ | Apontamento Framework, `@rdoapp/shared`, OpenAPI cedo |
 | Imutabilidade | TSK-32 | **F** | — | Chat **FAPESC Execução** · `rdo-blockchain` |
-| Front legado BS3/CSS | — | M4.7, UI-M3 | ◐ | Híbrido M4; redesign **UI-M3** pós-M7 |
+| Front legado BS3/CSS/fontello | — | M4.7 (**UI-M2c**), UI-M3 | ◐ | Fase A copiar glifos: [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) · Fase B **UI-M3** pós-M7 |
 
-**Marco ativo:** **M4** (M4.7c + menu hambúrguer local · deploy pendente) → **M4.8** → **M5…M7**.
+**Marco ativo:** **M4** (M4.7 paridade ícones/menu · doc fontello marcos) → **M4.8** → **M5…M7**.
 
 ---
 

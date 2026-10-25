@@ -13,7 +13,7 @@
 }
 
 .icon-rdo-gerar-novo:before {
-  content: '\e826';
+  content: '\e824';
 }
 
 .tema-azul-claro {
@@ -675,11 +675,13 @@
 
   .cards-toolbar-heading-actions {
     width: 100%;
-    height: 50px;
+    min-height: 50px;
     border-top: 1px solid #28496f;
     justify-content: flex-start;
     flex-wrap: nowrap;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
   }
 
   .cards-toolbar-heading-actions .cards-toolbar-primary-action,

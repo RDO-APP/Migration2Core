@@ -467,7 +467,7 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 
 ### 10.7 Stack front homolog ② — legado, moderno, híbrido (P1–P4)
 
-**Resumo:** a SPA operador (**P2/P3**) é **moderna** (React + BFF Core). O que ainda “cheira” prod é **visual** — CSS recortado (`header.css`, `escolher.css`, `cards-page.css`), **Font Awesome 4.7** parcial, markup copiado de `escolher.html` / `cards.html` (`panel-*`, `col-xs-*`, `btn-simple`).
+**Resumo:** a SPA operador (**P2/P3**) é **moderna** (React + BFF Core). O que ainda “cheira” prod é **visual** — CSS recortado (`header.css`, `escolher.css`, `cards-page.css`), **Font Awesome 4.7** parcial + **fontello** (subset), markup copiado de `escolher.html` / `cards.html` (`panel-*`, `col-xs-*`, `btn-simple`). **Quando** copiar legado vs aposentar fontes: [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
 | Stack | Significado | Exemplos homolog |
 |:-----:|-------------|------------------|
@@ -481,11 +481,11 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 
 | Fase | IDs | Conteúdo |
 |------|-----|----------|
-| **Agora** | UI-M1, UI-M2, UI-M2b | Ícones FA, flex ações card, barra % — **M4.7** |
+| **Agora (Fase A)** | UI-M1, **UI-M2c**, UI-M2, UI-M2b | **Copiar** FA + fontello do prod; flex card; barra % — **M4.7** |
 | **Depois** | M4.8, UI-M5, UI-M6 | Login SPA / Esqueci senha |
-| **Adiado** | **UI-M3** (+ a/b) | Redesign sem BS/legado — **pós-M4.7 + M7**; regra **anti-Kiro** (sem big-bang CSS) |
+| **Adiado (Fase B)** | **UI-M3** (+ a/b) | Redesign sem BS/legado **e sem fontello/FA na SPA** — **pós-M4.7 ☑ + M7**; regra **anti-Kiro** |
 
-Tabela completa camada a camada: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
+Tabela camada a camada: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · marcos fontello/FA: [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
 ### 10.6 Como usar em review (Lucio / QA)
 
