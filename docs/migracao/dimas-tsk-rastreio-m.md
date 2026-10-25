@@ -14,6 +14,7 @@
 | **Papel do Dimas** | **TSK = inventário técnico** da solução alvo. Reordenação e cutover = plano unificado (ver comparativo §2). |
 | **Time Dimas** | **Incerto** — execução continua **Lucio + Cursor** até (se) Dimas entrar; **possível concluir homolog v1 sem Dimas**. |
 | **Decisão Lucio (2026-10-25)** | **Seguir plano M\*** sem Dimas **por enquanto**. Entrada futura = **paralelo**, aproveitando BFF/React/homolog existentes — **não** reiniciar Sprint 1 PDF. Marco de encaixe: **M5/M6** + doc [`dimas-entrada-paralela-pos-m4.md`](dimas-entrada-paralela-pos-m4.md). |
+| **Transição suave Dimas** | Rampa Ondas **A→D** + gates **G-M4…G-M8** — **obrigatória** mesmo sem Dimas no time; ver § *Transição suave* no doc acima. |
 | **Quando Dimas entrar** | Revalidar estimativas; exportar TSK→issues; **não** inverter M4→M8 sem gate. Storytelling: [`storytelling-unificado-dimas-migracao-fapesc.md`](../estudos-lucio-apps-plano-migracao-core/storytelling-unificado-dimas-migracao-fapesc.md). |
 | **Conflito explícito** | Strangler (M\*) **vence** big-bang Sprint 6 do PDF; mobile **evoluir** (M5) **vence** TSK-46…48 greenfield. |
 
