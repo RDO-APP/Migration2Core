@@ -1,0 +1,60 @@
+@model RdoApp.Core.Models.ViewModels.EmMigracaoViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = Model.Titulo;
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.Titulo — RDO App Equipamentos</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: #eef3f8;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .card-migracao {
+            max-width: 520px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgb(39 73 111 / 15%);
+            text-align: center;
+        }
+        .card-migracao h1 {
+            font-size: 1.35rem;
+            color: #27496f;
+            margin-bottom: 1rem;
+        }
+        .card-migracao p { color: #555; margin-bottom: 1.5rem; }
+        .btn-voltar {
+            background: #0088dd;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-voltar:hover { color: #fff; background: #0070b8; }
+    </style>
+</head>
+<body>
+    <div class="card-migracao">
+        <h1>@Model.Titulo</h1>
+        @if (!string.IsNullOrWhiteSpace(Model.Descricao))
+        {
+            <p>@Model.Descricao</p>
+        }
+        <p><small>Homolog · migração .NET Core</small></p>
+        <a class="btn-voltar" href="@Model.VoltarUrl">@Model.VoltarRotulo</a>
+    </div>
+</body>
+</html>

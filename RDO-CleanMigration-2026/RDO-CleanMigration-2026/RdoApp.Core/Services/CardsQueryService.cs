@@ -101,6 +101,14 @@ public class CardsQueryService
             .GroupBy(t => t.TarIdEtapa)
             .ToDictionary(g => g.Key, g => g.ToList());
 
+        var currentCards = tarefaRows
+            .GroupBy(t => t.TarIdEtapa)
+            .SelectMany(g => SelectCurrentTarefaPerAgrupador(g))
+            .ToList();
+        var tarefaIds = currentCards.Select(t => t.TarIdTarefa).Distinct().ToList();
+        var colabCounts = await LoadColaboradorCountsAsync(tarefaIds, cancellationToken);
+        var equipCounts = await LoadEquipamentoCountsAsync(tarefaIds, cancellationToken);
+
         var dtoEtapas = new List<EtapaComTarefasDto>();
 
         foreach (var e in etapaRows)
@@ -123,7 +131,7 @@ public class CardsQueryService
                 Ordem = e.EtaNrOrderm,
                 IdObra = e.EtaIdObra,
                 TituloObra = obraNome,
-                Tarefas = cards.Select(t => MapTarefaCard(t, statusMap, periodosPorAgrupador)).ToList()
+                Tarefas = cards.Select(t => MapTarefaCard(t, statusMap, periodosPorAgrupador, colabCounts, equipCounts)).ToList()
             });
         }
 
@@ -176,10 +184,44 @@ public class CardsQueryService
             x => new PeriodoExecucao { PrimeiroDia = x.PrimeiroDia, UltimoDia = x.UltimoDia });
     }
 
+    private async Task<Dictionary<int, int>> LoadColaboradorCountsAsync(
+        List<int> tarefaIds,
+        CancellationToken cancellationToken)
+    {
+        if (tarefaIds.Count == 0)
+        {
+            return new Dictionary<int, int>();
+        }
+
+        return await _context.ObraTarefaColaboradores.AsNoTracking()
+            .Where(x => tarefaIds.Contains(x.OtcIdTarefa))
+            .GroupBy(x => x.OtcIdTarefa)
+            .Select(g => new { Id = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Id, x => x.Count, cancellationToken);
+    }
+
+    private async Task<Dictionary<int, int>> LoadEquipamentoCountsAsync(
+        List<int> tarefaIds,
+        CancellationToken cancellationToken)
+    {
+        if (tarefaIds.Count == 0)
+        {
+            return new Dictionary<int, int>();
+        }
+
+        return await _context.ObraTarefaEquipamentos.AsNoTracking()
+            .Where(x => tarefaIds.Contains(x.OteIdTarefa))
+            .GroupBy(x => x.OteIdTarefa)
+            .Select(g => new { Id = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Id, x => x.Count, cancellationToken);
+    }
+
     private static TarefaCardDto MapTarefaCard(
         TarefaRow row,
         IReadOnlyDictionary<int, string> statusMap,
-        IReadOnlyDictionary<Guid, PeriodoExecucao> periodosPorAgrupador)
+        IReadOnlyDictionary<Guid, PeriodoExecucao> periodosPorAgrupador,
+        IReadOnlyDictionary<int, int> colabCounts,
+        IReadOnlyDictionary<int, int> equipCounts)
     {
         periodosPorAgrupador.TryGetValue(row.TarNrAgrupador, out var periodo);
         var entity = new Tarefa
@@ -193,6 +235,9 @@ public class CardsQueryService
 
         var percentual = CalcularPercentualConcluido(entity, periodo);
         var percentualCap = percentual > 100 ? 100 : percentual;
+        var execPrimeira = periodo?.PrimeiroDia;
+        var execUltima = periodo?.UltimoDia;
+        var existeExec = execPrimeira != null && execUltima != null;
 
         return new TarefaCardDto
         {
@@ -205,7 +250,12 @@ public class CardsQueryService
             DataPrevisaoFim = FormatDate(row.TarDtPrevisaoFim),
             PercentualConcluido = percentualCap,
             PercentualExtrapolado = percentual > 100 ? "false" : "true",
-            ClasseStatusCss = ClasseStatusCss(row.TarIdStatus)
+            ClasseStatusCss = ClasseStatusCss(row.TarIdStatus),
+            QuantidadeColaboradores = colabCounts.GetValueOrDefault(row.TarIdTarefa, 0),
+            QuantidadeEquipamentos = equipCounts.GetValueOrDefault(row.TarIdTarefa, 0),
+            PrimeiraExecucao = existeExec ? FormatDate(execPrimeira!.Value) : "",
+            UltimaExecucao = existeExec ? FormatDate(execUltima!.Value) : "",
+            ExisteExecucao = existeExec,
         };
     }
 }

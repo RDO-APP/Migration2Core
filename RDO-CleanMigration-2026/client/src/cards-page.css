@@ -1,0 +1,602 @@
+/* M4.5 / M4.6 — paridade cards.html (subset prod custom.css) */
+
+.icon-dashboard:before {
+  content: '\e808';
+}
+
+.icon-trator:before {
+  content: '\e81b';
+}
+
+.icon-rdo-novo_2:before {
+  content: '\e825';
+}
+
+.icon-rdo-gerar-novo:before {
+  content: '\e826';
+}
+
+.tema-azul-claro {
+  background: #eeeeee;
+  min-height: 100%;
+  padding-bottom: 57px;
+}
+
+.tema-azul-claro .conteudo {
+  color: #28496f;
+}
+
+.btn-link-nav {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.dropdown-logout-btn {
+  background: none;
+  border: none;
+  color: #26476d;
+  padding: 10px 20px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'sf-md', system-ui, sans-serif;
+  text-transform: uppercase;
+}
+
+.dropdown-logout-btn:hover {
+  background: #1c334d;
+  color: #fff;
+}
+
+.cards-page {
+  max-width: 100%;
+  padding: 0 12px 2rem;
+}
+
+.cards-loading {
+  text-align: center;
+  padding: 2rem;
+}
+
+.cards-meta {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.85rem;
+}
+
+.muted {
+  color: #555;
+}
+
+.error {
+  color: #b00020;
+}
+
+.cards-toolbar-heading {
+  width: 100%;
+  float: left;
+  margin-bottom: 12px;
+  padding: 0;
+  border-bottom: 1px solid #28496f;
+}
+
+.cards-toolbar-heading h3 {
+  float: left;
+  margin: 0;
+  color: #28496f;
+  font-family: 'sf-bd', system-ui, sans-serif;
+}
+
+.cards-toolbar-heading .action .btn {
+  padding: 0;
+  margin: 0 2px;
+  width: 52px;
+  height: 55px;
+  border-radius: 200px;
+  border: none;
+  background: transparent;
+  color: #28496f;
+}
+
+.cards-toolbar-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  clear: both;
+}
+
+.cards-toolbar-row-left {
+  flex: 0 0 auto;
+}
+
+.cards-toolbar-row-right {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.panel-etapa-body {
+  display: block;
+}
+
+.panel-etapa-body .panel-body {
+  padding: 12px 0;
+}
+
+.btn.btn-dark-blue {
+  background: #1c334d;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.btn.btn-blue {
+  background: #0088dd;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.cards-filtro-stub .panel {
+  padding: 12px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.cards-filtro-msg {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.cards-select-all {
+  margin: 0 0 12px;
+}
+
+.cards-empty-label {
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.accordion .panel-title .accordion-etapa-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 10px 10px 50px;
+  background: #27496f;
+  color: #fff;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'sf-md', system-ui, sans-serif;
+  position: relative;
+}
+
+.accordion .panel-title .accordion-etapa-btn:hover {
+  background: #1c334d;
+}
+
+.accordion .panel-title.active .accordion-etapa-btn {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.accordion .panel-title .accordion-etapa-btn::before {
+  content: '\f067';
+  position: absolute;
+  left: 17px;
+  top: 13px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 23px;
+}
+
+.accordion .panel-title.active .accordion-etapa-btn::before {
+  content: '\f068';
+}
+
+.lista-tarefas .accordion .panel-body {
+  display: flex;
+  flex-flow: row wrap;
+  padding: 16px 4px 24px;
+}
+
+.lista-tarefas .item {
+  display: inline-block;
+  padding: 0 3px;
+  flex-basis: 20%;
+  min-width: 220px;
+  margin-bottom: 8px;
+}
+
+.lista-tarefas .item .card {
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+.lista-tarefas .item .head {
+  position: relative;
+  float: left;
+  width: 100%;
+}
+
+.lista-tarefas .item .head i.icon- {
+  font-size: 33px;
+  color: #fff;
+  padding: 10px 1px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.lista-tarefas .item .head.bg-verde i.icon-::before {
+  content: '\e811';
+  font-family: fontello, sans-serif;
+}
+
+.lista-tarefas .item .head.bg-azul i.icon-::before {
+  content: '\e80d';
+  font-family: fontello, sans-serif;
+}
+
+.lista-tarefas .item .head.bg-vermelho i.icon-::before {
+  content: '\e820';
+  font-family: fontello, sans-serif;
+}
+
+.lista-tarefas .item .head.bg-cinza i.icon-::before {
+  content: '\e813';
+  font-family: fontello, sans-serif;
+}
+
+.lista-tarefas .item .head.bg-laranja i.icon-::before {
+  content: '\e812';
+  font-family: fontello, sans-serif;
+}
+
+.lista-tarefas .item .head h5 {
+  font-family: 'sf-bd', system-ui, sans-serif;
+  color: #fff;
+  width: calc(100% - 37px);
+  padding: 11px;
+  padding-left: 45px;
+  margin: 0 0 6px;
+  min-height: 49px;
+  height: 49px;
+  font-size: 14px;
+  line-height: 18px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.lista-tarefas .item .head a.bt-status,
+.lista-tarefas .item .head button.bt-status {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 39px;
+  font-size: 20px;
+  color: #fff;
+  padding: 18px 0;
+  line-height: 1;
+  border: none;
+  background: transparent;
+}
+
+/* FontAwesome 4.7 — escolher.css só declara fa-plus/th/chart; cards precisam do resto */
+.lista-tarefas .fa {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome, sans-serif;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lista-tarefas .fa-male::before {
+  content: '\f183';
+}
+
+.lista-tarefas .fa-eye::before {
+  content: '\f06e';
+}
+
+.lista-tarefas .fa-clock-o::before {
+  content: '\f017';
+}
+
+.lista-tarefas .fa-trash-o::before {
+  content: '\f014';
+}
+
+.lista-tarefas .fa-pencil::before {
+  content: '\f040';
+}
+
+.lista-tarefas .fa-print::before {
+  content: '\f02f';
+}
+
+.lista-tarefas .fa-plus::before {
+  content: '\f067';
+}
+
+.lista-tarefas .fa-ellipsis-v::before {
+  content: '\f142';
+}
+
+.lista-tarefas .fa-exclamation-triangle::before {
+  content: '\f071';
+}
+
+.lista-tarefas .item .head .icones {
+  float: left;
+  width: 100%;
+  min-height: 40px;
+  background: rgb(0 0 0 / 10%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.lista-tarefas .item .head .icones .inf,
+.lista-tarefas .item .head .icones .actions {
+  float: none;
+  width: auto;
+  max-width: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.lista-tarefas .item .head .icones .actions {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lista-tarefas .item .head .icones .inf {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lista-tarefas .item .head .icones .actions .pull-right {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+.lista-tarefas .item .head .icones .actions .btn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  padding: 2px 3px;
+  min-width: 22px;
+  line-height: 1;
+}
+
+.lista-tarefas .item .head .icones .actions .btn .fa {
+  font-size: 16px;
+}
+
+.lista-tarefas .item .head .icones .inf .fa,
+.lista-tarefas .item .head .icones .inf .icon-trator {
+  font-size: 18px;
+}
+
+.lista-tarefas .item .head .icones .actions .btn:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.lista-tarefas .item .datas {
+  float: left;
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.lista-tarefas .item .datas .no-padding {
+  flex: 1;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.lista-tarefas .item .datas label {
+  color: #1a334c;
+  font-family: 'sf-md', system-ui, sans-serif;
+  font-size: 12px;
+  padding: 9px 12px 0 35px;
+  height: 41px;
+  line-height: 12px;
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.lista-tarefas .item .datas label.icon-planejada::before,
+.lista-tarefas .item .datas label.icon-executada::before {
+  font-family: fontello, sans-serif;
+  font-size: 22px;
+  position: absolute;
+  left: 4px;
+  top: 6px;
+}
+
+.lista-tarefas .item .datas label.icon-planejada::before {
+  content: '\e814';
+}
+
+.lista-tarefas .item .datas label.icon-executada::before {
+  content: '\e816';
+}
+
+.task-card-foot {
+  float: left;
+  width: 100%;
+  padding: 0 8px;
+}
+
+.task-card-foot .checkbox {
+  float: left;
+  margin: -2px 15px 0 -7px;
+}
+
+.task-card-foot .progress,
+.task-card-foot .task-card-progress {
+  float: left;
+  height: 20px;
+  position: relative;
+  transform: scaleX(-1);
+  width: calc(100% - 26px);
+  margin: 0 -7px 9px;
+  background: #28496f;
+}
+
+.task-card-foot .progress.progress-line-info {
+  background: #28496f;
+}
+
+.task-card-foot .progress .progress-bar.progress-bar-info {
+  background: #eeeeee;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-card-foot .progress span {
+  transform: scaleX(-1);
+  position: absolute;
+  left: 9px;
+  font-size: 14px;
+  display: block;
+  color: #fff;
+}
+
+.task-card-foot .progress span.branco {
+  color: #28496f;
+  z-index: 1;
+}
+
+.task-card-foot .progress span.azul {
+  right: 9px;
+  left: auto;
+  color: #fff;
+  z-index: 1;
+}
+
+.task-card-foot .progress i.fa-exclamation-triangle {
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  color: #ffbf00;
+  transform: scaleX(-1);
+  z-index: 2;
+}
+
+.lista-tarefas .item .status {
+  clear: both;
+  padding: 0 8px 10px;
+  text-align: center;
+}
+
+.lista-tarefas .card .status .status-pill {
+  display: block;
+  width: 100%;
+  text-align: left;
+  text-transform: uppercase;
+  padding: 10px 12px 10px 44px;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 0;
+  border: none;
+  position: relative;
+}
+
+.lista-tarefas .item.add-tarefa .btn {
+  width: 100%;
+  min-height: 170px;
+  background: #e5e5e5;
+  border: 2px dashed #bbbbbb;
+  color: #28496f;
+  position: relative;
+}
+
+.lista-tarefas .item.add-tarefa .btn span {
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  top: 22px;
+  font-family: 'sf-bd', system-ui, sans-serif;
+}
+
+.lista-tarefas .item.add-tarefa .btn i {
+  font-size: 43px;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+}
+
+.bg-verde {
+  background: #57b257;
+}
+
+.bg-azul {
+  background: #51bcdc;
+}
+
+.bg-vermelho {
+  background: #d04541;
+}
+
+.bg-cinza {
+  background: #999;
+}
+
+.bg-laranja {
+  background: #ff8000;
+}
+
+.etapa-empty-msg {
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+}
+
+@media (max-width: 991px) {
+  .lista-tarefas .item {
+    flex-basis: 33.333%;
+  }
+}
+
+@media (max-width: 767px) {
+  .hidden-xs {
+    display: none !important;
+  }
+
+  .lista-tarefas .item {
+    flex-basis: 100%;
+  }
+}

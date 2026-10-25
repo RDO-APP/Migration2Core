@@ -7,4 +7,5 @@ public static class SessionKeys
     public const string ObraId = "ObraId";
     public const string ObraNome = "ObraNome";
     public const string ObraColaboradorId = "ObraColaboradorId";
+    public const string ObraCidadeEstado = "ObraCidadeEstado";
 }

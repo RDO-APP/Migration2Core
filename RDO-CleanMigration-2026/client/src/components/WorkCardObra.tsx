@@ -14,19 +14,20 @@ export function WorkCardObra({ obra, disabled, onSelect }: WorkCardObraProps) {
   const restante = Math.max(0, 100 - pct)
 
   return (
-    <div className="item col-md-6 col-lg-4">
+    <div className="item">
       <button
         type="button"
-        className="btn change-background"
+        className="btn change-background obra-card-btn"
         disabled={disabled}
         onClick={() => onSelect(obra.idObra)}
       >
-        <i className={`icon-${iconRole}`} aria-hidden />
-        <h5>{obra.descricao}</h5>
-        {obra.cidadeEstado ? <p>{obra.cidadeEstado}</p> : null}
-        {licenca ? <p>({licenca.toUpperCase()})</p> : null}
-        <small>STATUS</small>
-        <div className={`progress progress-line-info ${cssBar}`}>
+        <div className="obra-card-body">
+          <i className={`icon-${iconRole}`} aria-hidden />
+          <h5>{obra.descricao}</h5>
+          {obra.cidadeEstado ? <p>{obra.cidadeEstado}</p> : null}
+          {licenca ? <p className="obra-card-licenca">({licenca})</p> : null}
+        </div>
+        <div className={`progress progress-line-info obra-card-progress ${cssBar}`}>
           <div
             className="progress-bar progress-bar-info"
             role="progressbar"

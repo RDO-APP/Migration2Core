@@ -1,0 +1,97 @@
+@model EsqueciSenhaDto
+@{
+    ViewData["Title"] = "Esqueci a senha - RDO App Equipamentos";
+    Layout = null;
+    var sucesso = ViewData["Sucesso"] as string;
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgb(0 0 0 / 20%);
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+        }
+        h2 { text-align: center; color: #27496f; margin-bottom: 1.5rem; font-size: 1.25rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 0.35rem; }
+        input.form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .text-danger { color: #c0392b; font-size: 0.85rem; margin-top: 0.25rem; display: block; }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .actions { display: flex; gap: 10px; margin-top: 1.25rem; }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-secondary { background: #e5e7eb; color: #27496f; }
+        .validation-summary { color: #c0392b; margin-bottom: 1rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Esqueci a senha</h2>
+
+        @if (!string.IsNullOrEmpty(sucesso))
+        {
+            <div class="alert-success" role="status">@sucesso</div>
+        }
+
+        <div asp-validation-summary="All" class="validation-summary"></div>
+
+        <form asp-action="EsqueciSenha" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" placeholder="E-mail cadastrado" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cpf"></label>
+                <input asp-for="Cpf" class="form-control" placeholder="000.000.000-00" autocomplete="off" />
+                <span asp-validation-for="Cpf" class="text-danger"></span>
+            </div>
+            <div class="actions">
+                <a class="btn btn-secondary" asp-action="Login">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

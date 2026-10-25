@@ -13,6 +13,29 @@ export interface TarefaCard {
   percentualConcluido?: number
   percentualExtrapolado?: string
   classeStatusCss?: string
+  quantidadeColaboradores?: number
+  quantidadeEquipamentos?: number
+  primeiraExecucao?: string
+  ultimaExecucao?: string
+  existeExecucao?: boolean
+}
+
+export interface ShellNavItem {
+  titulo: string
+  href: string
+  cssClass: string
+}
+
+export interface ShellContext {
+  usuarioNome?: string
+  obraNome?: string
+  obraCidadeEstado?: string
+  showChart: boolean
+  showNovaObra: boolean
+  showDashboardObra: boolean
+  menuPaginas: ShellNavItem[]
+  antiforgeryFieldName?: string
+  antiforgeryToken?: string
 }
 
 export interface EtapaComTarefas {

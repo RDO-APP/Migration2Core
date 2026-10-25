@@ -7,6 +7,7 @@ using RdoApp.Core.Models.DTOs;
 using RdoApp.Core.Models.ViewModels;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Utils;
+using RdoApp.Core.Services;
 using System.Security.Claims;
 
 namespace RdoApp.Core.Controllers
@@ -18,11 +19,16 @@ namespace RdoApp.Core.Controllers
     public class AccountController : Controller
     {
         private readonly RdoDbContext _context;
+        private readonly RecuperarSenhaService _recuperarSenha;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(RdoDbContext context, ILogger<AccountController> logger)
+        public AccountController(
+            RdoDbContext context,
+            RecuperarSenhaService recuperarSenha,
+            ILogger<AccountController> logger)
         {
             _context = context;
+            _recuperarSenha = recuperarSenha;
             _logger = logger;
         }
 
@@ -187,6 +193,46 @@ namespace RdoApp.Core.Controllers
             }
             
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult EsqueciSenha()
+        {
+            return View(new EsqueciSenhaDto());
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EsqueciSenha(EsqueciSenhaDto model, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _recuperarSenha.RecuperarAsync(model.Email, model.Cpf, cancellationToken);
+            if (!result.Success)
+            {
+                ModelState.AddModelError(string.Empty, result.Message);
+                return View(model);
+            }
+
+            ViewData["Sucesso"] = result.Message;
+            return View(new EsqueciSenhaDto());
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View("EmMigracao", new EmMigracaoViewModel
+            {
+                Titulo = "Trocar senha",
+                Descricao = "Alteração de senha em migração — use recuperar senha no login ou contate o suporte.",
+                VoltarUrl = "/Obra/Escolher",
+            });
         }
 
         /// <summary>

@@ -5,10 +5,10 @@ namespace RdoApp.Core.Services;
 /// <summary>Paridade ObraModel.ProgressoPorcentagem / ClasseStatusCss (EQ-L).</summary>
 internal static class ObraListParity
 {
-    public static int ProgressoPorcentagem(Obra obra)
+    public static int ProgressoPorcentagem(DateTime obrDtInicio, DateTime? obrDtPrevisaoFim)
     {
-        var inicio = obra.ObrDtInicio.Date;
-        var fim = obra.ObrDtPrevisaoFim?.Date;
+        var inicio = obrDtInicio.Date;
+        var fim = obrDtPrevisaoFim?.Date;
         if (fim == null || fim <= inicio)
         {
             return 0;
@@ -35,17 +35,22 @@ internal static class ObraListParity
         return (int)Math.Round(100.0 / total * decorrido, MidpointRounding.AwayFromZero);
     }
 
-    public static bool ObraFinalizada(Obra obra)
+    public static int ProgressoPorcentagem(Obra obra) =>
+        ProgressoPorcentagem(obra.ObrDtInicio, obra.ObrDtPrevisaoFim);
+
+    public static bool ObraFinalizada(DateTime? obrDtFim)
     {
-        if (obra.ObrDtFim == null)
+        if (obrDtFim == null)
         {
             return true;
         }
 
-        return obra.ObrDtFim.Value == DateTime.MinValue;
+        return obrDtFim.Value == DateTime.MinValue;
     }
 
-    public static string ClasseStatusCss(Obra obra, int progresso, bool existeTarefaPendenteAposPrazo)
+    public static bool ObraFinalizada(Obra obra) => ObraFinalizada(obra.ObrDtFim);
+
+    public static string ClasseStatusCss(int progresso, bool existeTarefaPendenteAposPrazo)
     {
         if (progresso == 100)
         {
@@ -55,13 +60,19 @@ internal static class ObraListParity
         return "bg-cinza";
     }
 
-    public static string ContratanteContratadaIcon(Grupo? grupo)
+    public static string ClasseStatusCss(Obra obra, int progresso, bool existeTarefaPendenteAposPrazo) =>
+        ClasseStatusCss(progresso, existeTarefaPendenteAposPrazo);
+
+    public static string ContratanteContratadaIcon(int? gruStContratante)
     {
-        if (grupo?.GruStContratante == 1)
+        if (gruStContratante == 1)
         {
             return "contratante";
         }
 
         return "contratada";
     }
+
+    public static string ContratanteContratadaIcon(Grupo? grupo) =>
+        ContratanteContratadaIcon(grupo?.GruStContratante);
 }

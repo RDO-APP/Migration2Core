@@ -76,6 +76,7 @@ public class BffObrasController : ControllerBase
 
         HttpContext.Session.SetInt32(SessionKeys.ObraId, result.ObraId);
         HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome ?? string.Empty);
+        HttpContext.Session.SetString(SessionKeys.ObraCidadeEstado, result.ObraCidadeEstado ?? string.Empty);
         HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, result.ObraColaboradorId);
 
         if (LoginSessionJson.TrySerialize(result.LoginData, out var loginJson))

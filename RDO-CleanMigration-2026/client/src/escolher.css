@@ -1,3 +1,10 @@
+.escolher-page-wide {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
 .escolher-page h2 {
   color: #fff;
   text-align: center;
@@ -26,27 +33,38 @@
   display: block;
 }
 
-.lista-obras .item .btn i {
-  display: block;
-  font-size: 48px;
-  color: #28496f;
-  margin: 0 auto 8px;
-  text-align: center;
+/* Card obra: grid/tipografia em /css/escolher.css (host) — alinhamento barra aqui (M4.4 / P2.1) */
+.lista-obras .item .btn.obra-card-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 210px;
 }
 
-.lista-obras .item .btn p {
-  text-align: center;
-  color: #28496f;
-  margin: 0 0 4px;
-  font-size: 14px;
+.lista-obras .item .btn.obra-card-btn .obra-card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.lista-obras .item .btn small {
-  display: block;
-  text-align: center;
-  color: #888;
-  margin-top: 8px;
-  font-size: 11px;
+.lista-obras .item .btn.obra-card-btn .obra-card-body h5 {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  width: 100%;
+}
+
+.lista-obras .item .btn.obra-card-btn .obra-card-progress {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: auto;
+}
+
+.lista-obras .item .btn.obra-card-btn .obra-card-licenca {
+  margin-bottom: 4px;
 }
 
 .progress.progress-line-info {

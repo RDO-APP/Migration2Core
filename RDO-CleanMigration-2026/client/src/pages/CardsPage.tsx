@@ -1,69 +1,24 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { fetchCardsContext } from '../api/cardsApi'
-import type { EtapaComTarefas, TarefaCard } from '../api/equipamentos-api.types'
+import type { EtapaComTarefas } from '../api/equipamentos-api.types'
+import { AddTarefaPlaceholder, TaskCardAgrupador } from '../components/TaskCardAgrupador'
+import { CardsToolbar } from '../components/CardsToolbar'
 import { OperadorShell } from '../components/OperadorShell'
-import '../App.css'
+import { useShellContext } from '../hooks/useShellContext'
+import '../cards-page.css'
 
-function formatDateBr(iso?: string): string {
-  if (!iso) return '—'
-  const part = iso.slice(0, 10)
-  const [y, m, d] = part.split('-')
-  if (!y || !m || !d) return iso
-  return `${d}/${m}/${y}`
-}
-
-function TaskCard({ tarefa }: { tarefa: TarefaCard }) {
-  const pct = Math.min(100, Math.max(0, tarefa.percentualConcluido ?? 0))
-  const headClass = tarefa.classeStatusCss?.trim() || 'bg-cinza'
-  const extrapolado = tarefa.percentualExtrapolado === 'false'
-  const inicio = formatDateBr(tarefa.dataInicio)
-  const fim = formatDateBr(tarefa.dataPrevisaoFim)
-  const hasDates = Boolean(tarefa.dataInicio || tarefa.dataPrevisaoFim)
-
-  return (
-    <article className="task-card">
-      <div className={`task-card-head ${headClass}`}>
-        <h5 className="task-card-title">{tarefa.descricao}</h5>
-      </div>
-      {hasDates ? (
-        <div className="task-card-datas">
-          <span className="task-card-datas-label">Planejada</span>
-          <span>
-            {inicio} à {fim}
-          </span>
-        </div>
-      ) : null}
-      <div className="task-card-progress">
-        {extrapolado ? (
-          <span className="task-card-warn" title="Percentual acima de 100%">
-            ⚠
-          </span>
-        ) : null}
-        <div
-          className="task-card-progress-track"
-          role="progressbar"
-          aria-valuenow={pct}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          <div className="task-card-progress-fill" style={{ width: `${pct}%` }} />
-        </div>
-        <span className="task-card-pct">{pct}%</span>
-      </div>
-      {tarefa.nomeStatus ? (
-        <div className="task-card-status-row">
-          <span className="task-card-status">{tarefa.nomeStatus}</span>
-        </div>
-      ) : null}
-    </article>
-  )
+function stubAction(label: string) {
+  window.alert(`${label} — em breve (M7+).`)
 }
 
 export function CardsPage() {
+  const { shell } = useShellContext()
   const [data, setData] = useState<Awaited<ReturnType<typeof fetchCardsContext>> | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [openEtapas, setOpenEtapas] = useState<Set<number>>(() => new Set())
+  const [filtroOpen, setFiltroOpen] = useState(false)
+  const [selectAll, setSelectAll] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -71,10 +26,7 @@ export function CardsPage() {
       .then((ctx) => {
         if (!cancelled) {
           setData(ctx)
-          const first = ctx.etapas[0]?.id
-          if (first != null) {
-            setOpenEtapas(new Set([first]))
-          }
+          setOpenEtapas(new Set())
         }
       })
       .catch((e: unknown) => {
@@ -90,11 +42,6 @@ export function CardsPage() {
     }
   }, [])
 
-  const totalTarefas = useMemo(
-    () => data?.etapas.reduce((n, e) => n + e.tarefas.length, 0) ?? 0,
-    [data],
-  )
-
   function toggleEtapa(id: number) {
     setOpenEtapas((prev) => {
       const next = new Set(prev)
@@ -104,26 +51,28 @@ export function CardsPage() {
     })
   }
 
+  const shellWrap = (body: ReactNode) => (
+    <OperadorShell variant="cards" obraNome={data?.obraNome} shell={shell}>
+      {body}
+    </OperadorShell>
+  )
+
   if (loading) {
-    return (
-      <OperadorShell>
-        <div className="cards-page">
-          <p className="muted cards-loading">Carregando tarefas…</p>
-        </div>
-      </OperadorShell>
+    return shellWrap(
+      <section className="cards-page">
+        <p className="muted cards-loading">Carregando tarefas…</p>
+      </section>,
     )
   }
 
   if (error) {
-    return (
-      <OperadorShell>
-        <div className="cards-page">
-          <p className="error">{error}</p>
-          <p>
-            <a href="/Obra/Escolher">Escolher obra</a>
-          </p>
-        </div>
-      </OperadorShell>
+    return shellWrap(
+      <section className="cards-page">
+        <p className="error">{error}</p>
+        <p>
+          <a href="/Obra/Escolher">Escolher obra</a>
+        </p>
+      </section>,
     )
   }
 
@@ -131,53 +80,70 @@ export function CardsPage() {
     return null
   }
 
-  return (
-    <OperadorShell obraNome={data.obraNome} usuarioNome={data.usuarioNome}>
-      <div className="cards-page">
-        <header className="cards-subheader">
-          <p className="cards-meta muted">
-            {data.etapas.length} etapa(s) · {totalTarefas} tarefa(s) · EQ-R M4
-          </p>
-        </header>
+  return shellWrap(
+    <section className="cards-page">
+      <CardsToolbar
+        filtroOpen={filtroOpen}
+        onToggleFiltro={() => setFiltroOpen((v) => !v)}
+        onNovaTarefa={() => stubAction('Adicionar tarefa')}
+        onNovaEtapa={() => stubAction('Adicionar etapa')}
+        onLista={() => stubAction('Visualização lista')}
+        onGerarRdo={() => stubAction('Gerar RDO')}
+        onEfetivoDiario={() => stubAction('Efetivo Diário')}
+        onEditarObra={() => stubAction('Editar obra')}
+      />
 
-        {data.etapas.length === 0 ? (
-          <p className="muted cards-empty">Nenhum registro encontrado.</p>
-        ) : (
-          <div className="etapa-accordion" role="presentation">
-            {data.etapas.map((etapa: EtapaComTarefas) => {
-              const open = openEtapas.has(etapa.id)
-              return (
-                <section key={etapa.id} className={`etapa-panel ${open ? 'is-open' : ''}`}>
-                  <button
-                    type="button"
-                    className="etapa-panel-heading"
-                    aria-expanded={open}
-                    onClick={() => toggleEtapa(etapa.id)}
-                  >
-                    <span className="etapa-panel-title">{etapa.titulo}</span>
-                    <span className="etapa-panel-chevron" aria-hidden>
-                      {open ? '▾' : '▸'}
-                    </span>
-                  </button>
-                  {open ? (
-                    <div className="etapa-panel-body">
-                      {etapa.tarefas.length === 0 ? (
-                        <p className="muted small etapa-empty">Nenhuma tarefa adicionada nesta etapa.</p>
-                      ) : (
-                        <div className="task-card-grid">
-                          {etapa.tarefas.map((t) => (
-                            <TaskCard key={t.id} tarefa={t} />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
-                </section>
-              )
-            })}
+      {data.etapas.length === 0 ? (
+        <label className="col-xs-12 no-padding cards-empty-label">Nenhum registro encontrado.</label>
+      ) : (
+        <>
+          <div id="selecionar-tudo" className="checkbox cards-select-all">
+            <label>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={(e) => setSelectAll(e.target.checked)}
+              />
+              SELECIONAR TUDO
+            </label>
           </div>
-        )}
-      </div>
-    </OperadorShell>
+
+          <div className="lista-tarefas">
+            <div className="panel-group accordion" id="accordion">
+              {data.etapas.map((etapa: EtapaComTarefas) => {
+                const open = openEtapas.has(etapa.id)
+                return (
+                  <div key={etapa.id} className="panel panel-default">
+                    <div className="panel-heading">
+                      <h4 className={`panel-title expand ${open ? 'active' : ''}`}>
+                        <button type="button" className="accordion-etapa-btn" onClick={() => toggleEtapa(etapa.id)}>
+                          {etapa.titulo}
+                        </button>
+                      </h4>
+                    </div>
+                    {open ? (
+                      <div className="panel-etapa-body">
+                        <div className="panel-body">
+                          {etapa.tarefas.length === 0 ? (
+                            <div className="etapa-empty-msg">Nenhuma tarefa adicionada nesta etapa.</div>
+                          ) : (
+                            <>
+                              {etapa.tarefas.map((t) => (
+                                <TaskCardAgrupador key={t.id} tarefa={t} />
+                              ))}
+                              <AddTarefaPlaceholder onClick={() => stubAction('Adicionar nova tarefa')} />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </>
+      )}
+    </section>,
   )
 }

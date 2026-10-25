@@ -68,7 +68,8 @@ Toolbar medição · APIs de escrita · **M5** Apontador · **M9** D1 pacote com
 
 ## Melhorias UI (backlog — não bloqueiam M4.7)
 
-Ver tabela P1–P4 e IDs **UI-M1…UI-M6** em [`pendencias-melhorias-ui-stack.md`](pendencias-melhorias-ui-stack.md).
+Ver tabela P1–P4 e IDs **UI-M1…UI-M6** em [`pendencias-melhorias-ui-stack.md`](pendencias-melhorias-ui-stack.md).  
+Inventário botões P3 (header / toolbar / card): [`p3-botoes-habilitacao-m7.md`](p3-botoes-habilitacao-m7.md).
 
 | ID | Resumo | Quando |
 |----|--------|--------|

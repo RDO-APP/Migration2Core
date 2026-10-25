@@ -52,7 +52,7 @@ internal static class CardsTarefaParity
     }
 
     internal static string FormatDate(DateTime date) =>
-        date.Date.ToString("yyyy-MM-dd");
+        date.Date.ToString("dd/MM/yyyy");
 
     internal static string FormatDate(DateTime? date) =>
         date.HasValue ? FormatDate(date.Value) : "";

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
-using RdoApp.Core.Data.Entities;
 using RdoApp.Core.Models.Dtos;
 
 namespace RdoApp.Core.Services;
@@ -17,21 +16,29 @@ public class ObrasQueryService
 
     public async Task<EscolherContextDto?> GetEscolherAsync(int colaboradorId, CancellationToken cancellationToken = default)
     {
+        // Projeção estreita (mesmo padrão CardsQueryService / M2) — homol_rdoapp tem NULL em colunas string da entidade Obra.
         var rows = await (
             from oc in _context.ObraColaboradores.AsNoTracking()
             join o in _context.Obras.AsNoTracking() on oc.OcoIdObra equals o.ObrIdObra
-            join m in _context.Municipios.AsNoTracking() on o.ObrIdMunicipio equals m.MunIdMunicipio
-            join uf in _context.UFs.AsNoTracking() on m.MunIdUf equals uf.UfeIdUf
+            join m in _context.Municipios.AsNoTracking() on o.ObrIdMunicipio equals m.MunIdMunicipio into mj
+            from m in mj.DefaultIfEmpty()
+            join uf in _context.UFs.AsNoTracking() on m.MunIdUf equals uf.UfeIdUf into ufj
+            from uf in ufj.DefaultIfEmpty()
             join g in _context.Grupos.AsNoTracking() on oc.OcoIdGrupo equals g.GruIdGrupo into gj
             from g in gj.DefaultIfEmpty()
             where oc.OcoIdColaborador == colaboradorId
-            orderby o.ObrDsObra
-            select new
+            orderby o.ObrDsObra ?? string.Empty
+            select new ObraEscolherRow
             {
-                Obra = o,
-                Cidade = m.MunDsMunicipio,
-                UfSigla = uf.UfeDsSigla,
-                Grupo = g,
+                IdObra = o.ObrIdObra,
+                Descricao = o.ObrDsObra ?? string.Empty,
+                DtInicio = o.ObrDtInicio,
+                DtPrevisaoFim = o.ObrDtPrevisaoFim,
+                DtFim = o.ObrDtFim,
+                Cidade = m != null ? m.MunDsMunicipio ?? string.Empty : string.Empty,
+                UfSigla = uf != null ? uf.UfeDsSigla ?? string.Empty : string.Empty,
+                GruStContratante = g != null ? g.GruStContratante : null,
+                GruNmNome = g != null ? g.GruNmNome ?? string.Empty : string.Empty,
             }).ToListAsync(cancellationToken);
 
         if (rows.Count == 0)
@@ -43,28 +50,32 @@ public class ObrasQueryService
             };
         }
 
-        var obraIds = rows.Select(r => r.Obra.ObrIdObra).Distinct().ToList();
+        var obraIds = rows.Select(r => r.IdObra).Distinct().ToList();
         var pendentePorObra = await ObraComTarefaPendentePosPrazoAsync(obraIds, cancellationToken);
 
         var obras = rows.Select(r =>
         {
-            var progresso = ObraListParity.ProgressoPorcentagem(r.Obra);
-            pendentePorObra.TryGetValue(r.Obra.ObrIdObra, out var pendente);
-            var css = ObraListParity.ClasseStatusCss(r.Obra, progresso, pendente);
-            var papel = ObraListParity.ContratanteContratadaIcon(r.Grupo);
-            var licenca = r.Grupo?.GruNmNome?.Trim() ?? "";
+            var progresso = ObraListParity.ProgressoPorcentagem(r.DtInicio, r.DtPrevisaoFim);
+            pendentePorObra.TryGetValue(r.IdObra, out var pendente);
+            var css = ObraListParity.ClasseStatusCss(progresso, pendente);
+            var papel = ObraListParity.ContratanteContratadaIcon(r.GruStContratante);
+            var licenca = r.GruNmNome.Trim();
+
+            var cidadeEstado = string.IsNullOrEmpty(r.UfSigla)
+                ? r.Cidade
+                : $"{r.Cidade}/{r.UfSigla}";
 
             return new ObraListItemDto
             {
                 IdColaborador = colaboradorId,
-                IdObra = r.Obra.ObrIdObra,
-                Descricao = r.Obra.ObrDsObra ?? "",
-                CidadeEstado = $"{r.Cidade}/{r.UfSigla}",
+                IdObra = r.IdObra,
+                Descricao = r.Descricao,
+                CidadeEstado = cidadeEstado,
                 ContratanteContratada = papel,
                 StatusBasicaGratuita = licenca,
                 ProgressoPorcentagem = progresso,
                 ClasseStatusCss = css,
-                ObraFinalizada = ObraListParity.ObraFinalizada(r.Obra),
+                ObraFinalizada = ObraListParity.ObraFinalizada(r.DtFim),
             };
         }).ToList();
 
@@ -73,6 +84,19 @@ public class ObrasQueryService
             ColaboradorId = colaboradorId,
             Obras = obras,
         };
+    }
+
+    private sealed class ObraEscolherRow
+    {
+        public int IdObra { get; init; }
+        public string Descricao { get; init; } = string.Empty;
+        public DateTime DtInicio { get; init; }
+        public DateTime? DtPrevisaoFim { get; init; }
+        public DateTime? DtFim { get; init; }
+        public string Cidade { get; init; } = string.Empty;
+        public string UfSigla { get; init; } = string.Empty;
+        public int? GruStContratante { get; init; }
+        public string GruNmNome { get; init; } = string.Empty;
     }
 
     /// <summary>Legado ObraModel.ClasseStatusCss — tarefas agrupador com status pendente quando progresso = 100%.</summary>

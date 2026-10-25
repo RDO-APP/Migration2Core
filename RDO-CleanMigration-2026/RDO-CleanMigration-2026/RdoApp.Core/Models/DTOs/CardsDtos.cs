@@ -12,6 +12,11 @@ public sealed class TarefaCardDto
     public double PercentualConcluido { get; init; }
     public string PercentualExtrapolado { get; init; } = "true";
     public string ClasseStatusCss { get; init; } = "bg-cinza";
+    public int QuantidadeColaboradores { get; init; }
+    public int QuantidadeEquipamentos { get; init; }
+    public string? PrimeiraExecucao { get; init; }
+    public string? UltimaExecucao { get; init; }
+    public bool ExisteExecucao { get; init; }
 }
 
 public sealed class EtapaComTarefasDto

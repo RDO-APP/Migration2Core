@@ -127,6 +127,7 @@ namespace RdoApp.Core.Controllers
 
                 HttpContext.Session.SetInt32(SessionKeys.ObraId, result.ObraId);
                 HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome ?? string.Empty);
+                HttpContext.Session.SetString(SessionKeys.ObraCidadeEstado, result.ObraCidadeEstado ?? string.Empty);
                 HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, result.ObraColaboradorId);
 
                 if (!LoginSessionJson.TrySerialize(result.LoginData, out var loginJson))
@@ -150,6 +151,18 @@ namespace RdoApp.Core.Controllers
                     : "Erro ao selecionar a obra. Tente novamente ou contate o suporte.";
                 return RedirectToAction(nameof(Escolher));
             }
+        }
+
+        /// <summary>GET: /Obra/Cadastro — placeholder até port Angular cadastro.</summary>
+        [HttpGet]
+        public IActionResult Cadastro()
+        {
+            return View("EmMigracao", new EmMigracaoViewModel
+            {
+                Titulo = "Nova obra / cadastro",
+                Descricao = "Cadastro de obra em migração (M5+).",
+                VoltarUrl = "/Obra/Escolher",
+            });
         }
     }
 }

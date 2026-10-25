@@ -4,6 +4,7 @@ import type { ObraListItem } from '../api/equipamentos-api.types'
 import { EscolherFilters } from '../components/EscolherFilters'
 import { ObraProgressLegend } from '../components/ObraProgressLegend'
 import { OperadorShell } from '../components/OperadorShell'
+import { useShellContext } from '../hooks/useShellContext'
 import { WorkCardObra } from '../components/WorkCardObra'
 import '../escolher.css'
 
@@ -29,6 +30,7 @@ function filterObras(obras: ObraListItem[], filtroObra: string, filtroMunicipio:
 }
 
 export function EscolherPage() {
+  const { shell } = useShellContext()
   const [usuarioNome, setUsuarioNome] = useState<string>()
   const [obras, setObras] = useState<ObraListItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,8 +79,8 @@ export function EscolherPage() {
 
   if (loading) {
     return (
-      <OperadorShell usuarioNome={usuarioNome}>
-        <div className="escolher-page container">
+      <OperadorShell variant="escolher" usuarioNome={usuarioNome} shell={shell}>
+        <div className="escolher-page escolher-page-wide">
           <p className="muted escolher-loading">Carregando obras…</p>
         </div>
       </OperadorShell>
@@ -86,10 +88,8 @@ export function EscolherPage() {
   }
 
   return (
-    <OperadorShell usuarioNome={usuarioNome}>
-      <section className="escolher-page container">
-        <h2>Selecione uma das obras abaixo:</h2>
-
+    <OperadorShell variant="escolher" usuarioNome={usuarioNome} shell={shell}>
+      <section className="escolher-page escolher-page-wide">
         {error ? (
           <div className="alert alert-danger text-center mb-3" role="alert">
             {error}
@@ -106,10 +106,10 @@ export function EscolherPage() {
         ) : null}
 
         <div className="lista-obras">
-          {obrasFiltradas.length === 0 ? (
+          {error ? null : obrasFiltradas.length === 0 ? (
             <label className="col-xs-12 no-padding escolher-empty">
               {obras.length === 0
-                ? 'Você não está associado a nenhuma obra. Entre em contato com o administrador.'
+                ? 'Clique no botão "+" no cabeçalho para abrir sua primeira obra!'
                 : 'Nenhuma obra corresponde aos filtros.'}
             </label>
           ) : (

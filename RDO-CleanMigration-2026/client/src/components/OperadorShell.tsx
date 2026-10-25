@@ -1,51 +1,137 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import type { ShellContext } from '../api/equipamentos-api.types'
+import '../operador-shell.css'
+
+export type OperadorShellVariant = 'escolher' | 'cards'
 
 type OperadorShellProps = {
+  variant: OperadorShellVariant
   obraNome?: string
   usuarioNome?: string
+  shell?: ShellContext | null
   children: ReactNode
 }
 
-/** M4 — header/nav alinhado a _HeaderEscolher (EQ-W) + layout prod. */
-export function OperadorShell({ obraNome, usuarioNome, children }: OperadorShellProps) {
-  const obraTitulo = obraNome?.trim() ?? ''
+function mergeNome(shell?: ShellContext | null, usuarioNome?: string): string {
+  return (usuarioNome?.trim() || shell?.usuarioNome?.trim() || 'Operador').trim()
+}
+
+export function OperadorShell({ variant, obraNome, usuarioNome, shell, children }: OperadorShellProps) {
+  const [userOpen, setUserOpen] = useState(false)
+  const userRef = useRef<HTMLLIElement>(null)
+  const nome = mergeNome(shell, usuarioNome)
+  const tituloObra = (obraNome ?? shell?.obraNome)?.trim().toUpperCase() ?? ''
+  const logoHref = variant === 'escolher' ? '/Obra/Escolher' : '/Obra/Escolher'
+
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (userRef.current && !userRef.current.contains(e.target as Node)) {
+        setUserOpen(false)
+      }
+    }
+    document.addEventListener('click', onDocClick)
+    return () => document.removeEventListener('click', onDocClick)
+  }, [])
+
+  function submitLogout(e: FormEvent) {
+    if (!shell?.antiforgeryFieldName || !shell.antiforgeryToken) {
+      e.preventDefault()
+      window.location.assign('/Account/Login')
+    }
+  }
+
+  const showChart = shell?.showChart ?? true
+  const showNovaObra = shell?.showNovaObra ?? true
+  const showDashboard = shell?.showDashboardObra ?? false
 
   return (
-    <div className="operador-app tema-azul base">
+    <div className={`operador-app base ${variant === 'escolher' ? 'tema-azul' : 'tema-azul-claro'}`}>
       <div className="topo">
         <nav className="navbar bg-blue-default">
           <div className="no-padding">
-            <a className="navbar-brand logo pointer" href="/Obra/Escolher">
+            <a className="navbar-brand logo pointer" href={logoHref}>
               <i className="icon-logo" aria-hidden />
-              <span>Equipamentos</span>
             </a>
             <div className="menu-lateral">
-              {obraTitulo ? <h2 id="tituloObra">{obraTitulo}</h2> : null}
+              {variant === 'cards' && tituloObra ? <h2 id="tituloObra">{tituloObra}</h2> : null}
             </div>
           </div>
           <div className="no-padding">
-            <div className="navbar-collapse menu">
+            <div className="navbar-collapse menu operador-menu-bar">
               <ul className="nav navbar-nav navbar-right user">
-                <li className="dropdown">
-                  <a href="/Obra/Escolher" className="dropdown-toggle pointer" role="button">
+                <li ref={userRef} className={userOpen ? 'dropdown open' : 'dropdown'}>
+                  <a
+                    href="#"
+                    className="dropdown-toggle pointer"
+                    aria-expanded={userOpen}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setUserOpen((v) => !v)
+                    }}
+                  >
                     <span className="image">
                       <img src="/images/user.png" alt="" />
                     </span>
-                    <p>{usuarioNome?.trim() || 'Operador'}</p>
+                    <p>{nome}</p>
+                    <i className="caret" aria-hidden />
                   </a>
+                  {userOpen ? (
+                    <ul className="dropdown-menu">
+                      <li>
+                        <a href="/Account/ChangePassword">TROCAR SENHA</a>
+                      </li>
+                      <li>
+                        <form action="/Account/Logout" method="post" onSubmit={submitLogout}>
+                          {shell?.antiforgeryFieldName && shell.antiforgeryToken ? (
+                            <input type="hidden" name={shell.antiforgeryFieldName} value={shell.antiforgeryToken} />
+                          ) : null}
+                          <button type="submit" className="dropdown-logout-btn">
+                            SAIR
+                          </button>
+                        </form>
+                      </li>
+                    </ul>
+                  ) : null}
                 </li>
               </ul>
+
               <ul className="nav navbar-nav navbar-right ball-hover">
-                <li className="btn-tooltip pointer" title="DASHBOARD GERAL">
-                  <a href="/Chart">
-                    <i className="fa fa-bar-chart" aria-hidden />
-                  </a>
-                </li>
-                <li className="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
-                  <a href="/Obra/Cadastro">
-                    <i className="fa fa-plus" aria-hidden />
-                  </a>
-                </li>
+                {variant === 'cards' ? (
+                  <>
+                    {showDashboard ? (
+                      <li className="btn-tooltip pointer" title="DASHBOARD DA OBRA">
+                        <a href="/Dashboard">
+                          <i className="icon-dashboard" aria-hidden />
+                        </a>
+                      </li>
+                    ) : null}
+                    <li className="btn-tooltip pointer" title="RDO's">
+                      <a href="/Rdo">
+                        <i className="icon-rdo-novo_2" aria-hidden />
+                      </a>
+                    </li>
+                    <li className="btn-tooltip pointer" title="TAREFAS">
+                      <a href="/Tarefa/Cards">
+                        <i className="fa fa-th" aria-hidden />
+                      </a>
+                    </li>
+                  </>
+                ) : null}
+                {showChart ? (
+                  <li className="btn-tooltip pointer" title="DASHBOARD GERAL">
+                    <a href="/Chart">
+                      <i className="fa fa-bar-chart" aria-hidden />
+                    </a>
+                  </li>
+                ) : null}
+                {showNovaObra ? (
+                  <li className="btn-tooltip pointer" title="NOVA UNIDADE ESCOLAR">
+                    <a href="/Obra/Cadastro">
+                      <i className="fa fa-plus" aria-hidden />
+                    </a>
+                  </li>
+                ) : null}
               </ul>
             </div>
           </div>

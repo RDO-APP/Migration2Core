@@ -107,6 +107,15 @@
 .fa-bar-chart:before { content: "\f080"; }
 .fa-plus:before { content: "\f067"; }
 .fa-caret-down:before { content: "\f0d7"; }
+/* P3 task cards (FA parcial — completo também em bundle cards-page.css) */
+.fa-male:before { content: "\f183"; }
+.fa-eye:before { content: "\f06e"; }
+.fa-clock-o:before { content: "\f017"; }
+.fa-trash-o:before { content: "\f014"; }
+.fa-pencil:before { content: "\f040"; }
+.fa-print:before { content: "\f02f"; }
+.fa-ellipsis-v:before { content: "\f142"; }
+.fa-exclamation-triangle:before { content: "\f071"; }
 
 /* ==================== BASE STYLES ==================== */
 
@@ -397,11 +406,46 @@ footer {
     margin-bottom: 10px;
 }
 
-/* ==================== RESPONSIVE ==================== */
+.lista-obras .item .btn i {
+    font-size: 97px;
+    color: #0088DD;
+    margin: 0 auto;
+    display: table;
+    text-align: center;
+    margin-bottom: -20px;
+}
+
+.lista-obras .item .btn i:before {
+    top: -14px;
+    position: relative;
+}
+
+.lista-obras .item .btn p {
+    color: #27486E;
+    font-size: 12px;
+    margin: 0;
+    display: block;
+}
+
+.lista-obras .item .btn small {
+    color: #27486E;
+    font-size: 10px;
+    margin-top: 20px;
+    display: none;
+}
+
+.lista-obras .item .btn .progress.progress-line-info {
+    background: #999;
+    margin: 0 auto;
+    float: none;
+    margin-top: 14px;
+}
+
+/* ==================== RESPONSIVE (paridade prod custom.css) ==================== */
 
 @media (min-width: 768px) {
     .lista-obras .item {
-        flex-basis: 50%;
+        flex-basis: 33.333%;
     }
 }
 
@@ -413,6 +457,6 @@ footer {
 
 @media (min-width: 1200px) {
     .lista-obras .item {
-        flex-basis: 25%;
+        flex-basis: 20%;
     }
 }

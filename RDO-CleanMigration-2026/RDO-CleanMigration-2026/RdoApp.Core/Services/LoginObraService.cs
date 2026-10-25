@@ -12,6 +12,7 @@ public sealed class LoginObraResult
     public LoginViewModel? LoginData { get; init; }
     public int ObraId { get; init; }
     public string? ObraNome { get; init; }
+    public string? ObraCidadeEstado { get; init; }
     public int ObraColaboradorId { get; init; }
 
     public static LoginObraResult Fail(string message) => new() { Success = false, ErrorMessage = message };
@@ -42,6 +43,8 @@ public class LoginObraService
         public string ColNrCpf { get; init; } = string.Empty;
         public string GruNmNome { get; init; } = string.Empty;
         public int? GruIdLicenca { get; init; }
+        public string Cidade { get; init; } = string.Empty;
+        public string UfSigla { get; init; } = string.Empty;
     }
 
     private readonly RdoDbContext _context;
@@ -75,6 +78,10 @@ public class LoginObraService
             join o in _context.Obras on oc.OcoIdObra equals o.ObrIdObra
             join c in _context.Colaboradores on oc.OcoIdColaborador equals c.ColIdColaborador
             join g in _context.Grupos on oc.OcoIdGrupo equals g.GruIdGrupo
+            join m in _context.Municipios on o.ObrIdMunicipio equals m.MunIdMunicipio into mj
+            from m in mj.DefaultIfEmpty()
+            join uf in _context.UFs on m.MunIdUf equals uf.UfeIdUf into ufj
+            from uf in ufj.DefaultIfEmpty()
             where oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == idObra
             select new ObraSelectionRow
             {
@@ -97,7 +104,9 @@ public class LoginObraService
                 ColDsSenha = c.ColDsSenha ?? string.Empty,
                 ColNrCpf = c.ColNrCpf ?? string.Empty,
                 GruNmNome = g.GruNmNome ?? string.Empty,
-                GruIdLicenca = g.GruIdLicenca
+                GruIdLicenca = g.GruIdLicenca,
+                Cidade = m != null ? m.MunDsMunicipio ?? string.Empty : string.Empty,
+                UfSigla = uf != null ? uf.UfeDsSigla ?? string.Empty : string.Empty,
             }
         ).FirstOrDefaultAsync(cancellationToken);
 
@@ -171,12 +180,17 @@ public class LoginObraService
             row.ObrDsObra,
             cancellationToken);
 
+        var cidadeEstado = string.IsNullOrEmpty(row.UfSigla)
+            ? row.Cidade
+            : $"{row.Cidade}/{row.UfSigla}";
+
         return new LoginObraResult
         {
             Success = true,
             LoginData = loginData,
             ObraId = row.ObrIdObra,
             ObraNome = row.ObrDsObra,
+            ObraCidadeEstado = cidadeEstado,
             ObraColaboradorId = row.OcoIdObraColaborador
         };
     }
