@@ -79,6 +79,14 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
 
   return (
     <div className={`operador-app base ${variant === 'escolher' ? 'tema-azul' : 'tema-azul-claro'}`}>
+      {mobileMenuOpen ? (
+        <button
+          type="button"
+          className="operador-menu-backdrop"
+          aria-label="Fechar menu"
+          onClick={closeMobileMenu}
+        />
+      ) : null}
       <div className="topo">
         <nav className="navbar bg-blue-default">
           <div className="no-padding">

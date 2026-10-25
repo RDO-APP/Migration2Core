@@ -95,6 +95,13 @@ public class ShellContextService
             "/rdo/index" or "/rdo/listagem" => "/Rdo",
             "/efetivo/index" or "/efetivo" => "/Efetivo",
             "/tarefa/paralizacoes/index" or "/tarefa/paralizacoes/cadastro" => "/Tarefa/Paralizacoes",
+            "/tarefa/index" => "/Tarefa/Index",
+            "/colaborador/index" => "/colaborador/index",
+            "/equipamento/index" or "/equipamentos/index" => "/equipamento/index",
+            "/empresa/index" => "/empresa/index",
+            "/etapa/index" => "/etapa/index",
+            "/obra/index" => "/obra/index",
+            "/pagina/index" => "/pagina/index",
             _ when path.StartsWith('/') => path,
             _ => "#",
         };

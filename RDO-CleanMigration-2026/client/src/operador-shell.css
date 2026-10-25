@@ -93,12 +93,24 @@
   left: 0;
 }
 
-/* M4.7e — hambúrguer colado ao logo (prod); header.css mobile float:right quebrava gap */
+.operador-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1999;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgb(0 0 0 / 45%);
+  cursor: pointer;
+}
+
+/* M4.7h — drawer mobile (prod custom.css § menu-sidebar / ball-hover) */
 @media (max-width: 767px) {
   .topo .menu-lateral .nav-mobile {
     float: left !important;
-    width: 63px;
+    width: 48px;
     flex-shrink: 0;
+    margin-left: 4px;
   }
 
   .topo .menu-lateral .nav-mobile svg {
@@ -107,6 +119,85 @@
   }
 
   .topo .menu-lateral h2 {
-    padding-left: 10px;
+    padding-left: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu-lateral .nav-mobile .menu-container .menu-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    max-width: min(380px, calc(100% - 56px));
+    width: calc(100% - 56px);
+    min-width: 260px;
+    z-index: 2000;
+    display: block;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    background: rgb(28 51 77 / 97%);
+    transform: translateX(-105%);
+    transition: transform 0.3s cubic-bezier(0, 0, 0.3, 1);
+    overflow-y: auto;
+  }
+
+  .menu-lateral .nav-mobile .menu-sidebar.menu-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .topo .menu-lateral .menu-sidebar .ball-hover {
+    float: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .topo .menu-lateral .navbar .navbar-nav.ball-hover > li {
+    float: left;
+    width: 100%;
+    position: relative;
+  }
+
+  .topo .menu-lateral .navbar .navbar-nav.ball-hover > li > a.collapsed-menu {
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0;
+    width: 100%;
+    float: left;
+    text-align: left;
+    margin: 0;
+    padding: 11px 11px 11px 48px;
+    box-sizing: border-box;
+  }
+
+  .topo .menu-lateral .navbar .navbar-nav.ball-hover > li > a.collapsed-menu span {
+    display: inline;
+    text-transform: uppercase;
+    font-family: 'sf-md', system-ui, sans-serif;
+    font-size: 13px;
+  }
+
+  .topo .menu-lateral .navbar .navbar-nav.ball-hover > li > a.collapsed-menu i {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0 8px;
+    position: absolute;
+    left: 12px;
+  }
+
+  .topo .menu-lateral .menu-sidebar .user > li > a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .topo .menu-lateral .menu-sidebar .multi-collapse li a {
+    color: #fff;
+    text-decoration: none;
   }
 }
