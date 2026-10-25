@@ -35,6 +35,7 @@ Homolog **②** aproxima **①** por **blocos de UI** (header, cards, accordion,
 | **M4.6** | **P3** **card tarefa** + placeholder “Adicionar nova tarefa” | ☑ | P3 | BFF colab/equip · ícones ação stub M7 |
 | M4.7 / M4.8 | **P1** Login SPA + congela EQ-W | ☐ | P1 | critério M4 fim |
 | **M4.7b** | **P3** navegação botões → rotas MVC (`p3-operador-routes.ts` + EmMigracao) | ☑ | P3 | smoke: Chart/Dashboard em migração |
+| **M4.7c** | **P3** toolbar Gerar RDO + Efetivo visíveis · spacing conteúdo 103px | ☐ | P3 | smoke: ícones título + faixa LISTA; clique → Em migração |
 | — | **P4** Nova medição modal | — | P4 | **M7+** |
 
 ---

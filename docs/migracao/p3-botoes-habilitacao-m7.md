@@ -22,6 +22,18 @@ Rotas como `/Chart` **não tinham action MVC**. O host devolvia o `index.html` d
 
 ---
 
+## Toolbar Gerar RDO / Efetivo — rotas vs UI (M4.7c)
+
+| Camada | Status |
+|--------|--------|
+| **Rotas + clique** (M4.7b) | `P3_NAV.toolbar.gerarRdo` → `/Rdo/Cadastro` · `efetivoDiario` → `/Efetivo` · `CardsPage` já chama `goOperador()` |
+| **Onde aparecem no prod** | Ícones na **linha do título** (`panel-heading`), à direita de “Etapas / Tarefas” — não são os botões azuis FILTRO / ADICIONAR |
+| **Por que sumiam no homolog** | Layout legado (`float` + `.pull-right`) no host BS5: a faixa `.action` colapsava e só um ícone ficava visível; **não** era falta de rota |
+| **M4.7c** | Flex em `.cards-toolbar-heading` · paridade `custom.css` (ícones fontello/FA) · RDO / Editar / Efetivo **só** na linha do título (acima da faixa LISTA/FILTRO, como `cards.html`) · `padding-top: 103px` em `.operador-conteudo` |
+| **Ver na EC2** | Commit + deploy com bundle SPA novo (ex. `index-CwiQ705n.js` pós-build M4.7c) |
+
+---
+
 ## Mapa canônico — prod Angular → homolog Core
 
 Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3-operador-routes.ts`
@@ -40,7 +52,16 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 | Dashboard geral | `#/chart` | `/Chart` | ⏳ **M5** · se `showChart` |
 | Nova obra (+) | `#/obra/cadastro` | `/Obra/Cadastro` | ⏳ **M5** · se `showNovaObra` |
 
-### 2) Toolbar (`CardsToolbar`)
+### 2) Toolbar (`CardsToolbar`) — duas faixas (como o print prod)
+
+```
+┌─ Linha 1 · panel-heading (borda inferior) ─────────────────────────────┐
+│  Etapas / Tarefas          [RDO] [Editar obra] [Efetivo]  (ícones)      │
+└─────────────────────────────────────────────────────────────────────────┘
+┌─ Linha 2 · desktop (hidden-xs) ──────────────────────────────────────────┐
+│  LISTA                              FILTRO | ADICIONAR TAREFA | ETAPA    │
+└─────────────────────────────────────────────────────────────────────────┘
+```
 
 | Botão | Prod | Rota homolog | Marco |
 |-------|------|--------------|-------|
@@ -79,6 +100,7 @@ Substituir `{id}` pelo `tarefa.id` do BFF.
 |-------|--------|
 | **M4.7** | Layout card · FA · sem pill status / lixeira no card |
 | **M4.7b** | **Todas as ações acima navegam** · placeholder Razor **Em migração** |
+| **M4.7c** | Toolbar P3 visível (RDO · efetivo · spacing header) · CSS `CardsToolbar` / `operador-shell` |
 | **M4.8** | Login SPA |
 | **M5** | Dashboard / Chart / RDO listagem reais |
 | **M7+** | Formulários, modais, RBAC, APIs · **P4** medição |

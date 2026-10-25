@@ -14,8 +14,13 @@
   margin: 0;
 }
 
+/* Prod custom.css: .topo + .conteudo { padding-top: 103px } */
 .operador-app .conteudo.operador-conteudo {
-  padding-top: 72px;
+  float: left;
+  width: 100%;
+  padding: 20px;
+  padding-top: 103px;
+  box-sizing: border-box;
 }
 
 .operador-obra-titulo {
