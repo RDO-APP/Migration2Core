@@ -34,10 +34,10 @@ Homolog **②** aproxima **①** por **blocos de UI** (header, cards, accordion,
 | **M4.5** | **P3** toolbar + **accordion** + ícones nav obra | ☑ | P3 | pacote P2+P3 · deploy **2026-10-21** |
 | **M4.6** | **P3** **card tarefa** + placeholder “Adicionar nova tarefa” | ☑ | P3 | BFF colab/equip · ícones ação stub M7 |
 | **M4.7b** | **P3** navegação botões → rotas MVC (`p3-operador-routes.ts` + EmMigracao) | ☑ | P3 | Git **`7e19d47`** |
-| **M4.7g** | Menu drawer + shell RBAC P1–P3 + `LegacyOperadorRoutes` | 🟡 | P2/P3 | código ☑ · smoke **G5/G6** pendente |
-| **M4.7c** | Toolbar RDO/Efetivo + faixa LISTA · RBAC `showCriarNovo*` | 🟡 | P3 | smoke G6 |
-| **M4.7** | UI-M1/M2c fontello/FA · UI-M2/M2b | ☐ | P3 | fecha paridade visual M4 |
-| **M4.8** | **P1** Login SPA + congela EQ-W | ☐ | P1 | critério M4 fim |
+| **M4.7g** | Menu drawer + shell RBAC P1–P3 + `LegacyOperadorRoutes` | ☑ | P2/P3 | código + deploy homolog 2026-10-26 |
+| **M4.7c** | Toolbar RDO/Efetivo + faixa LISTA · RBAC `showCriarNovo*` | ☑ | P3 | smoke G6 homolog |
+| **M4.7** | UI-M1/M2c fontello/FA · UI-M2/M2b | ☐ | P3 | não bloqueia M5 web |
+| **M4.8** | **P1** Login SPA + congela EQ-W | ☑ | P1 | `LoginPage` + `BffLoginController` · GET `/Account/Login` → SPA |
 | — | **P4** Nova medição modal | — | P4 | **M7+** |
 
 ---

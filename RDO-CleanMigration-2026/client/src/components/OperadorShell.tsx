@@ -17,7 +17,7 @@ function navClick(url: string): MouseEventHandler<HTMLAnchorElement> {
   }
 }
 
-export type OperadorShellVariant = 'escolher' | 'cards'
+export type OperadorShellVariant = 'escolher' | 'cards' | 'rdo'
 
 type OperadorShellProps = {
   variant: OperadorShellVariant

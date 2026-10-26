@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-26 — **M4** (**M4.7** smoke pendente · **M4.8** **P1**) · Git **`7e19d47`** (`ci/homolog-ec2-s3-ssm`) · **I0** B1/B2 · [`dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md) · [`docs/ops/`](ops/README.md)  
+**Atualizado:** 2026-10-26 — **M4** · **M5 web** (paridade prod) prioritário · **M5 EQ-M Apontador adiado** · Git **`842380f`** · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -155,6 +155,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - Branch CI: `ci/homolog-ec2-s3-ssm`.
 - Prod web: **EQ-L** até cutover Onda 6.
 - **PQ-L** web Piscinas prod: repo **`EquipoToPiscina`** · RDS **`piscinas_rdoapp`** — manual M0′ § referência rápida.
+- **M5 EQ-M (Apontador) adiado (2026-10-26):** prioridade = **sintonizar telas web homolog ↔ prod** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)). Prod mobile **continua EQ-L** (cenário A). **Reabrir** EQ-M: revisão ao **G-M5** web **ou** ao iniciar **M6** — **obrigatório** antes **M9 D4** e cutover Onda 6.
 
 ---
 
@@ -163,7 +164,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - Monorepo vs pacotes npm (`@rdo/api-client`, etc.) — Dimas + Lucio.
 - Onde hospedar build EQ-R no homolog (static no Core vs CDN vs subpath).
 - ~~Cenário mobile homolog E3~~ → **A** fechado M1 ([`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)).
-- **M5 (EQ-M):** merge ou plano explícito para `EquipamentosMobile` **`feature/alteracoes_apontador`** + APK homolog (ver § abaixo · [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md)).
+- **EQ-M pós-adiamento:** merge/plano `feature/alteracoes_apontador` — **só** quando retomar marco mobile (ver decisão fechada acima).
 - Marco FAPESC vs horas TSK (**Trilha F**).
 - Abertura trilha **PQ** (Piscinas).
 
@@ -354,8 +355,10 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **5** | ~~**M4.4** Escolher React + polish~~ | **EQ-R** | — | **✅ deploy 2026-10-21** |
 | **6** | ~~**M4.5–M4.6** P3 toolbar + accordion fix~~ | **EQ-R** | — | **✅ deploy 2026-10-21** · smoke Lucio |
 | **7** | **M4.7** smoke G5/G6 + UI-M1/M2c · depois **M4.8** Login SPA / congela EQ-W | **EQ-R** | — | código B–D **`7e19d47`** |
-| **8** | **M5** Apontador homolog + branch/plano `feature/alteracoes_apontador` | **EQ-M** | não | após M4.7 ☑ |
-| **9** | **M6** contratos/JWT · **M7+** telas reais · **I0 B3** | várias | não | paralelo |
+| **8** | **M5 web (Onda B)** — RDO listagem → Chart → Dashboard obra (**G-M5**) | **EQ-R** | — | 1 tela/PR · ordem [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) |
+| **9** | **M7+** cadastros/modais/menu admin · **M4.8** em paralelo curto | **EQ-R** | — | |
+| **10** | **M6** contratos/JWT · **I0 B3** | **I** / EQ-R | não | |
+| — | ~~**M5 EQ-M** Apontador~~ | **EQ-M** | — | **⏸ adiado** 2026-10-26 |
 
 **Por que não inverter:** M4 antes de M3 viola critério de encerramento EQ-W (M2+M3 OK). I0 B3 antes de M3 **não** é necessário (B1/B2 já OK). Toolbar Escolher/Cards **antes** do shell M4 gera UI solta — estratégia acordada: **shell → Escolher → Cards polish**.
 
@@ -382,11 +385,11 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 
 ## Próxima ação (1)
 
-1. **Deploy homolog** branch **`ci/homolog-ec2-s3-ssm`** @ **`7e19d47`** ([`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md)).
-2. **Smoke M4.7:** **G5** menu drawer (zero 404) · **G6** `/api/bff/shell` vs toolbar/header · Chart/RDO Em migração · bundle `index-C_4cZls3.js`.
-3. **UI-M1 + UI-M2c** (fontello/FA toolbar e card) — marcar **M4.7 ☑** em [`m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
-4. **M4.8** — P1 Login SPA; congela EQ-W (só bugfix crítico).
-5. **M5 (EQ-M)** — ver § [M5 — Apontador homolog](#m5--apontador-homolog-eq-m-vs-m5-nav-web); **não** antecipar antes de M4.7 fechado.
+1. **Deploy homolog** branch **`ci/homolog-ec2-s3-ssm`** (pacote **M4.8 + M5 web `/Rdo/Index`**) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
+2. **Smoke pós-deploy:** **P1** Login SPA (POST → Escolher) · **G5/G6** menu/RBAC · **`/Rdo/Index`** filtros + paginação + contagens vs prod · bundle `index-BoFBreD3.js`.
+3. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
+4. **Backlog M4** — **UI-M1/UI-M2c** fontello (não bloqueia M5 web).
+5. **M5 EQ-M** — **adiado**; prod Apontador inalterado.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

@@ -77,6 +77,36 @@ export interface EscolherContext {
   obras: ObraListItem[]
 }
 
+export interface RdoStatusOption {
+  id: number
+  nome: string
+}
+
+export interface RdoListItem {
+  idRdo: number
+  dataRdo: string
+  diaDaSemana: string
+  statusRdo: number
+  descricaoStatus: string
+  qtdTarefas: number
+  qtdColaboradores: number
+  qtdMaquinas: number
+}
+
+export interface RdoListPage {
+  currentPage: number
+  pageSize: number
+  totalPages: number
+  totalCount: number
+  items: RdoListItem[]
+  obraNome: string
+}
+
+export interface LoginContext {
+  antiforgeryFieldName: string
+  antiforgeryToken: string
+}
+
 export interface SelecionarObraResponse {
   success: boolean
   errorMessage?: string

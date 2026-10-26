@@ -20,15 +20,18 @@ namespace RdoApp.Core.Controllers
     {
         private readonly RdoDbContext _context;
         private readonly RecuperarSenhaService _recuperarSenha;
+        private readonly IWebHostEnvironment _env;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             RdoDbContext context,
             RecuperarSenhaService recuperarSenha,
+            IWebHostEnvironment env,
             ILogger<AccountController> logger)
         {
             _context = context;
             _recuperarSenha = recuperarSenha;
+            _env = env;
             _logger = logger;
         }
 
@@ -56,7 +59,13 @@ namespace RdoApp.Core.Controllers
             ViewData["Title"] = "Login - RDO App Equipamentos";
             
             _logger.LogInformation("Displaying login page");
-            
+
+            var spaIndex = Path.Combine(_env.WebRootPath, "app", "index.html");
+            if (System.IO.File.Exists(spaIndex))
+            {
+                return PhysicalFile(spaIndex, "text/html");
+            }
+
             return View(new LoginDto());
         }
 
