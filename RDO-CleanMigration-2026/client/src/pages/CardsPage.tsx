@@ -116,21 +116,35 @@ export function CardsPage() {
         showEditarObra={
           shell != null && typeof shell.showEditarObra === 'boolean' ? shell.showEditarObra : false
         }
+        showCriarNovoTarefa={shell?.showCriarNovoTarefa === true}
+        showCriarNovaEtapa={shell?.showCriarNovaEtapa === true}
       />
 
       {data.etapas.length === 0 ? (
         <label className="col-xs-12 no-padding cards-empty-label">Nenhum registro encontrado.</label>
       ) : (
         <>
-          <div id="selecionar-tudo" className="checkbox cards-select-all">
-            <label>
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={(e) => onSelectAllChange(e.target.checked)}
-              />
-              SELECIONAR TUDO
-            </label>
+          <div className="cards-select-all-row">
+            <div id="selecionar-tudo" className="checkbox cards-select-all">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectAll}
+                  onChange={(e) => onSelectAllChange(e.target.checked)}
+                />
+                SELECIONAR TUDO
+              </label>
+            </div>
+            {shell?.showAlterarStatusEmMassa === true ? (
+              <button
+                type="button"
+                className="btn btn-blue btn-menor cards-alterar-status-massa"
+                onClick={() => goOperador(P3_NAV.toolbar.alterarStatusEmMassa)}
+              >
+                <i className="fa fa-play-circle" aria-hidden />
+                alterar status em massa
+              </button>
+            ) : null}
           </div>
 
           <div className="lista-tarefas">

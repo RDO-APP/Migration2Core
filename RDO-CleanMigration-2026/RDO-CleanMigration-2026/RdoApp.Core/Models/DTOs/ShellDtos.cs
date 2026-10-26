@@ -19,6 +19,10 @@ public sealed class ShellContextDto
     public bool ShowGerarRdo { get; init; }
     /// <summary>P3 toolbar — paridade cards.html <c>permission="editarObra"</c> em /tarefa/cards.</summary>
     public bool ShowEditarObra { get; init; }
+    public bool ShowCriarNovoTarefa { get; init; }
+    public bool ShowCriarNovaEtapa { get; init; }
+    /// <summary>Typo legado <c>aterarStatusEmMassa</c> em cards.html.</summary>
+    public bool ShowAlterarStatusEmMassa { get; init; }
     public IReadOnlyList<ShellNavItemDto> MenuPaginas { get; init; } = Array.Empty<ShellNavItemDto>();
     public string? AntiforgeryFieldName { get; init; }
     public string? AntiforgeryToken { get; init; }

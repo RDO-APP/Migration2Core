@@ -9,6 +9,8 @@ type CardsToolbarProps = {
   onEditarObra: () => void
   showGerarRdo?: boolean
   showEditarObra?: boolean
+  showCriarNovoTarefa?: boolean
+  showCriarNovaEtapa?: boolean
 }
 
 /** M4.5 / M4.7c — paridade cards.html (ícones linha título + faixa LISTA/FILTRO). */
@@ -23,6 +25,8 @@ export function CardsToolbar({
   onEditarObra,
   showGerarRdo = false,
   showEditarObra = false,
+  showCriarNovoTarefa = false,
+  showCriarNovaEtapa = false,
 }: CardsToolbarProps) {
   return (
     <>
@@ -67,22 +71,26 @@ export function CardsToolbar({
           >
             <i className="fa fa-columns" aria-hidden />
           </button>
-          <button
-            type="button"
-            className="btn btn-simple cards-toolbar-mobile-only"
-            title="Adicionar tarefa"
-            onClick={onNovaTarefa}
-          >
-            <i className="fa fa-clipboard" aria-hidden />
-          </button>
-          <button
-            type="button"
-            className="btn btn-simple cards-toolbar-mobile-only"
-            title="Adicionar etapa"
-            onClick={onNovaEtapa}
-          >
-            <i className="fa fa-file-o" aria-hidden />
-          </button>
+          {showCriarNovoTarefa ? (
+            <button
+              type="button"
+              className="btn btn-simple cards-toolbar-mobile-only"
+              title="Adicionar tarefa"
+              onClick={onNovaTarefa}
+            >
+              <i className="fa fa-clipboard" aria-hidden />
+            </button>
+          ) : null}
+          {showCriarNovaEtapa ? (
+            <button
+              type="button"
+              className="btn btn-simple cards-toolbar-mobile-only"
+              title="Adicionar etapa"
+              onClick={onNovaEtapa}
+            >
+              <i className="fa fa-file-o" aria-hidden />
+            </button>
+          ) : null}
           <button
             type="button"
             className="btn btn-simple cards-toolbar-mobile-only"
@@ -107,14 +115,18 @@ export function CardsToolbar({
             <i className="fa fa-filter" aria-hidden />
             FILTRO
           </button>
-          <button type="button" className="btn btn-blue" onClick={onNovaTarefa}>
-            <i className="fa fa-clipboard" aria-hidden />
-            ADICIONAR TAREFA
-          </button>
-          <button type="button" className="btn btn-blue" onClick={onNovaEtapa}>
-            <i className="fa fa-file-o" aria-hidden />
-            ADICIONAR ETAPA
-          </button>
+          {showCriarNovoTarefa ? (
+            <button type="button" className="btn btn-blue" onClick={onNovaTarefa}>
+              <i className="fa fa-clipboard" aria-hidden />
+              ADICIONAR TAREFA
+            </button>
+          ) : null}
+          {showCriarNovaEtapa ? (
+            <button type="button" className="btn btn-blue" onClick={onNovaEtapa}>
+              <i className="fa fa-file-o" aria-hidden />
+              ADICIONAR ETAPA
+            </button>
+          ) : null}
         </div>
       </div>
 

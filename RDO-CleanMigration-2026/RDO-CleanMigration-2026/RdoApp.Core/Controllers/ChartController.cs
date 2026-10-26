@@ -7,10 +7,8 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class ChartController : Controller
 {
-    [HttpGet]
-    [HttpGet("/Chart")]
-    [HttpGet("/chart")]
-    [HttpGet("/chart/index")]
+    // Uma rota canonica — varios [HttpGet] no mesmo action geram AmbiguousMatchException (ASP0023) em runtime.
+    [HttpGet("/Chart/Index")]
     public IActionResult Index()
     {
         return EmMigracaoPage.Render(

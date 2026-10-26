@@ -1,10 +1,17 @@
 /* Shared OperadorShell — P2 + P3 */
+.topo .navbar-brand.logo {
+  flex-shrink: 0;
+  margin-right: 0;
+  padding: 3px 6px 3px 10px;
+}
+
 .topo .menu-lateral {
   display: flex;
   align-items: center;
   flex: 1 1 auto;
   min-width: 0;
-  gap: 0;
+  gap: 6px;
+  margin-left: 2px;
 }
 
 .operador-menu-bar {
@@ -131,12 +138,19 @@
 }
 
 /* M4.7h — drawer mobile (prod custom.css § menu-sidebar / ball-hover) */
+@media (min-width: 768px) {
+  .topo .menu-lateral .nav-mobile {
+    width: 63px;
+    flex-shrink: 0;
+  }
+}
+
 @media (max-width: 767px) {
   .topo .menu-lateral .nav-mobile {
     float: left !important;
     width: 48px;
     flex-shrink: 0;
-    margin-left: 4px;
+    margin-left: 8px;
   }
 
   .topo .menu-lateral .nav-mobile svg {

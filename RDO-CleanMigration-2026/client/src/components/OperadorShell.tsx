@@ -57,9 +57,10 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
     }
   }
 
-  const showChart = shell?.showChart ?? true
-  const showNovaObra = shell?.showNovaObra ?? true
-  const showDashboard = shell?.showDashboardObra ?? false
+  // Fail-closed até GET /api/bff/shell (paridade Permission.check — sem rota/permissão = oculto).
+  const showChart = shell?.showChart === true
+  const showNovaObra = shell?.showNovaObra === true
+  const showDashboard = shell?.showDashboardObra === true
   const menuPaginas = shell?.menuPaginas ?? []
 
   function closeMobileMenu() {
@@ -94,7 +95,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
       <div className="topo">
         <nav className="navbar bg-blue-default">
           <div className="no-padding">
-            <a className="navbar-brand logo pointer" href={logoHref}>
+            <a className="navbar-brand logo pointer" href={logoHref} onClick={navClick(logoHref)}>
               <i className="icon-logo" aria-hidden />
             </a>
             <div className="menu-lateral">

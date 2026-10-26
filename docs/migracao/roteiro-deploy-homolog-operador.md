@@ -164,7 +164,7 @@ Use **Ctrl+F5** (hard refresh) após SSM Success.
 | G3 | **P3** `/Tarefa/Cards` | Accordion com etapas/tarefas (BFF) |
 | G4 | Header | Logo · **nome da obra** · usuário + dropdown · ícones chart/+ (RBAC) |
 | G5 | **Menu hambúrguer** (M4.7d/**i**) | Drawer **opaco**, links **brancos**, accordion **não** aparece por cima do menu · itens de `GET /api/bff/shell` · Trocar senha / Sair |
-| G6 | Toolbar linha título | **RDO · Efetivo** (2 ícones se perfil **sem** `editarObra` — paridade prod **M4.7g**) · DevTools → `GET /api/bff/shell` → `showEditarObra` / `showGerarRdo` |
+| G6 | Toolbar linha título | **RDO · Efetivo** (2 ícones se perfil **sem** `editarObra` — paridade prod **M4.7g**) · DevTools → `GET /api/bff/shell` → matriz [`m4-7g-rbac-shell-p1-p3.md`](m4-7g-rbac-shell-p1-p3.md) |
 | G7 | Toolbar faixa | LISTA · FILTRO · ADICIONAR TAREFA · ADICIONAR ETAPA |
 | G8 | Navegação meio-termo (M4.7b) | Clique RDO → `/Rdo/Cadastro` (Em migração) · Chart → `/Chart` · ícone card → rota MVC |
 | G9 | DevTools Network | `GET /api/bff/etapas` **200** · SPA JS carregado (hash atual, ex. `index-DzoPbagL.js`) |
@@ -189,6 +189,18 @@ Após PASS: marcar **M4.7c/d** smoke em [`m4-execucao-checklist.md`](m4-execucao
 | Deploy OK mas **UI igual** | Publish **sem** `git pull` · **SSM sem publish** (re-upload zip velho) · cache browser | **Um ciclo só:** `git pull` → `git log -1` → **publish** → **deploy** → Ctrl+F5 · Network: hash JS/CSS **≠** deploy anterior |
 | Menu **transparente** / etapas **atrás** do drawer | `header.css` sidebar `z-index:2` dentro de `.topo` | **M4.7i** (`operador-menu-open`) — precisa bundle novo pós-fix |
 | **3 ícones** toolbar (RDO+edit+efetivo) vs prod **2** | `GET /api/bff/shell` → `showEditarObra:true` (permissão homolog) ou Core **sem** campos RBAC | Comparar JSON com prod (mesmo CPF) · não é bug de deploy se BFF devolve `true` |
+| **Deploy SSM OK** + browser **`502 Bad Gateway`** | **Regressão de hospedagem** (desde ~commit `6056bc9`): `ec2-apply` faz `taskkill` + **`Start-Process` Kestrel** mas **não** parava site IIS na **5081**; smoke só **`127.0.0.1:5081`** → falso positivo. ALB fala com **IP privado:5081** (mesmo caminho do browser). | Redeploy com `ec2-apply` atual (para IIS na 5081 + Kestrel `0.0.0.0:5081` + **ALB smoke obrigatório**). **Ou** modo IIS: deploy com `-AppPoolName '…'` e **sem** Kestrel solto — ver [`DEPLOY-HOMOLOG-EC2.md`](../../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-EC2.md). |
+| SSM **Failed** + **Unable to connect** `127.0.0.1:5081` | Build **`ceab653`**: `[HttpGet]` + `[HttpGet("/Chart")]` no mesmo action → exe **morre na subida** | Publish com fix M4.7k (só rotas por atributo no `Index` de Chart/Rdo/Dashboard) |
+
+### Por que “antes não acontecia”
+
+| Época | Como homolog subia | Por que ALB + browser funcionavam |
+|--------|-------------------|-----------------------------------|
+| **Setup manual (W1)** | IIS site na **5081** apontando para `homologacao\rdoapp_core` (doc Etapa 4) | Um único listener na 5081; ALB e localhost = mesmo caminho |
+| **SSM `6056bc9` / `d18cf8f`** | Script passou a subir **segundo** host: exe Kestrel + smoke **só localhost** | IIS **continuou** na 5081 em muitos deploys; ALB pode ver **502** enquanto SSM imprime **200** |
+| **Out/2026 `ceab653`** | Mesmo script + **bug de rotas** no publish | 502 **e** SSM Failed (exe não escuta) |
+
+**Regra operacional (evitar repetir):** na EC2 existe **um** dono da porta **5081** — **IIS** *ou* **Kestrel/serviço `RdoAppCoreHomolog`**, nunca os dois. O script `ec2-apply-rdoapp-core.ps1` hoje: para sites IIS na 5081 (modo Kestrel padrão), sobe Core em **`http://0.0.0.0:5081`**, e **falha o deploy** se o smoke no **IP privado** não for **200**.
 
 ---
 

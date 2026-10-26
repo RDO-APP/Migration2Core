@@ -27,8 +27,9 @@ public class ShellContextService
             {
                 Titulo = p.Titulo ?? "",
                 CssClass = string.IsNullOrWhiteSpace(p.CssClass) ? "fa fa-circle" : p.CssClass.Trim(),
-                Href = MapLegacyPath(p.Caminho),
+                Href = LegacyOperadorRoutes.MapHref(p.Caminho),
             })
+            .Where(i => !string.Equals(i.Href, "#", StringComparison.Ordinal))
             .ToList();
 
         return new ShellContextDto
@@ -41,6 +42,9 @@ public class ShellContextService
             ShowDashboardObra = PermissionHelper.HasPermission(context, "acessarDashboard", "/dashboard/index"),
             ShowGerarRdo = PermissionHelper.HasPermission(context, "gerarRdo", "/tarefa/cards"),
             ShowEditarObra = PermissionHelper.HasPermission(context, "editarObra", "/tarefa/cards"),
+            ShowCriarNovoTarefa = PermissionHelper.HasPermission(context, "criarNovo", "/tarefa/cards"),
+            ShowCriarNovaEtapa = PermissionHelper.HasPermission(context, "criarNovo", "/etapa/index"),
+            ShowAlterarStatusEmMassa = PermissionHelper.HasPermission(context, "aterarStatusEmMassa", "/tarefa/cards"),
             MenuPaginas = menu,
             AntiforgeryFieldName = tokens.FormFieldName,
             AntiforgeryToken = tokens.RequestToken,
@@ -77,39 +81,4 @@ public class ShellContextService
         }
     }
 
-    /// <summary>Best-effort map Angular hash paths → Core MVC routes (homolog).</summary>
-    private static string MapLegacyPath(string? caminho)
-    {
-        if (string.IsNullOrWhiteSpace(caminho))
-        {
-            return "#";
-        }
-
-        var path = caminho.Trim();
-        if (path.StartsWith("#/", StringComparison.Ordinal))
-        {
-            path = path[1..];
-        }
-
-        path = path.ToLowerInvariant();
-        return path switch
-        {
-            "/chart" or "/chart/index" => "/Chart/Index",
-            "/obra/cadastro" or "/obra/cadastro/index" => "/Obra/Cadastro",
-            "/dashboard/index" => "/Dashboard/Index",
-            "/tarefa/cards" or "/tarefa/cards/index" => "/Tarefa/Cards",
-            "/rdo/index" or "/rdo/listagem" => "/Rdo/Index",
-            "/efetivo/index" or "/efetivo" => "/Efetivo",
-            "/tarefa/paralizacoes/index" or "/tarefa/paralizacoes/cadastro" => "/Tarefa/Paralizacoes",
-            "/tarefa/index" => "/Tarefa/Index",
-            "/colaborador/index" => "/colaborador/index",
-            "/equipamento/index" or "/equipamentos/index" => "/equipamento/index",
-            "/empresa/index" => "/empresa/index",
-            "/etapa/index" => "/etapa/index",
-            "/obra/index" => "/obra/index",
-            "/pagina/index" => "/pagina/index",
-            _ when path.StartsWith('/') => path,
-            _ => "#",
-        };
-    }
 }

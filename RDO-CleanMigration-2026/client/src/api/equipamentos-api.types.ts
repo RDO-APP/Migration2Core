@@ -35,6 +35,9 @@ export interface ShellContext {
   showDashboardObra: boolean
   showGerarRdo: boolean
   showEditarObra: boolean
+  showCriarNovoTarefa: boolean
+  showCriarNovaEtapa: boolean
+  showAlterarStatusEmMassa: boolean
   menuPaginas: ShellNavItem[]
   antiforgeryFieldName?: string
   antiforgeryToken?: string

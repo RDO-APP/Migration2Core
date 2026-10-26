@@ -71,12 +71,37 @@ Expand-Archive -Path $zipPath -DestinationPath $extractRoot -Force
 Write-Output 'Expand-Archive OK'
 
 Import-Module WebAdministration -ErrorAction SilentlyContinue
+
+function Stop-IisSitesOnPort {
+    param([int]$Port)
+    if (-not (Get-Module WebAdministration)) { return @() }
+    $stopped = @()
+    Get-Website | ForEach-Object {
+        $site = $_
+        $site.Bindings.Collection |
+            Where-Object { $_.protocol -eq 'http' -and $_.bindingInformation -match ":$Port`:" } |
+            ForEach-Object {
+                if ($site.State -eq 'Started') {
+                    Write-Output "Stopping IIS site $($site.Name) (port $Port) so Kestrel can bind for ALB"
+                    Stop-Website -Name $site.Name -ErrorAction SilentlyContinue
+                    $stopped += $site.Name
+                }
+            }
+    }
+    return $stopped
+}
+
+$stoppedIisSites = @()
 if ($AppPoolName -and (Get-Module WebAdministration)) {
     if (Test-Path "IIS:\AppPools\$AppPoolName") {
         Write-Output "Stopping app pool $AppPoolName"
         Stop-WebAppPool -Name $AppPoolName -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 2
     }
+}
+else {
+    $stoppedIisSites = @(Stop-IisSitesOnPort -Port $SmokePort)
+    if ($stoppedIisSites.Count -gt 0) { Start-Sleep -Seconds 2 }
 }
 
 Write-Output 'Stopping RdoApp.Core (Kestrel homolog)...'
@@ -110,17 +135,33 @@ if (Test-Path $stagingBackup) {
     Write-Output "Restored $stagingName from backup"
 }
 
-if ($AppPoolName -and (Get-Module WebAdministration)) {
+$homologServiceName = 'RdoAppCoreHomolog'
+$homologService = Get-Service -Name $homologServiceName -ErrorAction SilentlyContinue
+$proc = $null
+$coreExe = Join-Path $SitePath 'RdoApp.Core.exe'
+
+if ($homologService) {
+    Write-Output "Restarting service $homologServiceName"
+    if ($homologService.Status -eq 'Running') {
+        Restart-Service -Name $homologServiceName -Force -ErrorAction SilentlyContinue
+    }
+    else {
+        Start-Service -Name $homologServiceName -ErrorAction SilentlyContinue
+    }
+    Start-Sleep -Seconds 5
+}
+elseif ($AppPoolName -and (Get-Module WebAdministration)) {
     if (Test-Path "IIS:\AppPools\$AppPoolName") {
-        Write-Output "Starting app pool $AppPoolName"
+        Write-Output "Starting app pool $AppPoolName (IIS :$SmokePort)"
         Start-WebAppPool -Name $AppPoolName -ErrorAction SilentlyContinue
+        Get-Website | Where-Object { $_.applicationPool -eq $AppPoolName -and $_.State -ne 'Started' } |
+            ForEach-Object { Start-Website -Name $_.Name -ErrorAction SilentlyContinue }
+        Start-Sleep -Seconds 3
     }
 }
-
-$coreExe = Join-Path $SitePath 'RdoApp.Core.exe'
-if (Test-Path $coreExe) {
-    Write-Output 'Starting RdoApp.Core (Kestrel homolog)...'
-    # Detached start: logs no console do SSM geravam Status=Failed com deploy OK.
+elseif (Test-Path $coreExe) {
+    Write-Output 'Starting RdoApp.Core (Kestrel homolog, 0.0.0.0 for ALB)...'
+    $listenUrls = "http://0.0.0.0:$SmokePort"
     $startArgs = @{
         FilePath         = $coreExe
         WorkingDirectory = $SitePath
@@ -130,23 +171,78 @@ if (Test-Path $coreExe) {
     if ($PSVersionTable.PSVersion.Major -ge 7) {
         $startArgs['Environment'] = @{
             ASPNETCORE_ENVIRONMENT = 'Staging'
-            ASPNETCORE_URLS        = "http://*:$SmokePort"
+            ASPNETCORE_URLS        = $listenUrls
         }
     }
     else {
         $env:ASPNETCORE_ENVIRONMENT = 'Staging'
-        $env:ASPNETCORE_URLS = "http://*:$SmokePort"
+        $env:ASPNETCORE_URLS = $listenUrls
     }
     $proc = Start-Process @startArgs
     if (-not $proc) { throw 'Failed to start RdoApp.Core.exe' }
-    Start-Sleep -Seconds 5
+    Start-Sleep -Seconds 3
+}
+elseif (-not (Test-Path $coreExe)) {
+    throw "RdoApp.Core.exe not found under $SitePath"
 }
 
 $smokeUrl = "http://127.0.0.1:$SmokePort/Account/Login"
 Write-Output "Smoke GET $smokeUrl"
-$response = Invoke-WebRequest -Uri $smokeUrl -UseBasicParsing -TimeoutSec 60
-Write-Output "Smoke status: $($response.StatusCode)"
-if ($response.StatusCode -ne 200) { exit 1 }
+$smokeOk = $false
+$maxAttempts = 15
+for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+    if ($proc -and $proc.HasExited) {
+        throw "RdoApp.Core.exe exited before smoke (code $($proc.ExitCode)). Check homolog Event Log or run exe manually on EC2."
+    }
+    try {
+        $response = Invoke-WebRequest -Uri $smokeUrl -UseBasicParsing -TimeoutSec 15
+        Write-Output "Smoke status: $($response.StatusCode) (attempt $attempt)"
+        if ($response.StatusCode -eq 200) {
+            $smokeOk = $true
+            break
+        }
+    } catch {
+        Write-Output "Smoke attempt ${attempt}/${maxAttempts}: $($_.Exception.Message)"
+    }
+    Start-Sleep -Seconds 4
+}
+if (-not $smokeOk) { exit 1 }
+
+$privateIp = (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+    Where-Object { $_.IPAddress -notmatch '^127\.' -and $_.PrefixOrigin -ne 'WellKnown' } |
+    Select-Object -First 1).IPAddress
+$albSmokeOk = $false
+if ($privateIp) {
+    $albSmokeUrl = "http://${privateIp}:$SmokePort/Account/Login"
+    Write-Output "Smoke GET $albSmokeUrl (ALB/TG path - must match browser, not only localhost)"
+    for ($attempt = 1; $attempt -le 10; $attempt++) {
+        try {
+            $albResp = Invoke-WebRequest -Uri $albSmokeUrl -UseBasicParsing -TimeoutSec 20
+            Write-Output "ALB smoke status: $($albResp.StatusCode) (attempt $attempt)"
+            if ($albResp.StatusCode -eq 200) {
+                $albSmokeOk = $true
+                break
+            }
+        } catch {
+            Write-Output "ALB smoke attempt $attempt/10: $($_.Exception.Message)"
+        }
+        Start-Sleep -Seconds 3
+    }
+}
+else {
+    Write-Output 'ALB smoke SKIP: no private IPv4 on instance (unexpected on EC2)'
+}
+
+if (-not $albSmokeOk) {
+    Write-Output @'
+ALB smoke FAILED. Common causes (regression since SSM Start-Process without stopping IIS):
+  - IIS still bound to :5081 (ALB hits IIS 502; localhost smoke hit Kestrel on another binding)
+  - Kestrel listening on 127.0.0.1 only (use ASPNETCORE_URLS=http://0.0.0.0:5081)
+  - RdoApp.Core.exe exited after SSM (check Event Log)
+Fix: redeploy with this script, or Session Manager - Stop-Website on :5081, start Core with 0.0.0.0:5081
+'@
+    exit 1
+}
 
 Write-Output 'Deploy homolog Core OK'
 exit 0

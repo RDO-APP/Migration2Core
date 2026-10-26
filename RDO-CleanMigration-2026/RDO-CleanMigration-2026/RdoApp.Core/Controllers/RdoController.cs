@@ -8,10 +8,7 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class RdoController : Controller
 {
-    [HttpGet]
-    [HttpGet("/Rdo")]
-    [HttpGet("/rdo/index")]
-    [HttpGet("/rdo/listagem")]
+    [HttpGet("/Rdo/Index")]
     public IActionResult Index()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
@@ -26,7 +23,7 @@ public class RdoController : Controller
             prodRef: "#/rdo/index");
     }
 
-    [HttpGet]
+    [HttpGet("/Rdo/Cadastro")]
     public IActionResult Cadastro()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))

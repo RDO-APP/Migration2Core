@@ -27,7 +27,7 @@ export const P3_NAV = {
   toolbar: {
     gerarRdo: '/Rdo/Cadastro',
     editarObra: '/Obra/Cadastro',
-    efetivoDiario: '/Efetivo',
+    efetivoDiario: '/Efetivo/Index',
     listaTarefas: '/Tarefa/Index',
     adicionarTarefa: '/Tarefa/Cadastro',
     adicionarEtapa: '/Etapa/Cadastro',

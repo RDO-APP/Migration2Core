@@ -114,8 +114,6 @@ public class TarefaController : Controller
             prodRef: "cards.html · SELECIONAR TUDO");
     }
 
-    [HttpGet("/tarefa/paralizacoes/index")]
-    [HttpGet("/Tarefa/Paralizacoes")]
     [HttpGet("/Tarefa/Paralizacoes/Index")]
     public IActionResult Paralizacoes()
     {

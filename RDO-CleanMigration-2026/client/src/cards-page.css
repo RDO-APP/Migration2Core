@@ -703,3 +703,16 @@
     top: 9px !important;
   }
 }
+
+.cards-select-all-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.cards-select-all-row .cards-alterar-status-massa {
+  margin: 0;
+}

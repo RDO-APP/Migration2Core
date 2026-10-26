@@ -43,31 +43,35 @@ $presignedUrl = $presignedUrl.Trim()
 
 $scriptPath = Join-Path $PSScriptRoot 'ec2-apply-rdoapp-core.ps1'
 if (-not (Test-Path $scriptPath)) { throw "Missing $scriptPath" }
-$remoteScript = Get-Content -Raw -Path $scriptPath
+$remoteScript = Get-Content -Raw -Encoding UTF8 -Path $scriptPath
+$scriptB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($remoteScript))
 
 $poolArg = if ($AppPoolName) { "-AppPoolName '$AppPoolName'" } else { '' }
+$presignedEsc = $presignedUrl -replace "'", "''"
 $commands = @(
-    "Set-ExecutionPolicy Bypass -Scope Process -Force"
+    'Set-ExecutionPolicy Bypass -Scope Process -Force'
     @"
-`$script = @'
-$remoteScript
-'@
-Set-Content -Path `$env:TEMP\ec2-apply-rdoapp-core.ps1 -Value `$script -Encoding UTF8
-& `$env:TEMP\ec2-apply-rdoapp-core.ps1 -S3Bucket '$S3Bucket' -PresignedZipUrl '$presignedUrl' -SitePath '$SitePath' -AwsRegion '$AwsRegion' $poolArg
+`$applyPath = Join-Path `$env:TEMP 'ec2-apply-rdoapp-core.ps1'
+[System.IO.File]::WriteAllBytes(`$applyPath, [Convert]::FromBase64String('$scriptB64'))
+& `$applyPath -S3Bucket '$S3Bucket' -PresignedZipUrl '$presignedEsc' -SitePath '$SitePath' -AwsRegion '$AwsRegion' $poolArg
 "@
 )
 
-$paramPath = Join-Path $env:TEMP "ssm-homolog-core-$timestamp.json"
-$paramJson = @{ commands = $commands } | ConvertTo-Json -Depth 5
+$cliInputPath = Join-Path $env:TEMP "ssm-homolog-input-$timestamp.json"
+$cliInput = @{
+    DocumentName = 'AWS-RunPowerShellScript'
+    InstanceIds  = @($InstanceId)
+    Parameters   = @{ commands = $commands }
+}
+$cliJson = $cliInput | ConvertTo-Json -Depth 8 -Compress
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
-[System.IO.File]::WriteAllText($paramPath, $paramJson, $utf8NoBom)
+[System.IO.File]::WriteAllText($cliInputPath, $cliJson, $utf8NoBom)
 
+# Windows: --parameters file://... falha (\U em \Users ou file:///C:/). --cli-input-json file://$path OK.
 Write-Host "SSM SendCommand -> $InstanceId" -ForegroundColor Cyan
 $commandId = aws ssm send-command `
     --region $AwsRegion `
-    --instance-ids $InstanceId `
-    --document-name 'AWS-RunPowerShellScript' `
-    --parameters "file://$paramPath" `
+    --cli-input-json "file://$cliInputPath" `
     --query 'Command.CommandId' `
     --output text
 

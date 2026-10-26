@@ -109,6 +109,14 @@ app.MapGet("/", context =>
     return Task.CompletedTask;
 });
 
+app.MapGet("/Chart", () => Results.Redirect("/Chart/Index"));
+app.MapGet("/Dashboard", () => Results.Redirect("/Dashboard/Index"));
+app.MapGet("/Rdo", () => Results.Redirect("/Rdo/Index"));
+app.MapGet("/Tarefa/Paralizacoes", () => Results.Redirect("/Tarefa/Paralizacoes/Index"));
+app.MapGet("/Efetivo", () => Results.Redirect("/Efetivo/Index"));
+app.MapGet("/efetivo/index", () => Results.Redirect("/Efetivo/Index"));
+app.MapGet("/rdo/cadastro", () => Results.Redirect("/Rdo/Cadastro"));
+
 app.MapControllers();
 
 app.MapControllerRoute(
