@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-25 — **M4** (M4.7 paridade · **execução Lucio+Cursor sem Dimas**) · **M4.8** **P1** · [`dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md) · **I0** B1/B2 · [`docs/ops/`](ops/README.md)  
+**Atualizado:** 2026-10-26 — **M4** (**M4.7** smoke pendente · **M4.8** **P1**) · Git **`7e19d47`** (`ci/homolog-ec2-s3-ssm`) · **I0** B1/B2 · [`dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md) · [`docs/ops/`](ops/README.md)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -100,7 +100,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M4** — **M4.4 polish P2** + **M4.5–M4.6 P3** **deploy homolog 2026-10-21** · smoke Lucio **P2/P3** · **P1** = **M4.8** · **P4** = **M7+**. Cruzamento web+apps: manual **§6b**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · runbook [`migracao/pacote-p2-p3-execucao-20261021.md`](migracao/pacote-p2-p3-execucao-20261021.md).
+**Marco ativo:** **M4** — **M4.4–M4.6 ☑** · **M4.7** código **B–D** no Git (**menu/RBAC/nav/header** · `LegacyOperadorRoutes` · commit **`7e19d47`**) · **falta:** smoke homolog **G5/G6** + **UI-M1/UI-M2c** (fontello/FA) · **P1** = **M4.8** · **P4** = **M7+**. Cruzamento web+apps: manual **§6b**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · nav/RBAC: [`migracao/m4-7-menu-nav-stubs.md`](migracao/m4-7-menu-nav-stubs.md) · [`migracao/m4-7g-rbac-shell-p1-p3.md`](migracao/m4-7g-rbac-shell-p1-p3.md).
 
 **Numeração P (canônica):** **P1** Login · **P2** Escolher/cards obra · **P3** Etapas/Tarefas · **P4** Nova medição (= matriz **#1–#4**).
 
@@ -111,16 +111,16 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | Fase | Marco | Passos | Status |
 |------|-------|--------|--------|
 | **A** | **M0′** doc | A1 RDS/hosts · A2 smoke prod + evidências · A3 aceite | **A executada** — ver [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · HAR API ○ opcional |
-| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **parcial** — B1/B2 OK 2026-10-19; **scripts FDD + serviço** versionados (`publish-homolog-ec2-fdd.ps1` · `ec2-install-rdoapp-core-service.ps1`); B3 execução EC2 pendente |
+| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **parcial** — B1/B2 OK · **SSM/apply** endurecido **`7e19d47`**; B3 serviço Windows / runway &lt;2 min na EC2 pendente |
 | **C** | **M2 produto** | C1 BFF agrupador · C2 DTO card · C3 React accordion/cards · C5 redeploy | **C1–C3 + C5 homolog OK** — `/Tarefa/Cards` obra 42: 3 etapas · **13** tarefas · head/datas/%/status; **M2.5+** toolbar/ações · **M3** gate |
 | **D** | **M3** | D1–D4 E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · D5 assinatura | **PASS 2026-10-19** (passos 1–5 · Lucio) |
 | **E** | **M4+** | E1 congela EQ-W · E2 M5 Apontador · E3 M6+ | **E1 ativo** — shell/layout · Escolher React |
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem confirmada 2026-10-21):** ver § [Próximos passos (ordem)](#próximos-passos-ordem) — **agora:** smoke **P2/P3** pós-deploy · depois **M4.8** Login SPA · **M6** contratos compartilhados (§6b.3).
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** deploy **`7e19d47`** + smoke **G5/G6** · fechar **M4.7** (fontello) · **M4.8** · depois **M5** EQ-M (não confundir com **M5-nav** web stubs).
 
-**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-20** M4.1 + ops/I0 scripts · Git **`d18cf8f`** (M2 deploy) → **`d9dce0b`** (`ci/homolog-ec2-s3-ssm`).
+**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-21** M4.4–M4.6 deploy · **2026-10-26** **`7e19d47`** M4.7 B–D + I0 scripts.
 
 **Deploy:** roteiro [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pacote P2+P3 **2026-10-21** (ver runbook) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
@@ -134,7 +134,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações · M4.4 Escolher React |
 | **M2** | **FECHADO** | — |
 | **M3** | **FECHADO** | passos 6–7 E2E opcional |
-| **M4** | **M4.1–M4.3** shell + deploy | **M4.4** **P2** · **M4.5–M4.7** **P3** · **M4.8** **P1** EQ-W |
+| **M4** | **M4.1–M4.6** ☑ · **M4.7** B–D no Git | Smoke G5/G6 · UI-M1/M2c · **M4.8** **P1** · congela EQ-W |
 
 ---
 
@@ -163,7 +163,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - Monorepo vs pacotes npm (`@rdo/api-client`, etc.) — Dimas + Lucio.
 - Onde hospedar build EQ-R no homolog (static no Core vs CDN vs subpath).
 - ~~Cenário mobile homolog E3~~ → **A** fechado M1 ([`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)).
-- Merge `EquipamentosMobile` `feature/alteracoes_apontador`.
+- **M5 (EQ-M):** merge ou plano explícito para `EquipamentosMobile` **`feature/alteracoes_apontador`** + APK homolog (ver § abaixo · [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md)).
 - Marco FAPESC vs horas TSK (**Trilha F**).
 - Abertura trilha **PQ** (Piscinas).
 
@@ -327,7 +327,17 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 **Regra:** seguir **M\***; usar Dimas para **não esquecer escopo** (ETL, JWT, domínio apontamento, gestor), não para **repriorizar** big-bang.
 
-**Modo atual (2026-10-25):** **sem Dimas na execução** — dono homolog operador = **Lucio + Cursor**. Dimas (se vier) **não substitui** M4.7/M4.8; encaixa em **M5/M6** (domínio, API v1, mobile) ou trilha **EQ-L** prod. Checklist entrada: [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md).
+**Modo atual (2026-10-26):** **sem Dimas na execução** — dono homolog operador web = **Lucio + Cursor**. Dimas (se vier) **não substitui** M4.7/M4.8; encaixa em **M5/M6** (domínio, API v1, mobile) ou trilha **EQ-L** prod. Checklist entrada: [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md).
+
+### M5 — Apontador homolog (EQ-M) vs M5-nav (web)
+
+| Nome | Trilha | O quê |
+|------|--------|--------|
+| **M5** (marco plano v1) | **EQ-M** | App **RDO Apontador** (`RDO-APP/EquipamentosMobile`): entrar no **mesmo plano** de migração que a web — homolog testável, API documentada (M1), **sem** rebuild greenfield (TSK mobile ⏸). |
+| **`feature/alteracoes_apontador`** | Git mobile | Branch de **trabalho em campo** (apontamentos, ajustes Apontador) inventariada em M0 @ **`14cf5d3`**. **Decisão aberta:** merge na main mobile **ou** plano escrito (o que fica, o que descarta) **antes** de APK homolog oficial. |
+| **M5-nav** (doc UI) | **EQ-R** | Só **menu drawer web** (9 itens → stubs). **Não** é o marco M5 do plano — nome colide; ver [`m4-7-menu-nav-stubs.md`](migracao/m4-7-menu-nav-stubs.md). |
+
+**Hoje:** Apontador em **prod** fala com **EQ-L** (`POST /api/login/LoginUser`, LoginObra, etc.) — cenário **A** ([`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)). **Homolog web** usa **Core + BFF + cookie** (`homol_rdoapp`). **M5** fecha o gap: APK apontando para **homolog Core** (ou cenário B/C/D documentado), mesma obra/CPF teste que web, branch mobile alinhada.
 
 ---
 
@@ -343,8 +353,9 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **4** | ~~**M4.3** deploy~~ | Lucio | — | **✅ 20261020-100219** |
 | **5** | ~~**M4.4** Escolher React + polish~~ | **EQ-R** | — | **✅ deploy 2026-10-21** |
 | **6** | ~~**M4.5–M4.6** P3 toolbar + accordion fix~~ | **EQ-R** | — | **✅ deploy 2026-10-21** · smoke Lucio |
-| **7** | **M4.7** card tarefa completo + **M4.8** Login SPA / congela EQ-W | **EQ-R** | — | |
-| **8** | **M7+** Nova medição · RBAC fino · **I0 B3** FDD | várias | não | paralelo |
+| **7** | **M4.7** smoke G5/G6 + UI-M1/M2c · depois **M4.8** Login SPA / congela EQ-W | **EQ-R** | — | código B–D **`7e19d47`** |
+| **8** | **M5** Apontador homolog + branch/plano `feature/alteracoes_apontador` | **EQ-M** | não | após M4.7 ☑ |
+| **9** | **M6** contratos/JWT · **M7+** telas reais · **I0 B3** | várias | não | paralelo |
 
 **Por que não inverter:** M4 antes de M3 viola critério de encerramento EQ-W (M2+M3 OK). I0 B3 antes de M3 **não** é necessário (B1/B2 já OK). Toolbar Escolher/Cards **antes** do shell M4 gera UI solta — estratégia acordada: **shell → Escolher → Cards polish**.
 
@@ -371,11 +382,13 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 
 ## Próxima ação (1)
 
-**M4.7** — fechar paridade P3 (**UI-M1 + UI-M2c** fontello/FA toolbar · UI-M2/M2b) + deploy **Core+SPA** + smoke Lucio (menu 9 itens, ícones Gerar RDO/Efetivo, header → Em migração). Doc marcos ícones: [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md). Depois **M4.8** Login SPA. Manual **§10.4** · **§10.7** · [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md).
+1. **Deploy homolog** branch **`ci/homolog-ec2-s3-ssm`** @ **`7e19d47`** ([`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md)).
+2. **Smoke M4.7:** **G5** menu drawer (zero 404) · **G6** `/api/bff/shell` vs toolbar/header · Chart/RDO Em migração · bundle `index-C_4cZls3.js`.
+3. **UI-M1 + UI-M2c** (fontello/FA toolbar e card) — marcar **M4.7 ☑** em [`m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md).
+4. **M4.8** — P1 Login SPA; congela EQ-W (só bugfix crítico).
+5. **M5 (EQ-M)** — ver § [M5 — Apontador homolog](#m5--apontador-homolog-eq-m-vs-m5-nav-web); **não** antecipar antes de M4.7 fechado.
 
-**UI-M3 (Fase B — aposentar fontello/BS legado na SPA):** **não** abrir até M4.7 ☑ + M7 estável — ver gates no doc fontello; atualizar **esta seção** ao mudar data.
-
-**Smoke 2026-10-25 (Lucio):** gap logo/menu → **UI-M2d** / UI-M3 · menu drawer sem pele prod + links legado → **M4.7g/M5-nav** · SELECIONAR TUDO → **M7** (não UI-M3). Próximo incremento código: **M4.7g** (CSS drawer + stubs menu MVC) — ver [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md) tabela pós-smoke.
+**UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
 ---
 
