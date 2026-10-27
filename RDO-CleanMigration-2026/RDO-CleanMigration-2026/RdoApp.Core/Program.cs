@@ -91,13 +91,11 @@ builder.Services.AddAuthentication(options =>
                         ObraSessionHelper.HasObraSelected(ctx.HttpContext)
                             ? "/Tarefa/Cards"
                             : "/Obra/Escolher");
-                    ctx.HandleResponse();
                     return Task.CompletedTask;
                 }
 
                 HomologDiagnostics.SetRedirectMotivo(ctx.HttpContext, "nao-autenticado; vai-Login-com-ReturnUrl");
                 ctx.Response.Redirect(ctx.RedirectUri);
-                ctx.HandleResponse();
                 return Task.CompletedTask;
             },
         };

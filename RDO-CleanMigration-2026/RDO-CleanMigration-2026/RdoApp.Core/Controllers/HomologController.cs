@@ -67,7 +67,8 @@ public class HomologController : Controller
   <p><strong>Não</strong> é tela de produto. Operador (Cards/RDO) fica igual ao legado.</p>
   <p class="warn">Meta: chegar na listagem RDO como prod <code>sistema.rdoapp.com.br/rdo/index</code>.</p>
   <h2>Snapshot servidor (esta requisição)</h2>
-  <pre id="snap-server">""");
+  <pre id="snap-server">
+""");
         sb.Append(WebUtility.HtmlEncode(snapshot));
         sb.Append($"\nautenticado-mvc={autenticado.ToString().ToLowerInvariant()}");
         sb.Append("""
