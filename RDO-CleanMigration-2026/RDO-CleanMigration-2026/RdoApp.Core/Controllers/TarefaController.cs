@@ -15,24 +15,8 @@ public class TarefaController : Controller
     }
 
     [HttpGet]
-    public IActionResult Cards()
-    {
-        if (!ObraSessionHelper.HasObraSelected(HttpContext))
-        {
-            return RedirectToAction(nameof(ObraController.Escolher), "Obra");
-        }
-
-        var spaIndex = Path.Combine(_env.WebRootPath, "app", "index.html");
-        if (System.IO.File.Exists(spaIndex))
-        {
-            return PhysicalFile(spaIndex, "text/html");
-        }
-
-        ViewData["Title"] = "Tarefas";
-        ViewData["ObraId"] = ObraSessionHelper.GetObraId(HttpContext);
-        ViewData["ObraNome"] = ObraSessionHelper.GetObraNome(HttpContext);
-        return View();
-    }
+    public IActionResult Cards() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Tarefas");
 
     [HttpGet]
     public IActionResult Index()

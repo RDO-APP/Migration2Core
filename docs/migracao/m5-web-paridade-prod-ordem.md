@@ -5,6 +5,8 @@
 
 **Nota:** marco **M5** no [`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) = mobile; aqui **M5 web** = Onda B (telas listagem/gráfico). Evitar confusão com **M5-nav** (menu drawer).
 
+**Classe de tela:** fila abaixo = **P5a** (manual §**10.8**) — MVC `OperadorSpaEntry` + React + BFF; smoke RDO após deploy (sem `ERR_TOO_MANY_REDIRECTS`).
+
 ---
 
 ## Já ≈ produção (homolog)

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,6 +54,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = cookieSecurePolicy;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.Path = "/";
 });
 
 // Configure Cookie Authentication (instead of Identity)
@@ -67,6 +70,26 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = cookieSecurePolicy;
         options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.Path = "/";
+        options.Events = new CookieAuthenticationEvents
+        {
+            // Cookie válido mas pipeline mandou para Login → evita loop Login ↔ ReturnUrl (P5a).
+            OnRedirectToLogin = ctx =>
+            {
+                if (ctx.HttpContext.User?.Identity?.IsAuthenticated == true)
+                {
+                    // Não reenviar para ReturnUrl (ex. /Rdo/Index) — quebra ERR_TOO_MANY_REDIRECTS.
+                    ctx.Response.Redirect(
+                        ObraSessionHelper.HasObraSelected(ctx.HttpContext)
+                            ? "/Tarefa/Cards"
+                            : "/Obra/Escolher");
+                    return Task.CompletedTask;
+                }
+
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;
+            },
+        };
     });
 
 builder.Services.AddAuthorization();

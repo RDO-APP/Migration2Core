@@ -465,6 +465,36 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 | **P1** | Login | Layout externo; SPA unificada | **M4.8** |
 | **P4** | Nova medição (modal) | Inexistente no homolog | **M7+** |
 
+### 10.8 Classes de tela operador — P5 (M5 web) e além
+
+**Atualizado:** 2026-10-27 · **Fila M5:** [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)
+
+Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta tabela para **pacotes de PR/deploy** (não migrar “tela solta”).
+
+| Classe | Prod (Angular `#/…`) | Entrada homolog (MVC) | UI homolog | Dados | Notas |
+|:------:|----------------------|------------------------|------------|-------|--------|
+| **P5a** | `#/rdo/index`, `#/chart`, `#/dashboard/index`, `#/efetivo/index`… | `/Rdo/Index`, `/Chart/Index`, … | React + `OperadorShell` | BFF `/api/bff/*` por módulo | **Full page** (`goOperador`) — não é popup de card |
+| **P5b** | `#/rdo/cadastro`, `#/obra/cadastro`… | `/Rdo/Cadastro`, … | React ou stub | POST legado / BFF | Formulários pesados → **M7** |
+| **P6** | `#/colaborador/index`, `#/grupo/index`… | `ModuloLegadoController` | “Em migração” | CRUD admin | **M7+** |
+
+**Molde P5a (copiar de Cards / RDO):**
+
+1. **MVC** — `[HttpGet] Index` → `OperadorSpaEntry.ServeSpaIndex` (HTTP **200** + `wwwroot/app/index.html`; obra selecionada; **sem** redirect Login com `ReturnUrl`).
+2. **React** — `detectOperadorPage()` + página dedicada (`RdoIndexPage`, …).
+3. **BFF** — espelhar API legado (ex. prod `POST api/rdo/CarregarLista` → homolog `GET /api/bff/rdos`).
+
+**Código compartilhado:** `RdoApp.Core/Infrastructure/OperadorSpaEntry.cs` · rotas header/menu: `client/src/nav/p3-operador-routes.ts` · mapa drawer: `LegacyOperadorRoutes.cs`.
+
+**Erros típicos P5a:**
+
+| Sintoma | Causa provável | Onde corrigir |
+|---------|----------------|---------------|
+| `ERR_TOO_MANY_REDIRECTS` | `/Rdo/Index` ↔ `/Account/Login?ReturnUrl=…` | Cookie `OnRedirectToLogin` + Login GET já logado → Cards (não voltar ao ReturnUrl) |
+| 500 AmbiguousMatch | Rota duplicada (`[HttpGet("/Rdo/Index")]` + convencional) | Só `[HttpGet]` convencional no controller |
+| Clique no menu “não muda” | Sem action MVC; SPA trata URL como Cards | Action MVC + ramo React |
+
+**Smoke P5a (RDO):** Login → Escolher → Selecionar → Cards → ícone RDO → **200** em `/Rdo/Index` + listagem (não tela vermelha de redirect).
+
 ### 10.7 Stack front homolog ② — legado, moderno, híbrido (P1–P4)
 
 **Resumo:** a SPA operador (**P2/P3**) é **moderna** (React + BFF Core). O que ainda “cheira” prod é **visual** — CSS recortado (`header.css`, `escolher.css`, `cards-page.css`), **Font Awesome 4.7** parcial + **fontello** (subset), markup copiado de `escolher.html` / `cards.html` (`panel-*`, `col-xs-*`, `btn-simple`). **Quando** copiar legado vs aposentar fontes: [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).

@@ -1,6 +1,6 @@
 export type OperadorPage = 'login' | 'escolher' | 'cards' | 'rdo'
 
-/** SPA servida pelo host MVC (Login, Escolher, Cards, RDO listagem). */
+/** SPA servida pelo host MVC (Login, Escolher, Cards, P5a módulos). */
 export function detectOperadorPage(pathname = window.location.pathname): OperadorPage {
   const p = pathname.toLowerCase()
   if (p.includes('/account/login')) {
@@ -9,11 +9,12 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   if (p.includes('/obra/escolher')) {
     return 'escolher'
   }
-  if (p.includes('/rdo/index')) {
+  if (p.includes('/rdo/index') || p === '/rdo' || p === '/rdo/') {
     return 'rdo'
   }
   if (p.includes('/tarefa/cards')) {
     return 'cards'
   }
-  return 'escolher'
+  // P5a futuro (Chart, Dashboard…): fallback cards até página React existir.
+  return 'cards'
 }

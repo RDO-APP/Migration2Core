@@ -16,24 +16,8 @@ public class RdoController : Controller
 
     // Rota convencional /Rdo/Index — evita AmbiguousMatch com MapControllerRoute (ASP0023).
     [HttpGet]
-    public IActionResult Index()
-    {
-        if (!ObraSessionHelper.HasObraSelected(HttpContext))
-        {
-            return RedirectToAction(nameof(ObraController.Escolher), "Obra");
-        }
-
-        var spaIndex = Path.Combine(_env.WebRootPath, "app", "index.html");
-        if (System.IO.File.Exists(spaIndex))
-        {
-            return PhysicalFile(spaIndex, "text/html");
-        }
-
-        ViewData["Title"] = "RDO's";
-        ViewData["ObraId"] = ObraSessionHelper.GetObraId(HttpContext);
-        ViewData["ObraNome"] = ObraSessionHelper.GetObraNome(HttpContext);
-        return View();
-    }
+    public IActionResult Index() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "RDO's");
 
     [HttpGet]
     public IActionResult Cadastro()

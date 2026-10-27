@@ -53,6 +53,16 @@ namespace RdoApp.Core.Controllers
                     await HttpContext.SignOutAsync("Cookies");
                     HttpContext.Session.Clear();
                 }
+                else
+                {
+                    // Já logado: nunca 302 de volta ao ReturnUrl (quebra loop Login ↔ /Rdo/Index).
+                    if (ObraSessionHelper.HasObraSelected(HttpContext))
+                    {
+                        return RedirectToAction("Cards", "Tarefa");
+                    }
+
+                    return RedirectToAction("Escolher", "Obra");
+                }
             }
 
             ViewData["ReturnUrl"] = returnUrl;
