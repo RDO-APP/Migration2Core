@@ -386,7 +386,7 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 ## Próxima ação (1)
 
 1. **Deploy homolog D→E** — pacote pós-**T3** (**`/Homolog/F12`**, auth scheme, sem rodapé SPA) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
-2. **Smoke RDO — T4:** Ctrl+F5 → **`/Homolog/F12`** (JSON) → Cards → RDO → listagem como prod **`#/rdo/index`**. Log **T4** em [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) · **T3** ☑ 2026-10-27 08:05 classe **A**.
+2. **Smoke RDO — T5:** deploy fix **Login sem ReturnUrl** em `/Rdo/Index` · log completo [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) (T0–T4 + aprendizados) · **T4** ☑ 2026-10-27 ~09:43 classe **A** pós-`6574ae5`.
 3. Se **classe E:** paridade listagem (filtros, paginação, contagens vs prod `#/rdo/index`) · bundle atual em `wwwroot/app/index.html`.
 4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
 5. **Backlog M4** — **UI-M1/UI-M2c** fontello · **M5 EQ-M** **adiado**.

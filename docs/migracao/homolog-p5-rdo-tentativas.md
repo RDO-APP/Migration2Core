@@ -1,7 +1,9 @@
 # Homolog P5a — RDO `/Rdo/Index` · registro de tentativas
 
-**Objetivo:** contar smoke e classificar falha (MVC vs deploy vs React vs BFF).  
-**Diagnóstico F12:** § [Como ler](#como-ler-f12) · API `GET /api/bff/diag` · cabeçalho `X-RdoApp-Diag`
+**Objetivo:** contar smoke, classificar falha (MVC / deploy / React / BFF) e **não repetir** o mesmo erro.  
+**Diagnóstico:** [`/Homolog/F12`](https://homolog.sistema.rdoapp.com.br/Homolog/F12) · `GET /api/bff/diag` · cabeçalhos `X-RdoApp-*` (Rede → Doc) · manual §10.8
+
+**Meta produto (paridade):** prod `#/rdo/index` → homolog **`/Rdo/Index`** — listagem Status, datas, tabela RDO, PESQUISAR/NOVO.
 
 ---
 
@@ -10,42 +12,63 @@
 | Marco | Estado |
 |-------|--------|
 | P3 Cards | ☑ homolog |
-| P5a RDO listagem | 🟡 loop redirect **até deploy** com fix `3a7f5ad`+ |
-| Diagnóstico visível | ☑ **`/Homolog/F12`** + `GET /api/bff/diag` (sem rodapé nas telas P1–P5) |
-
-**Por que “trava” aqui:** RDO usa **nova URL MVC** (`/Rdo/Index`) com **full page**; se o servidor responder **302 Login ↔ Rdo**, o React **nem carrega** — use **`/Homolog/F12`** e Rede **Doc** (cabeçalhos), não rodapé na tela operador.
+| P5a RDO listagem | 🔴 **classe A** — loop persiste pós-**T4** · fix **T5** (`Rdo/Index` sem `ReturnUrl` no redirect) |
+| Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
 
 ## Tentativas (contagem)
 
-| # | Data (BR) | Deploy D+E? | Commit alvo | O que você viu | Classe | Próximo passo |
-|---|-----------|-------------|-------------|----------------|--------|----------------|
-| **T0** | 2026-10-26 | ❓ | ≤ `3e3709b` | HTTP **500** AmbiguousMatch em `/Rdo/Index` | rota MVC | Fix `3e3709b` |
-| **T1** | 2026-10-26 | ❓ | ≤ `3e3709b` | `ERR_TOO_MANY_REDIRECTS` em `/Rdo/Index` | **A** loop MVC/auth | Deploy `3a7f5ad` |
-| **T2** | 2026-10-26 | ❓ | `3a7f5ad` local, EC2 ? | Mesmo loop após clique RDO | **B** EC2 desatualizada **ou** A | Confirmar SSM Success pós-D |
-| **T3** | **2026-10-27 08:05** (BR) | ✅ D+E · SSM `46901ecd-faff-47a0-97dc-28d5817f3185` Success · ~1,4 min | `c0d09e8` · publish `index-C4fKCj64.js` | P1/P3 OK · clique RDO → **`ERR_TOO_MANY_REDIRECTS`** em `/Rdo/Index` (print) · meta prod `#/rdo/index` | **A** | Deploy pós-fix F12 + auth scheme · **T4** |
+| # | Data/hora (BR) | Deploy D+E? | Commit / bundle | O que você viu | Classe | Próximo |
+|---|----------------|-------------|-----------------|----------------|--------|---------|
+| **T0** | 2026-10-26 | ❓ | ≤ `3e3709b` | HTTP **500** `AmbiguousMatch` em `/Rdo/Index` | rota MVC | `3e3709b` |
+| **T1** | 2026-10-26 | ❓ | ≤ `3e3709b` | `ERR_TOO_MANY_REDIRECTS` | **A** | anti-loop `3a7f5ad` |
+| **T2** | 2026-10-26 | ❓ | `3a7f5ad` local · EC2 ? | Mesmo loop após RDO | **B** ou **A** | SSM Success + D+E |
+| **T3** | **2026-10-27 08:05** | ✅ SSM `46901ecd…` ~1,4 min | `c0d09e8` · `index-C4fKCj64.js` | P1/P3 OK · RDO → loop (print) | **A** | F12 + `6574ae5` |
+| **T4** | **2026-10-27 ~09:43** | ✅ SSM `50efd8f3…` · zip `20261027-093531` ~1,4 min | `6574ae5` · `index-DVRJFW-_.js` | Publish OK · Deploy OK · smoke Login 200 · **RDO ainda loop** (print) | **A** | **T5** deploy fix Rdo redirect |
+| **T5** | _após deploy_ | | _preencher_ | | | |
 
 ### Classes de falha
 
-| Classe | Significado |
-|--------|-------------|
-| **A** | Loop ou 302 Login ↔ Rdo (servidor / cookie) |
-| **B** | Código novo no Git mas **EC2 ainda com zip antigo** |
-| **C** | **200** + SPA mas tela errada (React `route.ts`) |
-| **D** | **200** + RDO UI mas BFF `/api/bff/rdos` falha |
-| **E** | OK — listagem RDO visível |
+| Classe | Significado | React carrega? |
+|--------|-------------|----------------|
+| **A** | Loop ou 302 **Login ↔ `/Rdo/Index`** (MVC / cookie / `ReturnUrl`) | **Não** |
+| **B** | Git novo · **EC2 zip antigo** (pull ≠ deploy) | — |
+| **C** | **200** + SPA · rota/`RdoIndexPage` errada | Sim |
+| **D** | **200** + UI RDO · BFF `/api/bff/rdos` falha | Sim |
+| **E** | Listagem RDO = prod | Sim |
+
+---
+
+## Aprendizado por tentativa
+
+| # | Erro / sintoma | Causa provável | Aprendizado (não repetir) |
+|---|----------------|----------------|---------------------------|
+| **T0** | 500 AmbiguousMatch | `[HttpGet("/Rdo/Index")]` **e** rota convencional | P5a: **só** `[HttpGet]` convencional no `Index` (ASP0023). |
+| **T1** | Loop redirect | Login GET logado voltava ao `ReturnUrl` | Nunca **302** logado → `ReturnUrl=/Rdo/Index`. |
+| **T2** | Loop igual | Deploy não aplicado **ou** mesma classe A | **A2 → D → E** + confirmar SSM **Success**; pull ≠ EC2. |
+| **T3** | Loop pós-deploy OK | Classe **A** (não B) | SSM Success **não** prova RDO; smoke **só** no ícone RDO / `/Rdo/Index`. |
+| **T4** | Loop pós-`6574ae5` | Challenge `[Authorize]` manda **Login?ReturnUrl=…**; ciclo persiste | **T5:** `/Rdo/Index` redireciona **Login sem ReturnUrl**; diag em **`/Homolog/F12`**, não rodapé SPA. |
+| **T5** | _pendente_ | _após fix_ | Registrar **200 Doc** + listagem ou nova classe. |
+
+---
+
+## Erros de operação (não confundir com RDO)
+
+| O que aconteceu | O que é | O que fazer |
+|-----------------|---------|-------------|
+| PowerShell `>>` e “Projeto: não é reconhecido” | **Log colado** no terminal como comando | **Ctrl+C** · rodar **só** `.\publish-homolog-ec2.ps1` ou deploy **uma linha** |
+| CS9000 `HomologController.cs` | `"""` na mesma linha do HTML | Corrigido em **`6574ae5`** · publish de novo |
+| “Publish OK” + erros vermelhos depois | Log antigo colado **depois** do OK | Vale a última **`Publish OK.`** + **`Deploy SSM OK.`** |
 
 ---
 
 ## Como ler F12 (leigo)
 
-1. Abra **`https://homolog.sistema.rdoapp.com.br/Homolog/F12`** (logado) — snapshot + JSON automático.
-2. **Cards (P3):** Console opcional `[RDO homolog]` — **sem** barra no rodapé.
-3. **Rede:** apague filtro `app/assets` → **Fetch/XHR** → **`diag`**, **`etapas`** (200).
-3. **Clique RDO:**
-   - **Doc** `Rdo/Index` → **Cabeçalhos** → `X-RdoApp-Diag` e `X-RdoApp-Redirect-Motivo` (se 302).
-4. **Colar no chat:** abra `https://homolog.sistema.rdoapp.com.br/api/bff/diag` (logado) e copie o JSON.
+1. **`/Homolog/F12`** (logado) — snapshot + JSON; copiar para o chat Migração.
+2. **Rede:** filtro **Fetch/XHR** (não só `app/assets`) → `diag`, `etapas`.
+3. **RDO com loop:** Rede → **Doc** `Rdo/Index` → **Cabeçalhos** → `X-RdoApp-Diag`, `X-RdoApp-Redirect-Motivo`.
+4. **Cards:** Console opcional `[RDO homolog]` — sem barra no rodapé.
 
 ---
 
