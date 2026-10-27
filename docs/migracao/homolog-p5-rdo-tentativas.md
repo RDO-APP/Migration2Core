@@ -12,7 +12,7 @@
 | Marco | Estado |
 |-------|--------|
 | P3 Cards | ☑ homolog |
-| P5a RDO listagem | 🔴 **classe A** — loop persiste pós-**T4** · fix **T5** (`Rdo/Index` sem `ReturnUrl` no redirect) |
+| P5a RDO listagem | 🟡 fix **`056eb29`** (Kiro `/rdo/index` stub) · smoke **T5** pendente |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
@@ -51,7 +51,7 @@
 | **T2** | Loop igual | Deploy não aplicado **ou** mesma classe A | **A2 → D → E** + confirmar SSM **Success**; pull ≠ EC2. |
 | **T3** | Loop pós-deploy OK | Classe **A** (não B) | SSM Success **não** prova RDO; smoke **só** no ícone RDO / `/Rdo/Index`. |
 | **T4** | Loop pós-deploy | Hipótese Login↔Rdo | F12 provou outra coisa (**A′**). |
-| **T4b** | **302 para a mesma URL** | `ModuloLegado` **`GET /rdo/index` → Redirect `/Rdo/Index`** + rotas **case-insensitive** = **302 eterno** (não era cookie) | Remover redirect legado; F12: **Headers → Location** + **X-RdoApp-Diag**. |
+| **T4b** | **302 para a mesma URL** | Kiro **`#/rdo/index`** → stub M4.7h **`/rdo/index` → 302 `/Rdo/Index`**; case-insensitive = loop (não cookie) | P5a no **RdoController**, não redirect no **ModuloLegado**; F12 **Location** + **X-RdoApp-Diag**. |
 | **T5** | _pendente_ | _deploy pós-fix_ | **Doc** `/Rdo/Index` = **200** → classe **E** ou BFF **D**. |
 
 ---

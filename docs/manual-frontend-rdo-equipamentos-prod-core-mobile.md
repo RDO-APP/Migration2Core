@@ -490,6 +490,7 @@ Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta
 | Sintoma | Causa provável | Onde corrigir |
 |---------|----------------|---------------|
 | `ERR_TOO_MANY_REDIRECTS` | `/Rdo/Index` ↔ `/Account/Login?ReturnUrl=…` | Cookie `OnRedirectToLogin` + Login GET já logado → Cards (não voltar ao ReturnUrl) |
+| `ERR_TOO_MANY_REDIRECTS` + F12 **Location: `/Rdo/Index`** com **logado** (classe **A′**) | Kiro `#/rdo/index` → stub **`GET /rdo/index` → 302 `/Rdo/Index`** (`ModuloLegadoController`); rotas **case-insensitive** | P5a = **`RdoController.Index` only** — sem redirect legado ([`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) T4b) |
 | 500 AmbiguousMatch | Rota duplicada (`[HttpGet("/Rdo/Index")]` + convencional) | Só `[HttpGet]` convencional no controller |
 | Clique no menu “não muda” | Sem action MVC; SPA trata URL como Cards | Action MVC + ramo React |
 
