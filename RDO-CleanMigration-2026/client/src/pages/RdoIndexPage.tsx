@@ -4,6 +4,7 @@ import type { RdoListItem, RdoListPage, RdoStatusOption } from '../api/equipamen
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import '../cards-page.css'
 import '../rdo-index.css'
 
 function maskDateInput(value: string): string {
@@ -48,7 +49,7 @@ export function RdoIndexPage() {
     let cancelled = false
     fetchRdoStatusOptions()
       .then((opts) => {
-        if (!cancelled) setStatusOptions(opts)
+        if (!cancelled) setStatusOptions(opts.filter((s) => s.id !== 0))
       })
       .catch(() => {
         /* status opcional — lista ainda funciona */
@@ -71,7 +72,8 @@ export function RdoIndexPage() {
   }
 
   const showNovo = shell?.showGerarRdo === true
-  const obraNome = pageData?.obraNome
+  const obraFinalizada = pageData?.obraFinalizada === true
+  const obraNome = shell?.obraNome ?? pageData?.obraNome
 
   const shellWrap = (body: ReactNode) => (
     <OperadorShell variant="rdo" obraNome={obraNome} shell={shell}>
@@ -80,68 +82,77 @@ export function RdoIndexPage() {
   )
 
   return shellWrap(
-    <div className="rdo-index">
-      <div className="panel-heading rdo-heading">
+    <div className="rdo-index-page">
+      <div className="panel-heading">
         <h3>RDO</h3>
       </div>
 
-      <div className="panel rdo-filters">
-        <div className="rdo-filter-col">
-          <label className="control-label">Status</label>
-          <select
-            className="form-control"
-            value={statusRdo}
-            onChange={(e) => setStatusRdo(Number(e.target.value))}
-          >
-            <option value={0}>Todos</option>
-            {statusOptions.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="rdo-filter-col">
-          <label className="control-label">Data Inicial</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="dd/mm/aaaa"
-            value={dataInicial}
-            onChange={(e) => setDataInicial(maskDateInput(e.target.value))}
-          />
-        </div>
-        <div className="rdo-filter-col">
-          <label className="control-label">Data Final</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="dd/mm/aaaa"
-            value={dataFinal}
-            onChange={(e) => setDataFinal(maskDateInput(e.target.value))}
-          />
-        </div>
-        <div className="rdo-filter-actions">
-          <button type="button" className="btn btn-blue" onClick={onPesquisar}>
-            <i className="fa fa-search" aria-hidden /> PESQUISAR
-          </button>
-          {showNovo ? (
-            <button
-              type="button"
-              className="btn btn-blue"
-              onClick={() => goOperador(P3_NAV.toolbar.gerarRdo)}
+      <div className="panel rdo-filters-panel">
+        <div className="col-md-4 col-sm-4">
+          <div className="form-group is-empty">
+            <label className="control-label">Status</label>
+            <select
+              className="form-control"
+              value={statusRdo}
+              onChange={(e) => setStatusRdo(Number(e.target.value))}
             >
-              <i className="fa fa-plus" aria-hidden /> NOVO
+              <option value={0}>Selecione...</option>
+              {statusOptions.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-md-4 col-sm-4">
+          <div className="form-group">
+            <label className="control-label">Data Inicial</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="dd/mm/aaaa"
+              value={dataInicial}
+              onChange={(e) => setDataInicial(maskDateInput(e.target.value))}
+            />
+          </div>
+        </div>
+        <div className="col-md-4 col-sm-4">
+          <div className="form-group">
+            <label className="control-label">Data Final</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="dd/mm/aaaa"
+              value={dataFinal}
+              onChange={(e) => setDataFinal(maskDateInput(e.target.value))}
+            />
+          </div>
+        </div>
+        <div className="col-md-12 col-xs-12 rdo-filters-actions">
+          <div className="pull-right">
+            <button type="button" className="btn btn-blue" onClick={onPesquisar}>
+              <i className="fa fa-search" aria-hidden /> PESQUISAR
             </button>
-          ) : null}
+            {showNovo ? (
+              <button
+                type="button"
+                className="btn btn-blue"
+                disabled={obraFinalizada}
+                onClick={() => goOperador(P3_NAV.toolbar.gerarRdo)}
+              >
+                <i className="fa fa-plus" aria-hidden /> NOVO
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
 
       {error ? <div className="rdo-error">{error}</div> : null}
 
-      <div className="lista-tarefas rdo-list">
+      <div className="lista-tarefas">
         <div className="tabela table-responsive">
-          <table className="table table-striped">
+          <table className="table table-striped table-responsive">
             <thead>
               <tr>
                 <th>Data do RDO</th>
@@ -212,7 +223,7 @@ export function RdoIndexPage() {
           </table>
 
           {pageData && pageData.totalPages > 1 ? (
-            <ul className="pagination rdo-pagination">
+            <ul className="pull-right pagination">
               {Array.from({ length: pageData.totalPages }, (_, i) => i + 1).map((p) => (
                 <li key={p} className={p === pageData.currentPage ? 'active' : undefined}>
                   <button type="button" onClick={() => onPage(p)}>

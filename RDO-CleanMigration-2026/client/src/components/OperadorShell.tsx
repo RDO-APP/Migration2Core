@@ -78,6 +78,9 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
     }
   }
 
+  /** P5a-R1 — paridade prod: título obra + ícones obra/RDO/tarefas em Cards e telas operador (RDO, …). */
+  const showOperadorObraNav = variant === 'cards' || variant === 'rdo'
+
   return (
     <div
       className={`operador-app base ${variant === 'escolher' ? 'tema-azul' : 'tema-azul-claro'}${
@@ -186,13 +189,13 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                   </div>
                 </li>
               </ul>
-              {variant === 'cards' && tituloObra ? <h2 id="tituloObra">{tituloObra}</h2> : null}
+              {showOperadorObraNav && tituloObra ? <h2 id="tituloObra">{tituloObra}</h2> : null}
             </div>
           </div>
           <div className="no-padding">
             <div className="navbar-collapse menu operador-menu-bar">
               <ul className="nav navbar-nav navbar-right ball-hover">
-                {variant === 'cards' ? (
+                {showOperadorObraNav ? (
                   <>
                     {showDashboard ? (
                       <li className="btn-tooltip pointer" title="DASHBOARD DA OBRA">

@@ -37,6 +37,12 @@ public class RdoListQueryService
     {
         page = Math.Max(1, page);
 
+        var obraFim = await _context.Obras.AsNoTracking()
+            .Where(o => o.ObrIdObra == obraId)
+            .Select(o => o.ObrDtFim)
+            .FirstOrDefaultAsync(cancellationToken);
+        var obraFinalizada = obraFim.HasValue && obraFim.Value.Date != DateTime.MinValue.Date;
+
         var query = _context.Rdos.AsNoTracking().Where(r => r.RdoIdObra == obraId);
 
         if (statusRdo > 0)
@@ -95,6 +101,7 @@ public class RdoListQueryService
             TotalCount = total,
             Items = items,
             ObraNome = obraNome ?? "",
+            ObraFinalizada = obraFinalizada,
         };
     }
 

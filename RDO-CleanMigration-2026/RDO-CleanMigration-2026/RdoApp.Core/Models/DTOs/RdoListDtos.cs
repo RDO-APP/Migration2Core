@@ -26,4 +26,5 @@ public sealed class RdoListPageDto
     public int TotalCount { get; init; }
     public IReadOnlyList<RdoListItemDto> Items { get; init; } = Array.Empty<RdoListItemDto>();
     public string ObraNome { get; init; } = "";
+    public bool ObraFinalizada { get; init; }
 }

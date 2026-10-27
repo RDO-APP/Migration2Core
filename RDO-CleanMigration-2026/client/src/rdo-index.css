@@ -1,44 +1,93 @@
-.rdo-index {
-  padding: 0 16px 32px;
+/* P5a-R2 — paridade prod Views/Rdo/index.html + custom.css (subset) */
+
+.rdo-index-page {
+  width: 100%;
+  float: left;
+  color: #28496f;
 }
 
-.rdo-heading h3 {
-  margin: 16px 0;
-  font-weight: 600;
-}
-
-.rdo-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: flex-end;
+.rdo-index-page .panel-heading {
+  width: 100%;
+  float: left;
   margin-bottom: 20px;
-  padding: 16px;
-  background: #fafafa;
-  border-radius: 4px;
+  padding: 0;
+  border-bottom: 1px solid #28496f;
+  position: relative;
 }
 
-.rdo-filter-col {
-  flex: 1 1 200px;
-  min-width: 160px;
+.rdo-index-page .panel-heading h3 {
+  float: left;
+  margin: 0;
+  color: #28496f;
+  font-family: 'sf-bd', system-ui, sans-serif;
 }
 
-.rdo-filter-col .control-label {
+.rdo-index-page .panel.rdo-filters-panel {
+  width: 100%;
+  float: left;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.rdo-index-page .panel.rdo-filters-panel::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.rdo-index-page .rdo-filters-panel .form-group {
+  margin-bottom: 12px;
+}
+
+.rdo-index-page .rdo-filters-panel .control-label {
   display: block;
-  margin-bottom: 6px;
-  font-size: 13px;
   color: #555;
+  font-size: 13px;
 }
 
-.rdo-filter-actions {
-  flex: 1 1 100%;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
+.rdo-index-page .rdo-filters-actions {
+  width: 100%;
+  float: left;
+  clear: both;
 }
 
-.rdo-error {
+.rdo-index-page .rdo-filters-actions .pull-right {
+  float: right;
+}
+
+/* Prod custom.css .btn / .btn-blue */
+.rdo-index-page .btn {
+  box-shadow: none;
+  height: 41px;
+  border-radius: 8px;
+  padding: 0 30px;
+  margin: 0 0 10px 0;
+  color: #fff;
+  text-transform: uppercase;
+  font-family: 'sf-md', system-ui, sans-serif;
+}
+
+.rdo-index-page .btn-blue {
+  background: #0088dd;
+}
+
+.rdo-index-page .btn-blue:hover,
+.rdo-index-page .btn-blue:focus {
+  background: #0073bb;
+  color: #fff;
+}
+
+.rdo-index-page .btn.btn-blue i {
+  left: -10px;
+  position: relative;
+}
+
+.rdo-index-page .pull-right .btn {
+  margin-left: 8px;
+}
+
+.rdo-index-page .rdo-error {
+  clear: both;
   color: #c62828;
   margin-bottom: 12px;
   padding: 8px 12px;
@@ -46,31 +95,101 @@
   border-radius: 4px;
 }
 
-.rdo-empty {
+/* Prod § TABELA */
+.rdo-index-page .lista-tarefas {
+  width: 100%;
+  float: left;
+  clear: both;
+}
+
+.rdo-index-page .tabela {
+  width: 100%;
+  border: 2px solid #28496f;
+  margin-bottom: 20px;
+}
+
+.rdo-index-page .tabela table {
+  margin: 0;
+  width: 100%;
+}
+
+.rdo-index-page .tabela thead {
+  background: #28496f;
+  color: #fff;
+  font-family: 'sf-bd', system-ui, sans-serif;
+}
+
+.rdo-index-page .tabela thead tr th {
+  font-size: 11px;
+  padding: 11px 5px;
+  line-height: 23px;
+  text-align: center;
+  text-transform: uppercase;
+  border: 0;
+}
+
+.rdo-index-page .tabela tbody tr td {
+  border: 0;
+  color: #28496f;
+  padding: 4px;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
+}
+
+.rdo-index-page .tabela .btn-just-icon {
+  cursor: pointer;
+  border-radius: 100%;
+  padding: 8px;
+  width: 42px;
+  margin: 0 auto;
+  display: block;
+  background: transparent;
+  border: none;
+  color: #28496f;
+}
+
+.rdo-index-page .tabela .btn-just-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.rdo-index-page .tabela i {
+  font-size: 24px;
+  color: #28496f;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.rdo-index-page .rdo-empty {
   text-align: center;
   padding: 24px !important;
   color: #777;
 }
 
-.rdo-pagination {
+.rdo-index-page .pagination {
   display: flex;
   justify-content: flex-end;
   gap: 4px;
   list-style: none;
   padding: 12px 0;
   margin: 0;
+  float: right;
+  clear: both;
 }
 
-.rdo-pagination li button {
+.rdo-index-page .pagination li button {
   border: 1px solid #ddd;
   background: #fff;
   padding: 6px 12px;
   cursor: pointer;
   border-radius: 4px;
+  color: #28496f;
 }
 
-.rdo-pagination li.active button {
-  background: #1976d2;
+.rdo-index-page .pagination li.active button {
+  background: #28496f;
   color: #fff;
-  border-color: #1976d2;
+  border-color: #28496f;
 }

@@ -100,6 +100,8 @@ export interface RdoListPage {
   totalCount: number
   items: RdoListItem[]
   obraNome: string
+  /** Paridade prod Auth.getUser().obra.obraFinalizada — desabilita NOVO. */
+  obraFinalizada?: boolean
 }
 
 export interface LoginContext {
