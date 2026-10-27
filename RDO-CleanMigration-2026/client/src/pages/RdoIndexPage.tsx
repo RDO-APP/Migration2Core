@@ -88,7 +88,8 @@ export function RdoIndexPage() {
       </div>
 
       <div className="panel rdo-filters-panel">
-        <div className="col-md-4 col-sm-4">
+        <div className="row g-2 rdo-filters-row">
+        <div className="col-md-4 col-sm-12">
           <div className="form-group is-empty">
             <label className="control-label">Status</label>
             <select
@@ -105,7 +106,7 @@ export function RdoIndexPage() {
             </select>
           </div>
         </div>
-        <div className="col-md-4 col-sm-4">
+        <div className="col-md-4 col-sm-12">
           <div className="form-group">
             <label className="control-label">Data Inicial</label>
             <input
@@ -117,7 +118,7 @@ export function RdoIndexPage() {
             />
           </div>
         </div>
-        <div className="col-md-4 col-sm-4">
+        <div className="col-md-4 col-sm-12">
           <div className="form-group">
             <label className="control-label">Data Final</label>
             <input
@@ -129,8 +130,8 @@ export function RdoIndexPage() {
             />
           </div>
         </div>
-        <div className="col-md-12 col-xs-12 rdo-filters-actions">
-          <div className="pull-right">
+        <div className="col-12 rdo-filters-actions">
+          <div className="rdo-filters-actions-inner">
             <button type="button" className="btn btn-blue" onClick={onPesquisar}>
               <i className="fa fa-search" aria-hidden /> PESQUISAR
             </button>
@@ -146,13 +147,15 @@ export function RdoIndexPage() {
             ) : null}
           </div>
         </div>
+        </div>
       </div>
 
       {error ? <div className="rdo-error">{error}</div> : null}
 
       <div className="lista-tarefas">
-        <div className="tabela table-responsive">
-          <table className="table table-striped table-responsive">
+        <div className="tabela">
+          <div className="table-responsive">
+          <table className="table table-striped">
             <thead>
               <tr>
                 <th>Data do RDO</th>
@@ -221,14 +224,22 @@ export function RdoIndexPage() {
               )}
             </tbody>
           </table>
+          </div>
 
           {pageData && pageData.totalPages > 1 ? (
-            <ul className="pull-right pagination">
+            <ul className="pagination rdo-pagination">
               {Array.from({ length: pageData.totalPages }, (_, i) => i + 1).map((p) => (
                 <li key={p} className={p === pageData.currentPage ? 'active' : undefined}>
-                  <button type="button" onClick={() => onPage(p)}>
+                  <a
+                    href="#"
+                    role="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onPage(p)
+                    }}
+                  >
                     {p}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>

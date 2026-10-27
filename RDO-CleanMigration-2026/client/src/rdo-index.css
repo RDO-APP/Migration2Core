@@ -45,14 +45,39 @@
   font-size: 13px;
 }
 
-.rdo-index-page .rdo-filters-actions {
-  width: 100%;
-  float: left;
-  clear: both;
+/* BS5 exige .row; fallback flex se grid não aplicar */
+.rdo-index-page .rdo-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -12px;
+  margin-right: -12px;
 }
 
-.rdo-index-page .rdo-filters-actions .pull-right {
-  float: right;
+.rdo-index-page .rdo-filters-row > [class*='col-'] {
+  padding-left: 12px;
+  padding-right: 12px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .rdo-index-page .rdo-filters-row > .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+.rdo-index-page .rdo-filters-actions {
+  width: 100%;
+  flex: 0 0 100%;
+  max-width: 100%;
+  margin-top: 4px;
+}
+
+.rdo-index-page .rdo-filters-actions-inner {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* Prod custom.css .btn / .btn-blue */
@@ -82,8 +107,8 @@
   position: relative;
 }
 
-.rdo-index-page .pull-right .btn {
-  margin-left: 8px;
+.rdo-index-page .rdo-filters-actions-inner .btn {
+  margin-left: 0;
 }
 
 .rdo-index-page .rdo-error {
@@ -168,28 +193,65 @@
   color: #777;
 }
 
-.rdo-index-page .pagination {
+/* Paridade prod custom.css paginação (BS3 markup: li > a) */
+.rdo-index-page .rdo-pagination {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 4px;
   list-style: none;
-  padding: 12px 0;
+  padding: 12px 16px 16px;
   margin: 0;
-  float: right;
   clear: both;
 }
 
-.rdo-index-page .pagination li button {
-  border: 1px solid #ddd;
-  background: #fff;
+.rdo-index-page .rdo-pagination > li > a {
+  display: inline-block;
   padding: 6px 12px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 50%;
+  min-width: 36px;
+  text-align: center;
   color: #28496f;
+  border: 1px solid #ddd;
+  background: #fff;
+  text-decoration: none;
 }
 
-.rdo-index-page .pagination li.active button {
-  background: #28496f;
+.rdo-index-page .rdo-pagination > li.active > a,
+.rdo-index-page .rdo-pagination > li.active > a:hover {
+  background-color: #28496f;
+  border-color: #0088dd;
   color: #fff;
-  border-color: #28496f;
+  box-shadow: 0 4px 5px 0 rgba(0, 136, 221, 0.15), 0 1px 10px 0 rgba(0, 136, 221, 0.15),
+    0 2px 4px -1px rgba(0, 136, 221, 0.21);
+}
+
+/* W3 — glifos RDO (subset prod fonts.css; host escolher.css não traz PDF/assinar) */
+.rdo-index-page .icon-assinar:before {
+  font-family: fontello, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  content: '\e819';
+}
+
+.rdo-index-page .fa-file-pdf-o:before {
+  font-family: FontAwesome, sans-serif;
+  content: '\f1c1';
+}
+
+.rdo-index-page .fa-edit:before {
+  font-family: FontAwesome, sans-serif;
+  content: '\f044';
+}
+
+.rdo-index-page .tabela .fa:before,
+.rdo-index-page .tabela [class*=' icon-']:before,
+.rdo-index-page .tabela [class^='icon-']:before {
+  font-style: normal;
+  font-weight: normal;
+  speak: never;
+  display: inline-block;
+  text-decoration: inherit;
+  text-align: center;
 }
