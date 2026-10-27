@@ -25,14 +25,16 @@
 | **T1** | 2026-10-26 | ❓ | ≤ `3e3709b` | `ERR_TOO_MANY_REDIRECTS` | **A** | anti-loop `3a7f5ad` |
 | **T2** | 2026-10-26 | ❓ | `3a7f5ad` local · EC2 ? | Mesmo loop após RDO | **B** ou **A** | SSM Success + D+E |
 | **T3** | **2026-10-27 08:05** | ✅ SSM `46901ecd…` ~1,4 min | `c0d09e8` · `index-C4fKCj64.js` | P1/P3 OK · RDO → loop (print) | **A** | F12 + `6574ae5` |
-| **T4** | **2026-10-27 ~09:43** | ✅ SSM `50efd8f3…` · zip `20261027-093531` ~1,4 min | `6574ae5` · `index-DVRJFW-_.js` | Publish OK · Deploy OK · smoke Login 200 · **RDO ainda loop** (print) | **A** | **T5** deploy fix Rdo redirect |
-| **T5** | _após deploy_ | | _preencher_ | | | |
+| **T4** | **2026-10-27 ~09:43** | ✅ SSM `50efd8f3…` · zip `20261027-093531` | `6574ae5` · `index-DVRJFW-_.js` | Loop · F12 **Network/Doc** | **A′** | fix rota legado |
+| **T4b** | **2026-10-27 ~09:58** | (mesmo deploy) | — | F12: **302** `Location: /Rdo/Index` · `X-RdoApp-Diag: logado; obra=42; LoginData-ok` | **A′** self-302 | **T5** |
+| **T5** | _após deploy_ | | _feeec34+_ | _200 Doc + listagem?_ | | |
 
 ### Classes de falha
 
 | Classe | Significado | React carrega? |
 |--------|-------------|----------------|
-| **A** | Loop ou 302 **Login ↔ `/Rdo/Index`** (MVC / cookie / `ReturnUrl`) | **Não** |
+| **A** | Loop **Login ↔ `/Rdo/Index`** (`ReturnUrl`) | **Não** |
+| **A′** | **302 `/Rdo/Index` → `/Rdo/Index`** (rota legado `/rdo/index` case-insensitive) | **Não** |
 | **B** | Git novo · **EC2 zip antigo** (pull ≠ deploy) | — |
 | **C** | **200** + SPA · rota/`RdoIndexPage` errada | Sim |
 | **D** | **200** + UI RDO · BFF `/api/bff/rdos` falha | Sim |
@@ -48,8 +50,9 @@
 | **T1** | Loop redirect | Login GET logado voltava ao `ReturnUrl` | Nunca **302** logado → `ReturnUrl=/Rdo/Index`. |
 | **T2** | Loop igual | Deploy não aplicado **ou** mesma classe A | **A2 → D → E** + confirmar SSM **Success**; pull ≠ EC2. |
 | **T3** | Loop pós-deploy OK | Classe **A** (não B) | SSM Success **não** prova RDO; smoke **só** no ícone RDO / `/Rdo/Index`. |
-| **T4** | Loop pós-`6574ae5` | Challenge `[Authorize]` manda **Login?ReturnUrl=…**; ciclo persiste | **T5:** `/Rdo/Index` redireciona **Login sem ReturnUrl**; diag em **`/Homolog/F12`**, não rodapé SPA. |
-| **T5** | _pendente_ | _após fix_ | Registrar **200 Doc** + listagem ou nova classe. |
+| **T4** | Loop pós-deploy | Hipótese Login↔Rdo | F12 provou outra coisa (**A′**). |
+| **T4b** | **302 para a mesma URL** | `ModuloLegado` **`GET /rdo/index` → Redirect `/Rdo/Index`** + rotas **case-insensitive** = **302 eterno** (não era cookie) | Remover redirect legado; F12: **Headers → Location** + **X-RdoApp-Diag**. |
+| **T5** | _pendente_ | _deploy pós-fix_ | **Doc** `/Rdo/Index` = **200** → classe **E** ou BFF **D**. |
 
 ---
 

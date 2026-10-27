@@ -101,11 +101,8 @@ public class ModuloLegadoController : Controller
             voltarRotulo: "Dashboard geral",
             prodRef: "#/chart/*");
 
-    [HttpGet("/rdo/index")]
-    public IActionResult RdoIndexLegacy() => Redirect("/Rdo/Index");
-
-    [HttpGet("/tarefa/index")]
-    public IActionResult TarefaIndexLegacy() => Redirect("/Tarefa/Index");
+    // Não mapear GET /rdo/index → Redirect /Rdo/Index: rotas case-insensitive repetem 302 (F12 Location=/Rdo/Index).
+    // Listagem RDO: RdoController.Index · P5a homolog-p5-rdo-tentativas.md
 
     private IActionResult Stub(string titulo, string prodRef, string descricao, string voltarUrl = "/Tarefa/Cards") =>
         EmMigracaoPage.Render(this, titulo, descricao, voltarUrl: voltarUrl, prodRef: prodRef);
