@@ -7,7 +7,7 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class EfetivoController : Controller
 {
-    [HttpGet("/Efetivo/Index")]
+    [HttpGet]
     public IActionResult Index()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))

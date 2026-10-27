@@ -8,7 +8,7 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class DashboardController : Controller
 {
-    [HttpGet("/Dashboard/Index")]
+    [HttpGet]
     public IActionResult Index()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))

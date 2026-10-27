@@ -115,8 +115,7 @@ app.MapGet("/Dashboard", () => Results.Redirect("/Dashboard/Index"));
 app.MapGet("/Rdo", () => Results.Redirect("/Rdo/Index"));
 app.MapGet("/Tarefa/Paralizacoes", () => Results.Redirect("/Tarefa/Paralizacoes/Index"));
 app.MapGet("/Efetivo", () => Results.Redirect("/Efetivo/Index"));
-app.MapGet("/efetivo/index", () => Results.Redirect("/Efetivo/Index"));
-app.MapGet("/rdo/cadastro", () => Results.Redirect("/Rdo/Cadastro"));
+// Nao mapear /efetivo/index nem /rdo/cadastro aqui — colidem (case-insensitive) com rotas MVC /Efetivo/Index e /Rdo/Cadastro.
 
 app.MapControllers();
 

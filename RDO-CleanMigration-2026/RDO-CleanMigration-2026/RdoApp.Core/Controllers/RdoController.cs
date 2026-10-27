@@ -14,7 +14,8 @@ public class RdoController : Controller
         _env = env;
     }
 
-    [HttpGet("/Rdo/Index")]
+    // Rota convencional /Rdo/Index — evita AmbiguousMatch com MapControllerRoute (ASP0023).
+    [HttpGet]
     public IActionResult Index()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
@@ -34,7 +35,7 @@ public class RdoController : Controller
         return View();
     }
 
-    [HttpGet("/Rdo/Cadastro")]
+    [HttpGet]
     public IActionResult Cadastro()
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
