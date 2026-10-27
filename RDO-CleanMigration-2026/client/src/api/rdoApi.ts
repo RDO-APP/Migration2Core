@@ -1,4 +1,11 @@
-import type { RdoListPage, RdoStatusOption } from './equipamentos-api.types'
+import type {
+  RdoCadastroBootstrap,
+  RdoCadastroEtapas,
+  RdoCadastroSaveRequest,
+  RdoCadastroSaveResult,
+  RdoListPage,
+  RdoStatusOption,
+} from './equipamentos-api.types'
 
 async function readJson<T>(res: Response, fallback: string): Promise<T> {
   if (res.status === 401) {
@@ -43,4 +50,38 @@ export async function fetchRdoList(query: RdoListQuery = {}): Promise<RdoListPag
     headers: { Accept: 'application/json' },
   })
   return readJson(res, 'lista RDO')
+}
+
+export async function fetchRdoCadastroBootstrap(): Promise<RdoCadastroBootstrap> {
+  const res = await fetch('/api/bff/rdos/cadastro/bootstrap', {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'bootstrap cadastro RDO')
+}
+
+export async function fetchRdoCadastroEtapas(dataRdo: string): Promise<RdoCadastroEtapas> {
+  const params = new URLSearchParams({ dataRdo: dataRdo.trim() })
+  const res = await fetch(`/api/bff/rdos/cadastro/etapas?${params}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'etapas cadastro RDO')
+}
+
+export async function saveRdoCadastro(body: RdoCadastroSaveRequest): Promise<RdoCadastroSaveResult> {
+  const res = await fetch('/api/bff/rdos/cadastro', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (res.status === 401) {
+    throw new Error('Sessão expirada ou obra não selecionada. Volte a Escolher obra.')
+  }
+  const data = (await res.json()) as RdoCadastroSaveResult
+  if (!res.ok && !data.needsConfirm) {
+    throw new Error(data.errorMessage ?? `Erro ${res.status} ao salvar RDO.`)
+  }
+  return data
 }

@@ -104,6 +104,64 @@ export interface RdoListPage {
   obraFinalizada?: boolean
 }
 
+export interface RdoCadastroBootstrap {
+  dataRdoHoje: string
+  climaManha: string
+  climaTarde: string
+  climaNoite: string
+  chuvaManha: string
+  chuvaTarde: string
+  chuvaNoite: string
+  obraFinalizada: boolean
+  obraNome: string
+}
+
+export interface RdoCadastroTarefa {
+  id: number
+  descricao: string
+  status: number
+  idEtapa: number
+  existeRegistroMedicaoDataRequerida: boolean
+  existeRegistroMedicaoDiaAnterior: boolean
+}
+
+export interface RdoCadastroEtapa {
+  id: number
+  titulo: string
+  ordem: number
+  tarefas: RdoCadastroTarefa[]
+}
+
+export interface RdoCadastroEtapas {
+  etapas: RdoCadastroEtapa[]
+}
+
+export type ClimaValor = 'b' | 'r'
+export type ChuvaValor = 's' | 'p' | 'm'
+
+export interface RdoCadastroSaveRequest {
+  dataRdo: string
+  climaManha: ClimaValor
+  climaTarde: ClimaValor
+  climaNoite: ClimaValor
+  chuvaManha: ChuvaValor
+  chuvaTarde: ChuvaValor
+  chuvaNoite: ChuvaValor
+  comentario?: string
+  tipoComentarioGeracao?: number
+  confirmSubstituir?: boolean
+  confirmCopiarDiaAnterior?: boolean
+  listaTarefas: { id: number }[]
+}
+
+export interface RdoCadastroSaveResult {
+  ok: boolean
+  idRdo?: number
+  errorMessage?: string
+  needsConfirm?: 'substituir' | 'copiarDiaAnterior'
+  confirmDetail?: string
+}
+
 export interface LoginContext {
   antiforgeryFieldName: string
   antiforgeryToken: string

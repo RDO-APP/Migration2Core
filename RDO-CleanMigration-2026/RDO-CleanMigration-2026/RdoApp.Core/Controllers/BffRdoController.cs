@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RdoApp.Core.Infrastructure;
+using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Services;
 
 namespace RdoApp.Core.Controllers;
@@ -12,10 +13,17 @@ namespace RdoApp.Core.Controllers;
 public class BffRdoController : ControllerBase
 {
     private readonly RdoListQueryService _rdos;
+    private readonly RdoCadastroQueryService _cadastroQuery;
+    private readonly RdoCadastroSaveService _cadastroSave;
 
-    public BffRdoController(RdoListQueryService rdos)
+    public BffRdoController(
+        RdoListQueryService rdos,
+        RdoCadastroQueryService cadastroQuery,
+        RdoCadastroSaveService cadastroSave)
     {
         _rdos = rdos;
+        _cadastroQuery = cadastroQuery;
+        _cadastroSave = cadastroSave;
     }
 
     [HttpGet("status-options")]
@@ -51,6 +59,67 @@ public class BffRdoController : ControllerBase
             cancellationToken);
 
         return Ok(payload);
+    }
+
+    [HttpGet("cadastro/bootstrap")]
+    public IActionResult CadastroBootstrap()
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var payload = _cadastroQuery.GetBootstrap(obraId, ObraSessionHelper.GetObraNome(HttpContext));
+        return Ok(payload);
+    }
+
+    [HttpGet("cadastro/etapas")]
+    public async Task<IActionResult> CadastroEtapas(
+        [FromQuery] string? dataRdo,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var parsed = ParseDate(dataRdo);
+        if (!parsed.HasValue)
+        {
+            return BadRequest(new { message = "Informe dataRdo (dd/MM/yyyy)." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var payload = await _cadastroQuery.GetEtapasParaRdoAsync(obraId, parsed.Value, cancellationToken);
+        return Ok(payload);
+    }
+
+    [HttpPost("cadastro")]
+    public async Task<IActionResult> CadastroSave(
+        [FromBody] RdoCadastroSaveRequestDto body,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var colaboradorId = HttpContext.Session.GetInt32(SessionKeys.ColaboradorId) ?? 0;
+        var result = await _cadastroSave.SaveAsync(obraId, colaboradorId, body, cancellationToken);
+
+        if (!result.Ok && result.NeedsConfirm != null)
+        {
+            return Ok(result);
+        }
+
+        if (!result.Ok)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 
     private static DateTime? ParseDate(string? value)

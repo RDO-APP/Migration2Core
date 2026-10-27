@@ -27,6 +27,8 @@ builder.Services.AddScoped<LoginObraService>();
 builder.Services.AddScoped<HistoricoLoginWriter>();
 builder.Services.AddScoped<CardsQueryService>();
 builder.Services.AddScoped<RdoListQueryService>();
+builder.Services.AddScoped<RdoCadastroQueryService>();
+builder.Services.AddScoped<RdoCadastroSaveService>();
 builder.Services.AddScoped<ObrasQueryService>();
 builder.Services.AddScoped<ShellContextService>();
 builder.Services.AddScoped<RecuperarSenhaService>();

@@ -27,10 +27,6 @@ public class RdoController : Controller
             return RedirectToAction(nameof(ObraController.Escolher), "Obra");
         }
 
-        return EmMigracaoPage.Render(
-            this,
-            "Gerar RDO",
-            "Cadastro RDO (`cadastroRdo`) · **M7+** · permission gerarRdo.",
-            prodRef: "#/rdo/cadastro");
+        return OperadorSpaEntry.ServeSpaIndex(this, _env, "Gerar RDO");
     }
 }

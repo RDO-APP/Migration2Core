@@ -1,0 +1,132 @@
+.rdo-cadastro-page {
+  width: 100%;
+  float: left;
+  color: #28496f;
+}
+
+.rdo-cadastro-page .panel-heading {
+  width: 100%;
+  float: left;
+  margin-bottom: 16px;
+  padding: 0;
+  border-bottom: 1px solid #28496f;
+}
+
+.rdo-cadastro-page .panel-heading h3 {
+  margin: 0;
+  color: #28496f;
+  font-family: 'sf-bd', system-ui, sans-serif;
+}
+
+.rdo-cadastro-panel {
+  width: 100%;
+  float: left;
+  margin-bottom: 24px;
+}
+
+.rdo-section-title {
+  margin: 16px 0 8px;
+  clear: both;
+}
+
+.rdo-required {
+  color: #c0392b;
+}
+
+.rdo-fieldset {
+  border: 1px solid #dce4ec;
+  padding: 8px 12px 12px;
+  margin-bottom: 12px;
+}
+
+.rdo-fieldset legend {
+  font-size: 0.95rem;
+  padding: 0 6px;
+  width: auto;
+  margin-bottom: 0;
+}
+
+.rdo-clima-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.rdo-clima-col {
+  min-width: 120px;
+}
+
+.rdo-clima-col .radio {
+  margin: 4px 0;
+}
+
+.rdo-etapas-accordion {
+  clear: both;
+  margin-top: 8px;
+}
+
+.rdo-etapa-block {
+  border: 1px solid #dce4ec;
+  margin-bottom: 8px;
+}
+
+.rdo-etapa-head {
+  width: 100%;
+  text-align: left;
+  background: #f5f8fb;
+  border: none;
+  padding: 10px 12px;
+  color: #28496f;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rdo-etapa-body {
+  padding: 8px 12px 12px;
+}
+
+.rdo-etapa-actions {
+  margin-bottom: 8px;
+}
+
+.rdo-tarefa-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rdo-tarefa-list li {
+  padding: 4px 0;
+}
+
+.rdo-tarefa-list label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.rdo-tag-prev {
+  font-size: 0.75rem;
+  background: #fff3cd;
+  color: #856404;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: auto;
+}
+
+.rdo-cadastro-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  clear: both;
+}
+
+.rdo-cadastro-muted {
+  color: #607d8b;
+}
+
+.rdo-cadastro-page .rdo-error {
+  margin-top: 12px;
+  color: #c0392b;
+}
