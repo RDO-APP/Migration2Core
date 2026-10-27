@@ -27,7 +27,7 @@
 | **1** | `/Rdo/Index` | `#/rdo/index` | **M5 web** ☑ listagem **T5 E** · shell/CSS **W1/W2** `fd8a144` (smoke **T6**) · ações **M7+** · ícones **W3/UI-M1** |
 | **2** | `/Chart/Index` + `/chart/*` | `#/chart` | **M5 web** |
 | **3** | `/Dashboard/Index` | `#/dashboard/index` | **M5 web** |
-| **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7** |
+| **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7 7a** ☑ SPA `498ebc4` · **7b–7d** editar/PDF/assinar |
 | **5** | `/Obra/Cadastro` | `#/obra/cadastro` | **M7** |
 | **6** | `/Efetivo/Index` | `#/efetivo/index` | **M7** |
 | **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Cadastro` | toolbar + card | **M7** |

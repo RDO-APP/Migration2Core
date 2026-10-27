@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-10-24 · **Status:** **M4.7** paridade card P3 (híbrido React + pele legado) · §**6b** cinco vetores · §**10** paridade · §**10.7** stack L/M/H · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-10-27 · **Status:** **M4.7** + **P5a RDO** (listagem + cadastro 7a) · §**6b** cinco vetores · §**10** paridade · §**10.7** stack L/M/H + tabela **por página** · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
@@ -496,9 +496,13 @@ Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta
 
 **Smoke P5a (RDO):** Login → Escolher → Selecionar → Cards → ícone RDO → **200** em `/Rdo/Index` + listagem (não tela vermelha de redirect).
 
-### 10.7 Stack front homolog ② — legado, moderno, híbrido (P1–P4)
+### 10.7 Stack front homolog ② — legado, moderno, híbrido (P1–P5a)
 
-**Resumo:** a SPA operador (**P2/P3**) é **moderna** (React + BFF Core). O que ainda “cheira” prod é **visual** — CSS recortado (`header.css`, `escolher.css`, `cards-page.css`), **Font Awesome 4.7** parcial + **fontello** (subset), markup copiado de `escolher.html` / `cards.html` (`panel-*`, `col-xs-*`, `btn-simple`). **Quando** copiar legado vs aposentar fontes: [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
+**Resumo:** a SPA operador (**P2/P3/P5a RDO**) é **moderna** (React + BFF Core). O que ainda “cheira” prod é **visual** — link **Bootstrap 5 CSS** no `wwwroot/app/index.html` (não é pacote npm) + CSS recortado (`header.css`, `escolher.css`, `cards-page.css`, `rdo-index.css`, `rdo-cadastro.css`), **Font Awesome 4.7** parcial + **fontello** (subset), markup copiado de `escolher.html` / `cards.html` / `cadastro.html` RDO (`panel-*`, `col-md-*`, `btn-blue`). **Prod ①** ainda usa Bootstrap **3** + jQuery + **BS3 JS**; homolog **não** carrega BS JS na SPA.
+
+**Tabela canônica por rota** (colunas **Por que ainda está assim** · **Quando vamos mudar**): [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § *Tabela por página*. **Não confundir** BFF `cadastro/bootstrap` (JSON M7) com framework Bootstrap.
+
+**Quando** copiar legado vs aposentar fontes: [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
 | Stack | Significado | Exemplos homolog |
 |:-----:|-------------|------------------|

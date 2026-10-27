@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-27 — **M4** + **M5 web** (P5a RDO) · **M5 EQ-M adiado** · Git **`fd8a144`** (`ci/homolog-ec2-s3-ssm`) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · P5a log [`homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) · **I0** B1/B2  
+**Atualizado:** 2026-10-27 — **M4** + **M5 web** (P5a RDO) · **M7 7a** cadastro `498ebc4` · **M5 EQ-M adiado** · Git **`498ebc4`** (`ci/homolog-ec2-s3-ssm`) · stack UI por página: [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -377,8 +377,9 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 
 **Docs canônicos:**
 
-- [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) — tabela **P1–P4**, backlog **UI-M1…UI-M6**, regra **anti-Kiro** para **UI-M3**.
+- [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) — **tabela por página** (Bootstrap/stack legado · **Por que ainda está assim** · **Quando vamos mudar**) · tabela **P1–P4** camada a camada · backlog **UI-M1…UI-M6** · regra **anti-Kiro** para **UI-M3**.
 - [`migracao/fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md) — **quando** copiar legado (Fase A **M4.7**) vs **quando** aposentar fontello/FA na SPA (Fase B **UI-M3**); inventário toolbar; checklist de atualização de marcos.
+- Manual §**10.7** · plano §**2.1** — resumo executivo + link para a tabela por página.
 
 | Prioridade | IDs | O quê |
 |:----------:|-----|--------|
@@ -386,15 +387,15 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **Em seguida** | M4.8, UI-M5 | Login SPA / Esqueci senha smoke |
 | **Adiado** | **UI-M3** (+ M3a/M3b) | Redesign SPA **sem** BS3/`panel-*` **e sem** fontello/FA parcial — **só após M4.7 ☑ + M7** (gates no doc fontello) |
 
-Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **CSS + fontes (fontello/FA) + nomes de classe** copiados de `cards.html` / `escolher.html`. Manual **§10.7** · lição Kiro nos links acima.
+Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível é **Bootstrap 5 CSS (link)** + **CSS de paridade** + fontes (fontello/FA) + **nomes de classe** copiados de `escolher.html` / `cards.html` / RDO. **Impacto:** UI/manutenção front — **não** bloqueia BFF/RDS/M7. **Redesign (UI-M3)** adiado de propósito — ver coluna *Quando vamos mudar* na tabela por página.
 
 ---
 
 ## Próxima ação (1)
 
-1. **Deploy homolog D→E** — pacote **`fd8a144`** (bundle `index-DjF3nB1W.js`) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
-2. **Smoke P5a RDO — T6:** confirmar **W1/W2** (header obra + ícones · botões/tabela prod) em `/Rdo/Index` · registrar em [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md).
-3. **P5a RDO restante:** **W3** (fontello/FA ícones PDF/assinar) · **M7** (ações clicáveis + modal assinatura) · opcional auditoria BFF **W4**.
+1. **Deploy homolog D→E** — pacote **`498ebc4`** (M7 **7a** cadastro + bundle SPA atual) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
+2. **Smoke P5a RDO:** `/Rdo/Index` (**T6** W1/W2 se pendente) · **+ NOVO** → `/Rdo/Cadastro` → salvar — [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md).
+3. **P5a RDO restante:** **W3** (ícones PDF/assinar) · **M7 7b–7d** (editar/PDF/assinar) · **UI-M3** só após gates (doc stack UI).
 4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)) — após T6 OK ou em paralelo se Lucio priorizar fila.
 5. **Backlog M4** — **UI-M1/UI-M2c** global · **M4.8** Login SPA · **M5 EQ-M** **adiado**.
 

@@ -30,6 +30,19 @@
 | **F** | FAPESC — cronograma (chat Execução) |
 | **I** | CI homolog EC2 |
 
+### 2.1 Stack UI homolog — Bootstrap × legado (por página)
+
+Homolog **não** roda AngularJS/jQuery/Bootstrap 3 JS na SPA; usa **React + BFF** com **Bootstrap 5 CSS** + classes CSS copiadas do prod (stack **H**). Troca para design system limpo = marco **UI-M3** (adiado até **M4.7 ☑** + **M7** estável — regra **anti-Kiro**).
+
+**Canônico (tabela por rota com *Por que* e *Quando vamos mudar*):** [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · manual §**10.7** · orquestrador § *Pendências — melhorias (stack UI)*.
+
+| Fase | Marco / IDs | O quê muda na stack |
+|------|-------------|---------------------|
+| **Agora** | **M4.7** · UI-M1 · UI-M2c · W3 (RDO) | Copiar ícones/layout legado **sem** trocar motor BS |
+| **Paridade funcional** | **M5 web** · **M7+** | SPA+BFF substituem stubs; modais ainda podem ser **H** |
+| **Depois** | **M4.8** · UI-M5 · UI-M6 | Login/Esqueci na SPA (rota, não redesign) |
+| **Redesign** | **UI-M3** (+ a/b) | Aposentar BS + `panel-*` + fontello/FA parcial na SPA |
+
 ---
 
 ## 3. Marcos (sequência)
