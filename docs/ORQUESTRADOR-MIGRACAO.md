@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-26 — **M4** · **M5 web** (paridade prod) prioritário · **M5 EQ-M Apontador adiado** · Git **`842380f`** · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
+**Atualizado:** 2026-10-27 — **M4** + **M5 web** (P5a RDO) · **M5 EQ-M adiado** · Git **`fd8a144`** (`ci/homolog-ec2-s3-ssm`) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · P5a log [`homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) · **I0** B1/B2  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -100,7 +100,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ## Fase atual
 
-**Marco ativo:** **M4** — **M4.4–M4.6 ☑** · **M4.7** código **B–D** no Git (**menu/RBAC/nav/header** · `LegacyOperadorRoutes` · commit **`7e19d47`**) · **falta:** smoke homolog **G5/G6** + **UI-M1/UI-M2c** (fontello/FA) · **P1** = **M4.8** · **P4** = **M7+**. Cruzamento web+apps: manual **§6b**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · nav/RBAC: [`migracao/m4-7-menu-nav-stubs.md`](migracao/m4-7-menu-nav-stubs.md) · [`migracao/m4-7g-rbac-shell-p1-p3.md`](migracao/m4-7g-rbac-shell-p1-p3.md).
+**Marco ativo:** **M4** (fechamento UI shell) **+ M5 web Onda B** (paridade prod) — **M4.4–M4.6 ☑** · **M4.7** código **B–D** **`7e19d47`** · **P5a RDO:** listagem **T5 classe E** (`056eb29`) · paridade visual **W1/W2** no Git **`fd8a144`** (smoke homolog **T6** pendente) · **falta M4:** G5/G6 · **UI-M1/UI-M2c** (fontello/FA, incl. ícones ação RDO **W3**) · **P1** = **M4.8** · **P4** = **M7+**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · M5 fila: [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md).
 
 **Numeração P (canônica):** **P1** Login · **P2** Escolher/cards obra · **P3** Etapas/Tarefas · **P4** Nova medição (= matriz **#1–#4**).
 
@@ -118,9 +118,9 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** deploy **D→E** (pacote **`3a7f5ad` + diag homolog) · smoke **RDO T3** ([`homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md)) · depois **M5 web #2** `/Chart/Index`.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** deploy **D→E** pacote **`fd8a144`** · smoke **P5a RDO T6** (W1/W2 header/CSS) · depois **W3** ícones ação **ou** **M5 web #2** `/Chart/Index`.
 
-**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-21** M4.4–M4.6 deploy · **2026-10-26** M4.7 + **M4.8/M5 RDO** (`7aee0f2`→`3a7f5ad`) · **2026-10-27** diag homolog + registro P5a tentativas.
+**Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
 **Deploy:** roteiro [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pacote P2+P3 **2026-10-21** (ver runbook) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
@@ -134,7 +134,14 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações · M4.4 Escolher React |
 | **M2** | **FECHADO** | — |
 | **M3** | **FECHADO** | passos 6–7 E2E opcional |
-| **M4** | **M4.1–M4.6** ☑ · **M4.7** B–D no Git | Smoke G5/G6 · UI-M1/M2c · **M4.8** **P1** · congela EQ-W |
+| **M4** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ | Smoke **G5/G6** · **UI-M1/M2c** · congela EQ-W formal |
+| **M5 web** (Onda B) | **#1 RDO** listagem **T5 E** · **W1/W2** `fd8a144` | Smoke **T6** · **W3** · **M7** ações · **#2 Chart** · **#3 Dashboard** |
+| **M5 EQ-M** | — | **⏸ adiado** — retomar no **G-M5** web ou **M6** |
+| **M6** | — | JWT/OpenAPI spike · contrato mobile homolog |
+| **M7+** | Rotas stub P3 · RBAC shell | CRUD/escrita · **P4** medição · PDF/assinar RDO |
+| **M8** | Branch CI · deploy D→E documentado | Runway &lt;2 min · workflow gate |
+| **M9** | — | D1–D7 pacote homolog v1 |
+| **M10** | — | Onda 2 / L1 prep |
 
 ---
 
@@ -355,7 +362,7 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **5** | ~~**M4.4** Escolher React + polish~~ | **EQ-R** | — | **✅ deploy 2026-10-21** |
 | **6** | ~~**M4.5–M4.6** P3 toolbar + accordion fix~~ | **EQ-R** | — | **✅ deploy 2026-10-21** · smoke Lucio |
 | **7** | **M4.7** smoke G5/G6 + UI-M1/M2c · depois **M4.8** Login SPA / congela EQ-W | **EQ-R** | — | código B–D **`7e19d47`** |
-| **8** | **M5 web (Onda B)** — RDO listagem → Chart → Dashboard obra (**G-M5**) | **EQ-R** | — | 1 tela/PR · ordem [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) |
+| **8** | **M5 web (Onda B)** — **RDO** listagem ☑ **E** + W1/W2 ☑ Git · smoke **T6** · **Chart** → **Dashboard** (**G-M5**) | **EQ-R** | — | [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) |
 | **9** | **M7+** cadastros/modais/menu admin · **M4.8** em paralelo curto | **EQ-R** | — | |
 | **10** | **M6** contratos/JWT · **I0 B3** | **I** / EQ-R | não | |
 | — | ~~**M5 EQ-M** Apontador~~ | **EQ-M** | — | **⏸ adiado** 2026-10-26 |
@@ -385,11 +392,11 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 
 ## Próxima ação (1)
 
-1. **Deploy homolog D→E** — pacote pós-**T3** (**`/Homolog/F12`**, auth scheme, sem rodapé SPA) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
-2. **Smoke RDO — T5:** deploy fix **Login sem ReturnUrl** em `/Rdo/Index` · log completo [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) (T0–T4 + aprendizados) · **T4** ☑ 2026-10-27 ~09:43 classe **A** pós-`6574ae5`.
-3. Se **classe E:** paridade listagem (filtros, paginação, contagens vs prod `#/rdo/index`) · bundle atual em `wwwroot/app/index.html`.
-4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
-5. **Backlog M4** — **UI-M1/UI-M2c** fontello · **M5 EQ-M** **adiado**.
+1. **Deploy homolog D→E** — pacote **`fd8a144`** (bundle `index-DjF3nB1W.js`) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
+2. **Smoke P5a RDO — T6:** confirmar **W1/W2** (header obra + ícones · botões/tabela prod) em `/Rdo/Index` · registrar em [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md).
+3. **P5a RDO restante:** **W3** (fontello/FA ícones PDF/assinar) · **M7** (ações clicáveis + modal assinatura) · opcional auditoria BFF **W4**.
+4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)) — após T6 OK ou em paralelo se Lucio priorizar fila.
+5. **Backlog M4** — **UI-M1/UI-M2c** global · **M4.8** Login SPA · **M5 EQ-M** **adiado**.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

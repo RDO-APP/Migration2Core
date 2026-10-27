@@ -1,6 +1,6 @@
 # Rastreio Dimas (TSK) × marcos M* — execução homolog
 
-**Trilha:** docs / orquestrador · **Atualizado:** 2026-10-25  
+**Trilha:** docs / orquestrador · **Atualizado:** 2026-10-27  
 **Dono da execução:** plano **M\*** ([`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) + [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md))  
 **Referência Dimas:** PDF **Backlog_RDO v20260818** → [`../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md) (TSK-01…56 × Ondas U)
 
@@ -39,7 +39,7 @@ Legenda: **☑** coberto pelo M* em curso/fechado · **◐** parcial · **☐** 
 | Cadastros gestor cedo | 14…16 | Onda 5 / M7+ | ☐ | Empresa/Colaborador/Equip CRUD React — **fora M4** |
 | Obra · etapa · tarefa | 17…23 | M2, M7 | ◐ | **Leitura** Cards (M2☑); **escrita** cadastro/lista/filtro — **M7+** |
 | Apontamento · medição | 24…30 | M7+, P4 | ☐ | Domínio + API; U-05 Framework antes — **Onda 0/4** |
-| RDO · laudo web | 31…36 | M5, M7+ | ◐ | Listagem/chart stub; cadastro RDO real — **M5/M7** |
+| RDO · laudo web | 31…36 | M5 web, M7+ | ◐ | **P5a** listagem BFF **T5 E** · shell W1/W2 **`fd8a144`**; Chart stub; PDF/assinar **M7** |
 | Relatórios · S3 worker | 37…39 | Onda 5 / M7+ | ☐ | Dapper/Excel/PDF gestor |
 | OpenAPI · ETL · cutover | 40…45 | M6, M8, M10, Onda 6 | ☐ | ETL **adiado** vs PDF mês 4 — **correto** no plano M* |
 | Mobile greenfield | 46…56 | M5, M6 | ⏸ | **Não rebuild** — integrar RN existente |
@@ -47,7 +47,7 @@ Legenda: **☑** coberto pelo M* em curso/fechado · **◐** parcial · **☐** 
 | Imutabilidade | TSK-32 | **F** | — | Chat **FAPESC Execução** · `rdo-blockchain` |
 | Front legado BS3/CSS/fontello | — | M4.7 (**UI-M2c**), UI-M3 | ◐ | Fase A copiar glifos: [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) · Fase B **UI-M3** pós-M7 |
 
-**Marco ativo:** **M4** (M4.7 paridade ícones/menu · doc fontello marcos) → **M4.8** → **M5…M7**.
+**Marco ativo:** **M4** fechamento (G5/G6 · UI-M1) **+ M5 web Onda B** (P5a RDO → Chart → Dashboard) · **M5 EQ-M ⏸** · **M6/M7** backlog.
 
 ---
 

@@ -12,7 +12,7 @@
 | Marco | Estado |
 |-------|--------|
 | P3 Cards | ☑ homolog |
-| P5a RDO listagem | ☑ **T5 classe E** (listagem 200) · paridade visual/ações **M7+** / **UI-M3** |
+| P5a RDO listagem | ☑ **T5 E** · **W1/W2** no Git **`fd8a144`** (smoke **T6** pendente) · **W3/M7** ações |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
@@ -27,7 +27,8 @@
 | **T3** | **2026-10-27 08:05** | ✅ SSM `46901ecd…` ~1,4 min | `c0d09e8` · `index-C4fKCj64.js` | P1/P3 OK · RDO → loop (print) | **A** | F12 + `6574ae5` |
 | **T4** | **2026-10-27 ~09:43** | ✅ SSM `50efd8f3…` · zip `20261027-093531` | `6574ae5` · `index-DVRJFW-_.js` | Loop · F12 **Network/Doc** | **A′** | fix rota legado |
 | **T4b** | **2026-10-27 ~09:58** | (mesmo deploy) | — | F12: **302** `Location: /Rdo/Index` · `X-RdoApp-Diag: logado; obra=42; LoginData-ok` | **A′** self-302 | **T5** |
-| **T5** | **2026-10-27 ~11:00** (BR) | ✅ D+E · SSM `775cda4a…` · zip `20261027-105734` | `056eb29`+ | **200** `/Rdo/Index` · listagem (print) · paridade vs prod parcial | **E** | M7 ações · header RDO · UI |
+| **T5** | **2026-10-27 ~11:00** (BR) | ✅ D+E · SSM `775cda4a…` · zip `20261027-105734` | `056eb29`+ | **200** `/Rdo/Index` · listagem (print) · paridade vs prod parcial | **E** | W1/W2 no Git |
+| **T6** | _após deploy_ | | **`fd8a144`** | W1/W2: header obra, nav, botões, tabela centralizada | _pendente_ | W3 ou Chart |
 
 ### Classes de falha
 
@@ -52,7 +53,7 @@
 | **T3** | Loop pós-deploy OK | Classe **A** (não B) | SSM Success **não** prova RDO; smoke **só** no ícone RDO / `/Rdo/Index`. |
 | **T4** | Loop pós-deploy | Hipótese Login↔Rdo | F12 provou outra coisa (**A′**). |
 | **T4b** | **302 para a mesma URL** | Kiro **`#/rdo/index`** → stub M4.7h **`/rdo/index` → 302 `/Rdo/Index`**; case-insensitive = loop (não cookie) | P5a no **RdoController**, não redirect no **ModuloLegado**; F12 **Location** + **X-RdoApp-Diag**. |
-| **T5** | Listagem OK | Fix **`056eb29`** + publish 10:57 | P5a **E**; gaps = header obra, ícones, ações M7, CSS/fontello | Próximo: **M5 web #2** Chart ou fechar gaps RDO. |
+| **T5** | Listagem OK | Fix **`056eb29`** + publish 10:57 | P5a **E** | **T6** smoke **`fd8a144`** (W1/W2) |
 
 ---
 

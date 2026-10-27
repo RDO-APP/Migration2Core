@@ -24,7 +24,7 @@
 | Ordem | Destino stub hoje | Referência prod | Marco |
 |:-----:|-------------------|-----------------|-------|
 | **0** | — | **M4.8** ☑ · M4.7 smoke ☑ (fontello = backlog UI-M1) | Pré-M5 web |
-| **1** | `/Rdo/Index` | `#/rdo/index` | **M5 web** ☑ listagem BFF + React (ações M7+) |
+| **1** | `/Rdo/Index` | `#/rdo/index` | **M5 web** ☑ listagem **T5 E** · shell/CSS **W1/W2** `fd8a144` (smoke **T6**) · ações **M7+** · ícones **W3/UI-M1** |
 | **2** | `/Chart/Index` + `/chart/*` | `#/chart` | **M5 web** |
 | **3** | `/Dashboard/Index` | `#/dashboard/index` | **M5 web** |
 | **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7** |
