@@ -55,7 +55,7 @@ namespace RdoApp.Core.Controllers
                 }
                 else
                 {
-                    // Já logado: nunca 302 de volta ao ReturnUrl (quebra loop Login ↔ /Rdo/Index).
+                    // Já logado: nunca 302 de volta ao ReturnUrl (loop Login ↔ /Rdo/Index).
                     if (ObraSessionHelper.HasObraSelected(HttpContext))
                     {
                         return RedirectToAction("Cards", "Tarefa");

@@ -60,8 +60,13 @@ builder.Services.AddSession(options =>
 });
 
 // Configure Cookie Authentication (instead of Identity)
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie("Cookies", options =>
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
@@ -86,11 +91,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                         ObraSessionHelper.HasObraSelected(ctx.HttpContext)
                             ? "/Tarefa/Cards"
                             : "/Obra/Escolher");
+                    ctx.HandleResponse();
                     return Task.CompletedTask;
                 }
 
                 HomologDiagnostics.SetRedirectMotivo(ctx.HttpContext, "nao-autenticado; vai-Login-com-ReturnUrl");
                 ctx.Response.Redirect(ctx.RedirectUri);
+                ctx.HandleResponse();
                 return Task.CompletedTask;
             },
         };

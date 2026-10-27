@@ -35,7 +35,7 @@ public class BffDiagController : ControllerBase
             obraSelecionada = ObraSessionHelper.HasObraSelected(HttpContext),
             obraId = ObraSessionHelper.GetObraId(HttpContext),
             temLoginData = !string.IsNullOrEmpty(HttpContext.Session.GetString(SessionKeys.LoginData)),
-            dicaF12 = "Rede → filtro Fetch/XHR → GET api/bff/diag · Documento Rdo/Index → Cabeçalhos → X-RdoApp-Diag",
+            dicaF12 = "Página debug: /Homolog/F12 · Rede Fetch/XHR → api/bff/diag · Doc Rdo/Index → X-RdoApp-*",
         });
     }
 }

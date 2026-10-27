@@ -385,8 +385,8 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 
 ## Próxima ação (1)
 
-1. **Deploy homolog D→E** branch **`ci/homolog-ec2-s3-ssm`** — pacote **anti-loop RDO (`3a7f5ad`) + diagnóstico homolog** (faixa verde, `GET /api/bff/diag`, headers `X-RdoApp-*`) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md). Confirmar **SSM Success** nos dois passos (pull ≠ deploy).
-2. **Smoke RDO — tentativa T3:** Ctrl+F5 → **P1/P3** OK → ícone RDO → **`/Rdo/Index`**. Registrar linha **T3** em [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) (classe **A/B/C/D/E**). Evidência: JSON `/api/bff/diag` · Rede **Doc** cabeçalhos se 302 · manual **§10.8**.
+1. **Deploy homolog D→E** — pacote pós-**T3** (**`/Homolog/F12`**, auth scheme, sem rodapé SPA) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
+2. **Smoke RDO — T4:** Ctrl+F5 → **`/Homolog/F12`** (JSON) → Cards → RDO → listagem como prod **`#/rdo/index`**. Log **T4** em [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) · **T3** ☑ 2026-10-27 08:05 classe **A**.
 3. Se **classe E:** paridade listagem (filtros, paginação, contagens vs prod `#/rdo/index`) · bundle atual em `wwwroot/app/index.html`.
 4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
 5. **Backlog M4** — **UI-M1/UI-M2c** fontello · **M5 EQ-M** **adiado**.
