@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
 using RdoApp.Core.Infrastructure;
+using RdoApp.Core.Middleware;
 using RdoApp.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,7 +79,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             {
                 if (ctx.HttpContext.User?.Identity?.IsAuthenticated == true)
                 {
-                    // Não reenviar para ReturnUrl (ex. /Rdo/Index) — quebra ERR_TOO_MANY_REDIRECTS.
+                    HomologDiagnostics.SetRedirectMotivo(
+                        ctx.HttpContext,
+                        "autenticado-mas-rota-pediu-login; vai-Cards-ou-Escolher-sem-ReturnUrl");
                     ctx.Response.Redirect(
                         ObraSessionHelper.HasObraSelected(ctx.HttpContext)
                             ? "/Tarefa/Cards"
@@ -86,6 +89,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                     return Task.CompletedTask;
                 }
 
+                HomologDiagnostics.SetRedirectMotivo(ctx.HttpContext, "nao-autenticado; vai-Login-com-ReturnUrl");
                 ctx.Response.Redirect(ctx.RedirectUri);
                 return Task.CompletedTask;
             },
@@ -123,6 +127,7 @@ app.UseRouting();
 app.UseSession(); // ✅ Enable session support
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<HomologDiagnosticsMiddleware>();
 
 app.MapStaticAssets();
 

@@ -118,9 +118,9 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** deploy **`7e19d47`** + smoke **G5/G6** · fechar **M4.7** (fontello) · **M4.8** · depois **M5** EQ-M (não confundir com **M5-nav** web stubs).
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** deploy **D→E** (pacote **`3a7f5ad` + diag homolog) · smoke **RDO T3** ([`homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md)) · depois **M5 web #2** `/Chart/Index`.
 
-**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-21** M4.4–M4.6 deploy · **2026-10-26** **`7e19d47`** M4.7 B–D + I0 scripts.
+**Histórico:** **M1** FECHADO 2026-10-17. **M0** PARCIAL PASS. **2026-10-19** M3 PASS · **2026-10-21** M4.4–M4.6 deploy · **2026-10-26** M4.7 + **M4.8/M5 RDO** (`7aee0f2`→`3a7f5ad`) · **2026-10-27** diag homolog + registro P5a tentativas.
 
 **Deploy:** roteiro [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pacote P2+P3 **2026-10-21** (ver runbook) · pré-check `Test-Path C:\Dev\Migration2Core`.
 
@@ -385,11 +385,11 @@ Homolog **não executa** AngularJS/jQuery na SPA; o “legado” visível é **C
 
 ## Próxima ação (1)
 
-1. **Deploy homolog** branch **`ci/homolog-ec2-s3-ssm`** (pacote **M4.8 + M5 web `/Rdo/Index`**) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
-2. **Smoke pós-deploy:** **P1** Login SPA (POST → Escolher) · **G5/G6** menu/RBAC · **`/Rdo/Index`** filtros + paginação + contagens vs prod · bundle `index-BoFBreD3.js`.
-3. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
-4. **Backlog M4** — **UI-M1/UI-M2c** fontello (não bloqueia M5 web).
-5. **M5 EQ-M** — **adiado**; prod Apontador inalterado.
+1. **Deploy homolog D→E** branch **`ci/homolog-ec2-s3-ssm`** — pacote **anti-loop RDO (`3a7f5ad`) + diagnóstico homolog** (faixa verde, `GET /api/bff/diag`, headers `X-RdoApp-*`) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md). Confirmar **SSM Success** nos dois passos (pull ≠ deploy).
+2. **Smoke RDO — tentativa T3:** Ctrl+F5 → **P1/P3** OK → ícone RDO → **`/Rdo/Index`**. Registrar linha **T3** em [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md) (classe **A/B/C/D/E**). Evidência: JSON `/api/bff/diag` · Rede **Doc** cabeçalhos se 302 · manual **§10.8**.
+3. Se **classe E:** paridade listagem (filtros, paginação, contagens vs prod `#/rdo/index`) · bundle atual em `wwwroot/app/index.html`.
+4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
+5. **Backlog M4** — **UI-M1/UI-M2c** fontello · **M5 EQ-M** **adiado**.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

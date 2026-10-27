@@ -33,6 +33,9 @@ public static class OperadorSpaEntry
         var spaIndex = Path.Combine(env.WebRootPath, "app", "index.html");
         if (System.IO.File.Exists(spaIndex))
         {
+            HomologDiagnostics.SetDiag(
+                controller.HttpContext,
+                HomologDiagnostics.BuildSnapshot(controller.HttpContext) + "; acao=ServeSpaIndex-200");
             return controller.PhysicalFile(spaIndex, "text/html");
         }
 
