@@ -2,7 +2,7 @@
 
 **Trilha:** **I0** · **Quem executa:** Lucio (PowerShell + browser). **Agente:** não roda SSM/deploy (só código/docs no Git).  
 **Plano técnico:** [`../homolog-core-deploy-rapido-plano.md`](../homolog-core-deploy-rapido-plano.md)  
-**Atualizado:** 2026-10-25 · **M4.7i** drawer z-index · **M4.7g/h** toolbar RBAC + menu · branch `ci/homolog-ec2-s3-ssm` · ref Git **`1970030+`** (sempre **A2 pull** → **D publish** → **E deploy** — nunca E sem D)
+**Atualizado:** 2026-10-28 · **M7 7a** cadastro RDO · branch `ci/homolog-ec2-s3-ssm` · ref Git **`498ebc4+`** (sempre **A2 pull** → **D publish** → **E deploy** — nunca E sem D)
 
 ---
 
@@ -44,6 +44,59 @@ Se `Test-Path` do clone = **False** → **Passo A** abaixo (clone). Não pule.
 **Regra de colar:** uma **linha** por vez — **sem** `PS C:\...>`, **sem** JSON `{ "CommandId": ... }` (isso é **resposta**, não comando).
 
 **Antes de cada passo:** na dúvida, `hostname; whoami` na janela onde vai colar.
+
+**Como copiar no PowerShell:** abra este `.md` no Cursor (preview ou editor), clique no **ícone copiar** no canto superior direito de cada bloco `powershell` (ou selecione só o texto **dentro** do bloco). Cole **uma colagem por vez** na janela **[PC]** — **não** cole o prompt `PS C:\...>` nem JSON de resposta.
+
+---
+
+## 3b. Ciclo deploy normal — 4 colagens (fluxo de sempre)
+
+Use isto **99% das vezes**. Credencial AWS OK recente → pule colagem **2** (login).
+
+**Colagem 1 — atualizar Git**
+
+```powershell
+git -C C:\Dev\Migration2Core fetch origin ci/homolog-ec2-s3-ssm; git -C C:\Dev\Migration2Core pull origin ci/homolog-ec2-s3-ssm
+```
+
+**Colagem 2 — só se `aws sts get-caller-identity` falhar (credencial expirada)**
+
+```powershell
+aws login --remote
+```
+
+```powershell
+aws sts get-caller-identity --region us-east-2
+```
+
+**Colagem 3 — publish (vários minutos)**
+
+```powershell
+cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts
+```
+
+```powershell
+.\publish-homolog-ec2.ps1
+```
+
+**Colagem 4 — deploy (mesma pasta `scripts`; não feche o PowerShell)**
+
+```powershell
+.\deploy-homolog-ec2-ssm.ps1 -S3Bucket s3rdoapp -InstanceId i-05cb0003c031a26da
+```
+
+**O que acontece na colagem 4 (importante):**
+
+| Você vê | Significa |
+|---------|-----------|
+| `CommandId: xxxxxxxx-…` | SSM aceitou o job na EC2 (só informativo) |
+| Linhas `[HH:mm:ss] Status: InProgress` | **Normal** — o script **já está esperando** sozinho (poll 15 s) |
+| `Deploy SSM OK.` | Pode ir ao browser — **Passo G** |
+| `Failed` | Copie **toda** a saída para o chat Migração |
+
+**Você não precisa** rodar `wait-ssm-homolog-command.ps1` nem **substituir** nenhum UUID no fluxo normal. Isso só existia para quem usava `-NoWait` ou fechava o terminal no meio — ver **Passo F (recuperação)** abaixo.
+
+---
 
 ## 4. Passo a passo — um comando por vez
 
@@ -121,35 +174,41 @@ cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts; .\publish-homolog-ec2.
 
 ### Passo E — Enviar S3 + comando na EC2 · **[PC]** (dispara deploy **remoto** na EC2)
 
+Mesma pasta que o Passo D (`...\RDO-CleanMigration-2026\scripts`):
+
 ```powershell
-.\deploy-homolog-ec2-ssm.ps1 -S3Bucket "s3rdoapp" -InstanceId "i-05cb0003c031a26da"
+.\deploy-homolog-ec2-ssm.ps1 -S3Bucket s3rdoapp -InstanceId i-05cb0003c031a26da
 ```
 
 **Serve:** upload zip + script na EC2 (para processo, preserva `appsettings.Staging.json`).  
-**Esperado:** `CommandId` + **poll automático** a cada 15 s até `Success` ou erro (full deploy na EC2 costuma **3–8 min** — `InProgress` nesse intervalo é normal).
+**Esperado:** `CommandId: …` (informativo) → o **mesmo script** chama `wait-ssm-homolog-command.ps1` **automaticamente** → termina com **`Deploy SSM OK.`** (full deploy na EC2 costuma **3–8 min**; `InProgress` nesse intervalo é normal).
 
-**Só se usou** `-NoWait` no deploy, ou perdeu a janela — **Passo F** (mesma pasta `scripts`):
-
-```powershell
-.\wait-ssm-homolog-command.ps1 -CommandId "COMMAND_ID"
-```
-
-Substitua `COMMAND_ID` pelo UUID anotado.
+**Não faça nada extra** após colar o comando — deixe o PowerShell aberto até `Deploy SSM OK.` ou `Failed`.
 
 ---
 
-### Passo F — Esperar SSM (manual / recuperação)
+### Passo F — Esperar SSM (**só recuperação** — fluxo normal **não** usa)
+
+**Quando usar (raro):**
+
+| Situação | O que fazer |
+|----------|-------------|
+| Deploy com **`-NoWait`** | O PowerShell imprime **uma linha pronta** com o UUID **já preenchido** — copie **essa linha inteira** (não invente `COMMAND_ID`) |
+| Fechou o PowerShell com SSM ainda `InProgress` | Na saída antiga ou no Console AWS → Run Command, copie o UUID de `CommandId:` e use a colagem abaixo trocando **só** o UUID |
+| `wait` deu timeout mas o deploy pode ainda estar rodando | Reexecutar wait com o **mesmo** `CommandId` (script é idempotente enquanto `InProgress`) |
 
 **Onde:** **[PC]** · `C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts`
 
+Troque `COLE-AQUI-O-UUID-DO-COMMANDID` pelo valor verde `CommandId: …` (ex.: `46901ecd-1234-5678-abcd-0123456789ab`):
+
 ```powershell
-.\wait-ssm-homolog-command.ps1 -CommandId "COMMAND_ID"
+.\wait-ssm-homolog-command.ps1 -CommandId "COLE-AQUI-O-UUID-DO-COMMANDID" -InstanceId i-05cb0003c031a26da
 ```
 
 **Esperado:** linhas `[HH:mm:ss] Status: InProgress` … depois **`Deploy SSM OK.`**  
 Se `Failed`: copie a saída completa para o chat Migração.
 
-Alternativa legada (uma consulta, sem loop): `aws ssm get-command-invocation ...` — evitar; preferir `wait-ssm-homolog-command.ps1`.
+**Exemplo com `-NoWait`:** o deploy **já imprime** o comando completo — use **só** essa linha, sem editar manualmente.
 
 ---
 
@@ -166,7 +225,7 @@ Use **Ctrl+F5** (hard refresh) após SSM Success.
 | G5 | **Menu hambúrguer** (M4.7d/**i**) | Drawer **opaco**, links **brancos**, accordion **não** aparece por cima do menu · itens de `GET /api/bff/shell` · Trocar senha / Sair |
 | G6 | Toolbar linha título | **RDO · Efetivo** (2 ícones se perfil **sem** `editarObra` — paridade prod **M4.7g**) · DevTools → `GET /api/bff/shell` → matriz [`m4-7g-rbac-shell-p1-p3.md`](m4-7g-rbac-shell-p1-p3.md) |
 | G7 | Toolbar faixa | LISTA · FILTRO · ADICIONAR TAREFA · ADICIONAR ETAPA |
-| G8 | Navegação meio-termo (M4.7b) | Clique RDO → `/Rdo/Cadastro` (Em migração) · Chart → `/Chart` · ícone card → rota MVC |
+| G8 | **P5a / M7 7a** RDO | `/Rdo/Index` listagem · **NOVO** → `/Rdo/Cadastro` SPA · salvar · voltar listagem · Chart → `/Chart` (stub se ainda não entregue) |
 | G9 | DevTools Network | `GET /api/bff/etapas` **200** · SPA JS carregado (hash atual, ex. `index-DzoPbagL.js`) |
 
 Erro → banner vermelho ou tela em branco; anotar `CommandId` se SSM falhou → chat Migração.
@@ -185,7 +244,8 @@ Após PASS: marcar **M4.7c/d** smoke em [`m4-execucao-checklist.md`](m4-execucao
 | SSM `InProgress` 10–20 min, stdout vazio | **Normal** — zip self-contained: download + `Expand-Archive` + `Copy-Item` na EC2; SSM **nao** mostra log ate `Success`/`Failed` | Deixe `wait-ssm-homolog-command.ps1` rodar; teste `https://homolog.sistema.rdoapp.com.br/Account/Login` (pode ser build anterior ate acabar) |
 | SSM `InProgress` 20+ min (timeout do wait) | Deploy anterior / DLL presa / download travado | Console SSM → cancelar; Session Manager: processos `RdoApp.Core`; redeploy |
 | SSM **`Failed`** mas stdout tem **`Deploy homolog Core OK`** + **`Smoke status: 200`** | **Falso negativo** — Core escreveu log no console SSM (`invalid argument`) | Tratar como **Success**; testar browser; proximo deploy usa `ec2-apply` com start detached |
-| Agente “faz deploy” | Regra de sessão | **Lucio** roda Passos D–F; agente só documenta/codifica |
+| Agente “faz deploy” | Regra de sessão | **Lucio** roda colagens **3–4** (D–E); agente só documenta/codifica |
+| Doc pedia `wait-ssm` + `COMMAND_ID` | Confusão com fluxo antigo / `-NoWait` | Fluxo normal: **só** `deploy-homolog-ec2-ssm.ps1` até `Deploy SSM OK.` |
 | Deploy OK mas **UI igual** | Publish **sem** `git pull` · **SSM sem publish** (re-upload zip velho) · cache browser | **Um ciclo só:** `git pull` → `git log -1` → **publish** → **deploy** → Ctrl+F5 · Network: hash JS/CSS **≠** deploy anterior |
 | Menu **transparente** / etapas **atrás** do drawer | `header.css` sidebar `z-index:2` dentro de `.topo` | **M4.7i** (`operador-menu-open`) — precisa bundle novo pós-fix |
 | **3 ícones** toolbar (RDO+edit+efetivo) vs prod **2** | `GET /api/bff/shell` → `showEditarObra:true` (permissão homolog) ou Core **sem** campos RBAC | Comparar JSON com prod (mesmo CPF) · não é bug de deploy se BFF devolve `true` |
@@ -235,7 +295,7 @@ Enquanto EC2 usa **só** `RdoApp.Core.exe` self-contained **sem** .NET instalado
 - [ ] `publish-homolog-ec2.ps1` existe  
 - [ ] `aws sts get-caller-identity` OK  
 - [ ] Publish gerou zip (+ `npm run build` no log)  
-- [ ] SSM Success  
+- [ ] Colagem 4 terminou com **`Deploy SSM OK.`** (sem passo extra de wait)  
 - [ ] G1–G3 login → Escolher → Cards com dados  
 - [ ] G5 hambúrguer + G6 ícones toolbar título  
 - [ ] G8 pelo menos um clique → Em migração
