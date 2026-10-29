@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-27 — **M4** + **M5 web** (P5a RDO) · **M7 7a** cadastro `498ebc4` · **M5 EQ-M adiado** · Git **`498ebc4`** (`ci/homolog-ec2-s3-ssm`) · stack UI por página: [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
+**Atualizado:** 2026-10-28 — **M7 7a** cadastro `498ebc4` · **7a-P0** etapas `3c061b6` · **M5 EQ-M adiado** · Git **`3c061b6`** (`ci/homolog-ec2-s3-ssm`) · stack UI por página: [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).

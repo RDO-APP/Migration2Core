@@ -2,7 +2,7 @@
 
 **Trilha:** **I0** · **Quem executa:** Lucio (PowerShell + browser). **Agente:** não roda SSM/deploy (só código/docs no Git).  
 **Plano técnico:** [`../homolog-core-deploy-rapido-plano.md`](../homolog-core-deploy-rapido-plano.md)  
-**Atualizado:** 2026-10-28 · **M7 7a** cadastro RDO · branch `ci/homolog-ec2-s3-ssm` · ref Git **`498ebc4+`** (sempre **A2 pull** → **D publish** → **E deploy** — nunca E sem D)
+**Atualizado:** 2026-10-28 · **M7 7a-P0** cadastro RDO · branch `ci/homolog-ec2-s3-ssm` · ref Git **`3c061b6+`** (sempre **A2 pull** → **D publish** → **E deploy** — nunca E sem D)
 
 ---
 
