@@ -86,14 +86,7 @@ public class RdoCadastroSaveService
         }
 
         var selectedIds = request.ListaTarefas.Select(t => t.Id).Distinct().ToList();
-        var tarefasObra = await _context.Tarefas
-            .Where(t => t.TarIdEtapa != 0)
-            .Join(
-                _context.Etapas.Where(e => e.EtaIdObra == obraId),
-                t => t.TarIdEtapa,
-                e => e.EtaIdEtapa,
-                (t, _) => t)
-            .ToListAsync(cancellationToken);
+        var tarefasObra = await TarefaAgrupadorQuery.LoadByObraIdAsync(_context, obraId, cancellationToken);
 
         var semHistorico = new List<string>();
         foreach (var id in selectedIds)
@@ -113,7 +106,7 @@ public class RdoCadastroSaveService
 
             if (diaAnterior && !noDia)
             {
-                semHistorico.Add(seed.TarDsTarefa ?? $"Tarefa {id}");
+                semHistorico.Add(seed.Descricao.Length > 0 ? seed.Descricao : $"Tarefa {id}");
             }
         }
 
@@ -190,7 +183,7 @@ public class RdoCadastroSaveService
         int rdoId,
         DateTime dataRdo,
         List<int> selectedIds,
-        List<Tarefa> tarefasObra,
+        List<TarefaAgrupadorRow> tarefasObra,
         bool allowCopyPreviousDay,
         CancellationToken cancellationToken)
     {
@@ -218,7 +211,7 @@ public class RdoCadastroSaveService
                     .ToList();
                 foreach (var tar in prev)
                 {
-                    var newId = await CopyTarefaHistoricoAsync(tar, cancellationToken);
+                    var newId = await CopyTarefaHistoricoAsync(tar.TarIdTarefa, cancellationToken);
                     await EnsureLinkAsync(rdoId, newId, remaining, cancellationToken);
                 }
 
@@ -261,8 +254,9 @@ public class RdoCadastroSaveService
         }
     }
 
-    private async Task<int> CopyTarefaHistoricoAsync(Tarefa tar, CancellationToken cancellationToken)
+    private async Task<int> CopyTarefaHistoricoAsync(int tarIdOrigem, CancellationToken cancellationToken)
     {
+        var tar = await _context.Tarefas.FirstAsync(t => t.TarIdTarefa == tarIdOrigem, cancellationToken);
         var newTar = new Tarefa
         {
             TarDsComentario = tar.TarDsComentario,

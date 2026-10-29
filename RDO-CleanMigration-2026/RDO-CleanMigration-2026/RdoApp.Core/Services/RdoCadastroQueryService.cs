@@ -1,7 +1,6 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
-using RdoApp.Core.Data.Entities;
 using RdoApp.Core.Models.Dtos;
 
 namespace RdoApp.Core.Services;
@@ -44,6 +43,7 @@ public class RdoCadastroQueryService
         var etapaRows = await _context.Etapas.AsNoTracking()
             .Where(e => e.EtaIdObra == obraId)
             .OrderBy(e => e.EtaNrOrderm)
+            .ThenBy(e => e.EtaIdEtapa)
             .Select(e => new { e.EtaIdEtapa, Titulo = e.EtaDsEtapa ?? "", e.EtaNrOrderm })
             .ToListAsync(cancellationToken);
 
@@ -53,26 +53,13 @@ public class RdoCadastroQueryService
         }
 
         var etapaIds = etapaRows.Select(e => e.EtaIdEtapa).ToList();
-        var tarefas = await _context.Tarefas.AsNoTracking()
-            .Where(t => etapaIds.Contains(t.TarIdEtapa) && t.TarIdStatus != 1)
-            .ToListAsync(cancellationToken);
+        var tarefas = await TarefaAgrupadorQuery.LoadByEtapaIdsAsync(_context, etapaIds, cancellationToken);
 
         var etapas = new List<RdoCadastroEtapaDto>();
         foreach (var etapa in etapaRows)
         {
-            var reps = tarefas
-                .Where(t => t.TarIdEtapa == etapa.EtaIdEtapa)
-                .GroupBy(t => t.TarNrAgrupador)
-                .Select(g => g
-                    .OrderByDescending(t => t.TarIdTarefa)
-                    .ThenByDescending(t => t.TarDtMedicao)
-                    .ThenByDescending(t => t.TarDtMedicaoHoraInicial)
-                    .First())
-                .Where(t => t.TarIdStatus != 1)
-                .OrderBy(t => t.TarIdStatus)
-                .ThenBy(t => t.TarDtInicio)
-                .ToList();
-
+            var inEtapa = tarefas.Where(t => t.TarIdEtapa == etapa.EtaIdEtapa);
+            var reps = TarefaAgrupadorQuery.SelectRepresentantesParaRdo(inEtapa);
             if (reps.Count == 0)
             {
                 continue;
@@ -89,7 +76,7 @@ public class RdoCadastroQueryService
                 return new RdoCadastroTarefaDto
                 {
                     Id = t.TarIdTarefa,
-                    Descricao = t.TarDsTarefa ?? "",
+                    Descricao = t.Descricao,
                     Status = t.TarIdStatus,
                     IdEtapa = t.TarIdEtapa,
                     ExisteRegistroMedicaoDataRequerida = noDia,
