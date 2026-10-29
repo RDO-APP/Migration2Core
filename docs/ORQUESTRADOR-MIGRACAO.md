@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-28 — **M7 7a** cadastro `498ebc4` · **7a-P0** etapas `3c061b6` · **M5 EQ-M adiado** · Git **`3c061b6`** (`ci/homolog-ec2-s3-ssm`) · stack UI por página: [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
+**Atualizado:** 2026-10-29 — roteamento **obra demo assinatura** (Loja) · **M7 7a-P0** `3c061b6` · Git **`05999d6`** (`ci/homolog-ec2-s3-ssm`) · stack UI por página: [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -393,8 +393,8 @@ Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível
 
 ## Próxima ação (1)
 
-1. **Deploy homolog D→E** — pacote **`498ebc4`** (M7 **7a** cadastro + bundle SPA atual) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
-2. **Smoke P5a RDO:** `/Rdo/Index` (**T6** W1/W2 se pendente) · **+ NOVO** → `/Rdo/Cadastro` → salvar — [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md).
+1. **Deploy homolog D→E** — pacote **`3c061b6`** (M7 **7a-P0** + SPA) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
+2. **Smoke T7 cadastro:** `cadastro/etapas` **200** → salvar RDO — gap prod: [`migracao/m7-rdo-cadastro-paridade-homolog-prod.md`](migracao/m7-rdo-cadastro-paridade-homolog-prod.md) · [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md).
 3. **P5a RDO restante:** **W3** (ícones PDF/assinar) · **M7 7b–7d** (editar/PDF/assinar) · **UI-M3** só após gates (doc stack UI).
 4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)) — após T6 OK ou em paralelo se Lucio priorizar fila.
 5. **Backlog M4** — **UI-M1/UI-M2c** global · **M4.8** Login SPA · **M5 EQ-M** **adiado**.
@@ -424,6 +424,30 @@ Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível
 
 ---
 
+## Regras rápidas (roteamento)
+
+| Pedido | Dono / trilha | Não fazer no chat **Migração** |
+|--------|---------------|--------------------------------|
+| Cards / telas web homolog | **EQ-R** | Feature nova em Razor (**EQ-W**) |
+| API mobile / Expo | **EQ-M** | Assumir Core homolog sem E3 |
+| Hotfix prod IIS / AngularJS | **EQ-L** | Deploy Core em `:80` prod |
+| OIDC / S3 / SSM homolog | **I** | CI antes gate E6 (Cards EQ-R) |
+| PoC blockchain / Termo | **F** | Redirecionar chat **FAPESC Execução** |
+| **Obra demo pós-assinatura** (bat, tenant lead) | Chat **Loja RDO App** `65b6e329-2ae6-4468-9f01-485f21d9d68c` · skill **`criar-obra-assinatura`** · ponte Loja×Sistema | **Rodar** o bat · **Gravar** `homol_rdoapp` · **Commit** Migration2Core para provisionamento · Confundir com **P3** (abaixo) |
+
+### Obra demo assinatura (prod EQ-L — só roteamento)
+
+| Fact | Detalhe |
+|------|---------|
+| **Onde grava o bat** | **Prod** `sistema.rdoapp.com.br` · RDS **`novo_rdoapp`** (EQ-L) — obra **Contratada**, etapa **Serviços Preliminares**, tarefa **Terraplanagem** (Planejada) |
+| **Quem executa** | **Lucio** / chat **Loja** — agente **Migração documenta**, **não** dispara bat |
+| **Licença Equipamentos (18)** | Sem perfil **Diretor Contratada**; na demo a empresa costuma ficar na **licença 1** + menu **Gratuita** — regra **loja/legado**, **não** desenho Core homolog |
+| **≠ P3 (M2/M4)** | **P3** = `/Tarefa/Cards` no **homolog** Core · BFF `GET /api/bff/etapas` · RDS **`homol_rdoapp`** · React — **independente** do bat prod |
+
+**Fora deste bloco:** FAPESC · EDI/token · mobile homolog · Hub GovTech.
+
+---
+
 ## Mapa de impacto (canônico)
 
 Antes de codar ou editar doc de migração, cruzar **sub-trilha** × **superfícies**. Regra Cursor: `.cursor/rules/orquestrador-migracao-impacto.mdc`.
@@ -440,6 +464,7 @@ Antes de codar ou editar doc de migração, cruzar **sub-trilha** × **superfíc
 | Deploy homolog EC2/CI | **I** | `Migration2Core` branch `ci/*` | Preservar `appsettings.Staging.json`; E6 gate Cards **EQ-R** |
 | Cronograma / horas / M* FAPESC | **F** | `docs/` anexo E4 | Chat **FAPESC Execução** — não PoC aqui |
 | Prontidão B2G / W4 Hub | — | `docs/hub-*` | Regra **hub-govtech-equipamentos-only** — só Equipamentos+Apontador |
+| **Obra demo pós-assinatura** (bat prod) | **Loja** + skill `criar-obra-assinatura` | **Fora** Migration2Core · **≠** `homol_rdoapp` | **`novo_rdoapp` prod** · **≠ P3** homolog · ver **Regras rápidas** acima |
 | Piscinas (futuro) | **PQ-*** | TBD | Fora escopo EQ; nova sessão orquestrador |
 
 **Saída obrigatória do agente** (1 parágrafo + bullets): sub-trilha escolhida · repos tocados · impacto cruzado · chat/repo **fora** deste workspace se houver.

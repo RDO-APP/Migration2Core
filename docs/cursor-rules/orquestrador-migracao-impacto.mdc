@@ -33,6 +33,9 @@ Usar a tabela **Mapa de impacto** em `ORQUESTRADOR-MIGRACAO.md`. Em dúvida, pre
 | Hotfix prod IIS | EQ-L | Deploy Core em `:80` prod |
 | OIDC/S3/SSM homolog | I | CI antes gate E6 (Cards EQ-R) |
 | PoC blockchain / Termo | — | Redirecionar chat FAPESC Execução |
+| Obra demo pós-assinatura (bat prod) | Chat **Loja** `65b6e329…` · skill **`criar-obra-assinatura`** | Rodar bat; gravar **homol_rdoapp**; commit Core; confundir com **P3** homolog (`/api/bff/etapas`) |
+
+Detalhe bat / licença 1 vs 18 / **≠ P3:** `docs/ORQUESTRADOR-MIGRACAO.md` § **Regras rápidas (roteamento)**.
 
 ## Git (Lucio — canônico)
 
