@@ -13,6 +13,7 @@
 |-------|--------|
 | P3 Cards | ☑ homolog |
 | P5a RDO listagem | ☑ **T5 E** · **W1/W2** no Git **`fd8a144`** (smoke **T6** pendente) · **W3/M7** ações |
+| **M7 `/Rdo/Cadastro`** | ◐ **T7** **2026-10-29 23:11** — P0 `3c061b6` · matriz **19** itens · **5** parciais · smoke checklist **2/3** · ver linha **T7** |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
@@ -29,6 +30,7 @@
 | **T4b** | **2026-10-27 ~09:58** | (mesmo deploy) | — | F12: **302** `Location: /Rdo/Index` · `X-RdoApp-Diag: logado; obra=42; LoginData-ok` | **A′** self-302 | **T5** |
 | **T5** | **2026-10-27 ~11:00** (BR) | ✅ D+E · SSM `775cda4a…` · zip `20261027-105734` | `056eb29`+ | **200** `/Rdo/Index` · listagem (print) · paridade vs prod parcial | **E** | W1/W2 no Git |
 | **T6** | _após deploy_ | | **`fd8a144`** | W1/W2: header obra, nav, botões, tabela centralizada | _pendente_ | W3 ou Chart |
+| **T7** | **2026-10-29 23:11** (BR) | ✅ D+E (pós-`3c061b6`) | **`3c061b6`** + SPA `498ebc4` | **`/Rdo/Cadastro`** obra FACHADA · **`cadastro/etapas` 200** (antes 500) · **~3 etapas** na UI (lista simples, ≠ accordion/tabela prod) · clima/data OK · **SALVAR** não confirmado neste smoke · **Matriz paridade:** **19** itens ([`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md)) · **5** com resultado parcial · **14** em aberto · Lucio: *melhorou pouco* | **E′** cadastro parcial | **7a-P1** · checklist T7 **3/3** quando SALVAR OK |
 
 ### Classes de falha
 
@@ -40,6 +42,7 @@
 | **C** | **200** + SPA · rota/`RdoIndexPage` errada | Sim |
 | **D** | **200** + UI RDO · BFF `/api/bff/rdos` falha | Sim |
 | **E** | Listagem RDO = prod | Sim |
+| **E′** | Cadastro novo RDO: etapas **200** + UI ≠ prod (improd/comentários/tabela/fotos) | Sim |
 
 ---
 
@@ -54,6 +57,7 @@
 | **T4** | Loop pós-deploy | Hipótese Login↔Rdo | F12 provou outra coisa (**A′**). |
 | **T4b** | **302 para a mesma URL** | Kiro **`#/rdo/index`** → stub M4.7h **`/rdo/index` → 302 `/Rdo/Index`**; case-insensitive = loop (não cookie) | P5a no **RdoController**, não redirect no **ModuloLegado**; F12 **Location** + **X-RdoApp-Diag**. |
 | **T5** | Listagem OK | Fix **`056eb29`** + publish 10:57 | P5a **E** | **T6** smoke **`fd8a144`** (W1/W2) |
+| **T7** | 500 → 200 em `cadastro/etapas` | Materializar entidade `Tarefa` inteira no BFF | **P0** projeção `TarefaAgrupadorQuery` · paridade ainda **19−5=14** itens | **7a-P1+** |
 
 ---
 

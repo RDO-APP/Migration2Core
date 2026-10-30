@@ -18,7 +18,7 @@
 
 | # | Produção | Homolog | 1) Solução aplicada | 2) Resultado | 3) Próxima solução |
 |---|----------|---------|---------------------|--------------|-------------------|
-| A1 | Accordion de etapas (OBRA, TESTE ETAPA, EQUIPAMENTOS…) com tarefas | Antes: **500** `cadastro/etapas` + “nenhuma tarefa” | **7a-P0** `3c061b6` — `TarefaAgrupadorQuery` (projeção EF), paridade `ObterEtapasParaRDO` | **Melhorou pouco:** tende a **200** e alguma lista vs erro vermelho; accordion/conteúdo ainda **≠ prod** (confirmar F12 **T7**) | **7a-P2** tabela/colunas · **7a-P4** accordion azul · smoke **T7** documentado |
+| A1 | Accordion de etapas (OBRA, TESTE ETAPA, EQUIPAMENTOS…) com tarefas | Antes: **500** `cadastro/etapas` + “nenhuma tarefa” | **7a-P0** `3c061b6` — `TarefaAgrupadorQuery` (projeção EF), paridade `ObterEtapasParaRDO` | **T7** **2026-10-29 23:11** · **200** · **~3 etapas** UI · ≠ prod · *melhorou pouco* ([`homolog-p5-rdo-tentativas.md`](homolog-p5-rdo-tentativas.md)) | **7a-P2** tabela · **7a-P4** accordion azul |
 | A2 | Checkbox por tarefa + marcar/desmarcar etapa | Lista simples ▶/▼ + checkbox | **7a** `498ebc4` — UI React `RdoCadastroPage` | Depende de A1: se etapas carregam, seleção **funciona**; UX **≠** prod (sem tabela) | **7a-P2** “marcar etapa” + paridade tabela |
 
 ---
@@ -84,11 +84,20 @@
 
 ## Smoke homolog (T7)
 
-[`homolog-p5-rdo-tentativas.md`](homolog-p5-rdo-tentativas.md):
+Registro **T7** · **2026-10-29 23:11** (BR) · [`homolog-p5-rdo-tentativas.md`](homolog-p5-rdo-tentativas.md)
 
-1. `GET /api/bff/rdos/cadastro/etapas?dataRdo=dd/MM/yyyy` → **200**
-2. Etapas visíveis (mesma obra/data que prod)
-3. **SALVAR** → RDO em `/Rdo/Index`
+| Métrica | Valor |
+|---------|--------|
+| Itens na **matriz paridade** (A–E) | **19** |
+| **Parciais** vs prod (T7) | **5** — A1, A2, B5, C4, D1 |
+| **Em aberto** | **14** |
+| Checklist smoke T7 (200 · etapas · SALVAR) | **2/3** |
+
+Checklist operacional:
+
+1. `GET …/cadastro/etapas` → **200** ☑ (T7)
+2. Etapas visíveis (~**3**) ☑ (T7)
+3. **SALVAR** → listagem ☐ (próximo smoke)
 
 Deploy: [`roteiro-deploy-homolog-operador.md`](roteiro-deploy-homolog-operador.md) § **3b** · ≥ **`3c061b6`**.
 
