@@ -2,89 +2,95 @@
 
 **Trilha:** EQ-R · **Rota:** `/Rdo/Cadastro` · **Prod:** `#/rdo/cadastro` (AngularJS) · **Homolog:** React M7 **7a**  
 **Referência legado:** `Equipamentos/rdoappProject/Client/Views/Rdo/cadastro.html` · **BFF:** `GET/POST /api/bff/rdos/cadastro/*`  
-**Atualizado:** 2026-10-28 · **Git homolog:** `3c061b6` (7a-P0) sobre `498ebc4` (7a inicial)
+**Atualizado:** 2026-10-29 · **Git homolog:** `3c061b6` (7a-P0) sobre `498ebc4` (7a inicial)
 
-Legenda **O que foi feito:** ☑ entregue no Git · ◐ parcial · ☐ pendente · — fora escopo 7a
+**Colunas de solução**
+
+| Coluna | Significado |
+|--------|-------------|
+| **1) Solução aplicada** | O que já está no Git / deploy (commit ou fase) |
+| **2) Resultado** | O que Lucio vê no homolog **hoje** (smoke) |
+| **3) Próxima solução** | Próximo incremento planejado |
 
 ---
 
 ## A. Bloqueio funcional (etapas / tarefas)
 
-| # | Produção | Homolog (antes/depois P0) | Solução planejada | O que foi feito |
-|---|----------|---------------------------|-------------------|-----------------|
-| A1 | Accordion de etapas (ex. OBRA, TESTE ETAPA, EQUIPAMENTOS) com tarefas | **500** em `cadastro/etapas` → lista vazia + erro vermelho | **7a-P0** — projeção EF (`TarefaAgrupadorQuery`), paridade `ObterEtapasParaRDO` | ☑ **`3c061b6`** — aguarda **deploy + smoke T7** para confirmar 200 |
-| A2 | Checkbox por tarefa + marcar/desmarcar etapa | UI React pronta, sem dados enquanto A1 falha | Idem A1 | ☑ UI **7a** `498ebc4` · dados dependem smoke pós-P0 |
+| # | Produção | Homolog | 1) Solução aplicada | 2) Resultado | 3) Próxima solução |
+|---|----------|---------|---------------------|--------------|-------------------|
+| A1 | Accordion de etapas (OBRA, TESTE ETAPA, EQUIPAMENTOS…) com tarefas | Antes: **500** `cadastro/etapas` + “nenhuma tarefa” | **7a-P0** `3c061b6` — `TarefaAgrupadorQuery` (projeção EF), paridade `ObterEtapasParaRDO` | **Melhorou pouco:** tende a **200** e alguma lista vs erro vermelho; accordion/conteúdo ainda **≠ prod** (confirmar F12 **T7**) | **7a-P2** tabela/colunas · **7a-P4** accordion azul · smoke **T7** documentado |
+| A2 | Checkbox por tarefa + marcar/desmarcar etapa | Lista simples ▶/▼ + checkbox | **7a** `498ebc4` — UI React `RdoCadastroPage` | Depende de A1: se etapas carregam, seleção **funciona**; UX **≠** prod (sem tabela) | **7a-P2** “marcar etapa” + paridade tabela |
 
 ---
 
 ## B. Formulário superior (data, clima, improdutividade, comentários)
 
-| # | Produção | Homolog | Solução planejada | O que foi feito |
-|---|----------|---------|-------------------|-----------------|
-| B1 | Título da página **“RDO”** | **“Gerar RDO”** | **7a-P4** copy/CSS | ☐ |
-| B2 | Ícones clima (nascer do sol / sol / lua) nos rótulos Manhã/Tarde/Noite | Só texto | **7a-P4** fontello/FA como legado | ☐ |
-| B3 | **Motivos de improdutividade** — 10 toggles (clima, materiais, paralisações, equipamentos, contratante, fornecedores, mão de obra, projeto, planejamento/execução, acidente) | **Ausente** na SPA | **7a-P1** React + DTO + `RdoModel.Salvar` / tabela `improdutividade` | ◐ Save grava registro **vazio** em `Improdutividade` (`498ebc4`); **flags não expostas na UI** |
-| B4 | **Comentários** + 👍/👎 (`tipoComentarioGeracao`) | **Ausente** | **7a-P1** UI; DTO já tem `Comentario` / `TipoComentarioGeracao` | ◐ POST aceita campos (`498ebc4`); **sem UI** |
-| B5 | Datepicker legado (`datepicker-here`, máscara) | Input texto com máscara `dd/mm/aaaa` | **7a-P4** opcional | ◐ Máscara manual React **7a** — funcional, visual diferente |
+| # | Produção | Homolog | 1) Solução aplicada | 2) Resultado | 3) Próxima solução |
+|---|----------|---------|---------------------|--------------|-------------------|
+| B1 | Título **“RDO”** | **“Gerar RDO”** | — | Título diferente | **7a-P4** copy/CSS |
+| B2 | Ícones clima (nascer / sol / lua) | Só texto | — | Sem ícones | **7a-P4** fontello/FA |
+| B3 | **Motivos de improdutividade** (10 toggles) | Ausente | **7a** save: `Improdutividade` criada **vazia** (`498ebc4`) | Sem toggles na tela; PDF/gráficos **não** refletem prod | **7a-P1** UI + flags no POST (paridade `RdoModel.Salvar`) |
+| B4 | **Comentários** + 👍/👎 | Ausente | DTO + POST `Comentario` / `TipoComentarioGeracao` (`498ebc4`) | Sem UI | **7a-P1** |
+| B5 | Datepicker legado | Input mascarado `dd/mm/aaaa` | Máscara manual React **7a** | **OK** funcional; visual diferente | **7a-P4** opcional |
 
 ---
 
 ## C. Bloco ETAPAS / TAREFAS
 
-| # | Produção | Homolog | Solução planejada | O que foi feito |
-|---|----------|---------|-------------------|-----------------|
-| C1 | Cabeçalho **“ETAPAS / TAREFAS”** | Seção **“Tarefas”** apenas | **7a-P2/P4** | ☐ |
-| C2 | **“Habilitar relatório fotográfico?”** Sim/Não | Ausente | **7a-P3** + BFF imagens (`ListaImagem` legado) | ☐ |
-| C3 | Accordion **faixa azul** estilo `panel-heading` prod | Accordion simples ▶/▼ | **7a-P4** `rdo-cadastro.css` | ☐ |
-| C4 | Tabela: DESCRIÇÃO, **STATUS**, **QTD. COLABORADORES**, **QTD. EQUIPAMENTOS**, **AÇÕES** | Lista checkbox + descrição; tag “dia anterior” | **7a-P2** estender DTO (como Cards BFF) + colunas | ◐ Tag **dia anterior** **7a**; colunas prod **pendentes** |
-| C5 | Botão **editar tarefa** na linha | Ausente | **7a-P2** → `/Tarefa/Cadastro?id=` ou modal legado | ☐ |
-| C6 | Bloco **Fotos da(s) tarefa(s)** + galeria/checkboxes | Ausente | **7a-P3** | ☐ |
+| # | Produção | Homolog | 1) Solução aplicada | 2) Resultado | 3) Próxima solução |
+|---|----------|---------|---------------------|--------------|-------------------|
+| C1 | Cabeçalho **“ETAPAS / TAREFAS”** | **“Tarefas”** | — | Label diferente | **7a-P2/P4** |
+| C2 | **“Habilitar relatório fotográfico?”** Sim/Não | Ausente | — | Ausente | **7a-P3** + BFF imagens |
+| C3 | Accordion **faixa azul** (`panel-heading`) | Accordion simples | CSS mínimo **7a** | **≠ prod** | **7a-P4** `rdo-cadastro.css` |
+| C4 | Tabela: STATUS, QTD colab/equip, AÇÕES | Lista + descrição; tag “dia anterior” | Tag **dia anterior** **7a** | Só descrição + checkbox; **sem** colunas prod | **7a-P2** DTO estendido (como Cards) |
+| C5 | **Editar tarefa** na linha | Ausente | — | Ausente | **7a-P2** link `/Tarefa/Cadastro?id=` |
+| C6 | **Fotos** + galeria | Ausente | — | Ausente | **7a-P3** |
 
 ---
 
 ## D. Ações finais e regras de negócio
 
-| # | Produção | Homolog | Solução planejada | O que foi feito |
-|---|----------|---------|-------------------|-----------------|
-| D1 | **VOLTAR** + **GERAR RDO** (ícones FA) | **Voltar** + **SALVAR** | **7a-P4** labels/ícones | ◐ Voltar → listagem **7a**; label **SALVAR** (não GERAR RDO) |
-| D2 | Confirmar substituir RDO na data; copiar medições dia anterior | `window.confirm` no React | Ajuste fino **7a-P0/P1** após etapas OK | ☑ Fluxo confirm **7a** `498ebc4` — validar em smoke pós-P0 |
+| # | Produção | Homolog | 1) Solução aplicada | 2) Resultado | 3) Próxima solução |
+|---|----------|---------|---------------------|--------------|-------------------|
+| D1 | **VOLTAR** + **GERAR RDO** (ícones) | **Voltar** + **SALVAR** | Voltar → listagem **7a** | Navegação OK; label **SALVAR** | **7a-P4** ícones + “GERAR RDO” |
+| D2 | Substituir RDO / copiar dia anterior | `window.confirm` React | Fluxo confirm **7a** `498ebc4` + validação save **P0** | A validar após **SALVAR** com tarefas (smoke) | Ajuste mensagens **7a-P1** se divergir do prod |
 
 ---
 
 ## E. Fora do cadastro “novo RDO” (roadmap M7)
 
-| Item | Produção | Homolog | Solução | O que foi feito |
-|------|----------|---------|---------|-----------------|
-| E1 | Editar RDO existente | Listagem **7a** parcial; edição cadastro | **M7 7b** | ☐ |
-| E2 | PDF | Ícones listagem **W3** / prod | **M7 7c** | ☐ |
-| E3 | Assinar | Prod | **M7 7d** | ☐ |
-| E4 | Redesign global SPA (sem BS5 paridade) | — | **UI-M3** (gate M7 estável) | — adiado |
+| Item | Produção | Homolog | 1) Solução aplicada | 2) Resultado | 3) Próxima solução |
+|------|----------|---------|---------------------|--------------|-------------------|
+| E1 | Editar RDO existente | Listagem **7a** | Listagem BFF **P5a** | Cadastro edição **não** | **M7 7b** |
+| E2 | PDF | Prod / listagem | — | **W3** pendente listagem | **M7 7c** |
+| E3 | Assinar | Prod | — | Fora **7a** | **M7 7d** |
+| E4 | Redesign SPA | — | Gate **UI-M3** | Adiado | Após **7a-P1–P4** estável |
 
 ---
 
 ## Fases de entrega (mapa)
 
-| Fase | Escopo | Git / estado |
-|------|--------|----------------|
-| **7a** (MVP) | SPA + BFF bootstrap, etapas, save clima+tarefas | `498ebc4` |
-| **7a-P0** | Fix **500** `cadastro/etapas` + save sem entidade tarefa completa | `3c061b6` |
-| **7a-P1** | Improdutividade + comentários UI + flags no save | ☐ |
-| **7a-P2** | Tabela tarefas paridade + editar | ☐ |
+| Fase | Escopo | Git |
+|------|--------|-----|
+| **7a** | SPA + BFF bootstrap, etapas, save clima+tarefas | `498ebc4` |
+| **7a-P0** | Fix **500** `cadastro/etapas` | `3c061b6` |
+| **7a-P1** | Improdutividade + comentários | ☐ |
+| **7a-P2** | Tabela tarefas + editar | ☐ |
 | **7a-P3** | Relatório fotográfico | ☐ |
-| **7a-P4** | Visual (título, ícones, accordion azul, GERAR RDO) | ☐ |
+| **7a-P4** | Visual paridade | ☐ |
 | **7b–7d** | Editar / PDF / assinar | ☐ |
 
 ---
 
-## Smoke homolog (pós-P0)
+## Smoke homolog (T7)
 
-Registrar em [`homolog-p5-rdo-tentativas.md`](homolog-p5-rdo-tentativas.md) como **T7**:
+[`homolog-p5-rdo-tentativas.md`](homolog-p5-rdo-tentativas.md):
 
 1. `GET /api/bff/rdos/cadastro/etapas?dataRdo=dd/MM/yyyy` → **200**
-2. Etapas visíveis como prod (mesma obra/data)
-3. **SALVAR** → RDO na listagem `/Rdo/Index`
+2. Etapas visíveis (mesma obra/data que prod)
+3. **SALVAR** → RDO em `/Rdo/Index`
 
-Deploy: [`roteiro-deploy-homolog-operador.md`](roteiro-deploy-homolog-operador.md) § **3b** · pacote ≥ **`3c061b6`**.
+Deploy: [`roteiro-deploy-homolog-operador.md`](roteiro-deploy-homolog-operador.md) § **3b** · ≥ **`3c061b6`**.
 
 ---
 
@@ -92,4 +98,5 @@ Deploy: [`roteiro-deploy-homolog-operador.md`](roteiro-deploy-homolog-operador.m
 
 | Data | Nota |
 |------|------|
-| 2026-10-28 | Lista completa homolog×prod + coluna **O que foi feito**; P0 `3c061b6` |
+| 2026-10-29 | Colunas **Solução aplicada / Resultado / Próxima solução**; feedback smoke “melhorou pouco” |
+| 2026-10-28 | Versão inicial + P0 `3c061b6` |
