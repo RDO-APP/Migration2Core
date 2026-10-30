@@ -13,7 +13,7 @@
 |-------|--------|
 | P3 Cards | ☑ homolog |
 | P5a RDO listagem | ☑ **T5 E** · **W1/W2** no Git **`fd8a144`** (smoke **T6** pendente) · **W3/M7** ações |
-| **M7 `/Rdo/Cadastro`** | ◐ **T7** + **7a-P1** `d76dc52` (B3/B4/B6) · deploy homolog pendente · matriz **21** · ver **T7** / [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
+| **M7 `/Rdo/Cadastro`** | ◐ **T7c** **2026-10-30** — deploy `20261029-235613` · **P1** func OK · gap **visual bloco 1** + **bloco 2** intacto · matriz **26** · [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
@@ -30,7 +30,8 @@
 | **T4b** | **2026-10-27 ~09:58** | (mesmo deploy) | — | F12: **302** `Location: /Rdo/Index` · `X-RdoApp-Diag: logado; obra=42; LoginData-ok` | **A′** self-302 | **T5** |
 | **T5** | **2026-10-27 ~11:00** (BR) | ✅ D+E · SSM `775cda4a…` · zip `20261027-105734` | `056eb29`+ | **200** `/Rdo/Index` · listagem (print) · paridade vs prod parcial | **E** | W1/W2 no Git |
 | **T6** | _após deploy_ | | **`fd8a144`** | W1/W2: header obra, nav, botões, tabela centralizada | _pendente_ | W3 ou Chart |
-| **T7** | **2026-10-29 23:11** (BR) | ✅ D+E (pós-`3c061b6`) | **`3c061b6`** + SPA `498ebc4` | **`/Rdo/Cadastro`** obra FACHADA · **`cadastro/etapas` 200** (antes 500) · **~3 etapas** na UI (lista simples, ≠ accordion/tabela prod) · clima/data OK · **SALVAR** não confirmado neste smoke · **Matriz paridade:** **21** itens ([`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md)) · **5** parciais · **16** aberto · prints **1–10** (calendário, clima pré-marcado, improd, comentários, fotográfico, tabela, botão etapa, SALVAR) · *melhorou pouco* | **E′** cadastro parcial | **7a-P1** (+ **B6**) · **7a-P2** (**C7**) · T7 **3/3** quando GERAR RDO OK |
+| **T7** | **2026-10-29 23:11** (BR) | ✅ D+E (pós-`3c061b6`) | **`3c061b6`** + SPA `498ebc4` | **`/Rdo/Cadastro`** · **`cadastro/etapas` 200** · lista simples · *melhorou pouco* | **E′** | **T7c** |
+| **T7c** | **2026-10-30** (BR) | ✅ D+E · zip **`20261029-235613`** · SSM `397d3670…` | **`d76dc52`** (7a-P1) | **Bloco 1:** clima vazio **OK** · improd **OK** · comentários **OK** · **calendário não abre** · **layout ≠ prod** (panel branco **F0**, fieldset clima **B6a**, toggles 5+5 **B3a**, comentários **B4a**) · título **Gerar RDO** (manter) · **Bloco 2:** **sem mudança** (C1,C2,C3,C4,C7, Marcar etapa, SALVAR) · matriz **26** | **E′** | **7a-P4** bloco 1 visual · **P2/P3** bloco 2 |
 
 ### Classes de falha
 
