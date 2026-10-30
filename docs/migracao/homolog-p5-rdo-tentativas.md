@@ -13,7 +13,7 @@
 |-------|--------|
 | P3 Cards | ☑ homolog |
 | P5a RDO listagem | ☑ **T5 E** · **W1/W2** no Git **`fd8a144`** (smoke **T6** pendente) · **W3/M7** ações |
-| **M7 `/Rdo/Cadastro`** | ◐ **T7** **2026-10-29 23:11** — P0 `3c061b6` · matriz **19** itens · **5** parciais · smoke checklist **2/3** · ver linha **T7** |
+| **M7 `/Rdo/Cadastro`** | ◐ **T7** + **7a-P1** no Git (B3/B4/B6) · deploy homolog pendente · matriz **21** · ver **T7** / [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
@@ -30,7 +30,7 @@
 | **T4b** | **2026-10-27 ~09:58** | (mesmo deploy) | — | F12: **302** `Location: /Rdo/Index` · `X-RdoApp-Diag: logado; obra=42; LoginData-ok` | **A′** self-302 | **T5** |
 | **T5** | **2026-10-27 ~11:00** (BR) | ✅ D+E · SSM `775cda4a…` · zip `20261027-105734` | `056eb29`+ | **200** `/Rdo/Index` · listagem (print) · paridade vs prod parcial | **E** | W1/W2 no Git |
 | **T6** | _após deploy_ | | **`fd8a144`** | W1/W2: header obra, nav, botões, tabela centralizada | _pendente_ | W3 ou Chart |
-| **T7** | **2026-10-29 23:11** (BR) | ✅ D+E (pós-`3c061b6`) | **`3c061b6`** + SPA `498ebc4` | **`/Rdo/Cadastro`** obra FACHADA · **`cadastro/etapas` 200** (antes 500) · **~3 etapas** na UI (lista simples, ≠ accordion/tabela prod) · clima/data OK · **SALVAR** não confirmado neste smoke · **Matriz paridade:** **19** itens ([`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md)) · **5** com resultado parcial · **14** em aberto · Lucio: *melhorou pouco* | **E′** cadastro parcial | **7a-P1** · checklist T7 **3/3** quando SALVAR OK |
+| **T7** | **2026-10-29 23:11** (BR) | ✅ D+E (pós-`3c061b6`) | **`3c061b6`** + SPA `498ebc4` | **`/Rdo/Cadastro`** obra FACHADA · **`cadastro/etapas` 200** (antes 500) · **~3 etapas** na UI (lista simples, ≠ accordion/tabela prod) · clima/data OK · **SALVAR** não confirmado neste smoke · **Matriz paridade:** **21** itens ([`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md)) · **5** parciais · **16** aberto · prints **1–10** (calendário, clima pré-marcado, improd, comentários, fotográfico, tabela, botão etapa, SALVAR) · *melhorou pouco* | **E′** cadastro parcial | **7a-P1** (+ **B6**) · **7a-P2** (**C7**) · T7 **3/3** quando GERAR RDO OK |
 
 ### Classes de falha
 

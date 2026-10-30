@@ -130,3 +130,55 @@
   margin-top: 12px;
   color: #c0392b;
 }
+
+.rdo-improd-fieldset {
+  margin-top: 8px;
+}
+
+.rdo-improd-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.rdo-improd-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+  margin: 0;
+}
+
+.rdo-comentarios-wrap {
+  margin-top: 16px;
+  clear: both;
+}
+
+.rdo-comentarios-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.rdo-comentarios-input textarea {
+  flex: 1 1 280px;
+  min-height: 120px;
+}
+
+.rdo-comentarios-thumbs {
+  display: flex;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.rdo-comentarios-thumbs .btn {
+  min-width: 44px;
+  padding: 8px 10px;
+}
+
+.rdo-comentarios-thumbs .btn-active {
+  color: #28496f;
+  font-weight: 600;
+}

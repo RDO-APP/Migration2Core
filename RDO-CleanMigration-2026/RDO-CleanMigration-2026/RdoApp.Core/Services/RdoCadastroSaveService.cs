@@ -41,6 +41,16 @@ public class RdoCadastroSaveService
             return Fail("Selecione ao menos uma tarefa.");
         }
 
+        if (!IsClima(request.ClimaManha) || !IsClima(request.ClimaTarde) || !IsClima(request.ClimaNoite))
+        {
+            return Fail("Preencha o tempo (manhã, tarde e noite).");
+        }
+
+        if (!IsChuva(request.ChuvaManha) || !IsChuva(request.ChuvaTarde) || !IsChuva(request.ChuvaNoite))
+        {
+            return Fail("Preencha a chuva (manhã, tarde e noite).");
+        }
+
         var obra = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == obraId, cancellationToken);
         if (obra == null)
         {
@@ -123,7 +133,19 @@ public class RdoCadastroSaveService
         await using var tx = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            var impro = new Improdutividade();
+            var impro = new Improdutividade
+            {
+                ImpStClima = request.ImprodutividadeCondicoesClimaticas,
+                ImpStMaterial = request.ImprodutividadeMateriais,
+                ImpStParalizacao = request.ImprodutividadeParalizacoes,
+                ImpStEquipamento = request.ImprodutividadeEquipamentos,
+                ImpStContratante = request.ImprodutividadeContratante,
+                ImpStFornecedores = request.ImprodutividadeFornecedores,
+                ImpStMaodeobra = request.ImprodutividadeMaodeObra,
+                ImpStProjeto = request.ImprodutividadeProjeto,
+                ImpStPlanejamento = request.ImprodutividadePlanejamento,
+                ImpStAcidentes = request.ImprodutividadeAcidente,
+            };
             _context.Improdutividades.Add(impro);
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -318,6 +340,12 @@ public class RdoCadastroSaveService
             2 => "N",
             _ => "",
         };
+
+    private static bool IsClima(string? value) =>
+        value is "b" or "r";
+
+    private static bool IsChuva(string? value) =>
+        value is "s" or "p" or "m";
 
     private static bool TryParseDate(string value, out DateTime date)
     {

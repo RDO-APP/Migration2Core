@@ -5,7 +5,9 @@ import {
   saveRdoCadastro,
 } from '../api/rdoApi'
 import type {
+  ChuvaChoice,
   ChuvaValor,
+  ClimaChoice,
   ClimaValor,
   RdoCadastroEtapa,
   RdoCadastroSaveRequest,
@@ -23,6 +25,59 @@ function maskDateInput(value: string): string {
   return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
 }
 
+function isClima(v: ClimaChoice): v is ClimaValor {
+  return v === 'b' || v === 'r'
+}
+
+function isChuva(v: ChuvaChoice): v is ChuvaValor {
+  return v === 's' || v === 'p' || v === 'm'
+}
+
+const IMPRO_MOTIVOS = [
+  { key: 'improdutividadeCondicoesClimaticas', label: 'Condições Climáticas' },
+  { key: 'improdutividadeMateriais', label: 'Materiais' },
+  { key: 'improdutividadeParalizacoes', label: 'Paralizações' },
+  { key: 'improdutividadeEquipamentos', label: 'Equipamentos' },
+  { key: 'improdutividadeContratante', label: 'Contratante' },
+  { key: 'improdutividadeFornecedores', label: 'Fornecedores' },
+  { key: 'improdutividadeMaodeObra', label: 'Mão de obra' },
+  { key: 'improdutividadeProjeto', label: 'Projeto' },
+  { key: 'improdutividadePlanejamento', label: 'Planejamento / Execução' },
+  { key: 'improdutividadeAcidente', label: 'Acidente' },
+] as const satisfies ReadonlyArray<{
+  key: keyof Pick<
+    RdoCadastroSaveRequest,
+    | 'improdutividadeCondicoesClimaticas'
+    | 'improdutividadeMateriais'
+    | 'improdutividadeParalizacoes'
+    | 'improdutividadeEquipamentos'
+    | 'improdutividadeContratante'
+    | 'improdutividadeFornecedores'
+    | 'improdutividadeMaodeObra'
+    | 'improdutividadeProjeto'
+    | 'improdutividadePlanejamento'
+    | 'improdutividadeAcidente'
+  >
+  label: string
+}>
+
+type ImprodState = Record<(typeof IMPRO_MOTIVOS)[number]['key'], boolean>
+
+function initialImprod(): ImprodState {
+  return {
+    improdutividadeCondicoesClimaticas: false,
+    improdutividadeMateriais: false,
+    improdutividadeParalizacoes: false,
+    improdutividadeEquipamentos: false,
+    improdutividadeContratante: false,
+    improdutividadeFornecedores: false,
+    improdutividadeMaodeObra: false,
+    improdutividadeProjeto: false,
+    improdutividadePlanejamento: false,
+    improdutividadeAcidente: false,
+  }
+}
+
 function ClimaGroup({
   label,
   name,
@@ -31,7 +86,7 @@ function ClimaGroup({
 }: {
   label: string
   name: string
-  value: ClimaValor
+  value: ClimaChoice
   onChange: (v: ClimaValor) => void
 }) {
   return (
@@ -61,7 +116,7 @@ function ChuvaGroup({
 }: {
   label: string
   name: string
-  value: ChuvaValor
+  value: ChuvaChoice
   onChange: (v: ChuvaValor) => void
 }) {
   return (
@@ -88,12 +143,15 @@ function ChuvaGroup({
 export function RdoCadastroPage() {
   const { shell } = useShellContext()
   const [dataRdo, setDataRdo] = useState('')
-  const [climaManha, setClimaManha] = useState<ClimaValor>('b')
-  const [climaTarde, setClimaTarde] = useState<ClimaValor>('b')
-  const [climaNoite, setClimaNoite] = useState<ClimaValor>('b')
-  const [chuvaManha, setChuvaManha] = useState<ChuvaValor>('s')
-  const [chuvaTarde, setChuvaTarde] = useState<ChuvaValor>('s')
-  const [chuvaNoite, setChuvaNoite] = useState<ChuvaValor>('s')
+  const [climaManha, setClimaManha] = useState<ClimaChoice>('')
+  const [climaTarde, setClimaTarde] = useState<ClimaChoice>('')
+  const [climaNoite, setClimaNoite] = useState<ClimaChoice>('')
+  const [chuvaManha, setChuvaManha] = useState<ChuvaChoice>('')
+  const [chuvaTarde, setChuvaTarde] = useState<ChuvaChoice>('')
+  const [chuvaNoite, setChuvaNoite] = useState<ChuvaChoice>('')
+  const [improd, setImprod] = useState<ImprodState>(() => initialImprod())
+  const [comentario, setComentario] = useState('')
+  const [tipoComentarioGeracao, setTipoComentarioGeracao] = useState(0)
   const [etapas, setEtapas] = useState<RdoCadastroEtapa[]>([])
   const [selected, setSelected] = useState<Set<number>>(() => new Set())
   const [openEtapas, setOpenEtapas] = useState<Set<number>>(() => new Set())
@@ -132,12 +190,6 @@ export function RdoCadastroPage() {
       .then((b) => {
         if (cancelled) return
         setDataRdo(b.dataRdoHoje)
-        setClimaManha(b.climaManha as ClimaValor)
-        setClimaTarde(b.climaTarde as ClimaValor)
-        setClimaNoite(b.climaNoite as ClimaValor)
-        setChuvaManha(b.chuvaManha as ChuvaValor)
-        setChuvaTarde(b.chuvaTarde as ChuvaValor)
-        setChuvaNoite(b.chuvaNoite as ChuvaValor)
         setObraFinalizada(b.obraFinalizada)
         void loadEtapas(b.dataRdoHoje)
       })
@@ -181,15 +233,22 @@ export function RdoCadastroPage() {
     })
   }
 
+  function setImprodFlag(key: (typeof IMPRO_MOTIVOS)[number]['key'], checked: boolean) {
+    setImprod((prev) => ({ ...prev, [key]: checked }))
+  }
+
   async function postSave(extra: Partial<RdoCadastroSaveRequest>) {
     const body: RdoCadastroSaveRequest = {
       dataRdo,
-      climaManha,
-      climaTarde,
-      climaNoite,
-      chuvaManha,
-      chuvaTarde,
-      chuvaNoite,
+      climaManha: climaManha as ClimaValor,
+      climaTarde: climaTarde as ClimaValor,
+      climaNoite: climaNoite as ClimaValor,
+      chuvaManha: chuvaManha as ChuvaValor,
+      chuvaTarde: chuvaTarde as ChuvaValor,
+      chuvaNoite: chuvaNoite as ChuvaValor,
+      comentario: comentario.trim() || undefined,
+      tipoComentarioGeracao,
+      ...improd,
       listaTarefas: [...selected].map((id) => ({ id })),
       ...extra,
     }
@@ -199,6 +258,14 @@ export function RdoCadastroPage() {
   async function onSalvar() {
     if (!dataRdo.trim()) {
       setError('A data deve ser preenchida.')
+      return
+    }
+    if (!isClima(climaManha) || !isClima(climaTarde) || !isClima(climaNoite)) {
+      setError('Preencha o tempo (manhã, tarde e noite).')
+      return
+    }
+    if (!isChuva(chuvaManha) || !isChuva(chuvaTarde) || !isChuva(chuvaNoite)) {
+      setError('Preencha a chuva (manhã, tarde e noite).')
       return
     }
     if (selected.size === 0) {
@@ -306,6 +373,57 @@ export function RdoCadastroPage() {
                 <ChuvaGroup label="Noite" name="chuvaNoite" value={chuvaNoite} onChange={setChuvaNoite} />
               </div>
             </fieldset>
+          </div>
+        </div>
+
+        <fieldset className="rdo-fieldset rdo-improd-fieldset">
+          <legend>Motivos de Improdutividade</legend>
+          <div className="rdo-improd-grid">
+            {IMPRO_MOTIVOS.map(({ key, label }) => (
+              <div className="rdo-improd-toggle" key={key}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={improd[key]}
+                    onChange={(e) => setImprodFlag(key, e.target.checked)}
+                  />
+                  {label}
+                </label>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="rdo-comentarios-wrap">
+          <label className="control-label">Comentários</label>
+          <div className="rdo-comentarios-input">
+            <textarea
+              className="form-control"
+              rows={6}
+              maxLength={10000}
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+            />
+            <div className="rdo-comentarios-thumbs">
+              <button
+                type="button"
+                className={`btn btn-default btn-sm${tipoComentarioGeracao === 1 ? ' btn-active' : ''}`}
+                title="Positivo"
+                aria-pressed={tipoComentarioGeracao === 1}
+                onClick={() => setTipoComentarioGeracao(1)}
+              >
+                👍
+              </button>
+              <button
+                type="button"
+                className={`btn btn-default btn-sm${tipoComentarioGeracao === 2 ? ' btn-active' : ''}`}
+                title="Negativo"
+                aria-pressed={tipoComentarioGeracao === 2}
+                onClick={() => setTipoComentarioGeracao(2)}
+              >
+                👎
+              </button>
+            </div>
           </div>
         </div>
 

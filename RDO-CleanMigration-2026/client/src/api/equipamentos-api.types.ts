@@ -106,12 +106,6 @@ export interface RdoListPage {
 
 export interface RdoCadastroBootstrap {
   dataRdoHoje: string
-  climaManha: string
-  climaTarde: string
-  climaNoite: string
-  chuvaManha: string
-  chuvaTarde: string
-  chuvaNoite: string
   obraFinalizada: boolean
   obraNome: string
 }
@@ -138,6 +132,8 @@ export interface RdoCadastroEtapas {
 
 export type ClimaValor = 'b' | 'r'
 export type ChuvaValor = 's' | 'p' | 'm'
+export type ClimaChoice = ClimaValor | ''
+export type ChuvaChoice = ChuvaValor | ''
 
 export interface RdoCadastroSaveRequest {
   dataRdo: string
@@ -149,6 +145,16 @@ export interface RdoCadastroSaveRequest {
   chuvaNoite: ChuvaValor
   comentario?: string
   tipoComentarioGeracao?: number
+  improdutividadeCondicoesClimaticas?: boolean
+  improdutividadeMateriais?: boolean
+  improdutividadeParalizacoes?: boolean
+  improdutividadeEquipamentos?: boolean
+  improdutividadeContratante?: boolean
+  improdutividadeFornecedores?: boolean
+  improdutividadeMaodeObra?: boolean
+  improdutividadeProjeto?: boolean
+  improdutividadePlanejamento?: boolean
+  improdutividadeAcidente?: boolean
   confirmSubstituir?: boolean
   confirmCopiarDiaAnterior?: boolean
   listaTarefas: { id: number }[]

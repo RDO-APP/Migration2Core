@@ -3,12 +3,6 @@ namespace RdoApp.Core.Models.Dtos;
 public sealed class RdoCadastroBootstrapDto
 {
     public string DataRdoHoje { get; init; } = "";
-    public string ClimaManha { get; init; } = "b";
-    public string ClimaTarde { get; init; } = "b";
-    public string ClimaNoite { get; init; } = "b";
-    public string ChuvaManha { get; init; } = "s";
-    public string ChuvaTarde { get; init; } = "s";
-    public string ChuvaNoite { get; init; } = "s";
     public bool ObraFinalizada { get; init; }
     public string ObraNome { get; init; } = "";
 }
@@ -39,14 +33,24 @@ public sealed class RdoCadastroEtapasDto
 public sealed class RdoCadastroSaveRequestDto
 {
     public string DataRdo { get; set; } = "";
-    public string ClimaManha { get; set; } = "b";
-    public string ClimaTarde { get; set; } = "b";
-    public string ClimaNoite { get; set; } = "b";
-    public string ChuvaManha { get; set; } = "s";
-    public string ChuvaTarde { get; set; } = "s";
-    public string ChuvaNoite { get; set; } = "s";
+    public string ClimaManha { get; set; } = "";
+    public string ClimaTarde { get; set; } = "";
+    public string ClimaNoite { get; set; } = "";
+    public string ChuvaManha { get; set; } = "";
+    public string ChuvaTarde { get; set; } = "";
+    public string ChuvaNoite { get; set; } = "";
     public string? Comentario { get; set; }
     public int TipoComentarioGeracao { get; set; }
+    public bool ImprodutividadeCondicoesClimaticas { get; set; }
+    public bool ImprodutividadeMateriais { get; set; }
+    public bool ImprodutividadeParalizacoes { get; set; }
+    public bool ImprodutividadeEquipamentos { get; set; }
+    public bool ImprodutividadeContratante { get; set; }
+    public bool ImprodutividadeFornecedores { get; set; }
+    public bool ImprodutividadeMaodeObra { get; set; }
+    public bool ImprodutividadeProjeto { get; set; }
+    public bool ImprodutividadePlanejamento { get; set; }
+    public bool ImprodutividadeAcidente { get; set; }
     public bool ConfirmSubstituir { get; set; }
     public bool ConfirmCopiarDiaAnterior { get; set; }
     public List<RdoCadastroTarefaIdDto> ListaTarefas { get; set; } = new();
