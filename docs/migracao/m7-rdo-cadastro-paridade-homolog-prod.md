@@ -2,7 +2,7 @@
 
 **Trilha:** EQ-R · **Rota:** `/Rdo/Cadastro` · **Prod:** `#/rdo/cadastro` (AngularJS) · **Homolog:** React M7 **7a**  
 **Referência legado:** `Equipamentos/rdoappProject/Client/Views/Rdo/cadastro.html` · **BFF:** `GET/POST /api/bff/rdos/cadastro/*`  
-**Atualizado:** 2026-10-29 · **Git homolog:** **7a-P1** (B3/B4/B6) + `3c061b6` (P0) + `498ebc4` (7a) — branch `ci/homolog-ec2-s3-ssm`
+**Atualizado:** 2026-10-29 · **Git homolog:** **7a-P1** `d76dc52` (B3/B4/B6) · P0 `3c061b6` · 7a `498ebc4` — branch `ci/homolog-ec2-s3-ssm`
 
 | Coluna | Significado |
 |--------|-------------|
@@ -19,10 +19,10 @@
 | **A2** | — | Checkbox **por tarefa** na linha da tabela | Checkbox na lista simples (sem tabela) | **7a** `498ebc4` | Marca tarefa; **≠** layout prod | **7a-P2** com **C4**, **C7** |
 | **B1** | — | Título do painel **“RDO”** | **“Gerar RDO”** | — | ≠ prod | **7a-P4** |
 | **B2** | 2–3 | Ícones clima (nascer / sol / lua) nos radios | Só rótulos de texto | — | Sem ícones | **7a-P4** |
-| **B3** | **4** | Bloco **Motivos de improdutividade** (10 toggles) | **Ausente** na UI | **7a-P1** — UI 10 checkboxes + `Improdutividade` no save (`RdoCadastroPage` / `RdoCadastroSaveService`) | Aguarda smoke pós-deploy | Validar homolog (T7b) |
-| **B4** | **5** | **Comentários** (textarea) + botões **positivo / negativo** | **Ausente** | **7a-P1** — textarea + 👍/👎 (`tipoComentarioGeracao` 1/2) + POST | Aguarda smoke pós-deploy | Validar homolog (T7b) |
+| **B3** | **4** | Bloco **Motivos de improdutividade** (10 toggles) | **Ausente** na UI | **7a-P1** `d76dc52` — UI 10 checkboxes + `Improdutividade` no save | Aguarda smoke pós-deploy | Validar homolog (T7b) |
+| **B4** | **5** | **Comentários** (textarea) + botões **positivo / negativo** | **Ausente** | **7a-P1** `d76dc52` — textarea + 👍/👎 (`tipoComentarioGeracao` 1/2) + POST | Aguarda smoke pós-deploy | Validar homolog (T7b) |
 | **B5** | **1** | Campo **data** abre **calendário** (`datepicker-here`) | Input texto + máscara `dd/mm/aaaa`, **sem** calendário | Máscara React **7a** | Só digitação manual | **7a-P4** datepicker (paridade legado) |
-| **B6** | **2–3** | **Tempo** e **chuva**: radios **sem** opção marcada ao abrir | **Bom** + **Sem chuva** já selecionados | **7a-P1** — estado vazio no React; bootstrap sem defaults; validação save UI + BFF | Aguarda smoke pós-deploy | Validar homolog (T7b) |
+| **B6** | **2–3** | **Tempo** e **chuva**: radios **sem** opção marcada ao abrir | **Bom** + **Sem chuva** já selecionados | **7a-P1** `d76dc52` — radios vazios; bootstrap sem defaults; validação UI + BFF | Aguarda smoke pós-deploy | Validar homolog (T7b) |
 | **C1** | **6** | Cabeçalho **“ETAPAS / TAREFAS”** | Só **“Tarefas”** | — | Título errado | **7a-P4** copy |
 | **C2** | **6** | **“Habilitar relatório fotográfico?”** **Sim / Não** | **Ausente** | — | Pergunta não aparece | **7a-P3** |
 | **C3** | **6–7** | Accordion: faixa azul e ícone **+** no cabeçalho | **▶ / ▼** seta, estilo simples | CSS mínimo **7a** | **+** vs seta | **7a-P4** markup/CSS legado |
@@ -47,7 +47,7 @@
 |------|--------|-----|
 | **7a** | SPA + BFF bootstrap, etapas, save | `498ebc4` |
 | **7a-P0** | Fix **500** `cadastro/etapas` | `3c061b6` |
-| **7a-P1** | B3, B4, B6 | ☑ (commit desta entrega) |
+| **7a-P1** | B3, B4, B6 | ☑ `d76dc52` |
 | **7a-P1a** | Hotfix só B6 (opcional) | — (incorporado em P1) |
 | **7a-P2** | C4, C5, C7 | ☐ |
 | **7a-P3** | C2, C6 | ☐ |

@@ -13,7 +13,7 @@
 |-------|--------|
 | P3 Cards | ☑ homolog |
 | P5a RDO listagem | ☑ **T5 E** · **W1/W2** no Git **`fd8a144`** (smoke **T6** pendente) · **W3/M7** ações |
-| **M7 `/Rdo/Cadastro`** | ◐ **T7** + **7a-P1** no Git (B3/B4/B6) · deploy homolog pendente · matriz **21** · ver **T7** / [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
+| **M7 `/Rdo/Cadastro`** | ◐ **T7** + **7a-P1** `d76dc52` (B3/B4/B6) · deploy homolog pendente · matriz **21** · ver **T7** / [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
