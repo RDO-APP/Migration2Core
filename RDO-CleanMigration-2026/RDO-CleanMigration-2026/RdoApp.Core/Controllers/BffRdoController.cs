@@ -97,7 +97,7 @@ public class BffRdoController : ControllerBase
 
     [HttpPost("cadastro")]
     public async Task<IActionResult> CadastroSave(
-        [FromBody] RdoCadastroSaveRequestDto body,
+        [FromBody] RdoCadastroSaveRequestDto? body,
         CancellationToken cancellationToken)
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
@@ -105,9 +105,22 @@ public class BffRdoController : ControllerBase
             return Unauthorized(new { message = "Nenhuma obra selecionada." });
         }
 
+        if (body == null)
+        {
+            return BadRequest(new RdoCadastroSaveResultDto { Ok = false, ErrorMessage = "Corpo da requisição inválido." });
+        }
+
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
         var colaboradorId = HttpContext.Session.GetInt32(SessionKeys.ColaboradorId) ?? 0;
-        var result = await _cadastroSave.SaveAsync(obraId, colaboradorId, body, cancellationToken);
+        RdoCadastroSaveResultDto result;
+        try
+        {
+            result = await _cadastroSave.SaveAsync(obraId, colaboradorId, body, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new RdoCadastroSaveResultDto { Ok = false, ErrorMessage = ex.Message });
+        }
 
         if (!result.Ok && result.NeedsConfirm != null)
         {

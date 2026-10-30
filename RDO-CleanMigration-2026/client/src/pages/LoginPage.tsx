@@ -61,19 +61,30 @@ export function LoginPage() {
         {loading ? (
           <p className="login-muted">Carregando…</p>
         ) : (
-          <form method="post" action="/Account/Login" id="loginForm" onSubmit={onSubmit}>
+          <form
+            method="post"
+            action="/Account/Login"
+            id="loginForm"
+            autoComplete="on"
+            onSubmit={onSubmit}
+          >
             <input type="hidden" name={antiforgeryFieldName} value={antiforgeryToken} />
 
             <div className="login-form-group">
               <div className="login-input-group">
                 <span className="login-input-icon icon-person" aria-hidden />
                 <input
+                  id="login-cpf"
                   name="Cpf"
                   type="text"
+                  inputMode="numeric"
                   className="login-control"
                   placeholder="000.000.000-00"
                   maxLength={14}
-                  autoComplete="username"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
                   required
                   value={cpf}
                   onChange={(e) => setCpf(maskCpf(e.target.value))}

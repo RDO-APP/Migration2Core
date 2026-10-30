@@ -26,6 +26,24 @@ public class RdoCadastroSaveService
         RdoCadastroSaveRequestDto request,
         CancellationToken cancellationToken = default)
     {
+        try
+        {
+            return await SaveAsyncCore(obraId, colaboradorId, request, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return Fail(ex.Message);
+        }
+    }
+
+    private async Task<RdoCadastroSaveResultDto> SaveAsyncCore(
+        int obraId,
+        int colaboradorId,
+        RdoCadastroSaveRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        request.ListaTarefas ??= new List<RdoCadastroTarefaIdDto>();
+
         if (string.IsNullOrWhiteSpace(request.DataRdo))
         {
             return Fail("A data deve ser preenchida.");
@@ -41,17 +59,12 @@ public class RdoCadastroSaveService
             return Fail("Selecione ao menos uma tarefa.");
         }
 
-        if (!IsClima(request.ClimaManha) || !IsClima(request.ClimaTarde) || !IsClima(request.ClimaNoite))
-        {
-            return Fail("Preencha o tempo (manhã, tarde e noite).");
-        }
+        // Paridade prod <c>RdoModel.Salvar</c>: tempo/chuva opcionais (relatório = "Não Informado").
 
-        if (!IsChuva(request.ChuvaManha) || !IsChuva(request.ChuvaTarde) || !IsChuva(request.ChuvaNoite))
-        {
-            return Fail("Preencha a chuva (manhã, tarde e noite).");
-        }
-
-        var obra = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == obraId, cancellationToken);
+        var obra = await _context.Obras.AsNoTracking()
+            .Where(o => o.ObrIdObra == obraId)
+            .Select(o => new { o.ObrDtInicio, o.ObrDtFim })
+            .FirstOrDefaultAsync(cancellationToken);
         if (obra == null)
         {
             return Fail("Obra não encontrada.");
@@ -68,19 +81,23 @@ public class RdoCadastroSaveService
             return Fail("Não é possível gerar um RDO posterior a data final da obra.");
         }
 
-        var rdoRow = await _context.Rdos
-            .FirstOrDefaultAsync(r => r.RdoIdObra == obraId && r.RdoDtRdo.Date == dataRdo.Date, cancellationToken);
+        var dayStart = dataRdo.Date;
+        var dayEnd = dayStart.AddDays(1);
+        var existingRdo = await _context.Rdos.AsNoTracking()
+            .Where(r => r.RdoIdObra == obraId && r.RdoDtRdo >= dayStart && r.RdoDtRdo < dayEnd)
+            .Select(r => new { r.RdoIdRdo, r.RdoIdStatus, ComentarioGeracao = r.RdoDsComentarioGeracao ?? "" })
+            .FirstOrDefaultAsync(cancellationToken);
 
         string? statusText = null;
-        if (rdoRow != null)
+        if (existingRdo != null)
         {
             statusText = await _context.StatusRdos.AsNoTracking()
-                .Where(s => s.StrIdStatus == rdoRow.RdoIdStatus)
-                .Select(s => s.StrDsStatus)
+                .Where(s => s.StrIdStatus == existingRdo.RdoIdStatus)
+                .Select(s => s.StrDsStatus ?? "")
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        if (rdoRow != null && !request.ConfirmSubstituir)
+        if (existingRdo != null && !request.ConfirmSubstituir)
         {
             return new RdoCadastroSaveResultDto
             {
@@ -90,7 +107,7 @@ public class RdoCadastroSaveService
             };
         }
 
-        if (rdoRow != null && statusText != null && statusText.Contains("assinado", StringComparison.OrdinalIgnoreCase))
+        if (existingRdo != null && statusText != null && statusText.Contains("assinado", StringComparison.OrdinalIgnoreCase))
         {
             return Fail("Não é possível sobrescrever um RDO que já foi assinado.");
         }
@@ -130,75 +147,109 @@ public class RdoCadastroSaveService
             };
         }
 
-        await using var tx = await _context.Database.BeginTransactionAsync(cancellationToken);
-        try
-        {
-            var impro = new Improdutividade
-            {
-                ImpStClima = request.ImprodutividadeCondicoesClimaticas,
-                ImpStMaterial = request.ImprodutividadeMateriais,
-                ImpStParalizacao = request.ImprodutividadeParalizacoes,
-                ImpStEquipamento = request.ImprodutividadeEquipamentos,
-                ImpStContratante = request.ImprodutividadeContratante,
-                ImpStFornecedores = request.ImprodutividadeFornecedores,
-                ImpStMaodeobra = request.ImprodutividadeMaodeObra,
-                ImpStProjeto = request.ImprodutividadeProjeto,
-                ImpStPlanejamento = request.ImprodutividadePlanejamento,
-                ImpStAcidentes = request.ImprodutividadeAcidente,
-            };
-            _context.Improdutividades.Add(impro);
-            await _context.SaveChangesAsync(cancellationToken);
+        var climaManha = NormalizeLegadoChar(request.ClimaManha);
+        var climaTarde = NormalizeLegadoChar(request.ClimaTarde);
+        var climaNoite = NormalizeLegadoChar(request.ClimaNoite);
+        var chuvaManha = NormalizeLegadoChar(request.ChuvaManha);
+        var chuvaTarde = NormalizeLegadoChar(request.ChuvaTarde);
+        var chuvaNoite = NormalizeLegadoChar(request.ChuvaNoite);
 
-            var isNew = rdoRow == null;
-            if (isNew)
+        var strategy = _context.Database.CreateExecutionStrategy();
+        return await strategy.ExecuteAsync(async () =>
+        {
+            await using var tx = await _context.Database.BeginTransactionAsync(cancellationToken);
+            try
             {
-                rdoRow = new Rdo
+                var impro = new Improdutividade
                 {
-                    RdoIdObra = obraId,
-                    RdoIdColaborador = colaboradorId > 0 ? colaboradorId : null,
-                    RdoDsComentarioAssinatura = "",
-                    RdoTpComentarioAssinatura = "",
-                    RdoDsComentarioGeracao = request.Comentario ?? "",
-                    RdoTpComentarioGeracao = MapTipoComentarioGeracao(request.TipoComentarioGeracao),
+                    ImpStClima = request.ImprodutividadeCondicoesClimaticas,
+                    ImpStMaterial = request.ImprodutividadeMateriais,
+                    ImpStParalizacao = request.ImprodutividadeParalizacoes,
+                    ImpStEquipamento = request.ImprodutividadeEquipamentos,
+                    ImpStContratante = request.ImprodutividadeContratante,
+                    ImpStFornecedores = request.ImprodutividadeFornecedores,
+                    ImpStMaodeobra = request.ImprodutividadeMaodeObra,
+                    ImpStProjeto = request.ImprodutividadeProjeto,
+                    ImpStPlanejamento = request.ImprodutividadePlanejamento,
+                    ImpStAcidentes = request.ImprodutividadeAcidente,
                 };
-                _context.Rdos.Add(rdoRow);
+                _context.Improdutividades.Add(impro);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                var comentarioGeracao = request.Comentario ?? (existingRdo?.ComentarioGeracao ?? "");
+                var tpComentarioGeracao = MapTipoComentarioGeracao(request.TipoComentarioGeracao);
+                int rdoId;
+
+                if (existingRdo == null)
+                {
+                    var rdoRow = new Rdo
+                    {
+                        RdoIdObra = obraId,
+                        RdoIdColaborador = colaboradorId > 0 ? colaboradorId : null,
+                        RdoDsComentarioAssinatura = "",
+                        RdoTpComentarioAssinatura = "",
+                        RdoDsComentarioGeracao = comentarioGeracao,
+                        RdoTpComentarioGeracao = tpComentarioGeracao,
+                        RdoDtRdo = dataRdo.Date,
+                        RdoIdStatus = StatusRdoAberto,
+                        RdoDsClimaManha = climaManha,
+                        RdoDsClimaTarde = climaTarde,
+                        RdoDsClimaNoite = climaNoite,
+                        RdoDsChuvaManha = chuvaManha,
+                        RdoDsChuvaTarde = chuvaTarde,
+                        RdoDsChuvaNoite = chuvaNoite,
+                        RdoDtGeracao = DateTime.Now,
+                        RdoIdImprodutividade = impro.ImpIdImprodutividade,
+                    };
+                    _context.Rdos.Add(rdoRow);
+                    await _context.SaveChangesAsync(cancellationToken);
+                    rdoId = rdoRow.RdoIdRdo;
+                }
+                else
+                {
+                    rdoId = existingRdo.RdoIdRdo;
+                    await _context.Rdos
+                        .Where(r => r.RdoIdRdo == rdoId)
+                        .ExecuteUpdateAsync(
+                            s => s
+                                .SetProperty(r => r.RdoDsComentarioGeracao, comentarioGeracao)
+                                .SetProperty(r => r.RdoTpComentarioGeracao, tpComentarioGeracao)
+                                .SetProperty(r => r.RdoDtRdo, dataRdo.Date)
+                                .SetProperty(r => r.RdoIdStatus, StatusRdoAberto)
+                                .SetProperty(r => r.RdoDsClimaManha, climaManha)
+                                .SetProperty(r => r.RdoDsClimaTarde, climaTarde)
+                                .SetProperty(r => r.RdoDsClimaNoite, climaNoite)
+                                .SetProperty(r => r.RdoDsChuvaManha, chuvaManha)
+                                .SetProperty(r => r.RdoDsChuvaTarde, chuvaTarde)
+                                .SetProperty(r => r.RdoDsChuvaNoite, chuvaNoite)
+                                .SetProperty(r => r.RdoDtGeracao, DateTime.Now)
+                                .SetProperty(r => r.RdoIdImprodutividade, impro.ImpIdImprodutividade),
+                            cancellationToken);
+                }
+
+                await SyncRdoTarefasAsync(
+                    rdoId,
+                    dataRdo.Date,
+                    selectedIds,
+                    tarefasObra,
+                    request.ConfirmCopiarDiaAnterior,
+                    cancellationToken);
+
+                if (request.ListaImagems != null)
+                {
+                    await SyncRdoImagensAsync(rdoId, request.ListaImagems, cancellationToken);
+                }
+
+                await tx.CommitAsync(cancellationToken);
+
+                return new RdoCadastroSaveResultDto { Ok = true, IdRdo = rdoId };
             }
-            else
+            catch (Exception ex)
             {
-                rdoRow!.RdoDsComentarioGeracao = request.Comentario ?? rdoRow.RdoDsComentarioGeracao;
-                rdoRow.RdoTpComentarioGeracao = MapTipoComentarioGeracao(request.TipoComentarioGeracao);
+                await tx.RollbackAsync(cancellationToken);
+                return Fail(ex.Message);
             }
-
-            rdoRow!.RdoDtRdo = dataRdo.Date;
-            rdoRow.RdoIdStatus = StatusRdoAberto;
-            rdoRow.RdoDsClimaManha = request.ClimaManha;
-            rdoRow.RdoDsClimaTarde = request.ClimaTarde;
-            rdoRow.RdoDsClimaNoite = request.ClimaNoite;
-            rdoRow.RdoDsChuvaManha = request.ChuvaManha;
-            rdoRow.RdoDsChuvaTarde = request.ChuvaTarde;
-            rdoRow.RdoDsChuvaNoite = request.ChuvaNoite;
-            rdoRow.RdoDtGeracao = DateTime.Now;
-            rdoRow.RdoIdImprodutividade = impro.ImpIdImprodutividade;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            await SyncRdoTarefasAsync(
-                rdoRow.RdoIdRdo,
-                dataRdo.Date,
-                selectedIds,
-                tarefasObra,
-                request.ConfirmCopiarDiaAnterior,
-                cancellationToken);
-
-            await tx.CommitAsync(cancellationToken);
-
-            return new RdoCadastroSaveResultDto { Ok = true, IdRdo = rdoRow.RdoIdRdo };
-        }
-        catch (Exception ex)
-        {
-            await tx.RollbackAsync(cancellationToken);
-            return Fail(ex.Message);
-        }
+        });
     }
 
     private async Task SyncRdoTarefasAsync(
@@ -278,7 +329,31 @@ public class RdoCadastroSaveService
 
     private async Task<int> CopyTarefaHistoricoAsync(int tarIdOrigem, CancellationToken cancellationToken)
     {
-        var tar = await _context.Tarefas.FirstAsync(t => t.TarIdTarefa == tarIdOrigem, cancellationToken);
+        // Legado RDS: tar_ds_* pode ser NULL — evitar materializar entidade Tarefa inteira (DBNull → string).
+        var tar = await _context.Tarefas.AsNoTracking()
+            .Where(t => t.TarIdTarefa == tarIdOrigem)
+            .Select(t => new
+            {
+                TarDsComentario = t.TarDsComentario ?? "",
+                TarDsFoto = t.TarDsFoto ?? "",
+                TarDsTarefa = t.TarDsTarefa ?? "",
+                t.TarDtFim,
+                t.TarDtInicio,
+                t.TarDtMedicao,
+                t.TarDtMedicaoHoraFinal,
+                t.TarDtMedicaoHoraInicial,
+                t.TarDtPrevisaoFim,
+                t.TarIdColaboradorInsercao,
+                t.TarIdEtapa,
+                t.TarIdStatus,
+                t.TarIdUnidade,
+                t.TarNrAgrupador,
+                t.TarNrHorasTrabalhadas,
+                t.TarNrQtdConstruida,
+                t.TarVlValorUnitario,
+            })
+            .FirstAsync(cancellationToken);
+
         var newTar = new Tarefa
         {
             TarDsComentario = tar.TarDsComentario,
@@ -305,32 +380,80 @@ public class RdoCadastroSaveService
         _context.Tarefas.Add(newTar);
         await _context.SaveChangesAsync(cancellationToken);
 
-        var colabs = await _context.ObraTarefaColaboradores.AsNoTracking()
-            .Where(o => o.OtcIdTarefa == tar.TarIdTarefa)
+        var colabIds = await _context.ObraTarefaColaboradores.AsNoTracking()
+            .Where(o => o.OtcIdTarefa == tarIdOrigem)
+            .Select(o => o.OtcIdObraColaborador)
             .ToListAsync(cancellationToken);
-        foreach (var otc in colabs)
+        foreach (var otcId in colabIds)
         {
             _context.ObraTarefaColaboradores.Add(new ObraTarefaColaborador
             {
-                OtcIdObraColaborador = otc.OtcIdObraColaborador,
+                OtcIdObraColaborador = otcId,
                 OtcIdTarefa = newTar.TarIdTarefa,
             });
         }
 
-        var equips = await _context.ObraTarefaEquipamentos.AsNoTracking()
-            .Where(o => o.OteIdTarefa == tar.TarIdTarefa)
+        var equipIds = await _context.ObraTarefaEquipamentos.AsNoTracking()
+            .Where(o => o.OteIdTarefa == tarIdOrigem)
+            .Select(o => o.OteIdObraEquipamento)
             .ToListAsync(cancellationToken);
-        foreach (var ote in equips)
+        foreach (var oteId in equipIds)
         {
             _context.ObraTarefaEquipamentos.Add(new ObraTarefaEquipamento
             {
-                OteIdObraEquipamento = ote.OteIdObraEquipamento,
+                OteIdObraEquipamento = oteId,
                 OteIdTarefa = newTar.TarIdTarefa,
             });
         }
 
         await _context.SaveChangesAsync(cancellationToken);
         return newTar.TarIdTarefa;
+    }
+
+    /// <summary>Paridade prod <c>RdoModel.IncluirImagens</c>.</summary>
+    private async Task SyncRdoImagensAsync(
+        int rdoId,
+        List<RdoCadastroImagemIdDto> listaImagems,
+        CancellationToken cancellationToken)
+    {
+        var existing = await _context.RdoImagens
+            .Where(ri => ri.RimIdRdo == rdoId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var link in existing)
+        {
+            _context.RdoImagens.Remove(link);
+            var imagem = await _context.Imagens.FindAsync(new object[] { link.RimIdImagem }, cancellationToken);
+            if (imagem != null)
+            {
+                imagem.ImaIdHistoricoTarefaRdo = null;
+            }
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        var ids = listaImagems
+            .Select(x => x.IdImagem)
+            .Where(id => id > 0)
+            .Distinct()
+            .ToList();
+
+        foreach (var idImagem in ids)
+        {
+            _context.RdoImagens.Add(new RdoImagem
+            {
+                RimIdRdo = rdoId,
+                RimIdImagem = idImagem,
+            });
+
+            var imagem = await _context.Imagens.FindAsync(new object[] { idImagem }, cancellationToken);
+            if (imagem != null)
+            {
+                imagem.ImaIdHistoricoTarefaRdo = rdoId;
+            }
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     private static string MapTipoComentarioGeracao(int tipo) =>
@@ -341,11 +464,8 @@ public class RdoCadastroSaveService
             _ => "",
         };
 
-    private static bool IsClima(string? value) =>
-        value is "b" or "r";
-
-    private static bool IsChuva(string? value) =>
-        value is "s" or "p" or "m";
+    private static string? NormalizeLegadoChar(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static bool TryParseDate(string value, out DateTime date)
     {

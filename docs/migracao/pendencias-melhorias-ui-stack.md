@@ -1,6 +1,6 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-10-27  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-10-30  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).
@@ -28,7 +28,7 @@ Legenda **Stack:** **L** = só prod · **M** = moderno Core · **H** = híbrido 
 | P2 fallback | Razor `_LayoutEscolher` | jQuery + bundle BS (se SPA ausente) | Contingência deploy | **UI-M3b:** remover após 100% SPA Escolher estável |
 | **P3** `/Tarefa/Cards` | React SPA | BS5 CSS + `cards-page.css` + markup `panel`/accordion legado · modais prod = BS3+jQuery **ausentes** | Accordion/comportamento em React; visual clone prod | **M7+:** modais/ações (P4 medição) ainda em stack **H** · **UI-M3:** redesign página (pós-gates abaixo) |
 | **P5a** `/Rdo/Index` | React SPA | BS5 + `rdo-index.css` + grid/filtros estilo prod | Mesma estratégia M5 web | **Agora:** **W3** / **UI-M1** (ícones PDF/assinar) · **M7** ações · **UI-M3:** layout sem BS legado |
-| **P5a** `/Rdo/Cadastro` | React SPA (**M7 7a** `498ebc4` · P0 `3c061b6`) | BS5 + `rdo-cadastro.css` + radios/grid legado | Paridade cadastro novo RDO — gap detalhado: [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) | **7a-P1–P4** · **M7 7b–7d** editar/PDF/assinar · **UI-M3:** redesign |
+| **P5a** `/Rdo/Cadastro` | React SPA (**M7 7a** · **7a-P5 ☑ T7h**) | BS5 + `rdo-cadastro.css` + radios/grid legado | Paridade cadastro novo RDO — gap: [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) | **M7-FOTOS-01/02** (thumbs + save imagens) · **7b–7d** · **UI-M3** |
 | **P4** Nova medição | **Inexistente** homolog | Prod: modal BS3 + Angular | Escopo M7; Kiro quebrou ao trocar BS/JS cedo | **M7+:** modal em React (stack **H** primeiro) · **UI-M3:** componente/modal moderno |
 | **Stubs** Chart, Dashboard, Efetivo, Tarefa/*, Obra/Cadastro… | Razor `EmMigracao.cshtml` | BS5 mínimo num card | Placeholder até SPA+BFF de cada rota ([`m5-web-paridade-prod-ordem.md`](m5-web-paridade-prod-ordem.md)) | **M5 web #2–#3** Chart/Dashboard · **M7** cadastros/listagens · stub some ao entregar SPA · **UI-M3** não prioriza stub |
 | **Shell** header/menu (P2–P5a) | `OperadorShell` + `header.css` / `operador-shell.css` | FA/fontello parcial | RBAC + nav prod | **M4.7g / UI-M2d** drawer · **UI-M1/M2c** ícones · **UI-M3** tokens |
@@ -101,6 +101,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M3a** | Sub-item: eliminar `escolher.css` monolítico — extrair `@rdoapp/ui-tokens` ou pasta `client/src/legacy-parity/` explícita; **substituir** dependência de `Assets/Fonts/fontello.*` legado | G | com UI-M3 | ⏸ |
 | **UI-M3b** | Sub-item: remover jQuery/BS JS dos layouts Razor mortos (`_LayoutEscolher`) após 100% SPA | M | pós UI-M3 | ⏸ |
 | **UI-M6** | Unificar P1 Login na SPA (M4.8) **sem** refazer visual — só rota | M | M4.8 | ☐ planejado |
+| **UI-P1-01** | Campo **CPF**: ao focar vazio, Chrome não deve listar **e-mails** (“Gerenciar endereços…”). **CPF salvo** pode aparecer **depois** de começar a digitar (gerenciador de senhas do site) — aceite ≈ prod | P | M4.8 | ☑ código · smoke Lucio: e-mail sumiu · CPF ao digitar OK |
 
 **Regra anti-Kiro:** **UI-M3** só abre quando (1) **M4.7☑** + smoke P2/P3 OK, (2) **M7** mapeou modais/ações, (3) branch dedicada + página por página (Escolher → Cards → Login), **nunca** “swap global de CSS”.
 

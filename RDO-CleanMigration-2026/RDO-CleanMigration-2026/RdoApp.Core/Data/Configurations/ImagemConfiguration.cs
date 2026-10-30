@@ -13,7 +13,7 @@ public class ImagemConfiguration : IEntityTypeConfiguration<Imagem>
         builder.HasKey(e => e.ImaIdImagem);
 
         builder.Property(e => e.ImaDsCaminho)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(500);
 
         builder.Property(e => e.ImaIdHistoricoTarefaRdo);

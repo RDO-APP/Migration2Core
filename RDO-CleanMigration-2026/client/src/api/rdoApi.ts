@@ -79,7 +79,17 @@ export async function saveRdoCadastro(body: RdoCadastroSaveRequest): Promise<Rdo
   if (res.status === 401) {
     throw new Error('Sessão expirada ou obra não selecionada. Volte a Escolher obra.')
   }
-  const data = (await res.json()) as RdoCadastroSaveResult
+  const text = await res.text()
+  let data: RdoCadastroSaveResult
+  try {
+    data = JSON.parse(text) as RdoCadastroSaveResult
+  } catch {
+    const short =
+      text.includes('<!DOCTYPE') || text.includes('<html')
+        ? `Erro ${res.status} no servidor (salvar RDO). Abra a aba Resposta no F12 ou redeploy Core.`
+        : text.slice(0, 500) || `Erro ${res.status} ao salvar RDO.`
+    throw new Error(short)
+  }
   if (!res.ok && !data.needsConfirm) {
     throw new Error(data.errorMessage ?? `Erro ${res.status} ao salvar RDO.`)
   }

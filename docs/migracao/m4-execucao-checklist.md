@@ -37,7 +37,7 @@ Homolog **②** aproxima **①** por **blocos de UI** (header, cards, accordion,
 | **M4.7g** | Menu drawer + shell RBAC P1–P3 + `LegacyOperadorRoutes` | ☑ | P2/P3 | código + deploy homolog 2026-10-26 |
 | **M4.7c** | Toolbar RDO/Efetivo + faixa LISTA · RBAC `showCriarNovo*` | ☑ | P3 | smoke G6 homolog |
 | **M4.7** | UI-M1/M2c fontello/FA · UI-M2/M2b | ☐ | P3 | não bloqueia M5 web |
-| **M4.8** | **P1** Login SPA + congela EQ-W | ☑ | P1 | `LoginPage` + `BffLoginController` · GET `/Account/Login` → SPA |
+| **M4.8** | **P1** Login SPA + congela EQ-W | ☑ código **`7aee0f2`** | P1 | `LoginPage` + `BffLoginController` · GET `/Account/Login` → `PhysicalFile(app/index.html)` · fallback Razor se SPA ausente · smoke **UI-M5/M6** ☐ |
 | — | **P4** Nova medição modal | — | P4 | **M7+** |
 
 ---
@@ -81,3 +81,4 @@ Inventário botões P3 (header / toolbar / card): [`p3-botoes-habilitacao-m7.md`
 | UI-M2–M2b | Flex card, progress — paridade híbrida | **M4.7** |
 | UI-M3 | Redesign sem BS3/legado **e sem fontello/FA na SPA** | **⏸ pós-M4.7 ☑ + M7** — gates em [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) |
 | UI-M5–M6 | Esqueci senha smoke · Login SPA | M4.8 |
+| **UI-P1-01** | Login CPF: dropdown e-mail → paridade prod (sem `username` no CPF) | M4.8 · deploy |

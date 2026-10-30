@@ -7,14 +7,24 @@ public sealed class RdoCadastroBootstrapDto
     public string ObraNome { get; init; } = "";
 }
 
+public sealed class RdoCadastroImagemDto
+{
+    public int IdImagem { get; init; }
+    public string DsCaminho { get; init; } = "";
+}
+
 public sealed class RdoCadastroTarefaDto
 {
     public int Id { get; init; }
     public string Descricao { get; init; } = "";
     public int Status { get; init; }
+    public string NomeStatus { get; init; } = "";
     public int IdEtapa { get; init; }
+    public int QuantidadeColaboradores { get; init; }
+    public int QuantidadeEquipamentos { get; init; }
     public bool ExisteRegistroMedicaoDataRequerida { get; init; }
     public bool ExisteRegistroMedicaoDiaAnterior { get; init; }
+    public IReadOnlyList<RdoCadastroImagemDto> ListaImagem { get; init; } = Array.Empty<RdoCadastroImagemDto>();
 }
 
 public sealed class RdoCadastroEtapaDto
@@ -54,11 +64,20 @@ public sealed class RdoCadastroSaveRequestDto
     public bool ConfirmSubstituir { get; set; }
     public bool ConfirmCopiarDiaAnterior { get; set; }
     public List<RdoCadastroTarefaIdDto> ListaTarefas { get; set; } = new();
+    /// <summary>Paridade prod <c>cadastroParam.listaImagems</c>; null = não alterar vínculos.</summary>
+    public List<RdoCadastroImagemIdDto>? ListaImagems { get; set; }
+    /// <summary>Paridade prod <c>mostrarFotos</c> / PDF fotográfico.</summary>
+    public bool GerarRelatorioFotografico { get; set; }
 }
 
 public sealed class RdoCadastroTarefaIdDto
 {
     public int Id { get; set; }
+}
+
+public sealed class RdoCadastroImagemIdDto
+{
+    public int IdImagem { get; set; }
 }
 
 public sealed class RdoCadastroSaveResultDto

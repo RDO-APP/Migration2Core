@@ -48,7 +48,7 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
         builder.Property(t => t.TarDsTarefa)
             .HasColumnName("tar_ds_tarefa")
             .HasMaxLength(500)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(t => t.TarNrQtdConstruida)
             .HasColumnName("tar_nr_qtd_construida");
@@ -69,12 +69,12 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
         builder.Property(t => t.TarDsComentario)
             .HasColumnName("tar_ds_comentario")
             .HasMaxLength(1000)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(t => t.TarDsFoto)
             .HasColumnName("tar_ds_foto")
             .HasMaxLength(255)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(t => t.TarNrHorasTrabalhadas)
             .HasColumnName("tar_nr_horas_trabalhadas");

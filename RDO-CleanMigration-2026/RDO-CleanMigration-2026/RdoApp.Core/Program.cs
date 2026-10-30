@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using RdoApp.Core.Data;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Middleware;
@@ -129,6 +130,26 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+
+var uploadsRoot = app.Configuration["FileStorage:UploadsRoot"];
+if (string.IsNullOrWhiteSpace(uploadsRoot))
+{
+    var defaultUploads = Path.Combine(app.Environment.ContentRootPath, "Uploads");
+    if (Directory.Exists(defaultUploads))
+    {
+        uploadsRoot = defaultUploads;
+    }
+}
+
+if (!string.IsNullOrWhiteSpace(uploadsRoot) && Directory.Exists(uploadsRoot))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(uploadsRoot),
+        RequestPath = "/Uploads",
+    });
+}
+
 app.UseRouting();
 
 app.UseSession(); // ✅ Enable session support

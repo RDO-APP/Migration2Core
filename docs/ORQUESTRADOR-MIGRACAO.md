@@ -134,7 +134,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações · M4.4 Escolher React |
 | **M2** | **FECHADO** | — |
 | **M3** | **FECHADO** | passos 6–7 E2E opcional |
-| **M4** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ | Smoke **G5/G6** · **UI-M1/M2c** · congela EQ-W formal |
+| **M4** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ Git **`7aee0f2`** (`LoginPage` + `BffLoginController`; GET Login → SPA se `wwwroot/app`) | Smoke **G5/G6** · **UI-M1/M2c** · **UI-M5** Esqueci senha |
 | **M5 web** (Onda B) | **#1 RDO** listagem **T5 E** · **W1/W2** `fd8a144` | Smoke **T6** · **W3** · **M7** ações · **#2 Chart** · **#3 Dashboard** |
 | **M5 EQ-M** | — | **⏸ adiado** — retomar no **G-M5** web ou **M6** |
 | **M6** | — | JWT/OpenAPI spike · contrato mobile homolog |
@@ -393,11 +393,11 @@ Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível
 
 ## Próxima ação (1)
 
-1. **Deploy homolog D→E** — pacote **`3c061b6`** (M7 **7a-P0** + SPA) — [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md).
-2. **Smoke T7 cadastro:** `cadastro/etapas` **200** → salvar RDO — gap prod: [`migracao/m7-rdo-cadastro-paridade-homolog-prod.md`](migracao/m7-rdo-cadastro-paridade-homolog-prod.md) · [`migracao/homolog-p5-rdo-tentativas.md`](migracao/homolog-p5-rdo-tentativas.md).
-3. **P5a RDO restante:** **W3** (ícones PDF/assinar) · **M7 7b–7d** (editar/PDF/assinar) · **UI-M3** só após gates (doc stack UI).
-4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)) — após T6 OK ou em paralelo se Lucio priorizar fila.
-5. **Backlog M4** — **UI-M1/UI-M2c** global · **M4.8** Login SPA · **M5 EQ-M** **adiado**.
+1. **M7 `/Rdo/Cadastro` — M7-FOTOS-01/02:** validar thumbs (`/Uploads/Imagens`, `FileStorage:UploadsRoot` EC2) e persistência **`listaImagems` / `rdo_imagem`** — [`migracao/m7-rdo-cadastro-paridade-homolog-prod.md`](migracao/m7-rdo-cadastro-paridade-homolog-prod.md) § Pendências.
+2. **M7 7b–7d:** editar RDO · PDF (incl. fotográfico) · assinar — após fotos ou em paralelo se priorizar fila.
+3. **P5a RDO:** **W3** ícones PDF/assinar na listagem · smoke **T6** W1/W2 se ainda pendente.
+4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
+5. **Backlog M4** — **UI-M1/UI-M2c** · **M4.8** Login SPA · **M5 EQ-M** adiado.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

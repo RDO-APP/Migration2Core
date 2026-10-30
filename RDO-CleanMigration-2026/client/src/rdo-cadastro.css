@@ -1,3 +1,5 @@
+/* M7 7a-P4/P2/P3 — paridade cadastro.html (panel, clima, toggles, accordion, tabela) */
+
 .rdo-cadastro-page {
   width: 100%;
   float: left;
@@ -18,92 +20,456 @@
   font-family: 'sf-bd', system-ui, sans-serif;
 }
 
-.rdo-cadastro-panel {
-  width: 100%;
+.rdo-cadastro-page > .panel {
   float: left;
-  margin-bottom: 24px;
+  width: 100%;
+  padding: 11px 10px 25px;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 16px;
 }
 
-.rdo-section-title {
-  margin: 16px 0 8px;
+/* BS3 panel: colunas flutuam; BS5 precisa flow-root + .row onde aplicável */
+.rdo-cadastro-page .rdo-panel-bloco1 {
+  display: flow-root;
+}
+
+/* B0 — tipografia uniforme bloco 1 (paridade control-label prod) */
+.rdo-cadastro-page .rdo-bloco1-label,
+.rdo-cadastro-page .rdo-bloco1-section-title {
+  display: block;
+  color: #28496f;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.42857143;
+  margin-bottom: 8px;
+}
+
+.rdo-cadastro-page .rdo-bloco1-section-title {
+  margin-top: 16px;
   clear: both;
+}
+
+.rdo-cadastro-page .control-label {
+  color: #28496f;
+}
+
+/* B5 — largura data (col-md-4 sozinha estica demais no BS5) */
+.rdo-cadastro-page .rdo-date-field {
+  max-width: 280px;
+}
+
+.rdo-cadastro-page .rdo-clima-cols {
+  width: 100%;
+  clear: both;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .rdo-required {
   color: #c0392b;
 }
 
-.rdo-fieldset {
+.rdo-cadastro-page fieldset {
   border: 1px solid #dce4ec;
   padding: 8px 12px 12px;
   margin-bottom: 12px;
 }
 
-.rdo-fieldset legend {
-  font-size: 0.95rem;
-  padding: 0 6px;
+/* B6b — legend sobre a borda (custom.css legado) */
+.rdo-cadastro-page fieldset legend,
+.rdo-cadastro-page .rdo-bloco1-legend {
+  display: table;
   width: auto;
-  margin-bottom: 0;
-}
-
-.rdo-clima-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.rdo-clima-col {
-  min-width: 120px;
-}
-
-.rdo-clima-col .radio {
-  margin: 4px 0;
-}
-
-.rdo-etapas-accordion {
-  clear: both;
-  margin-top: 8px;
-}
-
-.rdo-etapa-block {
-  border: 1px solid #dce4ec;
-  margin-bottom: 8px;
-}
-
-.rdo-etapa-head {
-  width: 100%;
-  text-align: left;
-  background: #f5f8fb;
+  max-width: calc(100% - 24px);
+  padding: 0 13px;
+  margin: 0 0 0 8px;
+  float: none;
   border: none;
-  padding: 10px 12px;
+  background: #fff;
   color: #28496f;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.42857143;
+}
+
+/* B2 — fontello clima (face em escolher.css) */
+.rdo-cadastro-page .icon-sunrise:before {
+  content: '\e809';
+}
+.rdo-cadastro-page .icon-sun:before {
+  content: '\e80a';
+}
+.rdo-cadastro-page .icon-moon:before {
+  content: '\e80b';
+}
+
+/* B5 — data + calendário (showPicker via botão) */
+.rdo-date-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.rdo-date-wrap .form-control {
+  flex: 1 1 auto;
+  padding-right: 44px;
+}
+
+.rdo-date-wrap .rdo-date-open {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 42px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #28496f;
+  box-shadow: none;
+  z-index: 2;
+}
+
+.rdo-date-wrap .rdo-date-open .fa {
+  font-size: 18px;
+}
+
+.rdo-date-native-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* B6a — clima fieldsets (paridade custom.css) */
+.rdo-cadastro-page .panel .rdo-clima-fieldset {
+  min-height: 195px;
+  margin-bottom: 12px;
+}
+
+.rdo-cadastro-page .rdo-clima-row {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.rdo-cadastro-page .rdo-clima-period-label {
+  position: relative;
+  display: block;
+  padding-left: 25px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.rdo-cadastro-page .rdo-clima-period-label i {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.rdo-cadastro-page .rdo-clima-period .radio {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.rdo-cadastro-page .rdo-clima-period .radio label {
+  font-weight: normal;
+  padding-left: 20px;
+}
+
+.rdo-cadastro-page .Lista-toggle .togglebutton label {
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: normal;
+}
+
+/* BS5: nunca usar .collapse no accordion React */
+.rdo-cadastro-page .rdo-accordion-body {
+  display: block;
+  width: 100%;
+  clear: both;
+  background: #fff;
+  border: 1px solid #dce4ec;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+/* B3a — Lista-toggle + togglebutton (material-kit subset) */
+.Lista-toggle .bloco {
+  padding: 15px;
+  float: left;
+  width: 100%;
+}
+
+.Lista-toggle .togglebutton {
+  text-align: right;
+}
+
+.Lista-toggle .togglebutton label {
+  display: flex;
+  line-height: 17px;
+  padding: 5px;
+  flex-direction: row;
+  justify-content: flex-end;
+  color: #19334c;
+  font-weight: normal;
   cursor: pointer;
 }
 
-.rdo-etapa-body {
-  padding: 8px 12px 12px;
+.togglebutton label input[type='checkbox'] {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-.rdo-etapa-actions {
-  margin-bottom: 8px;
+.togglebutton label .toggle {
+  text-align: left;
+  margin-left: 15px;
+  content: '';
+  display: inline-block;
+  width: 30px;
+  height: 15px;
+  background-color: rgba(80, 80, 80, 0.7);
+  border-radius: 15px;
+  transition: background 0.3s ease;
+  vertical-align: middle;
 }
 
-.rdo-tarefa-list {
-  list-style: none;
+.togglebutton label .toggle:after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 20px;
+  position: relative;
+  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
+  left: -5px;
+  top: -3px;
+  border: 1px solid rgba(0, 0, 0, 0.54);
+  transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease;
+}
+
+.togglebutton label input[type='checkbox']:checked + .toggle {
+  background-color: rgb(39, 73, 111);
+}
+
+.togglebutton label input[type='checkbox']:checked + .toggle:after {
+  left: 15px;
+  border-color: #067ecc;
+}
+
+.Lista-toggle .togglebutton label input[type='checkbox']:checked + .toggle:after {
+  border-color: #067ecc;
+}
+
+@media (min-width: 992px) {
+  .col-md-15 {
+    width: 20%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+/* B4a — comentários input-group */
+.rdo-comentarios-wrap .input-group {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+}
+
+.rdo-comentarios-wrap .input-group textarea.form-control {
+  flex: 1 1 auto;
+  min-height: 120px;
+  resize: vertical;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rdo-comentarios-wrap .input-group-addon.rdo-comentarios-addon {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: center;
+  width: 125px;
+  min-width: 125px;
   padding: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+}
+
+.rdo-comentarios-wrap .rdo-thumb-inner {
+  width: 125px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.rdo-comentarios-wrap .rdo-thumb-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 4px 8px;
+  margin: 0;
+  line-height: 1;
+  color: #28496f;
+  width: 100%;
+}
+
+.rdo-comentarios-wrap .rdo-thumb-btn .fa {
+  font-size: 48px;
+}
+
+.rdo-comentarios-wrap .rdo-thumb-btn[aria-pressed='true'] {
+  color: #067ecc;
+}
+
+/* FA parcial (face em escolher.css) */
+.rdo-cadastro-page .fa-save:before {
+  content: '\f0c7';
+}
+.rdo-cadastro-page .fa-arrow-left:before {
+  content: '\f060';
+}
+.rdo-cadastro-page .fa-thumbs-o-up:before {
+  content: '\f087';
+}
+.rdo-cadastro-page .fa-thumbs-up:before {
+  content: '\f164';
+}
+.rdo-cadastro-page .fa-thumbs-o-down:before {
+  content: '\f088';
+}
+.rdo-cadastro-page .fa-thumbs-down:before {
+  content: '\f165';
+}
+.rdo-cadastro-page .fa-search:before {
+  content: '\f002';
+}
+.rdo-cadastro-page .fa-calendar:before {
+  content: '\f073';
+}
+
+/* Bloco 2 — lista-tarefas */
+.rdo-cadastro-page .lista-tarefas {
+  width: 100%;
+  float: left;
+  clear: both;
+  margin-bottom: 16px;
+}
+
+.rdo-cadastro-page .header-table {
+  position: relative;
+  width: 100%;
+  float: left;
+  padding: 0;
+}
+
+.rdo-cadastro-page .header-table h4 {
+  margin: 24px 0 0;
+  float: left;
+}
+
+.rdo-cadastro-page .header-table .habilitar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.rdo-cadastro-page .header-table .habilitar .radio {
   margin: 0;
 }
 
-.rdo-tarefa-list li {
-  padding: 4px 0;
+.rdo-cadastro-page .accordion {
+  float: left;
+  width: 100%;
 }
 
-.rdo-tarefa-list label {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  cursor: pointer;
+.rdo-cadastro-page .accordion .panel {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  margin-bottom: 8px;
+}
+
+.rdo-cadastro-page .accordion .panel-heading {
+  float: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.rdo-cadastro-page .accordion .panel-title a {
+  display: block;
+  width: 100%;
+  padding: 10px 10px 10px 50px;
+  background: #27496f;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 6px;
+  text-transform: none;
+  text-decoration: none;
+  position: relative;
+}
+
+.rdo-cadastro-page .accordion .panel-title a.active {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rdo-cadastro-page .accordion .panel-title a:hover,
+.rdo-cadastro-page .accordion .panel-title a:focus {
+  background: #1c334d;
+  color: #fff;
+}
+
+.rdo-cadastro-page .accordion .panel-title a:before {
+  content: '\f067';
+  position: absolute;
+  left: 17px;
+  font-size: 23px;
+  top: 13px;
+  font: normal normal normal 14px/1 FontAwesome;
+}
+
+.rdo-cadastro-page .accordion .panel-title a.active:before {
+  content: '\f068';
+  top: 11px;
+}
+
+.rdo-cadastro-page .lista-tarefas .accordion .panel-body {
+  width: 100%;
+  padding-bottom: 30px;
+}
+
+.rdo-cadastro-page .tabela {
+  width: 100%;
+  border: 2px solid #28496f;
+  margin-bottom: 20px;
+}
+
+.rdo-cadastro-page .tabela table {
+  margin: 0;
+}
+
+.rdo-cadastro-page .tabela .checkbox {
+  margin: 0;
 }
 
 .rdo-tag-prev {
@@ -112,14 +478,20 @@
   color: #856404;
   padding: 1px 6px;
   border-radius: 3px;
-  margin-left: auto;
+  margin-left: 6px;
 }
 
-.rdo-cadastro-actions {
+.rdo-cadastro-footer {
+  width: 100%;
+  float: left;
+  clear: both;
+  margin-bottom: 24px;
+}
+
+.rdo-cadastro-footer .pull-right {
+  float: right;
   display: flex;
   gap: 12px;
-  margin-top: 20px;
-  clear: both;
 }
 
 .rdo-cadastro-muted {
@@ -129,56 +501,111 @@
 .rdo-cadastro-page .rdo-error {
   margin-top: 12px;
   color: #c0392b;
-}
-
-.rdo-improd-fieldset {
-  margin-top: 8px;
-}
-
-.rdo-improd-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-}
-
-.rdo-improd-toggle label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: normal;
-  cursor: pointer;
-  margin: 0;
-}
-
-.rdo-comentarios-wrap {
-  margin-top: 16px;
   clear: both;
 }
 
-.rdo-comentarios-input {
+/* C6 — galeria fotográfica (paridade custom.css .galeria — sem slick JS) */
+.rdo-fotos-section {
+  float: left;
+  width: 100%;
+  clear: both;
+  margin-bottom: 16px;
+}
+
+.rdo-cadastro-page .galeria.rdo-galeria {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: flex-start;
+  flex-flow: row wrap;
+  padding: 8px 0;
 }
 
-.rdo-comentarios-input textarea {
-  flex: 1 1 280px;
-  min-height: 120px;
+.rdo-cadastro-page .galeria.rdo-galeria .rdo-galeria-item {
+  margin: 0;
+  padding: 0;
 }
 
-.rdo-comentarios-thumbs {
+.rdo-cadastro-page .rdo-galeria-selecionar-tudo {
+  width: 100%;
+  clear: both;
+  margin: 0 5px 8px;
+  padding: 0;
+}
+
+.rdo-cadastro-page .galeria.rdo-galeria .rdo-galeria-item label {
+  width: 11%;
+  min-width: 200px;
+  height: 200px;
+  margin: 0 5px 10px;
+  cursor: pointer;
+  background: #f7f7f7;
   display: flex;
-  gap: 4px;
-  padding-top: 4px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-flow: row wrap;
+  overflow: hidden;
 }
 
-.rdo-comentarios-thumbs .btn {
-  min-width: 44px;
-  padding: 8px 10px;
+.rdo-cadastro-page .galeria.rdo-galeria .rdo-galeria-check {
+  position: absolute;
+  top: 14px;
+  left: 13px;
+  z-index: 2;
+  margin: 0;
 }
 
-.rdo-comentarios-thumbs .btn-active {
+.rdo-cadastro-page .galeria.rdo-galeria .rdo-galeria-item img {
+  max-width: 100%;
+  max-height: 195px;
+  display: block;
+  object-fit: contain;
+}
+
+.rdo-cadastro-page .galeria.rdo-galeria .rdo-galeria-ampliar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  padding: 6px 0;
+  background: rgba(255, 255, 255, 0.75);
+  color: #28486f;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.rdo-cadastro-page .galeria.rdo-galeria .rdo-galeria-ampliar .fa {
+  font-size: 16px;
+}
+
+.rdo-galeria-empty {
+  width: 100%;
+  text-align: center;
+  color: #607d8b;
+  padding: 12px;
+}
+
+.rdo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.rdo-modal-dialog {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 16px 20px;
+}
+
+.rdo-modal-dialog h4 {
+  margin-top: 0;
   color: #28496f;
-  font-weight: 600;
 }

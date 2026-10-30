@@ -110,13 +110,22 @@ export interface RdoCadastroBootstrap {
   obraNome: string
 }
 
+export interface RdoCadastroImagem {
+  idImagem: number
+  dsCaminho: string
+}
+
 export interface RdoCadastroTarefa {
   id: number
   descricao: string
   status: number
+  nomeStatus: string
   idEtapa: number
+  quantidadeColaboradores: number
+  quantidadeEquipamentos: number
   existeRegistroMedicaoDataRequerida: boolean
   existeRegistroMedicaoDiaAnterior: boolean
+  listaImagem: RdoCadastroImagem[]
 }
 
 export interface RdoCadastroEtapa {
@@ -137,12 +146,13 @@ export type ChuvaChoice = ChuvaValor | ''
 
 export interface RdoCadastroSaveRequest {
   dataRdo: string
-  climaManha: ClimaValor
-  climaTarde: ClimaValor
-  climaNoite: ClimaValor
-  chuvaManha: ChuvaValor
-  chuvaTarde: ChuvaValor
-  chuvaNoite: ChuvaValor
+  /** Vazio = prod (relatório "Não Informado"). */
+  climaManha: ClimaChoice
+  climaTarde: ClimaChoice
+  climaNoite: ClimaChoice
+  chuvaManha: ChuvaChoice
+  chuvaTarde: ChuvaChoice
+  chuvaNoite: ChuvaChoice
   comentario?: string
   tipoComentarioGeracao?: number
   improdutividadeCondicoesClimaticas?: boolean
@@ -158,6 +168,8 @@ export interface RdoCadastroSaveRequest {
   confirmSubstituir?: boolean
   confirmCopiarDiaAnterior?: boolean
   listaTarefas: { id: number }[]
+  listaImagems?: { idImagem: number }[]
+  gerarRelatorioFotografico?: boolean
 }
 
 export interface RdoCadastroSaveResult {

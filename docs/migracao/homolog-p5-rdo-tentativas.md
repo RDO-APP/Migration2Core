@@ -13,7 +13,7 @@
 |-------|--------|
 | P3 Cards | ☑ homolog |
 | P5a RDO listagem | ☑ **T5 E** · **W1/W2** no Git **`fd8a144`** (smoke **T6** pendente) · **W3/M7** ações |
-| **M7 `/Rdo/Cadastro`** | ◐ **T7c** **2026-10-30** — deploy `20261029-235613` · **P1** func OK · gap **visual bloco 1** + **bloco 2** intacto · matriz **26** · [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
+| **M7 `/Rdo/Cadastro`** | **D2 ☑** · **7a-P5 ☑ T7h** (SELECIONAR TUDO + save) · **pend.** **M7-FOTOS** thumbs/ampliar + `rdo_imagem` · [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) |
 | Diagnóstico | ☑ **`/Homolog/F12`** + API diag — **sem** rodapé nas telas P1–P5 |
 
 ---
@@ -31,7 +31,12 @@
 | **T5** | **2026-10-27 ~11:00** (BR) | ✅ D+E · SSM `775cda4a…` · zip `20261027-105734` | `056eb29`+ | **200** `/Rdo/Index` · listagem (print) · paridade vs prod parcial | **E** | W1/W2 no Git |
 | **T6** | _após deploy_ | | **`fd8a144`** | W1/W2: header obra, nav, botões, tabela centralizada | _pendente_ | W3 ou Chart |
 | **T7** | **2026-10-29 23:11** (BR) | ✅ D+E (pós-`3c061b6`) | **`3c061b6`** + SPA `498ebc4` | **`/Rdo/Cadastro`** · **`cadastro/etapas` 200** · lista simples · *melhorou pouco* | **E′** | **T7c** |
-| **T7c** | **2026-10-30** (BR) | ✅ D+E · zip **`20261029-235613`** · SSM `397d3670…` | **`d76dc52`** (7a-P1) | **Bloco 1:** clima vazio **OK** · improd **OK** · comentários **OK** · **calendário não abre** · **layout ≠ prod** (panel branco **F0**, fieldset clima **B6a**, toggles 5+5 **B3a**, comentários **B4a**) · título **Gerar RDO** (manter) · **Bloco 2:** **sem mudança** (C1,C2,C3,C4,C7, Marcar etapa, SALVAR) · matriz **26** | **E′** | **7a-P4** bloco 1 visual · **P2/P3** bloco 2 |
+| **T7c** | **2026-10-30** (BR) | ✅ D+E · zip **`20261029-235613`** · SSM `397d3670…` | **`d76dc52`** (7a-P1) | **Bloco 1:** clima vazio **OK** · improd **OK** · comentários **OK** · **calendário não abre** · **layout ≠ prod** · **Bloco 2:** **sem mudança** | **E′** | **7a-P4** |
+| **T7d** | **2026-10-30** (BR) | ✅ D+E · **P4/P2/P3** (SPA novo hash) | 7a-P4/P2/P3 | **1** calendário **não abre ** **2** clima formatar **3** improd **só fonte** (caixa OK) **4** thumbs não formatados **5** fotográfico **OK** **6** accordion **+/−** mas **tarefas invisíveis** **7** **GERAR RDO OK** | **E′** | **7a-P4b** + redeploy **T7e** |
+| **T7e** | **2026-10-30** (BR) | ✅ zip **`20261030-010050`** | **`index-CBTs_oam.js`** | **0** fontes · **1** data larga/só botão 📅 · **2** clima empilhado · **3** legends · **4** thumbs · **5** etapas/tarefas **OK** | **E′** | **7a-P4c** + **T7f** |
+| **T7f** | **2026-10-30 ~14:23** | ☐ SSM (credencial expirou) | **`index-CbCyhEWE.js`** P4c | Publish OK · zip local · redeploy após `aws login` | _pendente_ | Smoke bloco 1 itens 0–4 |
+| **T7g** | **2026-10-30 ~18:20** (BR) | ✅ D+E (fixes D2/chuva/TS) | bundle pós-fix | **GERAR RDO** · **Salvando…** · **`/Rdo/Index`** · POST **200** · linha **30/10/2026 Gerado** · QTD 0/0/0 | **E′** | **7a-P5** + **C6** |
+| **T7h** | **2026-10-30 ~18:43** (BR) | (local / pós-commit) | 7a-P5+C6 | **SELECIONAR TUDO OK** · **GERAR RDO** → listagem · thumbs **cinza** (sem img) · lupa modal vazio | **E′** | **M7-FOTOS** validar paths/Uploads + save `listaImagems` |
 
 ### Classes de falha
 

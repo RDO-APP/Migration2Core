@@ -46,37 +46,44 @@ public class RdoConfiguration : IEntityTypeConfiguration<Rdo>
         builder.Property(e => e.RdoDsComentarioAssinatura)
             .HasColumnName("rdo_ds_comentario_assinatura")
             .HasMaxLength(500)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsClimaManha)
             .HasColumnName("rdo_ds_clima_manha")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsClimaTarde)
             .HasColumnName("rdo_ds_clima_tarde")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsClimaNoite)
             .HasColumnName("rdo_ds_clima_noite")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsChuvaManha)
             .HasColumnName("rdo_ds_chuva_manha")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsChuvaTarde)
             .HasColumnName("rdo_ds_chuva_tarde")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsChuvaNoite)
             .HasColumnName("rdo_ds_chuva_noite")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDtGeracao)
             .HasColumnName("rdo_dt_geracao")
@@ -85,17 +92,20 @@ public class RdoConfiguration : IEntityTypeConfiguration<Rdo>
         builder.Property(e => e.RdoTpComentarioAssinatura)
             .HasColumnName("rdo_tp_comentario_assinatura")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoDsComentarioGeracao)
             .HasColumnName("rdo_ds_comentario_geracao")
             .HasMaxLength(500)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         builder.Property(e => e.RdoTpComentarioGeracao)
             .HasColumnName("rdo_tp_comentario_geracao")
             .HasMaxLength(1)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .IsRequired(false);
 
         // Indexes for foreign keys
         builder.HasIndex(e => e.RdoIdStatus)
