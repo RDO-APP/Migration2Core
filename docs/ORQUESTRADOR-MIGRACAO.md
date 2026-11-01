@@ -118,7 +118,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** deploy **D→E** pacote **`fd8a144`** · smoke **P5a RDO T6** (W1/W2 header/CSS) · depois **W3** ícones ação **ou** **M5 web #2** `/Chart/Index`.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** **M7 7c/7d** (editar/assinar RDO) **ou** **M5 web #2** Chart. **7b** PDF homolog L15 smoke OK (logo + sem faixa fotográfica vazia).
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -135,10 +135,10 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M2** | **FECHADO** | — |
 | **M3** | **FECHADO** | passos 6–7 E2E opcional |
 | **M4** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ Git **`7aee0f2`** (`LoginPage` + `BffLoginController`; GET Login → SPA se `wwwroot/app`) | Smoke **G5/G6** · **UI-M1/M2c** · **UI-M5** Esqueci senha |
-| **M5 web** (Onda B) | **#1 RDO** listagem **T5 E** · **W1/W2** `fd8a144` | Smoke **T6** · **W3** · **M7** ações · **#2 Chart** · **#3 Dashboard** |
+| **M5 web** (Onda B) | **#1 RDO** listagem **T5 E** · **W1–W3** ícones · smoke lista OK | **#2 Chart** · **#3 Dashboard** |
 | **M5 EQ-M** | — | **⏸ adiado** — retomar no **G-M5** web ou **M6** |
 | **M6** | — | JWT/OpenAPI spike · contrato mobile homolog |
-| **M7+** | Rotas stub P3 · RBAC shell | CRUD/escrita · **P4** medição · PDF/assinar RDO |
+| **M7+** | **7a** cadastro SPA · **7b** PDF QuestPDF (layout RDLC v1 homolog; logo+fotos vazio L15) | **7c** editar · **7d** assinar · polish PDF (horímetro schema, fotos EC2) · **P4** medição · CRUD gestor |
 | **M8** | Branch CI · deploy D→E documentado | Runway &lt;2 min · workflow gate |
 | **M9** | — | D1–D7 pacote homolog v1 |
 | **M10** | — | Onda 2 / L1 prep |
@@ -393,11 +393,10 @@ Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível
 
 ## Próxima ação (1)
 
-1. **M7 `/Rdo/Cadastro` — M7-FOTOS-01/02:** validar thumbs (`/Uploads/Imagens`, `FileStorage:UploadsRoot` EC2) e persistência **`listaImagems` / `rdo_imagem`** — [`migracao/m7-rdo-cadastro-paridade-homolog-prod.md`](migracao/m7-rdo-cadastro-paridade-homolog-prod.md) § Pendências.
-2. **M7 7b–7d:** editar RDO · PDF (incl. fotográfico) · assinar — após fotos ou em paralelo se priorizar fila.
-3. **P5a RDO:** **W3** ícones PDF/assinar na listagem · smoke **T6** W1/W2 se ainda pendente.
-4. **M5 web #2** — **`/Chart/Index`** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)).
-5. **Backlog M4** — **UI-M1/UI-M2c** · **M4.8** Login SPA · **M5 EQ-M** adiado.
+1. **M7 7c / 7d:** editar RDO · assinar (stubs hoje na lista).
+2. **M5 web #2** — **`/Chart/Index`**.
+3. **Backlog 7b:** fotos no PDF quando o arquivo existir em `/Uploads` · horímetro `homol_rdoapp` · polish rodapé ©2019.
+4. **UI-M1** · **M5 EQ-M** adiado.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

@@ -30,6 +30,7 @@ builder.Services.AddScoped<CardsQueryService>();
 builder.Services.AddScoped<RdoListQueryService>();
 builder.Services.AddScoped<RdoCadastroQueryService>();
 builder.Services.AddScoped<RdoCadastroSaveService>();
+builder.Services.AddScoped<RdoPdfService>();
 builder.Services.AddScoped<ObrasQueryService>();
 builder.Services.AddScoped<ShellContextService>();
 builder.Services.AddScoped<RecuperarSenhaService>();
@@ -113,7 +114,9 @@ app.UseForwardedHeaders();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseWhen(
+        ctx => !ctx.Request.Path.StartsWithSegments("/api"),
+        branch => branch.UseExceptionHandler("/Home/Error"));
 }
 
 // HSTS só fora de homolog (Staging atrás do ALB — evita browser preso em HTTPS errado).

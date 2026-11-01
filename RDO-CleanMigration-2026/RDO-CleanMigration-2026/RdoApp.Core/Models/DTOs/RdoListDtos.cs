@@ -10,6 +10,8 @@ public sealed class RdoListItemDto
     public int QtdTarefas { get; init; }
     public int QtdColaboradores { get; init; }
     public int QtdMaquinas { get; init; }
+    /// <summary>Paridade prod <c>statusContratanteContratadaDonoRdo</c> (dono/gerador do RDO na obra).</summary>
+    public string StatusContratanteContratadaDonoRdo { get; init; } = "";
 }
 
 public sealed class RdoStatusOptionDto
@@ -27,4 +29,6 @@ public sealed class RdoListPageDto
     public IReadOnlyList<RdoListItemDto> Items { get; init; } = Array.Empty<RdoListItemDto>();
     public string ObraNome { get; init; } = "";
     public bool ObraFinalizada { get; init; }
+    /// <summary>Paridade prod <c>Auth.getUser().obraColaborador.contratanteContratada</c> (t/d).</summary>
+    public string ContratanteContratadaUsuario { get; init; } = "";
 }

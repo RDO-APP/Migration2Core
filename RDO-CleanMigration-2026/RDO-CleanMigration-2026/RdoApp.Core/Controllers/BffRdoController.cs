@@ -49,16 +49,26 @@ public class BffRdoController : ControllerBase
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
         var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
 
-        var payload = await _rdos.GetListAsync(
-            obraId,
-            obraNome,
-            page,
-            statusRdo,
-            ParseDate(dataInicial),
-            ParseDate(dataFinal),
-            cancellationToken);
+        try
+        {
+            var payload = await _rdos.GetListAsync(
+                obraId,
+                obraNome,
+                page,
+                statusRdo,
+                ParseDate(dataInicial),
+                ParseDate(dataFinal),
+                LoginSessionHelper.GetContratanteContratadaUsuario(HttpContext),
+                cancellationToken);
 
-        return Ok(payload);
+            return Ok(payload);
+        }
+        catch (Exception ex)
+        {
+            var inner = ex.InnerException?.Message;
+            var detail = string.IsNullOrWhiteSpace(inner) ? ex.Message : $"{ex.Message} | {inner}";
+            return StatusCode(500, new { message = $"Erro 500 no servidor (lista RDO). {ex.GetType().Name}: {detail}" });
+        }
     }
 
     [HttpGet("cadastro/bootstrap")]

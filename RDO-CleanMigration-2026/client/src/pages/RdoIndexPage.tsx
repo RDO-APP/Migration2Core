@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
-import { fetchRdoList, fetchRdoStatusOptions } from '../api/rdoApi'
+import { downloadRdoPdf, fetchRdoList, fetchRdoStatusOptions } from '../api/rdoApi'
 import type { RdoListItem, RdoListPage, RdoStatusOption } from '../api/equipamentos-api.types'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { rdoAssinarEditarDisabled } from '../utils/rdoIndexActions'
 import '../cards-page.css'
 import '../rdo-index.css'
 
@@ -23,6 +24,8 @@ export function RdoIndexPage() {
   const [pageData, setPageData] = useState<RdoListPage | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [pdfBusyId, setPdfBusyId] = useState<number | null>(null)
+  const [actionMessage, setActionMessage] = useState<string | null>(null)
 
   const loadList = useCallback(
     async (page: number) => {
@@ -72,8 +75,37 @@ export function RdoIndexPage() {
   }
 
   const showNovo = shell?.showGerarRdo === true
+  const showAssinarRdo = shell?.showAssinarRdo === true
+  const showEditarRdo = shell?.showEditarRdo === true
   const obraFinalizada = pageData?.obraFinalizada === true
   const obraNome = shell?.obraNome ?? pageData?.obraNome
+  const contratanteUsuario =
+    pageData?.contratanteContratadaUsuario?.trim() || shell?.contratanteContratada?.trim() || ''
+
+  async function onGerarPdf(rdo: RdoListItem) {
+    setActionMessage(null)
+    setPdfBusyId(rdo.idRdo)
+    try {
+      await downloadRdoPdf(rdo.idRdo, rdo.dataRdo, true)
+    } catch (e: unknown) {
+      setActionMessage(e instanceof Error ? e.message : 'Falha ao gerar PDF.')
+    } finally {
+      setPdfBusyId(null)
+    }
+  }
+
+  function onEditar(rdo: RdoListItem) {
+    goOperador(`/Rdo/Cadastro?rdoId=${rdo.idRdo}`)
+  }
+
+  function onAssinarPlaceholder(rdo: RdoListItem) {
+    const dono = (rdo.statusContratanteContratadaDonoRdo ?? '').trim()
+    if (dono && dono !== contratanteUsuario) {
+      setActionMessage('Assinatura com comentário (contratada) — M7 7d em breve.')
+      return
+    }
+    setActionMessage('Assinatura direta — M7 7d em breve.')
+  }
 
   const shellWrap = (body: ReactNode) => (
     <OperadorShell variant="rdo" obraNome={obraNome} shell={shell}>
@@ -151,6 +183,7 @@ export function RdoIndexPage() {
       </div>
 
       {error ? <div className="rdo-error">{error}</div> : null}
+      {actionMessage ? <div className="rdo-info">{actionMessage}</div> : null}
 
       <div className="lista-tarefas">
         <div className="tabela">
@@ -181,7 +214,9 @@ export function RdoIndexPage() {
                   </td>
                 </tr>
               ) : (
-                pageData?.items.map((rdo: RdoListItem) => (
+                pageData?.items.map((rdo: RdoListItem) => {
+                  const acoesDisabled = rdoAssinarEditarDisabled(rdo.statusRdo, contratanteUsuario)
+                  return (
                   <tr key={rdo.idRdo}>
                     <td>{rdo.dataRdo}</td>
                     <td>{rdo.diaDaSemana}</td>
@@ -189,38 +224,55 @@ export function RdoIndexPage() {
                     <td>{rdo.qtdTarefas}</td>
                     <td>{rdo.qtdColaboradores}</td>
                     <td>{rdo.qtdMaquinas}</td>
-                    <td>
-                      <button
-                        type="button"
-                        className="btn btn-simple btn-just-icon"
-                        title="Imprimir (M7+)"
-                        disabled
-                      >
-                        <i className="fa fa-file-pdf-o" aria-hidden />
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        className="btn btn-simple btn-just-icon"
-                        title="Assinar (M7+)"
-                        disabled
-                      >
-                        <i className="icon-assinar" aria-hidden />
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        className="btn btn-simple btn-just-icon"
-                        title="Editar (M7+)"
-                        disabled
-                      >
-                        <i className="fa fa-edit" aria-hidden />
-                      </button>
+                    <td className="rdo-acoes" colSpan={3}>
+                      <div className="rdo-acoes-inner">
+                        <button
+                          type="button"
+                          className="btn btn-simple btn-just-icon"
+                          title="Imprimir"
+                          aria-label={`Imprimir RDO ${rdo.dataRdo}`}
+                          disabled={pdfBusyId !== null}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            void onGerarPdf(rdo)
+                          }}
+                        >
+                          <i className="fa fa-file-pdf-o" aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-simple btn-just-icon"
+                          title={showAssinarRdo === false ? 'Assinar (sem permissão)' : 'Assinar'}
+                          aria-label={`Assinar RDO ${rdo.dataRdo}`}
+                          disabled={acoesDisabled || showAssinarRdo === false}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            onAssinarPlaceholder(rdo)
+                          }}
+                        >
+                          <i className="icon-assinar" aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-simple btn-just-icon"
+                          title={showEditarRdo === false ? 'Editar (sem permissão)' : 'Editar'}
+                          aria-label={`Editar RDO ${rdo.dataRdo}`}
+                          disabled={acoesDisabled || showEditarRdo === false}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            onEditar(rdo)
+                          }}
+                        >
+                          <i className="fa fa-edit" aria-hidden />
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                ))
+                  )
+                })
               )}
             </tbody>
           </table>

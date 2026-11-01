@@ -38,6 +38,10 @@ export interface ShellContext {
   showCriarNovoTarefa: boolean
   showCriarNovaEtapa: boolean
   showAlterarStatusEmMassa: boolean
+  showAssinarRdo?: boolean
+  showEditarRdo?: boolean
+  /** t/d — paridade prod obraColaborador.contratanteContratada */
+  contratanteContratada?: string
   menuPaginas: ShellNavItem[]
   antiforgeryFieldName?: string
   antiforgeryToken?: string
@@ -91,6 +95,7 @@ export interface RdoListItem {
   qtdTarefas: number
   qtdColaboradores: number
   qtdMaquinas: number
+  statusContratanteContratadaDonoRdo?: string
 }
 
 export interface RdoListPage {
@@ -102,6 +107,7 @@ export interface RdoListPage {
   obraNome: string
   /** Paridade prod Auth.getUser().obra.obraFinalizada — desabilita NOVO. */
   obraFinalizada?: boolean
+  contratanteContratadaUsuario?: string
 }
 
 export interface RdoCadastroBootstrap {

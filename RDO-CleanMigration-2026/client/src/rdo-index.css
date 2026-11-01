@@ -120,6 +120,15 @@
   border-radius: 4px;
 }
 
+.rdo-index-page .rdo-info {
+  clear: both;
+  color: #28496f;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #e3f2fd;
+  border-radius: 4px;
+}
+
 /* Prod § TABELA */
 .rdo-index-page .lista-tarefas {
   width: 100%;
@@ -162,16 +171,41 @@
   position: relative;
 }
 
+.rdo-index-page .tabela .rdo-acoes {
+  width: 15%;
+}
+
+.rdo-index-page .tabela .rdo-acoes-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+  z-index: 2;
+}
+
 .rdo-index-page .tabela .btn-just-icon {
   cursor: pointer;
   border-radius: 100%;
   padding: 8px;
   width: 42px;
-  margin: 0 auto;
-  display: block;
+  height: 42px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
   color: #28496f;
+  position: relative;
+  z-index: 2;
+  flex: 0 0 42px;
+}
+
+.rdo-index-page .tabela .btn-just-icon i {
+  pointer-events: none;
+  position: static;
+  left: auto;
 }
 
 .rdo-index-page .tabela .btn-just-icon:disabled {

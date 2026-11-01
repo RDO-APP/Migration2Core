@@ -23,6 +23,12 @@ public sealed class ShellContextDto
     public bool ShowCriarNovaEtapa { get; init; }
     /// <summary>Typo legado <c>aterarStatusEmMassa</c> em cards.html.</summary>
     public bool ShowAlterarStatusEmMassa { get; init; }
+    /// <summary>P5 lista RDO — ícone Assinar (RBAC; disabled no front se Gerado + perfil t).</summary>
+    public bool ShowAssinarRdo { get; init; }
+    /// <summary>P5 lista RDO — ícone Editar.</summary>
+    public bool ShowEditarRdo { get; init; }
+    /// <summary>Perfil na obra: t = contratante, d = contratada.</summary>
+    public string ContratanteContratada { get; init; } = "";
     public IReadOnlyList<ShellNavItemDto> MenuPaginas { get; init; } = Array.Empty<ShellNavItemDto>();
     public string? AntiforgeryFieldName { get; init; }
     public string? AntiforgeryToken { get; init; }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
+  downloadRdoPdf,
   fetchRdoCadastroBootstrap,
   fetchRdoCadastroEtapas,
   saveRdoCadastro,
@@ -367,6 +368,18 @@ export function RdoCadastroPage() {
       for (let step = 0; step < 4; step++) {
         const result = await postSave({ confirmSubstituir, confirmCopiarDiaAnterior })
         if (result.ok) {
+          // Prod: após Salvar, chama api/rdo/GerarDocumentoRdo (RdoController.js ~328/357).
+          if (result.idRdo && result.idRdo > 0) {
+            try {
+              await downloadRdoPdf(result.idRdo, dataRdo, mostrarFotos)
+            } catch (e: unknown) {
+              window.alert(
+                e instanceof Error
+                  ? `RDO salvo, mas o PDF falhou: ${e.message}`
+                  : 'RDO salvo, mas o PDF falhou.',
+              )
+            }
+          }
           goOperador(P3_NAV.header.rdoListagem)
           return
         }
@@ -870,7 +883,7 @@ export function RdoCadastroPage() {
             disabled={obraFinalizada || saving}
             onClick={() => void onSalvar()}
           >
-            <i className="fa fa-save" aria-hidden="true" /> {saving ? 'Salvando…' : 'GERAR RDO'}
+            <i className="fa fa-save" aria-hidden="true" /> {saving ? 'Salvando e gerando PDF…' : 'GERAR RDO'}
           </button>
         </div>
       </div>

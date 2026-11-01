@@ -57,7 +57,7 @@ Referência prod: `rdoappProject/Client/Views/Rdo/cadastro.html` · `RdoControll
 | **RF3b** | Por tarefa: **0 fotos** → mensagem *“Nenhuma foto adicionada nesta tarefa.”* · **N fotos** → **N** miniaturas (~200×200) + lupa AMPLIAR no canto (prod `custom.css` `.galeria label`). | ☑ **C6** — `NormalizeImagemCaminho` → `/Uploads/Imagens/…` · static `/Uploads` · CSS thumb + checkbox · smoke pós-deploy |
 | **RF4** | Marcar/desmarcar tarefa no grid **inclui/remove** a tarefa em `acordeonTarefas` em tempo real. | ☑ `selected` → `acordeonTarefas` |
 | **RF5** | Por tarefa: **SELECIONAR TUDO** + checkbox em cada foto; seleção alimenta `cadastroParam.listaImagems` no **Salvar**. | ☑ React `selectedImagens` + POST `listaImagems` |
-| **RF6** | No save/PDF: flag **`gerarRelatorioFotografico`** (= `mostrarFotos`) + imagens escolhidas persistidas (`RdoModel.IncluirImagens`). | ☑ save `SyncRdoImagensAsync` + flag no POST · PDF **7b** ☐ |
+| **RF6** | No save/PDF: flag **`gerarRelatorioFotografico`** (= `mostrarFotos`) + imagens escolhidas persistidas (`RdoModel.IncluirImagens`). | ☑ save + **após GERAR RDO** o front chama `POST /api/bff/rdos/{id}/pdf` (paridade prod `gerarDocumento`) |
 
 **Critério de aceite (smoke C8):** com **Sim**, marcar tarefas em **≥1 etapa** → aparece seção de fotos **só** dessas tarefas, com fotos quando existirem na medição; desmarcar tarefa some do acordeon; após **7a-P5**, seleção de fotos e save alinhados ao legado.
 

@@ -13,10 +13,18 @@ async function readJson<T>(res: Response, fallback: string): Promise<T> {
   }
   if (!res.ok) {
     const text = await res.text()
+    let fromJson: string | undefined
+    try {
+      const j = JSON.parse(text) as { message?: string }
+      fromJson = j.message
+    } catch {
+      /* HTML ou texto puro */
+    }
     const short =
-      text.includes('<!DOCTYPE') || text.includes('<html')
+      fromJson?.trim() ||
+      (text.includes('<!DOCTYPE') || text.includes('<html')
         ? `Erro ${res.status} no servidor (${fallback}).`
-        : text || `Erro ${res.status} (${fallback}).`
+        : text.slice(0, 400) || `Erro ${res.status} (${fallback}).`)
     throw new Error(short)
   }
   return res.json() as Promise<T>
@@ -94,4 +102,45 @@ export async function saveRdoCadastro(body: RdoCadastroSaveRequest): Promise<Rdo
     throw new Error(data.errorMessage ?? `Erro ${res.status} ao salvar RDO.`)
   }
   return data
+}
+
+export async function downloadRdoPdf(
+  idRdo: number,
+  dataRdoLabel: string,
+  gerarRelatorioFotografico = false,
+): Promise<void> {
+  const res = await fetch(`/api/bff/rdos/${idRdo}/pdf`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: 'application/pdf', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idRdo, gerarRelatorioFotografico }),
+  })
+  if (res.status === 401) {
+    throw new Error('Sessão expirada ou obra não selecionada. Volte a Escolher obra.')
+  }
+  if (!res.ok) {
+    const text = await res.text()
+    let message = text
+    try {
+      const j = JSON.parse(text) as { message?: string }
+      message = j.message ?? text
+    } catch {
+      /* keep text */
+    }
+    const short =
+      message.includes('<!DOCTYPE') || message.includes('<html')
+        ? `Erro ${res.status} ao gerar PDF (página HTML de erro). Request ID no F12; redeploy L6.`
+        : message
+    throw new Error(short || `Erro ${res.status} ao gerar PDF.`)
+  }
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `RDO_${dataRdoLabel.replace(/\//g, '_')}.pdf`
+  link.rel = 'noopener'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
 }

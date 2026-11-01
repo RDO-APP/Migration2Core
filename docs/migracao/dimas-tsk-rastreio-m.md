@@ -45,10 +45,10 @@ Legenda coluna **Dimas:** **◐** parcial vs backlog · **☐** alvo Dimas ainda
 | **M2** | **FECHADO** | — | **◐ Obra·etapa·tarefa** TSK-17…23 · **leitura Cards** ≈ early Sprint operador; **☐** use cases escrita |
 | **M3** | **FECHADO** | E2E passos 6–7 opcional | **—** gate produto Lucio · **não** é marco nomeado no PDF; equivalente a homolog aceito antes de cortar Razor |
 | **M4** | M4.1–M4.7g ☑, **M4.8** Login SPA ☑ | G5/G6; **UI-M1/M2c**; congela EQ-W formal | **◐ Front** (fontello/BS3) + **◐ Identity/RBAC** TSK-11…13 (shell/menu/stubs) · **☐** `usePermission`/CRUD · strangler **≠** app React gestor Sprint 2–3 |
-| **M5 web** (Onda B) | RDO listagem **T5 E**; W1/W2 **`fd8a144`** | T6 smoke; W3; M7 ações; Chart; Dashboard | **◐ RDO·laudo** TSK-31…36 · listagem BFF+React; **☐** cadastro/laudo/PDF/assinar · **◐** gráficos U-56/U-57 (Chart **#2** stub) |
+| **M5 web** (Onda B) | RDO listagem **T5 E**; W1–W3 ícones | Chart; Dashboard | **◐ RDO·laudo** TSK-31…36 · listagem BFF+React; cadastro **7a** + PDF **7b** no **M7** · **◐** gráficos U-56/U-57 (Chart **#2** stub) |
 | **M5 EQ-M** (plano v1) | — | **⏸ adiado** | **⏸ Mobile** TSK-46…56 · PDF = greenfield RN · **M\*** vence: integrar **EquipamentosMobile**, não rebuild |
 | **M6** | — | JWT/OpenAPI spike; mobile homolog API | **☐ Fundação auth** TSK-07 · **☐ OpenAPI** TSK-40…41 · ponto natural **entrada Dimas** (Application/API v1) |
-| **M7+** | Stubs P3, RBAC shell | CRUD, **P4** medição, PDF/assinar RDO | **☐** TSK-14…16 gestor · **☐** TSK-24…30 apontamento/medição · **☐** TSK-31…36 ações RDO · **◐** RBAC fino 11…13 |
+| **M7+** | **7a** cadastro · **7b** PDF QuestPDF homolog (paridade RDLC v1) | **7c** editar · **7d** assinar · **P4** medição · CRUD | **◐** TSK-31…36 PDF/listagem · **☐** TSK-14…16 gestor · **☐** TSK-24…30 apontamento/medição · **◐** RBAC 11…13 |
 | **M8** | Branch CI, roteiro D→E | Runway &lt;2 min; gate workflow | **◐ Infra deploy** (parte TSK-01…05) · **☐** pipeline “produto Dimas” · **☐** ETL TSK-43 (**Onda 6 only**, adiado ✓) |
 | **M9** | — | D1–D7 pacote homolog v1 | **◐** “release homolog v1” · cobre **fatia** operador web+doc · **☐** D4 mobile homolog · **☐** D7 pacote M1 pleno |
 | **M10** | — | Onda 2 / prep Linux L1 | **☐** expansão telas + **☐** cutover Onda 6 TSK-43…45 · prep pós-v1, não Sprint linear |
@@ -72,7 +72,7 @@ Legenda: **☑** coberto pelo M* em curso/fechado · **◐** parcial · **☐** 
 | Cadastros gestor cedo | 14…16 | Onda 5 / M7+ | ☐ | Empresa/Colaborador/Equip CRUD React — **fora M4** |
 | Obra · etapa · tarefa | 17…23 | M2, M7 | ◐ | **Leitura** Cards (M2☑); **escrita** cadastro/lista/filtro — **M7+** |
 | Apontamento · medição | 24…30 | M7+, P4 | ☐ | Domínio + API; U-05 Framework antes — **Onda 0/4** |
-| RDO · laudo web | 31…36 | M5 web, M7+ | ◐ | **P5a** listagem BFF **T5 E** · shell W1/W2 **`fd8a144`**; Chart stub; PDF/assinar **M7** |
+| RDO · laudo web | 31…36 | M5 web, M7+ | ◐ | **P5a** listagem + **7a/7b** PDF; Chart stub; **7c/7d** assinar/editar |
 | Relatórios · S3 worker | 37…39 | Onda 5 / M7+ | ☐ | Dapper/Excel/PDF gestor |
 | OpenAPI · ETL · cutover | 40…45 | M6, M8, M10, Onda 6 | ☐ | ETL **adiado** vs PDF mês 4 — **correto** no plano M* |
 | Mobile greenfield | 46…56 | M5, M6 | ⏸ | **Não rebuild** — integrar RN existente |
