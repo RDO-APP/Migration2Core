@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import {
   downloadRdoPdf,
   fetchRdoCadastroBootstrap,
+  fetchRdoCadastroEdit,
   fetchRdoCadastroEtapas,
   saveRdoCadastro,
 } from '../api/rdoApi'
@@ -14,9 +15,11 @@ import type {
   RdoCadastroSaveRequest,
   RdoCadastroTarefa,
 } from '../api/equipamentos-api.types'
+import { useConfirmDialog } from '../components/ConfirmDialog'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { flashToast } from '../toast'
 import '../cards-page.css'
 import '../rdo-cadastro.css'
 
@@ -174,6 +177,7 @@ export function RdoCadastroPage() {
   const [loading, setLoading] = useState(true)
   const [loadingTarefas, setLoadingTarefas] = useState(false)
   const [saving, setSaving] = useState(false)
+  const { ask, dialog: confirmDialog } = useConfirmDialog()
   const [error, setError] = useState<string | null>(null)
   const datePickerRef = useRef<HTMLInputElement>(null)
 
@@ -200,48 +204,91 @@ export function RdoCadastroPage() {
     return list
   }, [selected, tarefaById])
 
-  const loadEtapas = useCallback(async (date: string) => {
-    if (date.length < 10) {
-      setEtapas([])
-      setSelected(new Set())
-      return
-    }
-    setLoadingTarefas(true)
-    setError(null)
-    try {
-      const data = await fetchRdoCadastroEtapas(date)
-      setEtapas(data.etapas)
-      setOpenEtapas(new Set(data.etapas.length > 0 ? [data.etapas[0].id] : []))
-      setSelected(new Set())
-      setSelectedImagens(new Set())
-      setOpenFotoTarefas(new Set())
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Falha ao carregar tarefas.')
-      setEtapas([])
-    } finally {
-      setLoadingTarefas(false)
-    }
+  const editRdoId = useMemo(() => {
+    const q = new URLSearchParams(window.location.search).get('rdoId')
+    const n = Number(q)
+    return Number.isFinite(n) && n > 0 ? n : 0
   }, [])
+
+  const loadEtapas = useCallback(
+    async (date: string, preselect?: { tarefas: number[]; imagens: number[] }) => {
+      if (date.length < 10) {
+        setEtapas([])
+        setSelected(new Set())
+        return
+      }
+      setLoadingTarefas(true)
+      setError(null)
+      try {
+        const data = await fetchRdoCadastroEtapas(date)
+        setEtapas(data.etapas)
+        setOpenEtapas(new Set(data.etapas.length > 0 ? [data.etapas[0].id] : []))
+        setSelected(new Set(preselect?.tarefas ?? []))
+        setSelectedImagens(new Set(preselect?.imagens ?? []))
+        setOpenFotoTarefas(new Set())
+        if (preselect && preselect.imagens.length > 0) {
+          setMostrarFotos(true)
+        }
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : 'Falha ao carregar tarefas.')
+        setEtapas([])
+      } finally {
+        setLoadingTarefas(false)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     let cancelled = false
-    fetchRdoCadastroBootstrap()
-      .then((b) => {
+    async function boot() {
+      try {
+        const b = await fetchRdoCadastroBootstrap()
         if (cancelled) return
-        setDataRdo(b.dataRdoHoje)
         setObraFinalizada(b.obraFinalizada)
-        void loadEtapas(b.dataRdoHoje)
-      })
-      .catch((e: unknown) => {
+        if (editRdoId > 0) {
+          const edit = await fetchRdoCadastroEdit(editRdoId)
+          if (cancelled) return
+          setDataRdo(edit.dataRdo)
+          setComentario(edit.comentario ?? '')
+          setTipoComentarioGeracao(edit.tipoComentarioGeracao ?? 0)
+          setClimaManha((edit.climaManha as ClimaChoice) ?? '')
+          setClimaTarde((edit.climaTarde as ClimaChoice) ?? '')
+          setClimaNoite((edit.climaNoite as ClimaChoice) ?? '')
+          setChuvaManha((edit.chuvaManha as ChuvaChoice) ?? '')
+          setChuvaTarde((edit.chuvaTarde as ChuvaChoice) ?? '')
+          setChuvaNoite((edit.chuvaNoite as ChuvaChoice) ?? '')
+          setImprod({
+            improdutividadeCondicoesClimaticas: edit.improdutividadeCondicoesClimaticas,
+            improdutividadeMateriais: edit.improdutividadeMateriais,
+            improdutividadeParalizacoes: edit.improdutividadeParalizacoes,
+            improdutividadeEquipamentos: edit.improdutividadeEquipamentos,
+            improdutividadeContratante: edit.improdutividadeContratante,
+            improdutividadeFornecedores: edit.improdutividadeFornecedores,
+            improdutividadeMaodeObra: edit.improdutividadeMaodeObra,
+            improdutividadeProjeto: edit.improdutividadeProjeto,
+            improdutividadePlanejamento: edit.improdutividadePlanejamento,
+            improdutividadeAcidente: edit.improdutividadeAcidente,
+          })
+          await loadEtapas(edit.dataRdo, {
+            tarefas: edit.listaTarefaIds ?? [],
+            imagens: edit.listaImagemIds ?? [],
+          })
+          return
+        }
+        setDataRdo(b.dataRdoHoje)
+        await loadEtapas(b.dataRdoHoje)
+      } catch (e: unknown) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Falha ao iniciar cadastro.')
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false)
-      })
+      }
+    }
+    void boot()
     return () => {
       cancelled = true
     }
-  }, [loadEtapas])
+  }, [editRdoId, loadEtapas])
 
   function toggleEtapaOpen(id: number) {
     setOpenEtapas((prev) => {
@@ -372,28 +419,32 @@ export function RdoCadastroPage() {
           if (result.idRdo && result.idRdo > 0) {
             try {
               await downloadRdoPdf(result.idRdo, dataRdo, mostrarFotos)
+              flashToast('success', 'Registro salvo com sucesso.')
             } catch (e: unknown) {
-              window.alert(
+              flashToast(
+                'error',
                 e instanceof Error
                   ? `RDO salvo, mas o PDF falhou: ${e.message}`
                   : 'RDO salvo, mas o PDF falhou.',
               )
             }
+          } else {
+            flashToast('success', 'Registro salvo com sucesso.')
           }
           goOperador(P3_NAV.header.rdoListagem)
           return
         }
         if (result.needsConfirm === 'substituir') {
-          const ok = window.confirm(
-            `Gerar RDO para ${dataRdo}? Se já existir RDO nesta data, ele será substituído.`,
+          const ok = await ask(
+            `Tem certeza que deseja gerar o RDO para a data: ${dataRdo}? Caso já tenha sido gerado um RDO para esta data, o mesmo será substituído.`,
           )
           if (!ok) return
           confirmSubstituir = true
           continue
         }
         if (result.needsConfirm === 'copiarDiaAnterior') {
-          const ok = window.confirm(
-            `Não há lançamentos no dia ${dataRdo} para: ${result.confirmDetail ?? ''}. Usar lançamentos do dia anterior?`,
+          const ok = await ask(
+            `Não existem lançamentos para o dia ${dataRdo} na(s) tarefa(s): ${result.confirmDetail ?? ''}. Deseja gerar o RDO para esta data com os lançamentos do dia anterior?`,
           )
           if (!ok) return
           confirmCopiarDiaAnterior = true
@@ -412,6 +463,7 @@ export function RdoCadastroPage() {
   const shellWrap = (body: ReactNode) => (
     <OperadorShell variant="rdo" obraNome={obraNome} shell={shell}>
       {body}
+      {confirmDialog}
     </OperadorShell>
   )
 
@@ -428,7 +480,7 @@ export function RdoCadastroPage() {
   return shellWrap(
     <div className="rdo-cadastro-page">
       <div className="panel-heading">
-        <h3>Gerar RDO</h3>
+        <h3>{editRdoId > 0 ? 'Editar RDO' : 'Gerar RDO'}</h3>
       </div>
 
       <div className="panel rdo-panel-bloco1">

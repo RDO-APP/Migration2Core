@@ -5,7 +5,7 @@
 
 **Nota:** marco **M5** no [`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) = mobile; aqui **M5 web** = Onda B (telas listagem/gráfico). Evitar confusão com **M5-nav** (menu drawer).
 
-**Classe de tela:** fila abaixo = **P5a** (manual §**10.8**) — MVC `OperadorSpaEntry` + React + BFF; smoke RDO após deploy (sem `ERR_TOO_MANY_REDIRECTS`).
+**Classe de tela:** fila abaixo = **P5a** (manual §**10.8** · fichas §**13** Chegada/Botões/Saída) — MVC `OperadorSpaEntry` + React + BFF; smoke RDO após deploy (sem `ERR_TOO_MANY_REDIRECTS`).
 
 ---
 
@@ -16,6 +16,7 @@
 | P1 | Login | Funcional Razor · **M4.8** = SPA, mesma regra |
 | P2 | Escolher | React + BFF |
 | P3 | Cards (lista tarefas) | React + BFF · cadastros/modais = **M7** |
+| P5a | Chart + Dashboard | SPA + BFF **no ar** (Lucio **02/nov**) |
 
 ---
 
@@ -25,14 +26,15 @@
 |:-----:|-------------------|-----------------|-------|
 | **0** | — | **M4.8** ☑ · M4.7 smoke ☑ (fontello = backlog UI-M1) | Pré-M5 web |
 | **1** | `/Rdo/Index` | `#/rdo/index` | **M5 web** ☑ listagem **T5 E** · shell/CSS **W1/W2** `fd8a144` (smoke **T6**) · ações **M7+** · ícones **W3/UI-M1** |
-| **2** | `/Chart/Index` + `/chart/*` | `#/chart` | **M5 web** |
-| **3** | `/Dashboard/Index` | `#/dashboard/index` | **M5 web** |
+| **2** | `/Chart/Index` + `/chart/*` | `#/chart` | **M5 web** ☑ SPA + BFF · polish **C0** [`homolog-p5a-chart-tentativas.md`](homolog-p5a-chart-tentativas.md) |
+| **3** | `/Dashboard/Index` | `#/dashboard/index` | **M5 web** ☑ SPA + BFF · **smoke Lucio 02/nov** (aparece) |
 | **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7 7a** ☑ SPA `498ebc4` · **7b–7d** editar/PDF/assinar |
 | **5** | `/Obra/Cadastro` | `#/obra/cadastro` | **M7** |
 | **6** | `/Efetivo/Index` | `#/efetivo/index` | **M7** |
 | **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Cadastro` | toolbar + card | **M7** |
-| **8** | Menu admin (colaborador, equipamento, relatórios…) | drawer | **M7+** |
+| **8** | Menu gestor (colaborador, equipamento, relatórios…) = **P6a** | drawer | **M7+** |
 | **9** | Nova medição | modal cards | **P4 · M7+** |
+| — | **P6b** `#/grupo` `#/menu` `#/pagina` (CMS `col_st_admin`) | **não** esta fila | **M10** — prod EQ-L até cutover |
 
 Critério “sintonizado”: mesma **informação e ações principais** que prod para aquela rota (não exige pixel-perfect — **UI-M3** adiado).
 

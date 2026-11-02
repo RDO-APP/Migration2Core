@@ -89,3 +89,44 @@ public sealed class RdoCadastroSaveResultDto
     public string? NeedsConfirm { get; init; }
     public string? ConfirmDetail { get; init; }
 }
+
+/// <summary>M7 7c — paridade prod <c>RdoModel.ObterRegistro</c>.</summary>
+public sealed class RdoCadastroEditDto
+{
+    public int IdRdo { get; init; }
+    public string DataRdo { get; init; } = "";
+    public string Comentario { get; init; } = "";
+    public int StatusRdo { get; init; }
+    public string ClimaManha { get; init; } = "";
+    public string ClimaTarde { get; init; } = "";
+    public string ClimaNoite { get; init; } = "";
+    public string ChuvaManha { get; init; } = "";
+    public string ChuvaTarde { get; init; } = "";
+    public string ChuvaNoite { get; init; } = "";
+    public int TipoComentarioGeracao { get; init; }
+    public bool ImprodutividadeCondicoesClimaticas { get; init; }
+    public bool ImprodutividadeMateriais { get; init; }
+    public bool ImprodutividadeParalizacoes { get; init; }
+    public bool ImprodutividadeEquipamentos { get; init; }
+    public bool ImprodutividadeContratante { get; init; }
+    public bool ImprodutividadeFornecedores { get; init; }
+    public bool ImprodutividadeMaodeObra { get; init; }
+    public bool ImprodutividadeProjeto { get; init; }
+    public bool ImprodutividadePlanejamento { get; init; }
+    public bool ImprodutividadeAcidente { get; init; }
+    public IReadOnlyList<int> ListaTarefaIds { get; init; } = Array.Empty<int>();
+    public IReadOnlyList<int> ListaImagemIds { get; init; } = Array.Empty<int>();
+}
+
+public sealed class RdoAssinarRequestDto
+{
+    public string? ComentarioAssinatura { get; set; }
+    public int TipoComentarioAssinatura { get; set; }
+    public string? Ip { get; set; }
+}
+
+public sealed class RdoAssinarResultDto
+{
+    public bool Ok { get; init; }
+    public string? ErrorMessage { get; init; }
+}

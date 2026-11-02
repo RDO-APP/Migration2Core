@@ -8,6 +8,7 @@ import {
 } from 'react'
 import type { ShellContext } from '../api/equipamentos-api.types'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { ToastHost } from './ToastHost'
 import '../operador-shell.css'
 
 function navClick(url: string): MouseEventHandler<HTMLAnchorElement> {
@@ -17,7 +18,7 @@ function navClick(url: string): MouseEventHandler<HTMLAnchorElement> {
   }
 }
 
-export type OperadorShellVariant = 'escolher' | 'cards' | 'rdo'
+export type OperadorShellVariant = 'escolher' | 'cards' | 'rdo' | 'chart' | 'dashboard'
 
 type OperadorShellProps = {
   variant: OperadorShellVariant
@@ -79,7 +80,8 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
   }
 
   /** P5a-R1 — paridade prod: título obra + ícones obra/RDO/tarefas em Cards e telas operador (RDO, …). */
-  const showOperadorObraNav = variant === 'cards' || variant === 'rdo'
+  const showOperadorObraNav =
+    variant === 'cards' || variant === 'rdo' || variant === 'chart' || variant === 'dashboard'
 
   return (
     <div
@@ -276,11 +278,13 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
         </nav>
       </div>
 
+      <ToastHost />
+
       <main className="conteudo operador-conteudo">{children}</main>
 
       <footer className="footer">
         <div className="container">
-          <p>RDO App Equipamentos © 2025. Todos os direitos reservados.</p>
+          <p>RDO App © 2026. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

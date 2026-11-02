@@ -21,3 +21,5 @@ Use `@ponte-loja-sistema-assinatura` em qualquer chat (Loja ou Migração) para 
 <!-- Conteúdo espelhado — editar a cópia canônica na skill e sincronizar aqui se necessário -->
 
 Ver skill `ponte-loja-sistema-rdo` para facts, gaps, fluxo e protocolo de atualização.
+
+**02/nov/2026 (Migração):** **DNA** = plano Loja × Cte/Cta × 5 papéis. **Operador Contratada** = perfil; **área da obra** = P2–P5 (não misturar). CMS = `col_st_admin`, **não** dono. #29 = dono **atribui** template. Fichas (Chegada/Botões/Saída): manual **§13**. Inventário: `docs/migracao/cms-grupo-menu-pagina-prod.md` §0. Canônico na skill.

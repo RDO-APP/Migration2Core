@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Services;
+using RdoApp.Core.Utils;
 
 namespace RdoApp.Core.Controllers;
 
@@ -15,15 +16,18 @@ public class BffRdoController : ControllerBase
     private readonly RdoListQueryService _rdos;
     private readonly RdoCadastroQueryService _cadastroQuery;
     private readonly RdoCadastroSaveService _cadastroSave;
+    private readonly RdoAssinarService _assinar;
 
     public BffRdoController(
         RdoListQueryService rdos,
         RdoCadastroQueryService cadastroQuery,
-        RdoCadastroSaveService cadastroSave)
+        RdoCadastroSaveService cadastroSave,
+        RdoAssinarService assinar)
     {
         _rdos = rdos;
         _cadastroQuery = cadastroQuery;
         _cadastroSave = cadastroSave;
+        _assinar = assinar;
     }
 
     [HttpGet("status-options")]
@@ -140,6 +144,71 @@ public class BffRdoController : ControllerBase
         if (!result.Ok)
         {
             return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("cadastro/{idRdo:int}")]
+    public async Task<IActionResult> CadastroEdit(int idRdo, CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        if (!PermissionHelper.HasPermission(HttpContext, "editar", "/rdo/index"))
+        {
+            return StatusCode(403, new { message = "Sem permissão para editar RDO." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var edit = await _cadastroQuery.GetEditAsync(obraId, idRdo, cancellationToken);
+        if (edit == null)
+        {
+            return NotFound(new { message = "RDO não encontrado para esta obra." });
+        }
+
+        return Ok(edit);
+    }
+
+    [HttpPost("{idRdo:int}/assinar")]
+    public async Task<IActionResult> Assinar(
+        int idRdo,
+        [FromBody] RdoAssinarRequestDto? body,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        if (!PermissionHelper.HasPermission(HttpContext, "assinarRdo", "/rdo/index"))
+        {
+            return StatusCode(403, new { message = "Sem permissão para assinar RDO." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var colaboradorId = HttpContext.Session.GetInt32(SessionKeys.ColaboradorId) ?? 0;
+        var idOc = LoginSessionHelper.GetIdObraColaborador(HttpContext);
+        var ip = body?.Ip;
+        if (string.IsNullOrWhiteSpace(ip))
+        {
+            ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "";
+        }
+
+        var result = await _assinar.AssinarAsync(
+            obraId,
+            colaboradorId,
+            idOc,
+            idRdo,
+            body ?? new RdoAssinarRequestDto(),
+            ip,
+            cancellationToken);
+
+        if (!result.Ok)
+        {
+            return BadRequest(new { message = result.ErrorMessage, ok = false });
         }
 
         return Ok(result);

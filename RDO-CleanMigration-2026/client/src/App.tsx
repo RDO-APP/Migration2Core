@@ -1,4 +1,6 @@
 import { CardsPage } from './pages/CardsPage'
+import { ChartIndexPage } from './pages/ChartIndexPage'
+import { DashboardPage } from './pages/DashboardPage'
 import { EscolherPage } from './pages/EscolherPage'
 import { LoginPage } from './pages/LoginPage'
 import { RdoCadastroPage } from './pages/RdoCadastroPage'
@@ -18,6 +20,12 @@ function App() {
   }
   if (page === 'rdo') {
     return <RdoIndexPage />
+  }
+  if (page === 'chart') {
+    return <ChartIndexPage />
+  }
+  if (page === 'dashboard') {
+    return <DashboardPage />
   }
   return <CardsPage />
 }

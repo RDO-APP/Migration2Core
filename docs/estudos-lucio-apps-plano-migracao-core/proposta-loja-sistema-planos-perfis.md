@@ -313,7 +313,7 @@ Itens que o **código não responde** — só negócio:
 
 1. Gratuito trial: **Equipamentos** ou **Piscinas** por default?  
 2. **Comprar Equipamentos:** upgrade assinatura vs obra avulsa?  
-3. Dono tenant: **só edita templates** ou **cria perfis novos**?  
+3. Dono tenant: **só edita templates** ou **cria perfis novos**? **Recomendação 01/nov/2026:** Fase 1 = só **atribui** os 5 templates Equipamentos (Contratada Operador/Engenheiro/Diretor · Contratante Engenheiro/Diretor). **Não** copiar o CMS Grupo/Menu/Página (`col_st_admin` é plataforma RDO, templates globais). Clone por empresa / `features[]` = fase 2.  
 4. Prazo alvo para aposentar `statusBasicaGratuita` após `features[]`.
 
 ---

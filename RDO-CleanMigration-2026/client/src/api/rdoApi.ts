@@ -1,6 +1,9 @@
 import type {
   RdoCadastroBootstrap,
   RdoCadastroEtapas,
+  RdoAssinarRequest,
+  RdoAssinarResult,
+  RdoCadastroEdit,
   RdoCadastroSaveRequest,
   RdoCadastroSaveResult,
   RdoListPage,
@@ -75,6 +78,28 @@ export async function fetchRdoCadastroEtapas(dataRdo: string): Promise<RdoCadast
     headers: { Accept: 'application/json' },
   })
   return readJson(res, 'etapas cadastro RDO')
+}
+
+export async function fetchRdoCadastroEdit(idRdo: number): Promise<RdoCadastroEdit> {
+  const res = await fetch(`/api/bff/rdos/cadastro/${idRdo}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'editar RDO')
+}
+
+export async function assinarRdo(idRdo: number, body: RdoAssinarRequest): Promise<RdoAssinarResult> {
+  const res = await fetch(`/api/bff/rdos/${idRdo}/assinar`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const data = await readJson<RdoAssinarResult>(res, 'assinar RDO')
+  if (!res.ok && !data.errorMessage) {
+    throw new Error('Não foi possível assinar o RDO.')
+  }
+  return data
 }
 
 export async function saveRdoCadastro(body: RdoCadastroSaveRequest): Promise<RdoCadastroSaveResult> {

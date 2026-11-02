@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-10-29 — roteamento **obra demo assinatura** (Loja) · **M7 7a-P0** `3c061b6` · Git **`05999d6`** (`ci/homolog-ec2-s3-ssm`) · stack UI por página: [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · [`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · **I0** B1/B2  
+**Atualizado:** 2026-11-02 — Chart + Dashboard **no ar** (Lucio) · DNA · fichas §13 (**DOC-FICHAS** backlog, não gate)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -102,9 +102,11 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Marco ativo:** **M4** (fechamento UI shell) **+ M5 web Onda B** (paridade prod) — **M4.4–M4.6 ☑** · **M4.7** código **B–D** **`7e19d47`** · **P5a RDO:** listagem **T5 classe E** (`056eb29`) · paridade visual **W1/W2** no Git **`fd8a144`** (smoke homolog **T6** pendente) · **falta M4:** G5/G6 · **UI-M1/UI-M2c** (fontello/FA, incl. ícones ação RDO **W3**) · **P1** = **M4.8** · **P4** = **M7+**. Checklist: [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) · M5 fila: [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md).
 
-**Numeração P (canônica):** **P1** Login · **P2** Escolher/cards obra · **P3** Etapas/Tarefas · **P4** Nova medição (= matriz **#1–#4**).
+**Numeração P (canônica):** **P1** Login · **P2** Escolher (**card de obra**) · **P3** Etapas/Cards (**card de tarefa** = bloco de P3, não P4) · **P4** Nova medição (modal no card) · depois **P5a** listagens · **P5b** cadastros · **P6a** gestor tenant · **P6b** CMS plataforma. Fichas: manual **§13**.
 
-**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4 Login→Nova medição) · **§6b cruzamento P2/P3 (web + Apontador + Piscineiro)** · **§10 paridade ①↔②** · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
+**Vocabulário:** **área da obra** / colaborador = P2–P5 (`OperadorShell` no código). **Operador Contratada** = um dos 5 papéis. **Gestor** = P6a. **Admin plataforma** = P6b. Não chamar a jornada de “operador”.
+
+**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4) · **§6b** · **§10** · **§12 DNA** · **§13 fichas** (molde Chegada/Botões/Saída; 1ª = P5a RDOs) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
 ### Plano de execução (A → E)
 
@@ -118,7 +120,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **agora:** **M7 7c/7d** (editar/assinar RDO) **ou** **M5 web #2** Chart. **7b** PDF homolog L15 smoke OK (logo + sem faixa fotográfica vazia).
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — toastr Assinar **A5 ☑**. Chart: log **C0** GESTÃO DE RDO's; **C1** datas em seguida.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -135,13 +137,13 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M2** | **FECHADO** | — |
 | **M3** | **FECHADO** | passos 6–7 E2E opcional |
 | **M4** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ Git **`7aee0f2`** (`LoginPage` + `BffLoginController`; GET Login → SPA se `wwwroot/app`) | Smoke **G5/G6** · **UI-M1/M2c** · **UI-M5** Esqueci senha |
-| **M5 web** (Onda B) | **#1 RDO** listagem **T5 E** · **W1–W3** ícones · smoke lista OK | **#2 Chart** · **#3 Dashboard** |
+| **M5 web** (Onda B) | **#1 RDO** listagem · **#2 Chart** · **#3 Dashboard** no ar (Lucio **02/nov**) | polish Highcharts se pedir · fila M7 #5+ |
 | **M5 EQ-M** | — | **⏸ adiado** — retomar no **G-M5** web ou **M6** |
 | **M6** | — | JWT/OpenAPI spike · contrato mobile homolog |
-| **M7+** | **7a** cadastro SPA · **7b** PDF QuestPDF (layout RDLC v1 homolog; logo+fotos vazio L15) | **7c** editar · **7d** assinar · polish PDF (horímetro schema, fotos EC2) · **P4** medição · CRUD gestor |
+| **M7+** | **7a** cadastro · **7b** PDF · **7c** editar (`?rdoId=`) · **7d** assinar (confirm + modal comentário) | smoke 7c/7d · polish PDF · **P4** · **P6a** gestor · **não** P6b CMS |
 | **M8** | Branch CI · deploy D→E documentado | Runway &lt;2 min · workflow gate |
 | **M9** | — | D1–D7 pacote homolog v1 |
-| **M10** | — | Onda 2 / L1 prep |
+| **M10** | — | Onda 2 / L1 prep · **P6b** CMS admin `#/grupo` `#/menu` `#/pagina` `#/historicoacesso` (hoje só EQ-L prod; homolog = stub) |
 
 ---
 
@@ -163,6 +165,8 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - Prod web: **EQ-L** até cutover Onda 6.
 - **PQ-L** web Piscinas prod: repo **`EquipoToPiscina`** · RDS **`piscinas_rdoapp`** — manual M0′ § referência rápida.
 - **M5 EQ-M (Apontador) adiado (2026-10-26):** prioridade = **sintonizar telas web homolog ↔ prod** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)). Prod mobile **continua EQ-L** (cenário A). **Reabrir** EQ-M: revisão ao **G-M5** web **ou** ao iniciar **M6** — **obrigatório** antes **M9 D4** e cutover Onda 6.
+- **CMS Grupo / Menu / Página (2026-11-01):** catálogo **plataforma** (`col_st_admin`). **Não** portar 1:1 ao dono nem à SPA da **área da obra**. **P6a** = colaborador/empresa/obra → **M7+**. **P6b** = `#/grupo` `#/menu` `#/pagina` (+ Histórico) → **marco M10**. **≠** **#29**. Inventário + **DNA:** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0. Fichas de tela: manual **§13**.
+- **Fichas manuais (2026-11-02):** um §13 no manual (não 35 arquivos). Molde **Chegada · Botões · Saída**. 1ª ficha = **P5a RDOs**. Restante = **DOC-FICHAS** (pendências UI) — **não** gate.
 
 ---
 
@@ -174,6 +178,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **EQ-M pós-adiamento:** merge/plano `feature/alteracoes_apontador` — **só** quando retomar marco mobile (ver decisão fechada acima).
 - Marco FAPESC vs horas TSK (**Trilha F**).
 - Abertura trilha **PQ** (Piscinas).
+- **Dono da assinatura:** só **atribui** os 5 templates da licença (recomendado) vs clona grupo / `features[]` — não misturar com M7.
 
 ---
 
@@ -181,7 +186,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 | Marco / doc | Documento |
 |:----:|-----------|
-| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · §1–§4 · **§10 paridade P2/P3** (**P1**–**P4** canônico) |
+| **M0′ manual UI** | [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — **5 vetores** · §1–§4 · **§10** · **§13 fichas** (**P1**–**P6b**) |
 | M0′ Fase A evidências | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) |
 | M0′ matriz 4 telas | [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md) |
 
@@ -241,7 +246,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 
 ## Paridade visual prod ① vs homolog ② (blocos por tela)
 
-**Numeração P (canônica):** **P1** Login (#1) · **P2** Escolher (#2) · **P3** Etapas/Cards (#3) · **P4** Nova medição (#4). Tabela abaixo foca **P2–P3** (M4); **P1** → **M4.8** · **P4** → **M7+**. Matriz: [4 páginas × M](#4-páginas--marcos-m-visão-única).
+**Numeração P (canônica):** **P1** Login (#1) · **P2** Escolher (#2) · **P3** Etapas/Cards (#3) · **P4** Nova medição (#4). **P5a/b · P6a/b** e molde Chegada/Botões/Saída: manual **§13**. Tabela abaixo foca **P2–P3** (M4); **P1** → **M4.8** · **P4** → **M7+**. Matriz: [4 páginas × M](#4-páginas--marcos-m-visão-única).
 
 **Estratégia (fechada):** **não** investir STRATEGY-2 / CSS pesado em **Razor Escolher** — **P2** vira **React** (M4.4). **P3** evolui no **mesmo `client/`** (`OperadorShell` compartilhado). Referência: prod **`escolher.html`** · **`cards.html`** (EQ-L); capítulo UX: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) **§10**.
 
@@ -386,17 +391,29 @@ Ordem **validada** contra gates do orquestrador (M2→M3→M4), matriz 4 página
 | **Agora (M4.7)** | UI-M1, **UI-M2c**, UI-M2, UI-M2b | **Copiar** FA + **fontello** do prod; flex card; barra % — paridade híbrida (**não** trocar motor de ícone) |
 | **Em seguida** | M4.8, UI-M5 | Login SPA / Esqueci senha smoke |
 | **Adiado** | **UI-M3** (+ M3a/M3b) | Redesign SPA **sem** BS3/`panel-*` **e sem** fontello/FA parcial — **só após M4.7 ☑ + M7** (gates no doc fontello) |
+| **Adiado (doc)** | **DOC-FICHAS** | Completar manual §13 (≈37 fichas). Sob demanda / fim. **Não** bloqueia M5/M7 |
 
 Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível é **Bootstrap 5 CSS (link)** + **CSS de paridade** + fontes (fontello/FA) + **nomes de classe** copiados de `escolher.html` / `cards.html` / RDO. **Impacto:** UI/manutenção front — **não** bloqueia BFF/RDS/M7. **Redesign (UI-M3)** adiado de propósito — ver coluna *Quando vamos mudar* na tabela por página.
+
+### Melhorias produto (Loja × Sistema) — não é stack UI
+
+Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 — blocos **só Loja** / **só Sistema (`#29`)** / **ambos**. **Não** implementar `#29` no ciclo M7.
+
+| # | Item | % | Neste chat |
+|---|------|---|------------|
+| **29** | **Dono da assinatura configura perfil de acesso** — atribui um dos **15 templates** (5 papéis × plano Loja). **Não** copiar CMS. DNA: cms §0. | 5% | Spec [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · Core React **depois** do ciclo M7 (Chart já no ar) |
+| **DOC-FICHAS** | Fichas de tela (manual §13). 1 feita (RDOs). Restante no fim / quando a tela for sprint | 3% | [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · **não** Melhorias 1.0 Loja |
 
 ---
 
 ## Próxima ação (1)
 
-1. **M7 7c / 7d:** editar RDO · assinar (stubs hoje na lista).
-2. **M5 web #2** — **`/Chart/Index`**.
-3. **Backlog 7b:** fotos no PDF quando o arquivo existir em `/Uploads` · horímetro `homol_rdoapp` · polish rodapé ©2019.
-4. **UI-M1** · **M5 EQ-M** adiado.
+1. **Toastr Assinar A5 ☑** (Lucio ~18:15). Chart/Dashboard no ar.
+2. **Chart C1** datas — código local; **smoke após publish**. Depois **C2** barras. Log [`migracao/homolog-p5a-chart-tentativas.md`](migracao/homolog-p5a-chart-tentativas.md).
+3. **Commit+push** Migration2Core quando Lucio pedir (toast/Chart/Dashboard/PDF + docs).
+4. **DOC-FICHAS** — backlog; **não** agora.
+5. **#29 / CMS** — só doc; **não** neste ciclo.
+6. **UI-M1** · **M5 EQ-M** adiado.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
@@ -407,7 +424,9 @@ Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível
 | | |
 |--|--|
 | E2E | `e2e-fase0-checklist.md` |
-| Manual UI + FAPESC ⑥ | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` |
+| Manual UI + FAPESC ⑥ | `manual-frontend-rdo-equipamentos-prod-core-mobile.md` (**§13 fichas**) |
+| CMS Grupo/Menu/Página (prod) | `migracao/cms-grupo-menu-pagina-prod.md` |
+| Ponte Loja × Sistema | skill `ponte-loja-sistema-rdo` · `ponte-loja-sistema-assinatura.md` |
 | Pendências stack UI (P1–P4 · UI-M3 adiado) | `migracao/pendencias-melhorias-ui-stack.md` |
 | Fontello + FA — Fase A (M4.7) vs Fase B (UI-M3) | `migracao/fontello-fa-legado-marcos-ui.md` |
 | Dimas TSK × marcos M* (rastreio) | `migracao/dimas-tsk-rastreio-m.md` |
@@ -444,6 +463,22 @@ Homolog **não executa** AngularJS/jQuery/BS3 JS na SPA; o “legado” visível
 | **≠ P3 (M2/M4)** | **P3** = `/Tarefa/Cards` no **homolog** Core · BFF `GET /api/bff/etapas` · RDS **`homol_rdoapp`** · React — **independente** do bat prod |
 
 **Fora deste bloco:** FAPESC · EDI/token · mobile homolog · Hub GovTech.
+
+### DNA — planos Loja × Contratante/Contratada (obrigatório)
+
+**Canônico (listas completas):** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 grupos · §2 menus · §4 páginas. **Ponte Loja:** skill `ponte-loja-sistema-rdo`. **Fichas (botões e rotas):** manual **§13**.
+
+Isto **não** é detalhe de CMS. É o modelo de acesso do produto. Homolog (`homol_rdoapp`) e prod (`novo_rdoapp`) têm o mesmo desenho; **GPA/ids diferem** — nunca misturar catálogo.
+
+| Eixo | Valores | Efeito |
+|------|---------|--------|
+| Plano Loja | Gratuito → **BASIC2** / grupos **Gratuita** · Básico → **FULL** / **Básica** · Equipamentos → **Equipamentos** (`18`) | Quais **5 templates** o tenant usa |
+| Lado da obra | Contratante `t` · Contratada `d` | Quem assina de cada lado; filtro de grupo |
+| Subperfil | Diretor · Engenheiro · **Operador Contratada** (não existe Operador Contratante) | GPA (`assinarRdo`/`editar` etc.) — **≠** “área da obra” (P2–P5) |
+
+**15 grupos** = 5 papéis × 3 planos. **2 menus:** Admin (`col_st_admin`) · Colaborador (9 itens, todos os clientes). **~35 páginas** ativas no catálogo (§4 do cms). Chart/Dashboard **não** estão no drawer — vão no header + GPA.
+
+Smoke 7c/7d: **Engenheiro Contratada** azuis; **Operador Contratada** cinza = (A) no `homol_rdoapp`, confirmado DBeaver 01/nov.
 
 ---
 

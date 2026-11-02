@@ -186,6 +186,43 @@ export interface RdoCadastroSaveResult {
   confirmDetail?: string
 }
 
+export interface RdoCadastroEdit {
+  idRdo: number
+  dataRdo: string
+  comentario: string
+  statusRdo: number
+  climaManha: ClimaChoice
+  climaTarde: ClimaChoice
+  climaNoite: ClimaChoice
+  chuvaManha: ChuvaChoice
+  chuvaTarde: ChuvaChoice
+  chuvaNoite: ChuvaChoice
+  tipoComentarioGeracao: number
+  improdutividadeCondicoesClimaticas: boolean
+  improdutividadeMateriais: boolean
+  improdutividadeParalizacoes: boolean
+  improdutividadeEquipamentos: boolean
+  improdutividadeContratante: boolean
+  improdutividadeFornecedores: boolean
+  improdutividadeMaodeObra: boolean
+  improdutividadeProjeto: boolean
+  improdutividadePlanejamento: boolean
+  improdutividadeAcidente: boolean
+  listaTarefaIds: number[]
+  listaImagemIds: number[]
+}
+
+export interface RdoAssinarRequest {
+  comentarioAssinatura?: string
+  tipoComentarioAssinatura?: number
+  ip?: string
+}
+
+export interface RdoAssinarResult {
+  ok: boolean
+  errorMessage?: string
+}
+
 export interface LoginContext {
   antiforgeryFieldName: string
   antiforgeryToken: string
@@ -195,4 +232,81 @@ export interface SelecionarObraResponse {
   success: boolean
   errorMessage?: string
   redirectUrl?: string
+}
+
+export interface GraficoRdoAtrasado {
+  obr_ds_obra: string
+  dias_atraso: number
+  sem_ass_contratante: number
+  sem_ass_contratada: number
+}
+
+export interface GraficoRdoGerado {
+  obr_ds_obra: string
+  gerado: number
+  assinado_contratante: number
+  assinado_contratada: number
+  a_gerar: number
+}
+
+export interface GraficoDiaImprodutivo {
+  obr_ds_obra: string
+  imp_clima: number
+  imp_falta_material: number
+  imp_paralizacao: number
+  imp_acidente: number
+  imp_contratante: number
+  imp_equipamento: number
+  imp_fornecedores: number
+  imp_maodeobra: number
+  imp_projeto: number
+  imp_planejamento: number
+}
+
+export interface GraficoTarefa {
+  obr_ds_obra: string
+  atraso_inicio: number
+  atraso_fim: number
+  pausadas: number
+  canceladas: number
+}
+
+export interface GraficoStatusTarefa {
+  obr_ds_obra: string
+  planejada: number
+  em_execucao: number
+  finalizada: number
+  pausada: number
+  cancelada: number
+}
+
+export interface GraficoComentario {
+  obr_ds_obra: string
+  positivo_contratante: number
+  negativo_contratante: number
+  positivo_contratada: number
+  negativo_contratada: number
+}
+
+export interface GraficoResumo {
+  periodoIni: string
+  periodoFim: string
+  rdosAtrasados: GraficoRdoAtrasado[]
+  rdosGerados: GraficoRdoGerado[]
+  diasImprodutivos: GraficoDiaImprodutivo[]
+  tarefas: GraficoTarefa[]
+  statusTarefas: GraficoStatusTarefa[]
+  comentarios: GraficoComentario[]
+}
+
+export interface DashboardSlice {
+  name: string
+  y: number
+}
+
+export interface DashboardObra {
+  pizzaColaboradores: DashboardSlice[]
+  barraCategorias: string[]
+  barraValores: number[]
+  pizzaEfetivo: DashboardSlice[]
 }

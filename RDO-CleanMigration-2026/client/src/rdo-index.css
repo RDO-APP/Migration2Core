@@ -279,6 +279,53 @@
   content: '\f044';
 }
 
+.rdo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1050;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.rdo-modal {
+  background: #fff;
+  width: min(720px, 100%);
+  border-radius: 2px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.rdo-modal-header,
+.rdo-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.rdo-modal-footer {
+  border-bottom: 0;
+  border-top: 1px solid #eee;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.rdo-modal-header h4 {
+  margin: 0;
+  color: #28496f;
+}
+
+.rdo-modal-body {
+  padding: 16px;
+}
+
+.rdo-assinar-thumbs {
+  margin-top: 8px;
+}
+
 .rdo-index-page .tabela .fa:before,
 .rdo-index-page .tabela [class*=' icon-']:before,
 .rdo-index-page .tabela [class^='icon-']:before {

@@ -7,16 +7,14 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class ChartController : Controller
 {
-    // Rota convencional /Chart/Index — uma endpoint por action (ASP0023).
-    [HttpGet]
-    public IActionResult Index()
+    private readonly IWebHostEnvironment _env;
+
+    public ChartController(IWebHostEnvironment env)
     {
-        return EmMigracaoPage.Render(
-            this,
-            "Dashboard geral (gráficos)",
-            "Módulo de gráficos em migração (M5+).",
-            voltarUrl: "/Tarefa/Cards",
-            voltarRotulo: "Voltar para tarefas",
-            prodRef: "#/chart");
+        _env = env;
     }
+
+    [HttpGet]
+    public IActionResult Index() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Dashboard geral");
 }

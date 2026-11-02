@@ -71,7 +71,7 @@ Referência prod: `rdoappProject/Client/Views/Rdo/cadastro.html` · `RdoControll
 | **7a-P4c** | B0, B5, B6a/b, B3a, B4a | ☑ código · ☑ smoke visual **T7f** (~9/10) |
 | **7a-P5** | **C8 / RF1–RF6** — checkboxes galeria, `listaImagems`, `gerarRelatorioFotografico` no save/BFF | ☑ **T7h** (SELECIONAR TUDO + save E2E) |
 | **D2** | **GERAR RDO** E2E (confirm + listagem) | ☑ **T7g** 2026-10-30 |
-| **7b–7d** | E1–E3 (editar RDO, PDF, assinar) | ☐ |
+| **7b–7d** | E1–E3 (editar RDO, PDF, assinar) | **7b** ☑ L15 · **7c/7d** código (smoke após D→E) |
 
 ### Pendências desta página (`/Rdo/Cadastro`)
 

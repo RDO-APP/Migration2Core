@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-10-27 · **Status:** **M4.7** + **P5a RDO** (listagem + cadastro 7a) · §**6b** cinco vetores · §**10** paridade · §**10.7** stack L/M/H + tabela **por página** · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-02 · **Status:** **M4.7** + **P5a RDO** (7a–7d) · **DNA** Loja×grupos [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · §**5** / §**12** · **§13 fichas** (molde Chegada/Botões/Saída; 1ª ficha = RDOs) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
@@ -121,7 +121,7 @@ flowchart TB
 | Layout shell | `layout-interno*.html` · `ng-view` | MVC `_Layout`; Cards = React sem shell prod | Stack Navigator | 🔀 mesmo padrão legado (nav + ng-view) | Stack Navigator |
 | Header `nav.html` | `NavController` · faixa azul | 🟡 partials Kiro; React sem nav prod | App bar | 🔀 nav + contexto unidade/obra piscina | App bar |
 | Logo / trocar contexto | `mudarObra()` | Escolher MVC | Lista obras | 🔀 trocar unidade/obra | Lista obras/unidades |
-| Menu RBAC | `userData.menu.listaPagina` | 🟡 Escolher | Reduzido | 🔀 | Reduzido |
+| Menu RBAC | `userData.menu.listaPagina` ← **Menu Colaborador** (9 itens) se grupo cliente; **Menu Admin** só `col_st_admin` | 🟡 drawer `shell.menuPaginas` | Reduzido | 🔀 | Reduzido |
 | Usuário (senha / sair) | Dropdown | ✅ cookie MVC | Auth context | 🔀 | Auth context |
 | Stack UI | Bootstrap 3, FA 4.7, fontello, AngularJS | **H:** React 19 + Vite; BS **5.3 CSS** + classes BS3 prod; **sem** Angular/jQuery na SPA — §**10.7** | RN Paper / lucide | 🔀 Bootstrap/fontello | 🔀 compartilhado ~94% c/ ③ |
 
@@ -253,6 +253,10 @@ flowchart TB
 | Histórico medições | modal web | ⬜ | `history-screen` | 🔀 | 🔀 |
 | Impressora PDF | web | ⬜ | `report-print-screen` | 🔀 | 🟡 TaskCard |
 | Dashboard gráfico obra | `#/dashboard` | ⬜ | removido gráfico | 🔀 | — |
+| Drawer operador | **Menu Colaborador** (9 URLs) | `LegacyOperadorRoutes` | — | 🔀 | — |
+| CMS Grupo / Menu / Página | `#/grupo` `#/menu` `#/pagina` · `col_st_admin` | stub “Em migração” — **não** EQ-R | — | 🔀 | — |
+
+**CMS ≠ área da obra:** catálogo e plano Dono em [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · §**12** · fichas §**13**.
 
 ---
 
@@ -465,7 +469,7 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 | **P1** | Login | Layout externo; SPA unificada | **M4.8** |
 | **P4** | Nova medição (modal) | Inexistente no homolog | **M7+** |
 
-### 10.8 Classes de tela operador — P5 (M5 web) e além
+### 10.8 Classes de tela da área da obra — P5 (M5 web) e além
 
 **Atualizado:** 2026-10-27 · **Fila M5:** [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)
 
@@ -475,7 +479,8 @@ Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta
 |:------:|----------------------|------------------------|------------|-------|--------|
 | **P5a** | `#/rdo/index`, `#/chart`, `#/dashboard/index`, `#/efetivo/index`… | `/Rdo/Index`, `/Chart/Index`, … | React + `OperadorShell` | BFF `/api/bff/*` por módulo | **Full page** (`goOperador`) — não é popup de card |
 | **P5b** | `#/rdo/cadastro`, `#/obra/cadastro`… | `/Rdo/Cadastro`, … | React ou stub | POST legado / BFF | Formulários pesados → **M7** |
-| **P6** | `#/colaborador/index`, `#/grupo/index`… | `ModuloLegadoController` | “Em migração” | CRUD admin | **M7+** |
+| **P6a** | `#/colaborador/index`, `#/empresa/index`, `#/obra/index`… | `ModuloLegadoController` | “Em migração” | CRUD **gestor da obra/empresa** | **M7+** (depois P5) |
+| **P6b** | `#/grupo/index`, `#/menu/index`, `#/pagina/index` (+ `#/historicoacesso`) | só `col_st_admin` | stub homolog · **prod EQ-L** até cutover | CMS **plataforma** | **M10** (não M5/M7) · [`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · **≠** #29 |
 
 **Molde P5a (copiar de Cards / RDO):**
 
@@ -528,6 +533,207 @@ Tabela camada a camada: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/p
 2. **P2:** marcar cada linha §10.3 — ✅ paridade · 🟡 parcial · ⬜ pendente.
 3. **P3:** idem §10.4.
 4. Divergência de **contagem** de tarefas: conferir **mesmo catálogo RDS** antes de abrir bug UI ([`ORQUESTRADOR-MIGRACAO.md`](ORQUESTRADOR-MIGRACAO.md) nota homol vs prod).
+
+---
+
+## 12. DNA de acesso + CMS Grupo · Menu · Página
+
+**Canônico:** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 (DNA) · §2 (menus) · §3 (15 grupos) · §4 (páginas). Orquestrador § **DNA**. Ponte Loja: `ponte-loja-sistema-rdo`.
+
+Acesso = **plano Loja** × **Contratante/Contratada** × **subperfil** (Diretor / Engenheiro / **Operador Contratada**). Não é “admin vs user”. **Operador Contratada** = perfil; **área da obra** = telas P2–P5 (`OperadorShell` no código — não renomear). Homolog = `homol_rdoapp` (Operador Contratada sem `assinarRdo`/`editar`; Engenheiro Cta tem). Prod Equipamentos = `novo_rdoapp` licença 18 (CSV dos 5 com Assinar/Editar — **outro** catálogo). Fichas (Chegada/Botões/Saída): **§13**.
+
+**Canônico (prints 01/nov/2026 + DBeaver):** mesmo arquivo cms.
+
+| Já estava neste manual / irmãos | O que os prints fecharam | Ainda falta |
+|---------------------------------|--------------------------|-------------|
+| §0 Menu RBAC `listaPagina` | Drawer cliente = **Menu Colaborador** (9 itens); **Menu Admin** à parte | Homolog: paridade dos 9 hrefs (vários ainda stub) |
+| §10.8 P6 misturava colaborador+grupo | **P6a** gestor vs **P6b** CMS `col_st_admin` | UI P6a React |
+| m4-7g `PermissionHelper` P3 | Assinar/Editar = (A) GPA + (B) `t`/`d`×status | Homolog Operador sem (A); não copiar CSV prod |
+| Proposta/ponte: dono não tem CMS | 5 papéis × 3 licenças; Equipamentos matriz RDS §3.1 cms | Painel Dono #29 — **não** neste ciclo M7 |
+| Matriz 5 Equipamentos | — | **Fechado** DBeaver 01/nov (`licenca` 18) |
+| Catálogo de rotas operador P1–P5 | Lista Página (~35 URLs ativas) | Cadastro de cada Página (ações) · IDs `gru_id_licenca` |
+
+---
+
+## 13. Índice de fichas (esqueleto)
+
+**Decisão (2026-11-02):** um § neste manual — **não** 35 arquivos. Primeira ficha = **P5a RDOs**. Restante = backlog **DOC-FICHAS** ([`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)) — **não** gate; preencher quando a tela for sprint.
+
+**Sub-trilha:** I (docs) · **não** é código. **P** = jornada; URL = ficha. Card de tarefa **não** é P4 — é bloco de **P3**. **P4** = Nova medição.
+
+**Vocabulário:** **colaborador / área da obra** = P2–P5 (`OperadorShell` no código). **Operador Contratada** = um perfil do DNA. **Gestor do tenant** = P6a. **Admin plataforma** = P6b. Não chamar a jornada de “operador”.
+
+**Molde de cada ficha** (quando houver conteúdo): DNA · Print ①/② · **Chegada** · **Botões** · **Saída** · Tela (layout) · Contrato API · Paridade.
+
+Chegada = de onde se entra (tela P + URL). Botões = cada controle da página (rótulo, GPA, fica / sai). Saída = para onde cada clique que **muda de rota** vai. Header/drawer da casca (§13.0) não se repetem em toda ficha — só o que é **desta** página.
+
+### 13.0 Casca (pós-login — compartilhada P2–P6a)
+
+**Chegada:** P1 Login OK → P2 Escolher → selecionar obra (`LoginObra`) → header+drawer desta casca em P3–P6a.
+
+**Botões / Saída (Menu Colaborador — 9)**
+
+| Item drawer | Homolog | Destino P |
+|-------------|---------|-----------|
+| Equipamentos | `/Equipamentos/Index` | P6a |
+| Colaboradores | `/Colaborador/Index` | P6a |
+| Efetivo Diário | `/Efetivo/Index` | P5a |
+| Card de Tarefas | `/Tarefa/Cards` | P3 |
+| RDOs | `/Rdo/Index` | P5a |
+| Obras | `/Obra/Index` | P6a |
+| Empresas | `/Empresa/Index` | P6a |
+| Etapas | `/Etapa/Index` | P6a |
+| Códigos de Paralizações | `/Tarefa/Paralizacoes/Index` | P6a |
+
+**Header (casca):** logo → P2 `/Obra/Escolher`. Chart `/Chart/Index` e Dashboard `/Dashboard/Index` = P5a (GPA, **não** estão no drawer). Toastr = fica na página.
+
+### 13.1 P1 — Login
+
+- Formulário (CPF / senha)
+- Erro / sessão
+- Branding (chrome externo — sem header da área da obra)
+
+### 13.2 P2 — Escolher obra
+
+- Header
+- Filtros (obra + município)
+- Card de obra
+- Legenda de progresso
+- Fluxo: clicar → selecionar → P3
+
+### 13.3 P3 — Etapas / Cards (`/tarefa/cards`)
+
+- Toolbar
+- Accordion de etapa
+- **Card de tarefa**
+  - Ações do card (Gerar RDO, editar, status, …)
+  - GPA (o que fica azul / cinza)
+- Placeholder nova tarefa
+
+### 13.4 P4 — Nova medição
+
+- Modal no card de P3
+- Campos do formulário
+- Histórico de medições (se for o mesmo fluxo)
+
+### 13.5 P5a — Área da obra · listagens
+
+#### Ficha — RDOs (`/rdo/index`)
+
+| | |
+|--|--|
+| **P** | P5a |
+| **prod** | `#/rdo/index` · alias `rdo` |
+| **homol** | `/Rdo/Index` · SPA `RdoIndexPage` + `OperadorShell` |
+
+**Chegada**
+
+| De | Controle | Para (esta página) |
+|----|----------|-------------------|
+| P3 Cards `/Tarefa/Cards` | ícone RDO no **card de tarefa** | `/Rdo/Index` |
+| Casca · drawer | item «RDOs» | `/Rdo/Index` |
+| P5b `/Rdo/Cadastro` | GERAR RDO / Salvar (volta da lista) | `/Rdo/Index` |
+
+**Botões** (desta página; GPA em `/rdo/index`)
+
+| Controle | Tipo | GPA | Fica / sai |
+|----------|------|-----|------------|
+| PESQUISAR | botão | `visualizar` | **fica** — recarrega a tabela |
+| NOVO | botão | `criarNovo` | **sai** → P5b `/Rdo/Cadastro` |
+| Assinar | ícone linha | `assinarRdo` + lock B | **fica** — modal **CONFIRMAÇÃO** (NÃO/SIM, paridade prod `MensagemConfirmacao`) + toast. **Não** `window.confirm` (Chrome «diz») |
+| Editar | ícone linha | `editar` + lock B | **sai** → P5b `/Rdo/Cadastro?rdoId=` |
+| PDF / Imprimir | ícone linha | `visualizar` | **fica** — download |
+| Filtro status / datas | form | `visualizar` | **fica** |
+
+Cinza = sem GPA (A) ou lock (B). Ícone continua visível (W3).
+
+**Saída** (só mudança de rota)
+
+| Controle | Homolog | Prod | Destino P |
+|----------|---------|------|-----------|
+| NOVO | `/Rdo/Cadastro` | `#/rdo/cadastro` | P5b |
+| Editar | `/Rdo/Cadastro?rdoId={id}` | `#/rdo/cadastro` + id | P5b |
+| Logo header (casca) | `/Obra/Escolher` | `#/obra/escolher` | P2 |
+| Drawer (casca) | 9 hrefs Menu Colaborador | idem | P3 / P5a / P6a |
+
+**DNA**
+
+- GPA da página `/rdo/index`: `visualizar` · `criarNovo` · `gerarRdo` · `assinarRdo` · `editar` · `deletar` (deletar só Diretor, no recorte prod).
+- Assinar/Editar **azuis** só se **(A)** GPA no grupo da sessão **e** **(B)** lado `t`/`d` × status do RDO.
+- Homolog `homol_rdoapp`: **Engenheiro Contratada** tem (A); **Operador Contratada** não tem (A) → cinza mesmo sendo `d`. Não copiar CSV `novo_rdoapp`.
+- Duas `pagina_acao` com alias `assinarRdo` (legado). Ícone **sempre visível**; sem (A) = disabled (W3).
+
+**Print** — ① prod toastr canto direito · ② homolog: listagem T5; toast Assinar/Salvar **no Git, no ar só após deploy** (não linha «Registro assinado.»).
+
+**Tela** (layout — botões estão nas tabelas acima)
+
+- Header da área da obra + toastr
+- Filtros + tabela (status, datas, QTD…)
+- Vazio / erro 500 da lista (não cair em `/Home/Error` no `/api`)
+- Assinar: toast «Registro assinado.» (prod toastr; homolog no Git, deploy pendente)
+
+**Contrato**
+
+- ① `POST api/rdo/CarregarLista`
+- ② `GET /api/bff/rdos` · `GET /api/bff/rdos/status-options` · `GET /api/bff/shell`
+- MVC: `RdoController.Index` → `OperadorSpaEntry` **200** (sem stub `#/rdo/index` 302)
+
+**Paridade**
+
+| Bloco | ① | ② |
+|--------|---|---|
+| Listagem | ✅ | ✅ T5 E |
+| Três ícones | ✅ | ✅ W3 (cinza vs azul = DNA) |
+| Assinar / Editar | ✅ | ✅ código 7c/7d · smoke Engenheiro Cta |
+| Toastr | ✅ | código local · **deploy pendente** |
+| PDF | ✅ | 7b local · **deploy pendente** |
+
+- Gráfico Geral (`/chart`)
+  - Gráfico RDOs
+  - Gráfico RDOs atrasados
+  - Gráfico dia improdutivo
+  - Gráfico tarefas
+  - Gráfico comentários
+- Dashboard (`/dashboard/index`)
+- Efetivo diário (`/efetivo/index`)
+- Relatório efetivo diário
+- Relatório de produtividade
+- Relatório de medição
+
+### 13.6 P5b — Área da obra · cadastros
+
+- RDO cadastro (`/rdo/cadastro`) — 7a–7d, PDF
+- Tarefa cadastro (`/tarefa/cadastro`)
+- Tarefa lista (`/tarefa/index`)
+- Etapa cadastro (`/etapa/cadastro`)
+- Alterar senha (`/colaborador/alterarsenha`)
+
+### 13.7 P6a — Gestor do tenant
+
+- Equipamentos · cadastro
+- Colaboradores · cadastro
+- Obras lista (`/obra/index`) · Obra lista excluir (`/obra/lista`) · Obra cadastro
+- Empresas · cadastro
+- Etapas (`/etapa/index`)
+- Códigos de paralisações (`/tarefa/paralizacoes/index`)
+
+### 13.8 P6b — Admin plataforma (`col_st_admin` · M10)
+
+- Grupo · cadastro
+- Menu · cadastro
+- Página · cadastro
+- Histórico de acessos
+- (não é tela do colaborador; ≠ #29 dono)
+
+### 13.9 DNA (ponte — sem ficha de tela)
+
+- Três eixos: plano Loja × Contratante/Contratada × subperfil
+- 15 grupos (5 papéis × 3 planos)
+- Menu Colaborador vs Menu Admin
+- GPA `grupo_pagina_acao` (Assinar/Editar = A + B)
+- Dono da assinatura atribui template (#29) — **não** CMS
+
+Canônico DNA: [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md).
 
 ---
 

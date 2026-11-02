@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
-import { downloadRdoPdf, fetchRdoList, fetchRdoStatusOptions } from '../api/rdoApi'
+import { assinarRdo, downloadRdoPdf, fetchRdoList, fetchRdoStatusOptions } from '../api/rdoApi'
 import type { RdoListItem, RdoListPage, RdoStatusOption } from '../api/equipamentos-api.types'
+import { useConfirmDialog } from '../components/ConfirmDialog'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { showToast } from '../toast'
 import { rdoAssinarEditarDisabled } from '../utils/rdoIndexActions'
 import '../cards-page.css'
 import '../rdo-index.css'
@@ -17,6 +19,7 @@ function maskDateInput(value: string): string {
 
 export function RdoIndexPage() {
   const { shell } = useShellContext()
+  const { ask, dialog: confirmDialog } = useConfirmDialog()
   const [statusOptions, setStatusOptions] = useState<RdoStatusOption[]>([])
   const [statusRdo, setStatusRdo] = useState(0)
   const [dataInicial, setDataInicial] = useState('')
@@ -25,7 +28,10 @@ export function RdoIndexPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pdfBusyId, setPdfBusyId] = useState<number | null>(null)
-  const [actionMessage, setActionMessage] = useState<string | null>(null)
+  const [commentModalRdo, setCommentModalRdo] = useState<RdoListItem | null>(null)
+  const [comentarioAssinatura, setComentarioAssinatura] = useState('')
+  const [tipoComentarioAssinatura, setTipoComentarioAssinatura] = useState(0)
+  const [assinando, setAssinando] = useState(false)
 
   const loadList = useCallback(
     async (page: number) => {
@@ -83,12 +89,11 @@ export function RdoIndexPage() {
     pageData?.contratanteContratadaUsuario?.trim() || shell?.contratanteContratada?.trim() || ''
 
   async function onGerarPdf(rdo: RdoListItem) {
-    setActionMessage(null)
     setPdfBusyId(rdo.idRdo)
     try {
       await downloadRdoPdf(rdo.idRdo, rdo.dataRdo, true)
     } catch (e: unknown) {
-      setActionMessage(e instanceof Error ? e.message : 'Falha ao gerar PDF.')
+      showToast('error', e instanceof Error ? e.message : 'Falha ao gerar PDF.')
     } finally {
       setPdfBusyId(null)
     }
@@ -98,13 +103,54 @@ export function RdoIndexPage() {
     goOperador(`/Rdo/Cadastro?rdoId=${rdo.idRdo}`)
   }
 
-  function onAssinarPlaceholder(rdo: RdoListItem) {
+  async function fetchClientIp(): Promise<string> {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const j = (await res.json()) as { ip?: string }
+      return j.ip ?? ''
+    } catch {
+      return ''
+    }
+  }
+
+  async function confirmarEAssinar(
+    rdo: RdoListItem,
+    comentario?: string,
+    tipo?: number,
+  ) {
+    const ok = await ask(`Tem certeza que deseja assinar o RDO de data: ${rdo.dataRdo}?`)
+    if (!ok) return
+    setAssinando(true)
+    try {
+      const ip = await fetchClientIp()
+      const result = await assinarRdo(rdo.idRdo, {
+        comentarioAssinatura: comentario,
+        tipoComentarioAssinatura: tipo ?? 0,
+        ip,
+      })
+      if (!result.ok) {
+        showToast('error', result.errorMessage ?? 'Não foi possível assinar o RDO.')
+        return
+      }
+      setCommentModalRdo(null)
+      showToast('success', 'Registro assinado.')
+      await loadList(pageData?.currentPage ?? 1)
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Falha ao assinar o RDO.')
+    } finally {
+      setAssinando(false)
+    }
+  }
+
+  function onAssinar(rdo: RdoListItem) {
     const dono = (rdo.statusContratanteContratadaDonoRdo ?? '').trim()
     if (dono && dono !== contratanteUsuario) {
-      setActionMessage('Assinatura com comentário (contratada) — M7 7d em breve.')
+      setComentarioAssinatura('')
+      setTipoComentarioAssinatura(0)
+      setCommentModalRdo(rdo)
       return
     }
-    setActionMessage('Assinatura direta — M7 7d em breve.')
+    void confirmarEAssinar(rdo)
   }
 
   const shellWrap = (body: ReactNode) => (
@@ -114,6 +160,7 @@ export function RdoIndexPage() {
   )
 
   return shellWrap(
+    <>
     <div className="rdo-index-page">
       <div className="panel-heading">
         <h3>RDO</h3>
@@ -183,7 +230,6 @@ export function RdoIndexPage() {
       </div>
 
       {error ? <div className="rdo-error">{error}</div> : null}
-      {actionMessage ? <div className="rdo-info">{actionMessage}</div> : null}
 
       <div className="lista-tarefas">
         <div className="tabela">
@@ -245,11 +291,11 @@ export function RdoIndexPage() {
                           className="btn btn-simple btn-just-icon"
                           title={showAssinarRdo === false ? 'Assinar (sem permissão)' : 'Assinar'}
                           aria-label={`Assinar RDO ${rdo.dataRdo}`}
-                          disabled={acoesDisabled || showAssinarRdo === false}
+                          disabled={acoesDisabled || showAssinarRdo === false || assinando}
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            onAssinarPlaceholder(rdo)
+                            onAssinar(rdo)
                           }}
                         >
                           <i className="icon-assinar" aria-hidden />
@@ -298,6 +344,89 @@ export function RdoIndexPage() {
           ) : null}
         </div>
       </div>
-    </div>,
+    </div>
+    {confirmDialog}
+    {commentModalRdo ? (
+      <div className="rdo-modal-backdrop" role="presentation">
+        <div
+          className="rdo-modal"
+          role="dialog"
+          aria-labelledby="rdo-assinar-titulo"
+        >
+          <div className="rdo-modal-header">
+            <h4 id="rdo-assinar-titulo">COMENTÁRIOS</h4>
+            <button
+              type="button"
+              className="btn btn-simple"
+              onClick={() => setCommentModalRdo(null)}
+            >
+              Fechar
+            </button>
+          </div>
+          <div className="rdo-modal-body">
+            <textarea
+              className="form-control"
+              rows={6}
+              maxLength={2000}
+              value={comentarioAssinatura}
+              onChange={(e) => setComentarioAssinatura(e.target.value)}
+            />
+            <div className="rdo-assinar-thumbs">
+              <button
+                type="button"
+                className="btn btn-transparent"
+                title="Positivo"
+                onClick={() => setTipoComentarioAssinatura(1)}
+              >
+                <i
+                  className={
+                    tipoComentarioAssinatura === 1 ? 'fa fa-thumbs-up' : 'fa fa-thumbs-o-up'
+                  }
+                  aria-hidden
+                />
+              </button>
+              <button
+                type="button"
+                className="btn btn-transparent"
+                title="Negativo"
+                onClick={() => setTipoComentarioAssinatura(2)}
+              >
+                <i
+                  className={
+                    tipoComentarioAssinatura === 2 ? 'fa fa-thumbs-down' : 'fa fa-thumbs-o-down'
+                  }
+                  aria-hidden
+                />
+              </button>
+            </div>
+          </div>
+          <div className="rdo-modal-footer">
+            <button
+              type="button"
+              className="btn btn-simple"
+              onClick={() => setCommentModalRdo(null)}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn btn-default btn-simple"
+              disabled={assinando}
+              onClick={() => {
+                if (!commentModalRdo) return
+                void confirmarEAssinar(
+                  commentModalRdo,
+                  comentarioAssinatura,
+                  tipoComentarioAssinatura,
+                )
+              }}
+            >
+              Adicionar
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : null}
+    </>,
   )
 }

@@ -124,6 +124,93 @@ public class RdoCadastroQueryService
         return new RdoCadastroEtapasDto { Etapas = etapas };
     }
 
+    public async Task<RdoCadastroEditDto?> GetEditAsync(
+        int obraId,
+        int idRdo,
+        CancellationToken cancellationToken)
+    {
+        var row = await _context.Rdos.AsNoTracking()
+            .Where(r => r.RdoIdRdo == idRdo && r.RdoIdObra == obraId)
+            .Select(r => new
+            {
+                r.RdoIdRdo,
+                r.RdoDtRdo,
+                r.RdoIdStatus,
+                r.RdoIdImprodutividade,
+                Comentario = (string?)r.RdoDsComentarioGeracao,
+                ClimaManha = (string?)r.RdoDsClimaManha,
+                ClimaTarde = (string?)r.RdoDsClimaTarde,
+                ClimaNoite = (string?)r.RdoDsClimaNoite,
+                ChuvaManha = (string?)r.RdoDsChuvaManha,
+                ChuvaTarde = (string?)r.RdoDsChuvaTarde,
+                ChuvaNoite = (string?)r.RdoDsChuvaNoite,
+                TipoGeracao = (string?)r.RdoTpComentarioGeracao,
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (row == null)
+        {
+            return null;
+        }
+
+        var imp = await _context.Improdutividades.AsNoTracking()
+            .Where(i => i.ImpIdImprodutividade == row.RdoIdImprodutividade)
+            .Select(i => new
+            {
+                i.ImpStClima,
+                i.ImpStMaterial,
+                i.ImpStParalizacao,
+                i.ImpStEquipamento,
+                i.ImpStContratante,
+                i.ImpStFornecedores,
+                i.ImpStMaodeobra,
+                i.ImpStProjeto,
+                i.ImpStPlanejamento,
+                i.ImpStAcidentes,
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        var tarefaIds = await _context.RdoTarefas.AsNoTracking()
+            .Where(t => t.RtaIdRdo == idRdo)
+            .Select(t => t.RtaIdTarefa)
+            .ToListAsync(cancellationToken);
+
+        var imagemIds = await _context.RdoImagens.AsNoTracking()
+            .Where(i => i.RimIdRdo == idRdo)
+            .Select(i => i.RimIdImagem)
+            .ToListAsync(cancellationToken);
+
+        var tp = (row.TipoGeracao ?? "").Trim().ToUpperInvariant();
+        var tipoGeracao = tp == "P" ? 1 : tp == "N" ? 2 : 0;
+
+        return new RdoCadastroEditDto
+        {
+            IdRdo = row.RdoIdRdo,
+            DataRdo = row.RdoDtRdo.ToString("dd/MM/yyyy", PtBr),
+            Comentario = row.Comentario ?? "",
+            StatusRdo = row.RdoIdStatus,
+            ClimaManha = row.ClimaManha ?? "",
+            ClimaTarde = row.ClimaTarde ?? "",
+            ClimaNoite = row.ClimaNoite ?? "",
+            ChuvaManha = row.ChuvaManha ?? "",
+            ChuvaTarde = row.ChuvaTarde ?? "",
+            ChuvaNoite = row.ChuvaNoite ?? "",
+            TipoComentarioGeracao = tipoGeracao,
+            ImprodutividadeCondicoesClimaticas = imp?.ImpStClima ?? false,
+            ImprodutividadeMateriais = imp?.ImpStMaterial ?? false,
+            ImprodutividadeParalizacoes = imp?.ImpStParalizacao ?? false,
+            ImprodutividadeEquipamentos = imp?.ImpStEquipamento ?? false,
+            ImprodutividadeContratante = imp?.ImpStContratante ?? false,
+            ImprodutividadeFornecedores = imp?.ImpStFornecedores ?? false,
+            ImprodutividadeMaodeObra = imp?.ImpStMaodeobra ?? false,
+            ImprodutividadeProjeto = imp?.ImpStProjeto ?? false,
+            ImprodutividadePlanejamento = imp?.ImpStPlanejamento ?? false,
+            ImprodutividadeAcidente = imp?.ImpStAcidentes ?? false,
+            ListaTarefaIds = tarefaIds,
+            ListaImagemIds = imagemIds,
+        };
+    }
+
     private async Task<Dictionary<int, int>> LoadColaboradorCountsAsync(
         List<int> tarefaIds,
         CancellationToken cancellationToken)

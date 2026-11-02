@@ -43,7 +43,7 @@ UUID: pasta `%USERPROFILE%\.cursor\projects\<slug>\agent-transcripts\<UUID>\`
 | **EDI / token** | `docs/edi-token-projeto/`, evolução produto pós-PoC | Reescrever proposta FAPESC; Loja; Dimas backlog |
 
 **Pontes:**  
-- Loja×Sistema: `docs/ponte-loja-sistema-assinatura.md`  
+- Loja×Sistema: `docs/ponte-loja-sistema-assinatura.md` · skill `ponte-loja-sistema-rdo` · DNA/grupos: `docs/migracao/cms-grupo-menu-pagina-prod.md` · fichas de tela (Migração): `docs/manual-frontend-rdo-equipamentos-prod-core-mobile.md` **§13**  
 - EDI×FAPESC: `docs/edi-token-projeto/README.md`
 
 ---

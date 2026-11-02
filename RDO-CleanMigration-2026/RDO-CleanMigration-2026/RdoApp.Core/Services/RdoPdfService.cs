@@ -127,7 +127,8 @@ public class RdoPdfService
 
         var hasImagens = await _context.RdoImagens.AsNoTracking()
             .AnyAsync(ri => ri.RimIdRdo == idRdo, cancellationToken);
-        gerarRelatorioFotografico = gerarRelatorioFotografico && hasImagens;
+        // Prod: se há rdo_imagem, o relatório fotográfico entra mesmo sem o flag do cliente.
+        gerarRelatorioFotografico = hasImagens || gerarRelatorioFotografico;
 
         var obraRow = await _context.Obras.AsNoTracking()
             .Where(o => o.ObrIdObra == rdo.RdoIdObra)
@@ -316,12 +317,15 @@ public class RdoPdfService
                         }
                     });
 
-                    page.Footer().AlignRight().Text(t =>
+                    page.Footer().Row(row =>
                     {
-                        t.Span("RDO App  ·  ").FontSize(8).FontColor("#888");
-                        t.CurrentPageNumber().FontSize(8).FontColor("#888");
-                        t.Span(" / ").FontSize(8).FontColor("#888");
-                        t.TotalPages().FontSize(8).FontColor("#888");
+                        row.RelativeItem().AlignLeft().Text("RDO App © 2026").FontSize(8).FontColor("#555");
+                        row.RelativeItem().AlignRight().Text(t =>
+                        {
+                            t.CurrentPageNumber().FontSize(8).Bold().FontColor("#333");
+                            t.Span(" de ").FontSize(8).Bold().FontColor("#333");
+                            t.TotalPages().FontSize(8).Bold().FontColor("#333");
+                        });
                     });
                 });
             }).GeneratePdf();
@@ -867,6 +871,7 @@ public class RdoPdfService
             where rt.RtaIdRdo == idRdo
             select new
             {
+                t.TarIdTarefa,
                 TarDsTarefa = (string?)t.TarDsTarefa,
                 TarDsComentario = (string?)t.TarDsComentario,
                 SttDsStatus = (string?)st.SttDsStatus,
@@ -874,17 +879,19 @@ public class RdoPdfService
             }
         ).ToListAsync(cancellationToken);
 
-        // homol_rdoapp ainda não tem tar_dt_medicao_horimetro_* (prod sim). PDF mostra Hi/Hf/Ht vazios até o schema alinhar.
+        var horimetro = await TryLoadHorimetroAsync(rows.Select(r => r.TarIdTarefa).ToList(), cancellationToken);
+
         foreach (var item in rows.OrderBy(o => o.EtaDsEtapa).ThenBy(o => o.TarDsTarefa))
         {
+            horimetro.TryGetValue(item.TarIdTarefa, out var h);
             dt.Rows.Add(
                 Str(item.TarDsTarefa),
                 Str(item.TarDsComentario),
                 Str(item.SttDsStatus),
                 Str(item.EtaDsEtapa),
-                "",
-                "",
-                "");
+                h.Hi ?? "",
+                h.Hf ?? "",
+                h.Ht ?? "");
         }
 
         return dt;
@@ -1072,6 +1079,7 @@ public class RdoPdfService
 
         var uploadsRoot = _configuration["FileStorage:UploadsRoot"];
         var webRoot = _env.WebRootPath;
+        var contentRoot = _env.ContentRootPath;
 
         for (var i = 0; i < linhas.Count;)
         {
@@ -1079,7 +1087,7 @@ public class RdoPdfService
             var batch = new List<(string Nome, byte[] Bytes, string Id)>();
             while (i < linhas.Count && batch.Count < 4 && linhas[i].NomeTarefa == nome)
             {
-                var bytes = LoadImageBytes(linhas[i].ImaDsCaminho, uploadsRoot, webRoot);
+                var bytes = LoadImageBytes(linhas[i].ImaDsCaminho, uploadsRoot, webRoot, contentRoot);
                 batch.Add((linhas[i].NomeTarefa, bytes, linhas[i].RimIdImagem.ToString()));
                 i++;
             }
@@ -1099,35 +1107,99 @@ public class RdoPdfService
         return dt;
     }
 
-    private static byte[] LoadImageBytes(string? caminho, string? uploadsRoot, string? webRoot)
+    private async Task<Dictionary<int, (string Hi, string Hf, string Ht)>> TryLoadHorimetroAsync(
+        List<int> tarefaIds,
+        CancellationToken cancellationToken)
+    {
+        var map = new Dictionary<int, (string, string, string)>();
+        if (tarefaIds.Count == 0)
+        {
+            return map;
+        }
+
+        try
+        {
+            var ids = string.Join(",", tarefaIds.Distinct());
+            var sql =
+                "SELECT tar_id_tarefa AS TarId, tar_dt_medicao_horimetro_inicial AS Hi, " +
+                "tar_dt_medicao_horimetro_final AS Hf, tar_dt_medicao_horimetro_total AS Ht " +
+                "FROM tarefa WHERE tar_id_tarefa IN (" + ids + ")";
+            var rows = await _context.Database
+                .SqlQueryRaw<HorimetroSqlRow>(sql)
+                .ToListAsync(cancellationToken);
+
+            foreach (var row in rows)
+            {
+                map[row.TarId] = (
+                    FormatHorimetro(row.Hi),
+                    FormatHorimetro(row.Hf),
+                    FormatHorimetro(row.Ht));
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Horímetro indisponível neste catálogo — Hi/Hf/Ht vazios no PDF.");
+        }
+
+        return map;
+    }
+
+    private static string FormatHorimetro(float? value) =>
+        value.HasValue ? value.Value.ToString("N", HorimetroFormat) : "";
+
+    private sealed class HorimetroSqlRow
+    {
+        public int TarId { get; set; }
+        public float? Hi { get; set; }
+        public float? Hf { get; set; }
+        public float? Ht { get; set; }
+    }
+
+    private static byte[] LoadImageBytes(string? caminho, string? uploadsRoot, string? webRoot, string? contentRoot)
     {
         if (string.IsNullOrWhiteSpace(caminho))
         {
             return Array.Empty<byte>();
         }
 
-        var rel = caminho.Replace('\\', '/');
+        var rel = caminho.Replace('\\', '/').Trim();
         if (!rel.StartsWith('/'))
         {
             rel = "/" + rel;
         }
 
-        string? physical = null;
-        if (!string.IsNullOrWhiteSpace(uploadsRoot) && rel.StartsWith("/Uploads/", StringComparison.OrdinalIgnoreCase))
+        var underUploads = rel.StartsWith("/Uploads/", StringComparison.OrdinalIgnoreCase)
+            ? rel["/Uploads/".Length..]
+            : rel.TrimStart('/');
+
+        var candidates = new List<string>();
+        void Add(string? root, string tail)
         {
-            physical = Path.Combine(uploadsRoot.TrimEnd('\\', '/'), rel.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-        }
-        else if (!string.IsNullOrWhiteSpace(webRoot))
-        {
-            physical = Path.Combine(webRoot, rel.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                return;
+            }
+
+            candidates.Add(Path.Combine(root.TrimEnd('\\', '/'), tail.Replace('/', Path.DirectorySeparatorChar)));
         }
 
-        if (physical == null || !File.Exists(physical))
+        Add(uploadsRoot, underUploads);
+        Add(uploadsRoot, rel.TrimStart('/'));
+        Add(webRoot, rel.TrimStart('/'));
+        Add(webRoot, underUploads);
+        Add(contentRoot, rel.TrimStart('/'));
+        Add(contentRoot, Path.Combine("Uploads", underUploads));
+        Add(contentRoot, Path.Combine("wwwroot", rel.TrimStart('/')));
+
+        foreach (var physical in candidates.Distinct(StringComparer.OrdinalIgnoreCase))
         {
-            return Array.Empty<byte>();
+            if (File.Exists(physical))
+            {
+                return File.ReadAllBytes(physical);
+            }
         }
 
-        return File.ReadAllBytes(physical);
+        return Array.Empty<byte>();
     }
 
     private static DataTable BuildDadosRdoTable(Rdo rdo, Obra obra, string statusLabel)

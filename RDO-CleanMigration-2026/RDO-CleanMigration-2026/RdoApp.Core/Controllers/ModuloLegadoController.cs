@@ -8,6 +8,13 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class ModuloLegadoController : Controller
 {
+    private readonly IWebHostEnvironment _env;
+
+    public ModuloLegadoController(IWebHostEnvironment env)
+    {
+        _env = env;
+    }
+
     [HttpGet("/colaborador/index")]
     public IActionResult Colaborador() =>
         Stub("Colaboradores", "#/colaborador/index", "Listagem e cadastro de colaboradores (M7+).");
@@ -93,13 +100,7 @@ public class ModuloLegadoController : Controller
     [HttpGet("/chart/tarefa")]
     [HttpGet("/chart/comentario")]
     public IActionResult ChartSubmodule() =>
-        EmMigracaoPage.Render(
-            this,
-            "Dashboard geral (detalhe)",
-            "Sub-rota do módulo Chart em migração (M5+).",
-            voltarUrl: "/Chart/Index",
-            voltarRotulo: "Dashboard geral",
-            prodRef: "#/chart/*");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Dashboard geral");
 
     // Não mapear GET /rdo/index → Redirect /Rdo/Index: rotas case-insensitive repetem 302 (F12 Location=/Rdo/Index).
     // Listagem RDO: RdoController.Index · P5a homolog-p5-rdo-tentativas.md

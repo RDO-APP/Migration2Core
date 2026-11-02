@@ -1,6 +1,6 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-10-30  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-02  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).
@@ -30,7 +30,8 @@ Legenda **Stack:** **L** = só prod · **M** = moderno Core · **H** = híbrido 
 | **P5a** `/Rdo/Index` | React SPA | BS5 + `rdo-index.css` + grid/filtros estilo prod | Mesma estratégia M5 web | **Agora:** **W3** / **UI-M1** (ícones PDF/assinar) · **M7** ações · **UI-M3:** layout sem BS legado |
 | **P5a** `/Rdo/Cadastro` | React SPA (**M7 7a** · **7a-P5 ☑ T7h**) | BS5 + `rdo-cadastro.css` + radios/grid legado | Paridade cadastro novo RDO — gap: [`m7-rdo-cadastro-paridade-homolog-prod.md`](m7-rdo-cadastro-paridade-homolog-prod.md) | **M7-FOTOS-01/02** (thumbs + save imagens) · **7b–7d** · **UI-M3** |
 | **P4** Nova medição | **Inexistente** homolog | Prod: modal BS3 + Angular | Escopo M7; Kiro quebrou ao trocar BS/JS cedo | **M7+:** modal em React (stack **H** primeiro) · **UI-M3:** componente/modal moderno |
-| **Stubs** Chart, Dashboard, Efetivo, Tarefa/*, Obra/Cadastro… | Razor `EmMigracao.cshtml` | BS5 mínimo num card | Placeholder até SPA+BFF de cada rota ([`m5-web-paridade-prod-ordem.md`](m5-web-paridade-prod-ordem.md)) | **M5 web #2–#3** Chart/Dashboard · **M7** cadastros/listagens · stub some ao entregar SPA · **UI-M3** não prioriza stub |
+| **P5a** `/Chart/Index` · `/Dashboard/Index` | React SPA + BFF (smoke Lucio **02/nov**) | CSS de paridade (não Highcharts) | M5 web #2/#3 no ar | **DOC-FICHAS** quando a tela for sprint · polish Highcharts se o smoke pedir · **UI-M3** depois |
+| **Stubs** Efetivo, Tarefa/*, Obra/Cadastro… | Razor `EmMigracao.cshtml` | BS5 mínimo num card | Placeholder até SPA+BFF ([`m5-web-paridade-prod-ordem.md`](m5-web-paridade-prod-ordem.md)) | **M7** fila #5 Obra cadastro → #6 Efetivo · stub some ao entregar SPA |
 | **Shell** header/menu (P2–P5a) | `OperadorShell` + `header.css` / `operador-shell.css` | FA/fontello parcial | RBAC + nav prod | **M4.7g / UI-M2d** drawer · **UI-M1/M2c** ícones · **UI-M3** tokens |
 
 **Gates UI-M3 (Fase B — trocar motor visual):** (1) **M4.7 ☑** + smoke P2/P3 · (2) **M7** mapeou modais/ações principais · (3) branch dedicada · ordem **Escolher → Cards → RDO → Login** · ver [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md).
@@ -92,6 +93,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M5** | Login: smoke Esqueci senha SMTP homolog | P | M4.8 | ☐ |
 | **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core · mapa `LegacyOperadorRoutes` + `ModuloLegadoController` **2026-10-26** | M | **M5** + trilha **M4.7g** stubs | 🟡 smoke G5 |
 | **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod `main.js` + modal) | M | **M7** · não UI-M3 | ☐ |
+| **DOC-FICHAS** | Completar fichas de tela (manual **§13**: Chegada / Botões / Saída). **1/≈38** feita (P5a RDOs). **Não** é gate de migração — preencher **quando a tela entrar na sprint**; P6b no M10 | P | fim / sob demanda | ☐ **adiado** · casca §13.0 parcial |
 
 **Adiado de propósito (não fazer no meio do M4):**
 
