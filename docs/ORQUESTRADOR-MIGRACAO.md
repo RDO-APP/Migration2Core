@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-02 ~22:33 — Git **`95ec8b5`** · Chart **C1–C4** ☑ Lucio (☰ Print/PNG/JPEG/PDF/SVG) · Lembrar-me CPF  
+**Atualizado:** 2026-11-03 ~05:55 — Chart **C1–C8** ☑ Lucio (dias/comentários/tarefas + número à direita + ☰ maior)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -120,7 +120,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — outras rotas `/chart/*` (tiles) · **DOC-FICHAS** backlog.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **olho/lápis** card P3 (`/Tarefa/Cadastro`) · M7.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -139,7 +139,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M2** | **100** | **FECHADO** | — |
 | **M3** | **95** | **FECHADO** | E2E passos 6–7 opcional |
 | **M4** | **88** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ | Smoke **G5/G6** · **UI-M1/M2c** · UI-M5 senha · congela EQ-W formal |
-| **M5 web** | **80** | **#1** RDO (toastr A5 ☑) · **#2** Chart **C1–C4** ☑ · **#3** Dashboard · Lembrar-me CPF | Outras rotas `/chart/*` (dia/tarefa/comentário polish) · **DOC-FICHAS** |
+| **M5 web** | **88** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard | Primeira ação real do **card P3** (olho/lápis) · **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
 | **M7+** | **55** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar (confirm + toastr) | smoke 7c/7d · polish PDF · **P4** · **P6a** · **não** P6b |
@@ -410,7 +410,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **C4** ☰ ☑ Lucio **02/nov ~22:33**. Próximo: polish outras rotas `/chart/*` (tiles) se o smoke pedir; senão **DOC-FICHAS** backlog.
+1. **C5–C8** ☑. Próximo produto: **olho/lápis** do card de tarefa (`/Tarefa/Cadastro`) — **M7**. **P4** (+) depois.
 2. Log [`migracao/homolog-p5a-chart-tentativas.md`](migracao/homolog-p5a-chart-tentativas.md).
 3. **DOC-FICHAS** — backlog; **não** agora.
 4. **#29 / CMS** — só doc; **não** neste ciclo.

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchGraficoResumo } from '../api/graficoApi'
 import type { GraficoResumo } from '../api/equipamentos-api.types'
-import { buildGroupedChartSvg, buildSimpleBarSvg } from '../chart/chartExport'
+import { buildGroupedChartSvg } from '../chart/chartExport'
 import { ChartExportMenu } from '../components/ChartExportMenu'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
@@ -106,7 +106,44 @@ const RDO_SERIES = [
   { key: 'a_gerar', name: 'A Gerar', color: '#59922B' },
 ] as const
 
+/** Ordem e cores = prod `ConstruirHighChartDiaImprodutivo`. */
+const IMP_SERIES = [
+  { key: 'imp_clima', name: 'Clima', color: '#254B59' },
+  { key: 'imp_falta_material', name: 'Materiais', color: '#92819F' },
+  { key: 'imp_paralizacao', name: 'Paralizações', color: '#B5BBA8' },
+  { key: 'imp_acidente', name: 'Acidentes', color: '#B8860B' },
+  { key: 'imp_contratante', name: 'Contratante', color: '#FF7F50' },
+  { key: 'imp_maodeobra', name: 'Mão de Obra', color: '#FACD7F' },
+  { key: 'imp_projeto', name: 'Projeto', color: '#59922B' },
+  { key: 'imp_planejamento', name: 'Planejamento', color: '#8A2BE2' },
+  { key: 'imp_fornecedores', name: 'Fornecedores', color: '#84CCF2' },
+  { key: 'imp_equipamento', name: 'Equipamento', color: '#00FFFF' },
+] as const
+
+/** Prod `ConstruirHighchartComentario`. */
+const COM_SERIES = [
+  { key: 'positivo_contratada', name: 'Positivos Contratada', color: '#254B59' },
+  { key: 'positivo_contratante', name: 'Positivos Contratante', color: '#84CCF2' },
+  { key: 'negativo_contratada', name: 'Negativos Contratada', color: '#92819F' },
+  { key: 'negativo_contratante', name: 'Negativos Contratante', color: '#FACD7F' },
+] as const
+
+/** Prod `ConstruirHighChartTarefa`. */
+const TAR_SERIES = [
+  { key: 'canceladas', name: 'Canceladas', color: '#254B59' },
+  { key: 'pausadas', name: 'Pausadas', color: '#84CCF2' },
+  { key: 'atraso_inicio', name: 'Início em Atraso', color: '#92819F' },
+  { key: 'atraso_fim', name: 'Fim em Atraso', color: '#FACD7F' },
+  { key: 'planejada', name: 'Planejada', color: '#B5BBA8' },
+  { key: 'em_execucao', name: 'Em Execução', color: '#59922B' },
+  { key: 'finalizada', name: 'Finalizada', color: '#00FFFF' },
+] as const
+
 type RdoSerieKey = (typeof RDO_SERIES)[number]['key']
+type ImpSerieKey = (typeof IMP_SERIES)[number]['key']
+type ComSerieKey = (typeof COM_SERIES)[number]['key']
+type TarSerieKey = (typeof TAR_SERIES)[number]['key']
+type ChartSerieDef = { key: string; name: string; color: string }
 
 type RdoObraBar = {
   obr_ds_obra: string
@@ -115,10 +152,6 @@ type RdoObraBar = {
   assinado_contratante: number
   gerado: number
   a_gerar: number
-}
-
-function serieValue(row: RdoObraBar, key: RdoSerieKey): number {
-  return Number(row[key] ?? 0)
 }
 
 function rdoExportSvg(rows: RdoObraBar[], visible: Record<RdoSerieKey, boolean>): string {
@@ -139,29 +172,62 @@ function rdoExportSvg(rows: RdoObraBar[], visible: Record<RdoSerieKey, boolean>)
   )
 }
 
-function RdoGroupedBars({
+function groupedRowsFrom(
+  rows: { obr_ds_obra: string }[],
+  series: readonly ChartSerieDef[],
+): { label: string; values: Record<string, number> }[] {
+  return rows.map((r) => ({
+    label: r.obr_ds_obra,
+    values: Object.fromEntries(
+      series.map((s) => [s.key, Number((r as Record<string, unknown>)[s.key] ?? 0)]),
+    ),
+  }))
+}
+
+function groupedExport(
+  title: string,
+  rows: { obr_ds_obra: string }[],
+  series: readonly ChartSerieDef[],
+  visible: Record<string, boolean>,
+): string {
+  return buildGroupedChartSvg(
+    title,
+    groupedRowsFrom(rows, series),
+    series.map((s) => ({ key: s.key, name: s.name, color: s.color })),
+    visible,
+  )
+}
+
+function impExportSvg(
+  rows: GraficoResumo['diasImprodutivos'],
+  visible: Record<ImpSerieKey, boolean>,
+): string {
+  return groupedExport('DIAS IMPRODUTIVOS', rows, IMP_SERIES, visible)
+}
+
+function GroupedBars({
   rows,
+  series,
   visible,
 }: {
-  rows: RdoObraBar[]
-  visible: Record<RdoSerieKey, boolean>
+  rows: { label: string; values: Record<string, number> }[]
+  series: readonly ChartSerieDef[]
+  visible: Record<string, boolean>
 }) {
-  const active = RDO_SERIES.filter((s) => visible[s.key])
-  const max = Math.max(1, ...rows.flatMap((r) => active.map((s) => Math.max(0, serieValue(r, s.key)))))
+  const active = series.filter((s) => visible[s.key])
+  const max = Math.max(1, ...rows.flatMap((r) => active.map((s) => Math.max(0, Number(r.values[s.key] ?? 0)))))
   return (
     <div className="chart-grouped">
       {rows.map((row) => (
-        <div key={row.obr_ds_obra} className="chart-obra-group">
-          <div className="chart-obra-name" title={row.obr_ds_obra}>
-            {row.obr_ds_obra}
+        <div key={row.label} className="chart-obra-group">
+          <div className="chart-obra-name" title={row.label}>
+            {row.label}
           </div>
           <div className="chart-obra-bars">
             {active.map((s) => {
-              const raw = serieValue(row, s.key)
+              const raw = Number(row.values[s.key] ?? 0)
               const n = Math.max(0, raw)
               const pct = (n / max) * 100
-              const inside = pct >= 14
-              const lightFill = s.key === 'gerado' || s.key === 'assinado_contratada' || s.key === 'assinado_contratante'
               return (
                 <div key={s.key} className="chart-h-bar">
                   <div className="chart-h-track">
@@ -169,15 +235,9 @@ function RdoGroupedBars({
                       className="chart-h-fill"
                       style={{ width: `${pct}%`, background: s.color }}
                       title={`${s.name}: ${raw}`}
-                    >
-                      {inside ? (
-                        <span className="chart-h-val-in" style={{ color: lightFill ? '#222' : '#fff' }}>
-                          {raw}
-                        </span>
-                      ) : null}
-                    </div>
+                    />
                   </div>
-                  {!inside ? <span className="chart-h-val-out">{raw}</span> : null}
+                  <span className="chart-h-val-out">{raw}</span>
                 </div>
               )
             })}
@@ -188,19 +248,25 @@ function RdoGroupedBars({
   )
 }
 
-function BarList({ items }: { items: { label: string; serie?: string; value: number }[] }) {
-  const max = Math.max(1, ...items.map((i) => i.value))
+function SeriesFilter({
+  series,
+  visible,
+  onToggle,
+  label,
+}: {
+  series: readonly ChartSerieDef[]
+  visible: Record<string, boolean>
+  onToggle: (key: string) => void
+  label: string
+}) {
   return (
-    <div className="chart-bars">
-      {items.map((i) => (
-        <div key={`${i.label}|${i.serie ?? ''}`} className="chart-bar-row">
-          <span className="chart-bar-obra">{i.label}</span>
-          <span className="chart-bar-serie">{i.serie ?? ''}</span>
-          <div className="chart-bar-track">
-            <div className="chart-bar-fill" style={{ width: `${(i.value / max) * 100}%` }} />
-          </div>
-          <span className="chart-bar-val">{i.value}</span>
-        </div>
+    <div className="chart-series-filter" aria-label={label}>
+      {series.map((s) => (
+        <label key={s.key}>
+          <input type="checkbox" checked={visible[s.key] !== false} onChange={() => onToggle(s.key)} />
+          <span className="chart-swatch" style={{ background: s.color }} />
+          {s.name}
+        </label>
       ))}
     </div>
   )
@@ -221,6 +287,33 @@ export function ChartIndexPage() {
     assinado_contratante: true,
     gerado: true,
     a_gerar: true,
+  })
+  const [impOn, setImpOn] = useState<Record<ImpSerieKey, boolean>>({
+    imp_clima: true,
+    imp_falta_material: true,
+    imp_paralizacao: true,
+    imp_acidente: true,
+    imp_contratante: true,
+    imp_maodeobra: true,
+    imp_projeto: true,
+    imp_planejamento: true,
+    imp_fornecedores: true,
+    imp_equipamento: true,
+  })
+  const [comOn, setComOn] = useState<Record<ComSerieKey, boolean>>({
+    positivo_contratada: true,
+    positivo_contratante: true,
+    negativo_contratada: true,
+    negativo_contratante: true,
+  })
+  const [tarOn, setTarOn] = useState<Record<TarSerieKey, boolean>>({
+    canceladas: true,
+    pausadas: true,
+    atraso_inicio: true,
+    atraso_fim: true,
+    planejada: true,
+    em_execucao: true,
+    finalizada: true,
   })
 
   function goChart(path: string) {
@@ -265,6 +358,23 @@ export function ChartIndexPage() {
     return data.rdosGerados.map((g) => {
       const a = data.rdosAtrasados.find((x) => x.obr_ds_obra === g.obr_ds_obra)
       return { ...g, atrasado: a?.dias_atraso ?? 0 }
+    })
+  }, [data])
+
+  const mergedTarefas = useMemo(() => {
+    if (!data) return []
+    return data.tarefas.map((t) => {
+      const st = data.statusTarefas.find((s) => s.obr_ds_obra === t.obr_ds_obra)
+      return {
+        obr_ds_obra: t.obr_ds_obra,
+        canceladas: t.canceladas,
+        pausadas: t.pausadas,
+        atraso_inicio: t.atraso_inicio,
+        atraso_fim: t.atraso_fim,
+        planejada: st?.planejada ?? 0,
+        em_execucao: st?.em_execucao ?? 0,
+        finalizada: st?.finalizada ?? 0,
+      }
     })
   }, [data])
 
@@ -555,25 +665,31 @@ export function ChartIndexPage() {
           </>
         ) : view === 'rdos' ? (
           <>
-            <div className="chart-series-filter" aria-label="Séries do gráfico">
-              {RDO_SERIES.map((s) => (
-                <label key={s.key}>
-                  <input
-                    type="checkbox"
-                    checked={serieOn[s.key]}
-                    onChange={() => setSerieOn((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
-                  />
-                  <span className="chart-swatch" style={{ background: s.color }} />
-                  {s.name}
-                </label>
-              ))}
-            </div>
+            <SeriesFilter
+              label="Séries do gráfico"
+              series={RDO_SERIES}
+              visible={serieOn}
+              onToggle={(key) => setSerieOn((prev) => ({ ...prev, [key]: !prev[key as RdoSerieKey] }))}
+            />
             <div className="chart-panel chart-plot">
               <div className="chart-panel-head">
                 <h4>RDO´s por obra</h4>
                 <ChartExportMenu filename="gestao-rdos" getSvg={() => rdoExportSvg(mergedRdos, serieOn)} />
               </div>
-              <RdoGroupedBars rows={mergedRdos} visible={serieOn} />
+              <GroupedBars
+                series={RDO_SERIES}
+                visible={serieOn}
+                rows={mergedRdos.map((r) => ({
+                  label: r.obr_ds_obra,
+                  values: {
+                    atrasado: r.atrasado,
+                    assinado_contratada: r.assinado_contratada,
+                    assinado_contratante: r.assinado_contratante,
+                    gerado: r.gerado,
+                    a_gerar: r.a_gerar,
+                  },
+                }))}
+              />
             </div>
             <div className="chart-panel">
               <h4>Tabela</h4>
@@ -608,65 +724,171 @@ export function ChartIndexPage() {
             </div>
           </>
         ) : view === 'dias' ? (
-          <div className="chart-panel">
-            <div className="chart-panel-head">
-              <h4>Dias improdutivos</h4>
-              <ChartExportMenu
-                filename="dias-improdutivos"
-                getSvg={() =>
-                  buildSimpleBarSvg(
-                    'DIAS IMPRODUTIVOS',
-                    data.diasImprodutivos.map((d) => ({ label: d.obr_ds_obra, value: improdutivoTotal(d) })),
-                  )
-                }
-              />
-            </div>
-            <BarList items={data.diasImprodutivos.map((d) => ({ label: d.obr_ds_obra, value: improdutivoTotal(d) }))} />
-          </div>
-        ) : view === 'comentario' ? (
-          <div className="chart-panel">
-            <div className="chart-panel-head">
-              <h4>Comentários</h4>
-              <ChartExportMenu
-                filename="comentarios"
-                getSvg={() =>
-                  buildSimpleBarSvg(
-                    'COMENTÁRIOS',
-                    data.comentarios.map((c) => ({
-                      label: c.obr_ds_obra,
-                      value:
-                        c.positivo_contratada +
-                        c.positivo_contratante +
-                        c.negativo_contratada +
-                        c.negativo_contratante,
-                    })),
-                  )
-                }
-              />
-            </div>
-            <BarList
-              items={data.comentarios.map((c) => ({
-                label: c.obr_ds_obra,
-                value: c.positivo_contratada + c.positivo_contratante + c.negativo_contratada + c.negativo_contratante,
-              }))}
+          <>
+            <SeriesFilter
+              label="Categorias de dias improdutivos"
+              series={IMP_SERIES}
+              visible={impOn}
+              onToggle={(key) => setImpOn((prev) => ({ ...prev, [key]: !prev[key as ImpSerieKey] }))}
             />
-          </div>
-        ) : (
-          <div className="chart-panel">
-            <div className="chart-panel-head">
-              <h4>Tarefas</h4>
-              <ChartExportMenu
-                filename="tarefas"
-                getSvg={() =>
-                  buildSimpleBarSvg(
-                    'TAREFAS',
-                    data.tarefas.map((t) => ({ label: t.obr_ds_obra, value: t.atraso_inicio })),
-                  )
-                }
+            <div className="chart-panel chart-plot">
+              <div className="chart-panel-head">
+                <h4>CATEGORIAS</h4>
+                <ChartExportMenu filename="dias-improdutivos" getSvg={() => impExportSvg(data.diasImprodutivos, impOn)} />
+              </div>
+              <GroupedBars
+                series={IMP_SERIES}
+                visible={impOn}
+                rows={data.diasImprodutivos.map((r) => ({
+                  label: r.obr_ds_obra,
+                  values: Object.fromEntries(IMP_SERIES.map((s) => [s.key, Number(r[s.key] ?? 0)])),
+                }))}
               />
             </div>
-            <BarList items={data.tarefas.map((t) => ({ label: t.obr_ds_obra, value: t.atraso_inicio }))} />
-          </div>
+            <div className="chart-panel">
+              <h4>Tabela</h4>
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Obra</th>
+                      <th>Clima</th>
+                      <th>Fornecedores</th>
+                      <th>Materiais</th>
+                      <th>Mão de Obra</th>
+                      <th>Paralizações</th>
+                      <th>Projeto</th>
+                      <th>Equipamento</th>
+                      <th>Planejamento</th>
+                      <th>Contratante</th>
+                      <th>Acidentes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.diasImprodutivos.map((d, i) => (
+                      <tr key={d.obr_ds_obra}>
+                        <td>{i + 1}</td>
+                        <td>{d.obr_ds_obra}</td>
+                        <td>{d.imp_clima}</td>
+                        <td>{d.imp_fornecedores}</td>
+                        <td>{d.imp_falta_material}</td>
+                        <td>{d.imp_maodeobra}</td>
+                        <td>{d.imp_paralizacao}</td>
+                        <td>{d.imp_projeto}</td>
+                        <td>{d.imp_equipamento}</td>
+                        <td>{d.imp_planejamento}</td>
+                        <td>{d.imp_contratante}</td>
+                        <td>{d.imp_acidente}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        ) : view === 'comentario' ? (
+          <>
+            <SeriesFilter
+              label="Séries de comentários"
+              series={COM_SERIES}
+              visible={comOn}
+              onToggle={(key) => setComOn((prev) => ({ ...prev, [key]: !prev[key as ComSerieKey] }))}
+            />
+            <div className="chart-panel chart-plot">
+              <div className="chart-panel-head">
+                <h4>COMENTÁRIOS</h4>
+                <ChartExportMenu
+                  filename="comentarios"
+                  getSvg={() => groupedExport('COMENTÁRIOS', data.comentarios, COM_SERIES, comOn)}
+                />
+              </div>
+              <GroupedBars series={COM_SERIES} visible={comOn} rows={groupedRowsFrom(data.comentarios, COM_SERIES)} />
+            </div>
+            <div className="chart-panel">
+              <h4>Tabela</h4>
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Obra</th>
+                      <th>Positivos Contratada</th>
+                      <th>Positivos Contratante</th>
+                      <th>Negativos Contratada</th>
+                      <th>Negativos Contratante</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.comentarios.map((c, i) => (
+                      <tr key={c.obr_ds_obra}>
+                        <td>{i + 1}</td>
+                        <td>{c.obr_ds_obra}</td>
+                        <td>{c.positivo_contratada}</td>
+                        <td>{c.positivo_contratante}</td>
+                        <td>{c.negativo_contratada}</td>
+                        <td>{c.negativo_contratante}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <SeriesFilter
+              label="Séries de tarefas"
+              series={TAR_SERIES}
+              visible={tarOn}
+              onToggle={(key) => setTarOn((prev) => ({ ...prev, [key]: !prev[key as TarSerieKey] }))}
+            />
+            <div className="chart-panel chart-plot">
+              <div className="chart-panel-head">
+                <h4>CATEGORIAS</h4>
+                <ChartExportMenu
+                  filename="tarefas"
+                  getSvg={() => groupedExport('TAREFAS', mergedTarefas, TAR_SERIES, tarOn)}
+                />
+              </div>
+              <GroupedBars series={TAR_SERIES} visible={tarOn} rows={groupedRowsFrom(mergedTarefas, TAR_SERIES)} />
+            </div>
+            <div className="chart-panel">
+              <h4>Tabela</h4>
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Obra</th>
+                      <th>Início em atraso</th>
+                      <th>Final em atraso</th>
+                      <th>Pausadas</th>
+                      <th>Canceladas</th>
+                      <th>Planejada</th>
+                      <th>Em Execução</th>
+                      <th>Finalizada</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mergedTarefas.map((t, i) => (
+                      <tr key={t.obr_ds_obra}>
+                        <td>{i + 1}</td>
+                        <td>{t.obr_ds_obra}</td>
+                        <td>{t.atraso_inicio}</td>
+                        <td>{t.atraso_fim}</td>
+                        <td>{t.pausadas}</td>
+                        <td>{t.canceladas}</td>
+                        <td>{t.planejada}</td>
+                        <td>{t.em_execucao}</td>
+                        <td>{t.finalizada}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </OperadorShell>

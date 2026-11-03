@@ -106,10 +106,11 @@
   margin-right: 8px;
 }
 .chart-export-btn {
-  width: 24px;
-  height: 22px;
+  width: 44px;
+  height: 40px;
   padding: 0;
-  border: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   background: #fff;
   cursor: pointer;
   display: flex;
@@ -120,9 +121,9 @@
 .chart-export-bars::before,
 .chart-export-bars::after {
   display: block;
-  width: 14px;
-  height: 2px;
-  background: #666;
+  width: 22px;
+  height: 3px;
+  background: #555;
   border-radius: 1px;
 }
 .chart-export-bars {
@@ -135,15 +136,15 @@
   left: 0;
 }
 .chart-export-bars::before {
-  top: -5px;
+  top: -8px;
 }
 .chart-export-bars::after {
-  top: 5px;
+  top: 8px;
 }
 .chart-export-menu {
   position: absolute;
   right: 0;
-  top: 26px;
+  top: 44px;
   z-index: 20;
   margin: 0;
   padding: 5px 0;
@@ -233,30 +234,25 @@
   flex: 1;
   min-width: 0;
   height: 14px;
+  overflow: hidden;
   background: #f0f0f0;
 }
 .chart-h-fill {
   height: 14px;
   min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 5px;
+  max-height: 14px;
+  overflow: hidden;
+  padding: 0;
   box-sizing: border-box;
-}
-.chart-h-val-in {
-  color: #fff;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
 }
 .chart-h-val-out {
   flex-shrink: 0;
   min-width: 2.25rem;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
+  line-height: 14px;
   color: #333;
+  text-align: right;
 }
 .chart-bars {
   padding: 8px 16px 14px;

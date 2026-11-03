@@ -34,7 +34,11 @@
 | **C2b** | **2026-11-02 ~18:52** · smoke Lucio **~20:07** | Datas «na memória» + colunas | sessionStorage + atraso 0 + nome **max 300px** + ellipsis | Datas/números **OK** (print 03/10/2019–02/11/2021). **Nome ainda cortado** («…ger…», «FEIRA DE SANT…») — 300px foi chute, não o tamanho do campo | **C2c** |
 | **C2c** | **2026-11-02 ~20:08** · smoke **~20:19** | Nome incompleto | max-content + série à parte | **Nome OK**. Ainda 2 linhas CSS ≠ gráfico prod | **C3** |
 | **C3** | **2026-11-02 ~20:27** · smoke Lucio **~21:27** | 5 faixas + valores; legenda fora | 1 obra = 1 grupo; 5 faixas **uma acima da outra** (Atrasados, Ass. Contratada, Ass. Contratante, Gerados, A Gerar). Número **em cada barra**. Checkboxes **fora** da caixa. Tabela embaixo. | **OK** | C4 ☰ |
-| **C4** | **2026-11-02 ~21:30** · smoke Lucio **~22:33** | Prints ① menu ☰ Print / PNG / JPEG / PDF / SVG. **Não** é C2. | Hambúrguer no canto do painel (sem Highcharts): Print + PNG/JPEG/PDF/SVG a partir de SVG das barras. Menu EN como prod. | **OK** | Outras rotas `/chart/*` tiles |
+| **C4** | **2026-11-02 ~21:30** · smoke Lucio **~22:33** | Prints ① menu ☰ Print / PNG / JPEG / PDF / SVG. **Não** é C2. | Hambúrguer no canto do painel (sem Highcharts): Print + PNG/JPEG/PDF/SVG a partir de SVG das barras. Menu EN como prod. | **OK** | C5 dias improdutivos |
+| **C5** | **2026-11-02 ~22:45** | `/chart/diaimprodutivo` era 1 barra soma | 10 faixas prod (Clima…Equipamento) + checkboxes fora + tabela + ☰ | **Pendente smoke** | C6/C7 |
+| **C6** | **2026-11-02 ~22:48** | `/chart/comentario` 1 barra soma | 4 faixas prod (pos/neg × contratada/contratante) + filtro + tabela + ☰ | **Pendente smoke** | — |
+| **C7** | **2026-11-02 ~22:48** · smoke Lucio **03/nov ~05:45** | `/chart/tarefa` 1 barra atraso_inicio | 7 faixas prod (canceladas…finalizada) + statusTarefas + tabela + ☰ | **OK** | C8 números/☰ |
+| **C8** | **2026-11-03 ~05:50** | Número **dentro** da faixa larga (73) estica a barra; faixa estreita número à direita; ☰ pequeno | Número **sempre** à direita, altura fixa 14px; ☰ 44×40 | **Pendente smoke** | — |
 
 ---
 
@@ -60,7 +64,7 @@ Prod Highcharts **pode** omitir série sem pontos. Homolog **não** deve omitir:
 2. **C2** estreitar colunas/barras.  
 3. **C3** filtro de séries fora da caixa + Contratante.  
 4. **C4** export.  
-5. Só então outras rotas do Dashboard geral (`/chart/diaimprodutivo`, tarefa, comentário, tiles).
+5. **C5** `/chart/diaimprodutivo` · **C6** comentário · **C7** tarefa.
 
 ---
 

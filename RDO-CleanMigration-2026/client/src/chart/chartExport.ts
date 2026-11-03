@@ -49,13 +49,16 @@ export function buildGroupedChartSvg(
   const groupPad = 10
   const groupH = Math.max(28, active.length * (barH + gapBar) + groupPad)
   const headerH = 44
-  const legendH = 28
-  const w = nameW + plotW + pad * 2
+  const legendCols = 5
+  const legendRows = Math.max(1, Math.ceil(active.length / legendCols))
+  const legendH = 10 + legendRows * 18
+  const w = Math.max(nameW + plotW + pad * 2 + 40, pad + legendCols * 170)
   const h = headerH + legendH + rows.length * groupH + pad
   const legend = active
     .map((s, i) => {
-      const x = pad + i * 150
-      return `<rect x="${x}" y="${headerH + 6}" width="10" height="10" fill="${s.color}"/><text x="${x + 14}" y="${headerH + 15}" font-size="11" fill="#333">${esc(s.name)}</text>`
+      const x = pad + (i % legendCols) * 170
+      const y = headerH + 6 + Math.floor(i / legendCols) * 18
+      return `<rect x="${x}" y="${y}" width="10" height="10" fill="${s.color}"/><text x="${x + 14}" y="${y + 9}" font-size="11" fill="#333">${esc(s.name)}</text>`
     })
     .join('')
   const groups = rows
@@ -66,18 +69,12 @@ export function buildGroupedChartSvg(
         .map((s, si) => {
           const raw = Number(row.values[s.key] ?? 0)
           const n = Math.max(0, raw)
-          const bw = (n / max) * (plotW - 36)
+          const trackW = plotW - 36
+          const bw = (n / max) * trackW
           const y = y0 + si * (barH + gapBar)
           const x = pad + nameW
-          const inside = bw >= 40
-          const labelFill =
-            s.key === 'gerado' || s.key === 'assinado_contratada' || s.key === 'assinado_contratante'
-              ? '#222'
-              : '#fff'
-          const val = inside
-            ? `<text x="${x + bw - 4}" y="${y + 11}" font-size="11" text-anchor="end" fill="${labelFill}">${raw}</text>`
-            : `<text x="${x + bw + 6}" y="${y + 11}" font-size="11" fill="#333">${raw}</text>`
-          return `<rect x="${x}" y="${y}" width="${plotW - 36}" height="${barH}" fill="#f0f0f0"/><rect x="${x}" y="${y}" width="${bw}" height="${barH}" fill="${s.color}"/>${val}`
+          const val = `<text x="${x + trackW + 8}" y="${y + 11}" font-size="11" fill="#333">${raw}</text>`
+          return `<rect x="${x}" y="${y}" width="${trackW}" height="${barH}" fill="#f0f0f0"/><rect x="${x}" y="${y}" width="${bw}" height="${barH}" fill="${s.color}"/>${val}`
         })
         .join('')
       return `${name}${bars}`
