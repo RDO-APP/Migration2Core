@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-03 ~05:55 — Chart **C1–C8** ☑ Lucio (dias/comentários/tarefas + número à direita + ☰ maior)  
+**Atualizado:** 2026-11-03 ~05:55 — Git **`18c1d45`** · Chart **C1–C8** ☑ Lucio (dias/comentários/tarefas + número à direita + ☰ maior)  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
