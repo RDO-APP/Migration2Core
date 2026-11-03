@@ -15,6 +15,20 @@ public class ChartController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index() =>
-        OperadorSpaEntry.ServeSpaIndex(this, _env, "Dashboard geral");
+    public IActionResult Index() => Spa();
+
+    [HttpGet]
+    public IActionResult Rdos() => Spa();
+
+    [HttpGet]
+    public IActionResult DiaImprodutivo() => Spa();
+
+    [HttpGet]
+    public IActionResult Tarefa() => Spa();
+
+    [HttpGet]
+    public IActionResult Comentario() => Spa();
+
+    private IActionResult Spa() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Dashboard geral", requireObra: false);
 }

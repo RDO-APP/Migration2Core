@@ -90,7 +90,6 @@ public sealed class RdoCadastroSaveResultDto
     public string? ConfirmDetail { get; init; }
 }
 
-/// <summary>M7 7c — paridade prod <c>RdoModel.ObterRegistro</c>.</summary>
 public sealed class RdoCadastroEditDto
 {
     public int IdRdo { get; init; }

@@ -37,7 +37,6 @@
 | **T7f** | **2026-10-30 ~14:23** | ☐ SSM (credencial expirou) | **`index-CbCyhEWE.js`** P4c | Publish OK · zip local · redeploy após `aws login` | _pendente_ | Smoke bloco 1 itens 0–4 |
 | **T7g** | **2026-10-30 ~18:20** (BR) | ✅ D+E (fixes D2/chuva/TS) | bundle pós-fix | **GERAR RDO** · **Salvando…** · **`/Rdo/Index`** · POST **200** · linha **30/10/2026 Gerado** · QTD 0/0/0 | **E′** | **7a-P5** + **C6** |
 | **T7h** | **2026-10-30 ~18:43** (BR) | (local / pós-commit) | 7a-P5+C6 | **SELECIONAR TUDO OK** · **GERAR RDO** → listagem · thumbs **cinza** (sem img) · lupa modal vazio | **E′** | **M7-FOTOS** validar paths/Uploads + save `listaImagems` |
-| **T8** | **2026-11-02** | ver **A1–A5** em [`homolog-p5-lista-rdo-tentativas.md`](homolog-p5-lista-rdo-tentativas.md) | toastr Assinar | Chrome «diz» · print verde = **prod** · homolog **sem** faixa | **F-SPA** toastr | **A5** `rdo-toast` (não class BS `.toast`) |
 
 ### Classes de falha
 

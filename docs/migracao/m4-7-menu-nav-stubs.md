@@ -1,6 +1,6 @@
 # M4.7 / M5-nav — Menu drawer + botões P3 (B–D)
 
-**Atualizado:** 2026-11-01 · **Mapa href:** `RdoApp.Core/Infrastructure/LegacyOperadorRoutes.cs` · catálogo prod: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md)
+**Atualizado:** 2026-10-26 · **Mapa href:** `RdoApp.Core/Infrastructure/LegacyOperadorRoutes.cs` · **Stubs:** `ModuloLegadoController` + controllers Tarefa/Rdo/Chart/Efetivo/Obra/Etapa
 
 ## B — Menu principal
 
@@ -8,8 +8,7 @@
 |--------|------------------------|
 | `GET /api/bff/shell` → `menuPaginas[]` | `href` mapeado; entradas `#` omitidas |
 | Clique drawer | `goOperador(href)` → MVC **200** ou redirect SPA |
-| **Menu Colaborador** (prod: 9 itens) | Equipamentos, Colaboradores, Efetivo, Cards, RDOs, Obras, Empresas, Etapas, Paralisações |
-| **Menu Admin** (`col_st_admin`) | `/grupo/*`, `/menu/*`, `/pagina/*`, histórico → **P6b** — **não** SPA operador |
+| Admin (grupo, menu, páginas, histórico, relatórios) | `/grupo/*`, `/menu/*`, … → **Em migração** |
 | Card de tarefas (`#/pagina/index`) | → `/Tarefa/Cards` |
 | Colaborador alterar senha no menu | → `/Account/ChangePassword` |
 

@@ -85,27 +85,215 @@
   background: #f5f5f5;
   font-size: 14px;
 }
+.chart-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #f5f5f5;
+  position: relative;
+}
+.chart-panel-head h4 {
+  background: transparent;
+  flex: 1;
+}
+.chart-plot {
+  position: relative;
+}
+.chart-export {
+  position: relative;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+.chart-export-btn {
+  width: 24px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chart-export-bars,
+.chart-export-bars::before,
+.chart-export-bars::after {
+  display: block;
+  width: 14px;
+  height: 2px;
+  background: #666;
+  border-radius: 1px;
+}
+.chart-export-bars {
+  position: relative;
+}
+.chart-export-bars::before,
+.chart-export-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+.chart-export-bars::before {
+  top: -5px;
+}
+.chart-export-bars::after {
+  top: 5px;
+}
+.chart-export-menu {
+  position: absolute;
+  right: 0;
+  top: 26px;
+  z-index: 20;
+  margin: 0;
+  padding: 5px 0;
+  list-style: none;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #999;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+}
+.chart-export-menu button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 0.5em 1em;
+  font-size: 11px;
+  color: #333;
+  cursor: pointer;
+}
+.chart-export-menu button:hover {
+  background: #335cad;
+  color: #fff;
+}
+.chart-export-sep {
+  border-top: 1px solid #e6e6e6;
+  margin-top: 4px;
+  padding-top: 4px;
+}
 .chart-panel .table {
   margin: 0;
   font-size: 13px;
 }
+.chart-series-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #ddd;
+  font-size: 13px;
+}
+.chart-series-filter label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  cursor: pointer;
+  color: #333;
+}
+.chart-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.chart-grouped {
+  padding: 4px 8px 12px;
+}
+.chart-obra-group {
+  display: grid;
+  grid-template-columns: minmax(14rem, 22rem) minmax(12rem, 1fr);
+  gap: 8px 16px;
+  align-items: center;
+  padding: 8px 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+.chart-obra-name {
+  font-size: 12px;
+  line-height: 1.35;
+  color: #333;
+}
+.chart-obra-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.chart-h-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 16px;
+}
+.chart-h-track {
+  flex: 1;
+  min-width: 0;
+  height: 14px;
+  background: #f0f0f0;
+}
+.chart-h-fill {
+  height: 14px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+.chart-h-val-in {
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+}
+.chart-h-val-out {
+  flex-shrink: 0;
+  min-width: 2.25rem;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: #333;
+}
 .chart-bars {
-  padding: 8px 12px 16px;
+  padding: 8px 16px 14px;
+  width: 100%;
+  overflow-x: auto;
 }
 .chart-bar-row {
   display: grid;
-  grid-template-columns: 140px 1fr 40px;
-  gap: 8px;
+  grid-template-columns: max-content 7.5rem minmax(12rem, 22rem) 3.5rem;
+  column-gap: 12px;
   align-items: center;
-  margin: 6px 0;
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.25;
+}
+.chart-bar-obra {
+  white-space: nowrap;
+  overflow: visible;
+  color: #333;
+}
+.chart-bar-serie {
+  color: #666;
   font-size: 12px;
 }
+.chart-bar-val {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #333;
+}
 .chart-bar-track {
+  width: 100%;
+  max-width: 22rem;
   background: #eee;
-  height: 12px;
+  height: 10px;
 }
 .chart-bar-fill {
-  height: 12px;
+  height: 10px;
   background: #28496f;
 }
 .dashboard-slice {

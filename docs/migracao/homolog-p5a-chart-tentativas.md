@@ -17,9 +17,9 @@
 |--------|--------|----------------|
 | Filtro datas | Data Início / Data Fim (`__/__/____`) + aplica no Highcharts | Inputs `type="date"` + botão **Filtrar** (Lucio gostou — **manter**) |
 | Tile RDO´s Atrasados | Lista + ícone filtro no título | Lista + «Ver mais…» |
-| Gráfico GESTÃO | Highcharts barras empilhadas (obras × séries) | `BarList` CSS: **só** «gerados» e «atrasados» por obra (duas linhas) |
-| Legenda séries | **No gráfico** (cobre barras): Atrasados · Gerados · Assinados Contratada · A Gerar | **Não** há. Falta **Assinatura Contratante** na legenda prod (ver C0-2.2) |
-| Export | Hambúrguer Highcharts: Print · PNG · JPEG · PDF · SVG | **Não** há |
+| Gráfico GESTÃO | Highcharts barras empilhadas (obras × séries) | **C3** ☑ 5 faixas CSS (Atrasados, Ass. Contratada, Ass. Contratante, Gerados, A Gerar) |
+| Legenda séries | **No gráfico** (cobre barras): Atrasados · Gerados · Assinados Contratada · A Gerar | Checkboxes **fora** da caixa + Contratante |
+| Export | Hambúrguer Highcharts: Print · PNG · JPEG · PDF · SVG | **C4** ☑ mesmo menu EN (sem Highcharts; SVG local) |
 | Título | ACOMPANHAMENTO DE RDOs | **GESTÃO DE RDO's** — **ficar** |
 
 ---
@@ -29,10 +29,12 @@
 | # | Data/hora (BR) | Problema | Solução empregada | Resultado | Nova solução proposta |
 |---|----------------|----------|-------------------|-----------|------------------------|
 | **C0** | **2026-11-02 ~18:16** | Abertura da página. Prints ① prod × ② homolog. Datas «não parecem funcionar». Colunas largas. Legenda em cima do gráfico. Sem hambúrguer export. Sem Assinado Contratante na legenda prod | **Só inventário** — sem código | Baseline. Toastr RDO (**A5**) ☑ no mesmo smoke | **C1** datas (provar BFF + botão Filtrar) → **C2** largura das barras → **C3** séries/legenda **fora** da caixa → **C4** export |
-| **C1** | **2026-11-02 ~18:25** | Datas «não filtram» | Hipótese (a)+(c) **confirmadas**: (a) precisa **Filtrar** (Enter no form também); (c) SQL usava `BETWEEN início da obra AND data Fim` — **Data Início ignorada** (igual prod atual). Solução: `BETWEEN {ini} AND {fim}` nos counts de RDO/improdutivo/comentário; atraso vs **Data Fim** (não `now()`); texto «Período aplicado». Campos **mantidos** | **Pendente smoke** após publish (sem git pull — working tree local) | Smoke: mês 08/2020 → Filtrar → gerados/atrasados **mudam** vs 30 dias. Tarefas **não** usam data (igual prod). Depois **C2** |
-| **C2** | _pendente_ | **1 / 2.1** barras ② muito **largas** / afastadas vs ① apertadas | — | — | Estreitar `BarList` (altura da linha, gap, `max-width` da barra). Título **GESTÃO DE RDO's** não mexer |
-| **C3** | _pendente_ | **2.2** prod: legenda no gráfico impede leitura. Séries: Atrasados, Gerados, Assinados Contratada, A Gerar. **Não** aparece Assinado Contratante — Lucio pergunta se é porque está **zerado** | — | — | Legenda/filtro **fora** da caixa do gráfico (checkboxes). Incluir **Assinatura Contratante** mesmo se 0 (não esconder por zero). Empilhar as 5 séries (hoje ② só 2) |
-| **C4** | _pendente_ | **2.3** prod: menu ☰ Print chart / PNG / JPEG / PDF / SVG | — | — | Botão/☰ **fora** do plot: imprimir + baixar PNG (e PDF se der no mesmo ciclo). Sem Highcharts no C4 se CSV/canvas bastar |
+| **C1** | **2026-11-02 ~18:25** · smoke Lucio **~18:35** | Datas «não filtram» | `BETWEEN {ini} AND {fim}` + Filtrar | **OK** — Lucio: filtros OK | **C2** |
+| **C2** | **2026-11-02 ~18:36** · smoke **~18:51** | Barras largas | `BarList` 8px / max 640px / ellipsis | **Não OK** — print GESTÃO: nome cortado, valores longe, plot estreito demais; «30» em todas = tamanho da janela (C1 `DATEDIFF(ini,fim)`), parece filtro «na memória» | **C2b** |
+| **C2b** | **2026-11-02 ~18:52** · smoke Lucio **~20:07** | Datas «na memória» + colunas | sessionStorage + atraso 0 + nome **max 300px** + ellipsis | Datas/números **OK** (print 03/10/2019–02/11/2021). **Nome ainda cortado** («…ger…», «FEIRA DE SANT…») — 300px foi chute, não o tamanho do campo | **C2c** |
+| **C2c** | **2026-11-02 ~20:08** · smoke **~20:19** | Nome incompleto | max-content + série à parte | **Nome OK**. Ainda 2 linhas CSS ≠ gráfico prod | **C3** |
+| **C3** | **2026-11-02 ~20:27** · smoke Lucio **~21:27** | 5 faixas + valores; legenda fora | 1 obra = 1 grupo; 5 faixas **uma acima da outra** (Atrasados, Ass. Contratada, Ass. Contratante, Gerados, A Gerar). Número **em cada barra**. Checkboxes **fora** da caixa. Tabela embaixo. | **OK** | C4 ☰ |
+| **C4** | **2026-11-02 ~21:30** · smoke Lucio **~22:33** | Prints ① menu ☰ Print / PNG / JPEG / PDF / SVG. **Não** é C2. | Hambúrguer no canto do painel (sem Highcharts): Print + PNG/JPEG/PDF/SVG a partir de SVG das barras. Menu EN como prod. | **OK** | Outras rotas `/chart/*` tiles |
 
 ---
 

@@ -4,7 +4,7 @@ using RdoApp.Core.Controllers;
 namespace RdoApp.Core.Infrastructure;
 
 /// <summary>
-/// Entrada MVC → SPA React (P2/P3/P5a). Mesma regra de sessão/obra que Cards.
+/// Entrada MVC → SPA React (P2/P3/P5a). Cards/RDO/Dashboard da obra exigem obra; Chart geral não (P2).
 /// </summary>
 public static class OperadorSpaEntry
 {
@@ -22,12 +22,16 @@ public static class OperadorSpaEntry
         Controller controller,
         IWebHostEnvironment env,
         string? razorTitle = null,
-        Action<Controller>? configureRazorFallback = null)
+        Action<Controller>? configureRazorFallback = null,
+        bool requireObra = true)
     {
-        var obraRedirect = RequireObraOrRedirectToEscolher(controller, controller.HttpContext);
-        if (obraRedirect != null)
+        if (requireObra)
         {
-            return obraRedirect;
+            var obraRedirect = RequireObraOrRedirectToEscolher(controller, controller.HttpContext);
+            if (obraRedirect != null)
+            {
+                return obraRedirect;
+            }
         }
 
         var spaIndex = Path.Combine(env.WebRootPath, "app", "index.html");

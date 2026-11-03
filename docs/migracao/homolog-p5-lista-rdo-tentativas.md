@@ -27,21 +27,6 @@
 | **L14** | **2026-10-31 ~21:50** (código) | PDF gera, layout ≠ RDLC prod | QuestPDF espelha blocos do `Rdo_def.rdlc` (cabeçalho 2×3, tarefas agrupadas, MO∥equip, clima∥acidentes, comentários/assinaturas) | **Pendente smoke** | Prints 28/08 = ouro | Publish+SSM; comparar 28/08 homolog × prod |
 | **L15** | **2026-11-01** | Homolog 27/08: sem logo; faixa **RELATÓRIO FOTOGRÁFICO / Sem fotos neste RDO** (prod não tem) | Logo: `wwwroot/images/logo.jpg` + `Assets/images`; fotos só se houver bytes | **Pendente smoke** | Desktop = homolog; Downloads `(1)` = prod | Publish D→E |
 
----
-
-## Assinar / toastr «Registro assinado.» (2026-11-02)
-
-**Prod:** `MensagemConfirmacao` (modal **CONFIRMAÇÃO** NÃO/SIM) → `toastr.success("Registro assinado.")` canto direito.  
-**Print verde** enviado neste chat = **produção**, não homolog.
-
-| # | Data/hora (BR) | Sintoma | Solução empregada | Resultado | Nova solução proposta |
-|---|----------------|---------|-------------------|-----------|------------------------|
-| **A1** | **2026-11-01** (código 7d) · smoke Engenheiro Cta | Assinar OK; homolog com texto **inline** na lista | Tirar `rdo-info`; `showToast('success','Registro assinado.')` + `ToastHost` (`#toast-container` + class **`toast`**) | Código no Git. **Não** validou toastr no homolog neste dia | Deploy + smoke toastr |
-| **A2** | **2026-11-02 ~10:42–10:56** | Chart/Dashboard **no ar**. Assinar: popup Chrome **`homolog.sistema.rdoapp.com.br diz`**. Faixa verde do print **não** era homolog | 7d usava `window.confirm` | Assinar **grava**; popup nativo ≠ prod; **toastr homolog ausente** (print = prod) | Modal `MensagemConfirmacao` + toastr visível |
-| **A3** | **2026-11-02 ~11:17** (código) · D+E pedido | Chrome «diz» | `ConfirmDialog` (CONFIRMAÇÃO NÃO/SIM); rodapé **RDO App © 2026** | Modal pode ter ido no zip; **msg toastr ainda não** | Não depender do host dentro do header |
-| **A4** | **2026-11-02 ~11:42** (código) · smoke Lucio **~15:08** | «ainda não apareceu a msg» | `createPortal(…, document.body)` + fila de toast no módulo (`toast.ts`) | **Falhou** — faixa continua invisível | Hipótese: Bootstrap **5** `.toast:not(.show){display:none}` esconde o toastr |
-| **A5** | **2026-11-02 ~15:11** (código) · smoke Lucio **~18:15** | Mesmo sintoma A4 | **Não** usar class `toast`. Host `#rdo-toast-host` · `.rdo-toast` | **OK** — print homolog Villa Lobos: faixa verde «Registro assinado.» no canto | Fechado. Chart: [`homolog-p5a-chart-tentativas.md`](homolog-p5a-chart-tentativas.md) |
-
 ### Classes
 
 | Classe | Significado |

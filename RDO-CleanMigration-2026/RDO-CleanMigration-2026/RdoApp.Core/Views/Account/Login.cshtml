@@ -364,6 +364,20 @@
             const cpfInput = document.querySelector('input[name="Cpf"]');
             
             if (cpfInput) {
+                try {
+                    var savedCpf = localStorage.getItem('rdo.login.cpf');
+                    if (savedCpf) {
+                        var digits = savedCpf.replace(/\D/g, '').slice(0, 11);
+                        var masked = digits;
+                        masked = masked.replace(/(\d{3})(\d)/, '$1.$2');
+                        masked = masked.replace(/(\d{3})(\d)/, '$1.$2');
+                        masked = masked.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                        cpfInput.value = masked;
+                        var lembrar = document.getElementById('lembrarMe');
+                        if (lembrar) lembrar.checked = true;
+                    }
+                } catch (e) {}
+
                 cpfInput.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
                     
@@ -418,7 +432,15 @@
             
             if (loginForm && submitBtn) {
                 loginForm.addEventListener('submit', function(e) {
-                    // Add loading state
+                    try {
+                        var lembrar = document.getElementById('lembrarMe');
+                        var cpfField = document.querySelector('input[name="Cpf"]');
+                        if (lembrar && lembrar.checked && cpfField) {
+                            localStorage.setItem('rdo.login.cpf', (cpfField.value || '').replace(/\D/g, ''));
+                        } else {
+                            localStorage.removeItem('rdo.login.cpf');
+                        }
+                    } catch (err) {}
                     submitBtn.disabled = true;
                     submitBtn.classList.add('loading');
                     submitBtn.textContent = 'ACESSANDO';

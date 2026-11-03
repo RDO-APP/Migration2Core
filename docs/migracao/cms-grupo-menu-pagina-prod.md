@@ -1,8 +1,8 @@
 # CMS — Grupo, Menu, Página (RBAC = DNA do RDO App)
 
-**Trilha:** EQ-L (catálogo) · ponte Loja × Sistema · **não** é área da obra (P1–P5).  
-**Atualizado:** 2026-11-02 · prints prod + DBeaver · fichas manual §13.  
-**Orquestrador:** [`../ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § DNA · **Manual:** [`../manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §5 / §12 / **§13**.  
+**Trilha:** EQ-L (catálogo) · ponte Loja × Sistema · **não** é tela operador P1–P5.  
+**Atualizado:** 2026-11-01 · prints prod + DBeaver `homol_rdoapp` / `novo_rdoapp`.  
+**Orquestrador:** [`../ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § DNA · **Manual:** [`../manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §5 / §12.  
 **Ponte:** skill `ponte-loja-sistema-rdo`.
 
 Quem vê o CMS: `colaborador.col_st_admin == true` → `LoginModel.ObterMenuDefault` injeta Grupo, Menu, Página, Histórico **no login** (não depende da obra).
@@ -29,9 +29,9 @@ menu               →  drawer (9 itens iguais para todos os clientes)
 |------|------|----------------|
 | **1. Plano Loja** | `tipoLicenca` → `licenca.lic_ds_licenca` → `grupo.gru_id_licenca` | **Qual conjunto** de 5 templates existe para aquele tenant |
 | **2. Lado da obra** | `gru_st_contratante` 1=`t` Contratante · 2=`d` Contratada · `oco_st_contratante_contratada` | Quem assina de cada lado; filtro ao vincular colaborador |
-| **3. Subperfil** | nome do `grupo` + `gru_st_diretor` + GPA | Diretor / Engenheiro / **Operador Contratada** — **Assinar/Editar** e o resto das páginas |
+| **3. Subperfil** | nome do `grupo` + `gru_st_diretor` + GPA | Diretor / Engenheiro / **Operador (só Contratada)** — **Assinar/Editar** e o resto das páginas |
 
-**Não existe** Operador Contratante. **Operador Contratada** = perfil (DNA). **Área da obra** = telas P2–P5 — não chamar a jornada de “operador”. Botões e rotas: manual **§13**.
+**Não existe** Operador Contratante.
 
 Homolog Core lê **`homol_rdoapp`**. Prod EQ-L lê **`novo_rdoapp`**. **Não** copiar matriz de um catálogo para o outro.
 

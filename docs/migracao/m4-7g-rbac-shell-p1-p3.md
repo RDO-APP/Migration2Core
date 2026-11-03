@@ -1,6 +1,6 @@
 # M4.7g — RBAC operador P1 → P3 (`GET /api/bff/shell`)
 
-**Trilha:** EQ-R · **Atualizado:** 2026-11-01 · CMS/menu: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md)  
+**Trilha:** EQ-R · **Atualizado:** 2026-10-26  
 **Código:** `ShellContextService` · `PermissionHelper` (espelho `Permission.check` em `app.js`) · React `OperadorShell` / `CardsToolbar`
 
 ---
@@ -25,11 +25,7 @@ Paths usados no BFF (minúsculas, como no BD):
 | `showCriarNovoTarefa` | `criarNovo` | `/tarefa/cards` | FILTRO / ADICIONAR TAREFA |
 | `showCriarNovaEtapa` | `criarNovo` | `/etapa/index` | ADICIONAR ETAPA (`permission-route`) |
 | `showAlterarStatusEmMassa` | `aterarStatusEmMassa` | `/tarefa/cards` | Botão abaixo de SELECIONAR TUDO |
-| `showAssinarRdo` | `assinarRdo` | `/rdo/index` | Lista RDO — ícone Assinar (W3: visível mesmo se false; **disabled**) |
-| `showEditarRdo` | `editar` | `/rdo/index` | Lista RDO — ícone Editar |
 | *(sempre)* | — | — | **Efetivo diário** (prod sem `permission` em `cards.html`) |
-
-Cinza Assinar/Editar = **(A)** sem `assinarRdo`/`editar` nas rotas do **grupo da sessão** **ou** **(B)** `t`/`d` × status. **Evidência UI:** Operador Contratada cinza · Engenheiro Contratada azul (ambos `d` → não é só B). Homolog lê **`homol_rdoapp`**. CSV prod licença 18 não substitui o print.
 
 Menu lateral: itens vêm de `LoginData.Menu` (grupo), href via `LegacyOperadorRoutes.MapHref` — ver [`m4-7-menu-nav-stubs.md`](m4-7-menu-nav-stubs.md).
 

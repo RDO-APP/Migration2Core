@@ -22,6 +22,7 @@ export async function fetchGraficoResumo(periodoIni: string, periodoFim: string)
   const q = new URLSearchParams({ periodoIni, periodoFim })
   const res = await fetch(`/api/bff/grafico/resumo?${q}`, {
     credentials: 'include',
+    cache: 'no-store',
     headers: { Accept: 'application/json' },
   })
   return readJson(res, 'gráfico')

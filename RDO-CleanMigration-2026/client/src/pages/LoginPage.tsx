@@ -2,6 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { fetchLoginContext } from '../api/loginApi'
 import '../login-page.css'
 
+const LEMBRAR_CPF_KEY = 'rdo.login.cpf'
+
 function maskCpf(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 11)
   let v = digits
@@ -11,10 +13,35 @@ function maskCpf(value: string): string {
   return v
 }
 
+function readSavedCpf(): string {
+  try {
+    const raw = localStorage.getItem(LEMBRAR_CPF_KEY)
+    return raw ? maskCpf(raw) : ''
+  } catch {
+    return ''
+  }
+}
+
+function persistCpf(cpf: string) {
+  try {
+    localStorage.setItem(LEMBRAR_CPF_KEY, cpf.replace(/\D/g, ''))
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+function clearSavedCpf() {
+  try {
+    localStorage.removeItem(LEMBRAR_CPF_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 export function LoginPage() {
-  const [cpf, setCpf] = useState('')
+  const [cpf, setCpf] = useState(readSavedCpf)
   const [senha, setSenha] = useState('')
-  const [lembrarMe, setLembrarMe] = useState(false)
+  const [lembrarMe, setLembrarMe] = useState(() => readSavedCpf().length > 0)
   const [showSenha, setShowSenha] = useState(false)
   const [antiforgeryFieldName, setAntiforgeryFieldName] = useState('')
   const [antiforgeryToken, setAntiforgeryToken] = useState('')
@@ -47,6 +74,12 @@ export function LoginPage() {
     if (!antiforgeryFieldName || !antiforgeryToken) {
       e.preventDefault()
       setError('Token de segurança indisponível. Recarregue a página.')
+      return
+    }
+    if (lembrarMe) {
+      persistCpf(cpf)
+    } else {
+      clearSavedCpf()
     }
   }
 
@@ -81,7 +114,7 @@ export function LoginPage() {
                   className="login-control"
                   placeholder="000.000.000-00"
                   maxLength={14}
-                  autoComplete="off"
+                  autoComplete="username"
                   autoCorrect="off"
                   autoCapitalize="off"
                   spellCheck={false}

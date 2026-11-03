@@ -50,10 +50,21 @@ namespace RdoApp.Core.Controllers
                 var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
                 if (string.IsNullOrEmpty(loginDataJson))
                 {
-                    await HttpContext.SignOutAsync("Cookies");
-                    HttpContext.Session.Clear();
+                    // Cookie persistente (Lembrar-me) sobrevive ao fechar o browser; a sessão não.
+                    // Rehidrata em vez de SignOut — senão o checkbox de 30 dias não tem efeito.
+                    var restored = await TryRestoreLoginSessionFromCookieAsync();
+                    if (!restored)
+                    {
+                        await HttpContext.SignOutAsync("Cookies");
+                        HttpContext.Session.Clear();
+                    }
+                    else
+                    {
+                        loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
+                    }
                 }
-                else
+
+                if (!string.IsNullOrEmpty(loginDataJson))
                 {
                     // Já logado: nunca 302 de volta ao ReturnUrl (loop Login ↔ /Rdo/Index).
                     if (ObraSessionHelper.HasObraSelected(HttpContext))
@@ -122,19 +133,7 @@ namespace RdoApp.Core.Controllers
                     return View(model);
                 }
 
-                // EXACT COPY: Build LoginViewModel with Routes and Menu
-                var loginViewModel = new LoginViewModel
-                {
-                    Routes = ObterRotasDefault(colaborador),
-                    Menu = ObterMenuDefault(colaborador),
-                    Usuario = new UsuarioViewModel
-                    {
-                        Email = colaborador.ColDsEmail,
-                        Id = colaborador.ColIdColaborador,
-                        Senha = Seguranca.DecryptTripleDES(colaborador.ColDsSenha),
-                        NomeUsuario = colaborador.ColNmColaborador
-                    }
-                };
+                var loginViewModel = BuildLoginViewModel(colaborador);
 
                 // EXACT COPY: Log to historico_login
                 await InserirHistoricoLogin(new HistoricoLogin
@@ -264,6 +263,45 @@ namespace RdoApp.Core.Controllers
         {
             _logger.LogWarning("Access denied for user {UserName}", User.Identity?.Name ?? "Anonymous");
             return View();
+        }
+
+        private LoginViewModel BuildLoginViewModel(Data.Entities.Colaborador colaborador)
+        {
+            return new LoginViewModel
+            {
+                Routes = ObterRotasDefault(colaborador),
+                Menu = ObterMenuDefault(colaborador),
+                Usuario = new UsuarioViewModel
+                {
+                    Email = colaborador.ColDsEmail,
+                    Id = colaborador.ColIdColaborador,
+                    Senha = string.Empty,
+                    NomeUsuario = colaborador.ColNmColaborador
+                }
+            };
+        }
+
+        private async Task<bool> TryRestoreLoginSessionFromCookieAsync()
+        {
+            var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(idStr, out var colaboradorId))
+            {
+                return false;
+            }
+
+            var colaborador = await _context.Colaboradores
+                .FirstOrDefaultAsync(c => c.ColIdColaborador == colaboradorId);
+            if (colaborador == null)
+            {
+                return false;
+            }
+
+            HttpContext.Session.SetInt32("ColaboradorId", (int)colaborador.ColIdColaborador);
+            HttpContext.Session.SetString(SessionKeys.LoginData, LoginSessionJson.Serialize(BuildLoginViewModel(colaborador)));
+            _logger.LogInformation(
+                "Restored login session from persistent cookie for colaborador {ColaboradorId}",
+                colaborador.ColIdColaborador);
+            return true;
         }
 
         #region EXACT COPY: Legacy Helper Methods

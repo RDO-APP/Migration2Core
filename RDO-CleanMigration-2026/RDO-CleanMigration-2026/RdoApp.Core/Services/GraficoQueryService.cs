@@ -77,7 +77,7 @@ public class GraficoQueryService
 
     private const string SqlRdoAtrasado = """
         SELECT obra.obr_ds_obra AS obr_ds_obra,
-          (SELECT DATEDIFF(IFNULL(MAX(rdo.rdo_dt_rdo), {1}), {2})
+          (SELECT IFNULL(ABS(DATEDIFF(MAX(rdo.rdo_dt_rdo), {2})), 0)
            FROM rdo
            WHERE rdo.rdo_id_obra = obra.obr_id_obra
              AND rdo_dt_rdo BETWEEN {1} AND {2}) AS dias_atraso,

@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-02 — Chart + Dashboard **no ar** (Lucio) · DNA · fichas §13 (**DOC-FICHAS** backlog, não gate)  
+**Atualizado:** 2026-11-02 ~22:33 — Chart **C1–C4** ☑ Lucio (☰ Print/PNG/JPEG/PDF/SVG) · Lembrar-me CPF · hash no commit deste ciclo  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -120,7 +120,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — toastr Assinar **A5 ☑**. Chart: log **C0** GESTÃO DE RDO's; **C1** datas em seguida.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — outras rotas `/chart/*` (tiles) · **DOC-FICHAS** backlog.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -128,22 +128,24 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ### Pendências por marco (snapshot)
 
-| Marco | Feito | Ainda pendente |
-|-------|--------|----------------|
-| **M0** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher (7 obras); docs E0–E6/orquestrador | branding homolog; Escolher CSS STRATEGY-2; E2 localhost completo |
-| **M0′** | Matriz; manual ①–⑥; diagrama; **Fase A** PASS doc ([`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md)) | M0′ **FECHADO** formal opcional: HAR API prod Lucio |
-| **M1** | Cenário **A**; v1 endpoints; tipos TS Auth/Obra/Cards; mapa Core vs legado | Pacote npm publicado; EQ-M ainda não consome tipos |
-| **W0.5 / E2E** | Selecionar + Cards **React** homolog; **M3 PASS** | toolbar/ações · M4.4 Escolher React |
-| **M2** | **FECHADO** | — |
-| **M3** | **FECHADO** | passos 6–7 E2E opcional |
-| **M4** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ Git **`7aee0f2`** (`LoginPage` + `BffLoginController`; GET Login → SPA se `wwwroot/app`) | Smoke **G5/G6** · **UI-M1/M2c** · **UI-M5** Esqueci senha |
-| **M5 web** (Onda B) | **#1 RDO** listagem · **#2 Chart** · **#3 Dashboard** no ar (Lucio **02/nov**) | polish Highcharts se pedir · fila M7 #5+ |
-| **M5 EQ-M** | — | **⏸ adiado** — retomar no **G-M5** web ou **M6** |
-| **M6** | — | JWT/OpenAPI spike · contrato mobile homolog |
-| **M7+** | **7a** cadastro · **7b** PDF · **7c** editar (`?rdoId=`) · **7d** assinar (confirm + modal comentário) | smoke 7c/7d · polish PDF · **P4** · **P6a** gestor · **não** P6b CMS |
-| **M8** | Branch CI · deploy D→E documentado | Runway &lt;2 min · workflow gate |
-| **M9** | — | D1–D7 pacote homolog v1 |
-| **M10** | — | Onda 2 / L1 prep · **P6b** CMS admin `#/grupo` `#/menu` `#/pagina` `#/historicoacesso` (hoje só EQ-L prod; homolog = stub) |
+**%** = fatia **deste** marco (não peso no projeto inteiro). Homolog operador web (M0–M5 web + fatia M7) ≈ **~55–60%** do caminho até **M9 D1**. Valor Dimas visível na web ≈ **~40%** (P1–P3 + RDO + Chart no ar).
+
+| Marco | % | Feito | Ainda pendente |
+|-------|:-:|--------|----------------|
+| **M0** | **90** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher; docs E0–E6 | branding homolog; Escolher CSS STRATEGY-2; E2 localhost |
+| **M0′** | **95** | Matriz; manual ①–⑥; diagrama; Fase A PASS | HAR API prod (opcional) |
+| **M1** | **85** | Cenário **A**; v1 endpoints; tipos TS; mapa Core vs legado | Pacote npm; EQ-M não consome |
+| **W0.5 / E2E** | **95** | Selecionar + Cards React; **M3 PASS** | — (toolbar já M4) |
+| **M2** | **100** | **FECHADO** | — |
+| **M3** | **95** | **FECHADO** | E2E passos 6–7 opcional |
+| **M4** | **88** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ | Smoke **G5/G6** · **UI-M1/M2c** · UI-M5 senha · congela EQ-W formal |
+| **M5 web** | **80** | **#1** RDO (toastr A5 ☑) · **#2** Chart **C1–C4** ☑ · **#3** Dashboard · Lembrar-me CPF | Outras rotas `/chart/*` (dia/tarefa/comentário polish) · **DOC-FICHAS** |
+| **M5 EQ-M** | **0** | — | **⏸ adiado** |
+| **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
+| **M7+** | **55** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar (confirm + toastr) | smoke 7c/7d · polish PDF · **P4** · **P6a** · **não** P6b |
+| **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
+| **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
+| **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
 
 ---
 
@@ -408,12 +410,11 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Toastr Assinar A5 ☑** (Lucio ~18:15). Chart/Dashboard no ar.
-2. **Chart C1** datas — código local; **smoke após publish**. Depois **C2** barras. Log [`migracao/homolog-p5a-chart-tentativas.md`](migracao/homolog-p5a-chart-tentativas.md).
-3. **Commit+push** Migration2Core quando Lucio pedir (toast/Chart/Dashboard/PDF + docs).
-4. **DOC-FICHAS** — backlog; **não** agora.
-5. **#29 / CMS** — só doc; **não** neste ciclo.
-6. **UI-M1** · **M5 EQ-M** adiado.
+1. **C4** ☰ ☑ Lucio **02/nov ~22:33**. Próximo: polish outras rotas `/chart/*` (tiles) se o smoke pedir; senão **DOC-FICHAS** backlog.
+2. Log [`migracao/homolog-p5a-chart-tentativas.md`](migracao/homolog-p5a-chart-tentativas.md).
+3. **DOC-FICHAS** — backlog; **não** agora.
+4. **#29 / CMS** — só doc; **não** neste ciclo.
+5. **UI-M1** · **M5 EQ-M** adiado.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

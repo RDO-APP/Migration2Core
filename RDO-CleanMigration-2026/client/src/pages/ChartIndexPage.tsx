@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchGraficoResumo } from '../api/graficoApi'
 import type { GraficoResumo } from '../api/equipamentos-api.types'
+import { buildGroupedChartSvg, buildSimpleBarSvg } from '../chart/chartExport'
+import { ChartExportMenu } from '../components/ChartExportMenu'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador } from '../nav/p3-operador-routes'
@@ -8,14 +10,62 @@ import { showToast } from '../toast'
 import '../cards-page.css'
 import '../chart-page.css'
 
+const CHART_PERIODO_KEY = 'rdo-chart-periodo'
+
+function pad2(n: number): string {
+  return String(n).padStart(2, '0')
+}
+
+function localIso(d: Date): string {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
+}
+
 function isoDaysAgo(days: number): string {
   const d = new Date()
   d.setDate(d.getDate() - days)
-  return d.toISOString().slice(0, 10)
+  return localIso(d)
 }
 
 function todayIso(): string {
-  return new Date().toISOString().slice(0, 10)
+  return localIso(new Date())
+}
+
+function persistPeriodo(ini: string, fim: string) {
+  try {
+    sessionStorage.setItem(CHART_PERIODO_KEY, JSON.stringify({ ini, fim }))
+  } catch {
+    /* private mode */
+  }
+  const url = new URL(window.location.href)
+  url.searchParams.set('periodoIni', ini)
+  url.searchParams.set('periodoFim', fim)
+  window.history.replaceState({}, '', `${url.pathname}${url.search}`)
+}
+
+function readPeriodoInicial(): { ini: string; fim: string } {
+  const q = new URLSearchParams(window.location.search)
+  const qIni = q.get('periodoIni')
+  const qFim = q.get('periodoFim')
+  if (qIni && qFim) {
+    return { ini: qIni, fim: qFim }
+  }
+  try {
+    const raw = sessionStorage.getItem(CHART_PERIODO_KEY)
+    if (raw) {
+      const p = JSON.parse(raw) as { ini?: string; fim?: string }
+      if (p.ini && p.fim) return { ini: p.ini, fim: p.fim }
+    }
+  } catch {
+    /* ignore */
+  }
+  return { ini: isoDaysAgo(30), fim: todayIso() }
+}
+
+function chartUrl(path: string, ini: string, fim: string): string {
+  const u = new URL(path, window.location.origin)
+  u.searchParams.set('periodoIni', ini)
+  u.searchParams.set('periodoFim', fim)
+  return u.pathname + u.search
 }
 
 function formatBr(iso: string): string {
@@ -48,17 +98,108 @@ function improdutivoTotal(d: GraficoResumo['diasImprodutivos'][0]): number {
   )
 }
 
-function BarList({ items }: { items: { label: string; value: number }[] }) {
+const RDO_SERIES = [
+  { key: 'atrasado', name: 'Atrasados', color: '#254B59' },
+  { key: 'assinado_contratada', name: 'Assinados Contratada', color: '#84CCF2' },
+  { key: 'assinado_contratante', name: 'Assinados Contratante', color: '#FACD7F' },
+  { key: 'gerado', name: 'Gerados', color: '#B5BBA8' },
+  { key: 'a_gerar', name: 'A Gerar', color: '#59922B' },
+] as const
+
+type RdoSerieKey = (typeof RDO_SERIES)[number]['key']
+
+type RdoObraBar = {
+  obr_ds_obra: string
+  atrasado: number
+  assinado_contratada: number
+  assinado_contratante: number
+  gerado: number
+  a_gerar: number
+}
+
+function serieValue(row: RdoObraBar, key: RdoSerieKey): number {
+  return Number(row[key] ?? 0)
+}
+
+function rdoExportSvg(rows: RdoObraBar[], visible: Record<RdoSerieKey, boolean>): string {
+  return buildGroupedChartSvg(
+    "GESTÃO DE RDO's",
+    rows.map((r) => ({
+      label: r.obr_ds_obra,
+      values: {
+        atrasado: r.atrasado,
+        assinado_contratada: r.assinado_contratada,
+        assinado_contratante: r.assinado_contratante,
+        gerado: r.gerado,
+        a_gerar: r.a_gerar,
+      },
+    })),
+    RDO_SERIES.map((s) => ({ key: s.key, name: s.name, color: s.color })),
+    visible,
+  )
+}
+
+function RdoGroupedBars({
+  rows,
+  visible,
+}: {
+  rows: RdoObraBar[]
+  visible: Record<RdoSerieKey, boolean>
+}) {
+  const active = RDO_SERIES.filter((s) => visible[s.key])
+  const max = Math.max(1, ...rows.flatMap((r) => active.map((s) => Math.max(0, serieValue(r, s.key)))))
+  return (
+    <div className="chart-grouped">
+      {rows.map((row) => (
+        <div key={row.obr_ds_obra} className="chart-obra-group">
+          <div className="chart-obra-name" title={row.obr_ds_obra}>
+            {row.obr_ds_obra}
+          </div>
+          <div className="chart-obra-bars">
+            {active.map((s) => {
+              const raw = serieValue(row, s.key)
+              const n = Math.max(0, raw)
+              const pct = (n / max) * 100
+              const inside = pct >= 14
+              const lightFill = s.key === 'gerado' || s.key === 'assinado_contratada' || s.key === 'assinado_contratante'
+              return (
+                <div key={s.key} className="chart-h-bar">
+                  <div className="chart-h-track">
+                    <div
+                      className="chart-h-fill"
+                      style={{ width: `${pct}%`, background: s.color }}
+                      title={`${s.name}: ${raw}`}
+                    >
+                      {inside ? (
+                        <span className="chart-h-val-in" style={{ color: lightFill ? '#222' : '#fff' }}>
+                          {raw}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                  {!inside ? <span className="chart-h-val-out">{raw}</span> : null}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function BarList({ items }: { items: { label: string; serie?: string; value: number }[] }) {
   const max = Math.max(1, ...items.map((i) => i.value))
   return (
     <div className="chart-bars">
       {items.map((i) => (
-        <div key={i.label} className="chart-bar-row">
-          <span>{i.label}</span>
+        <div key={`${i.label}|${i.serie ?? ''}`} className="chart-bar-row">
+          <span className="chart-bar-obra">{i.label}</span>
+          <span className="chart-bar-serie">{i.serie ?? ''}</span>
           <div className="chart-bar-track">
             <div className="chart-bar-fill" style={{ width: `${(i.value / max) * 100}%` }} />
           </div>
-          <span>{i.value}</span>
+          <span className="chart-bar-val">{i.value}</span>
         </div>
       ))}
     </div>
@@ -68,11 +209,23 @@ function BarList({ items }: { items: { label: string; value: number }[] }) {
 export function ChartIndexPage() {
   const { shell } = useShellContext()
   const view = chartView()
-  const [periodoIni, setPeriodoIni] = useState(isoDaysAgo(30))
-  const [periodoFim, setPeriodoFim] = useState(todayIso())
+  const inicial = readPeriodoInicial()
+  const [periodoIni, setPeriodoIni] = useState(inicial.ini)
+  const [periodoFim, setPeriodoFim] = useState(inicial.fim)
   const [data, setData] = useState<GraficoResumo | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [serieOn, setSerieOn] = useState<Record<RdoSerieKey, boolean>>({
+    atrasado: true,
+    assinado_contratada: true,
+    assinado_contratante: true,
+    gerado: true,
+    a_gerar: true,
+  })
+
+  function goChart(path: string) {
+    goOperador(chartUrl(path, periodoIni, periodoFim))
+  }
 
   async function load() {
     if (!periodoIni || !periodoFim) {
@@ -88,6 +241,11 @@ export function ChartIndexPage() {
     try {
       const payload = await fetchGraficoResumo(periodoIni, periodoFim)
       setData(payload)
+      if (payload.periodoIni && payload.periodoFim) {
+        setPeriodoIni(payload.periodoIni)
+        setPeriodoFim(payload.periodoFim)
+        persistPeriodo(payload.periodoIni, payload.periodoFim)
+      }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Falha ao carregar gráficos.'
       setError(msg)
@@ -158,7 +316,7 @@ export function ChartIndexPage() {
             Filtrar
           </button>
           {view !== 'index' ? (
-            <button type="button" className="btn btn-default" onClick={() => goOperador('/Chart/Index')}>
+            <button type="button" className="btn btn-default" onClick={() => goChart('/Chart/Index')}>
               Voltar
             </button>
           ) : null}
@@ -187,7 +345,7 @@ export function ChartIndexPage() {
                   </tbody>
                 </table>
                 <div className="chart-tile-footer">
-                  <a href="/chart/rdos" onClick={(e) => { e.preventDefault(); goOperador('/chart/rdos') }}>
+                  <a href="/chart/rdos" onClick={(e) => { e.preventDefault(); goChart('/chart/rdos') }}>
                     Ver mais…
                   </a>
                 </div>
@@ -205,7 +363,7 @@ export function ChartIndexPage() {
                   </tbody>
                 </table>
                 <div className="chart-tile-footer">
-                  <a href="/chart/diaimprodutivo" onClick={(e) => { e.preventDefault(); goOperador('/chart/diaimprodutivo') }}>
+                  <a href="/chart/diaimprodutivo" onClick={(e) => { e.preventDefault(); goChart('/chart/diaimprodutivo') }}>
                     Ver mais…
                   </a>
                 </div>
@@ -224,7 +382,7 @@ export function ChartIndexPage() {
                   </tbody>
                 </table>
                 <div className="chart-tile-footer">
-                  <a href="/chart/comentario" onClick={(e) => { e.preventDefault(); goOperador('/chart/comentario') }}>
+                  <a href="/chart/comentario" onClick={(e) => { e.preventDefault(); goChart('/chart/comentario') }}>
                     Ver mais…
                   </a>
                 </div>
@@ -242,7 +400,7 @@ export function ChartIndexPage() {
                   </tbody>
                 </table>
                 <div className="chart-tile-footer">
-                  <a href="/chart/tarefa" onClick={(e) => { e.preventDefault(); goOperador('/chart/tarefa') }}>
+                  <a href="/chart/tarefa" onClick={(e) => { e.preventDefault(); goChart('/chart/tarefa') }}>
                     Ver mais…
                   </a>
                 </div>
@@ -250,7 +408,10 @@ export function ChartIndexPage() {
             </div>
 
             <div className="chart-panel">
-              <h4>GESTÃO DE RDO´s</h4>
+              <div className="chart-panel-head">
+                <h4>GESTÃO DE RDO´s</h4>
+                <ChartExportMenu filename="gestao-rdos" getSvg={() => rdoExportSvg(mergedRdos, serieOn)} />
+              </div>
               <div className="table-responsive">
                 <table className="table table-striped">
                   <thead>
@@ -393,23 +554,96 @@ export function ChartIndexPage() {
             </div>
           </>
         ) : view === 'rdos' ? (
-          <div className="chart-panel">
-            <h4>RDO´s por obra</h4>
-            <BarList
-              items={mergedRdos.flatMap((r) => [
-                { label: `${r.obr_ds_obra} gerados`, value: r.gerado },
-                { label: `${r.obr_ds_obra} atrasados`, value: r.atrasado },
-              ])}
-            />
-          </div>
+          <>
+            <div className="chart-series-filter" aria-label="Séries do gráfico">
+              {RDO_SERIES.map((s) => (
+                <label key={s.key}>
+                  <input
+                    type="checkbox"
+                    checked={serieOn[s.key]}
+                    onChange={() => setSerieOn((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
+                  />
+                  <span className="chart-swatch" style={{ background: s.color }} />
+                  {s.name}
+                </label>
+              ))}
+            </div>
+            <div className="chart-panel chart-plot">
+              <div className="chart-panel-head">
+                <h4>RDO´s por obra</h4>
+                <ChartExportMenu filename="gestao-rdos" getSvg={() => rdoExportSvg(mergedRdos, serieOn)} />
+              </div>
+              <RdoGroupedBars rows={mergedRdos} visible={serieOn} />
+            </div>
+            <div className="chart-panel">
+              <h4>Tabela</h4>
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Obra</th>
+                      <th>Atrasados</th>
+                      <th>Assinatura Contratada</th>
+                      <th>Assinatura Contratante</th>
+                      <th>Gerados</th>
+                      <th>A Gerar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mergedRdos.map((r, i) => (
+                      <tr key={r.obr_ds_obra}>
+                        <td>{i + 1}</td>
+                        <td>{r.obr_ds_obra}</td>
+                        <td>{r.atrasado}</td>
+                        <td>{r.assinado_contratada}</td>
+                        <td>{r.assinado_contratante}</td>
+                        <td>{r.gerado}</td>
+                        <td>{r.a_gerar}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         ) : view === 'dias' ? (
           <div className="chart-panel">
-            <h4>Dias improdutivos</h4>
+            <div className="chart-panel-head">
+              <h4>Dias improdutivos</h4>
+              <ChartExportMenu
+                filename="dias-improdutivos"
+                getSvg={() =>
+                  buildSimpleBarSvg(
+                    'DIAS IMPRODUTIVOS',
+                    data.diasImprodutivos.map((d) => ({ label: d.obr_ds_obra, value: improdutivoTotal(d) })),
+                  )
+                }
+              />
+            </div>
             <BarList items={data.diasImprodutivos.map((d) => ({ label: d.obr_ds_obra, value: improdutivoTotal(d) }))} />
           </div>
         ) : view === 'comentario' ? (
           <div className="chart-panel">
-            <h4>Comentários</h4>
+            <div className="chart-panel-head">
+              <h4>Comentários</h4>
+              <ChartExportMenu
+                filename="comentarios"
+                getSvg={() =>
+                  buildSimpleBarSvg(
+                    'COMENTÁRIOS',
+                    data.comentarios.map((c) => ({
+                      label: c.obr_ds_obra,
+                      value:
+                        c.positivo_contratada +
+                        c.positivo_contratante +
+                        c.negativo_contratada +
+                        c.negativo_contratante,
+                    })),
+                  )
+                }
+              />
+            </div>
             <BarList
               items={data.comentarios.map((c) => ({
                 label: c.obr_ds_obra,
@@ -419,7 +653,18 @@ export function ChartIndexPage() {
           </div>
         ) : (
           <div className="chart-panel">
-            <h4>Tarefas</h4>
+            <div className="chart-panel-head">
+              <h4>Tarefas</h4>
+              <ChartExportMenu
+                filename="tarefas"
+                getSvg={() =>
+                  buildSimpleBarSvg(
+                    'TAREFAS',
+                    data.tarefas.map((t) => ({ label: t.obr_ds_obra, value: t.atraso_inicio })),
+                  )
+                }
+              />
+            </div>
             <BarList items={data.tarefas.map((t) => ({ label: t.obr_ds_obra, value: t.atraso_inicio }))} />
           </div>
         )}

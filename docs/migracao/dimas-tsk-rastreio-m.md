@@ -1,6 +1,6 @@
 # Rastreio Dimas (TSK) × marcos M* — execução homolog
 
-**Trilha:** docs / orquestrador · **Atualizado:** 2026-10-27  
+**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-02  
 **Dono da execução:** plano **M\*** ([`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) + [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md))  
 **Referência Dimas:** PDF **Backlog_RDO v20260818** → [`../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md) (TSK-01…56 × Ondas U)
 
@@ -45,7 +45,7 @@ Legenda coluna **Dimas:** **◐** parcial vs backlog · **☐** alvo Dimas ainda
 | **M2** | **FECHADO** | — | **◐ Obra·etapa·tarefa** TSK-17…23 · **leitura Cards** ≈ early Sprint operador; **☐** use cases escrita |
 | **M3** | **FECHADO** | E2E passos 6–7 opcional | **—** gate produto Lucio · **não** é marco nomeado no PDF; equivalente a homolog aceito antes de cortar Razor |
 | **M4** | M4.1–M4.7g ☑, **M4.8** Login SPA ☑ | G5/G6; **UI-M1/M2c**; congela EQ-W formal | **◐ Front** (fontello/BS3) + **◐ Identity/RBAC** TSK-11…13 (shell/menu/stubs) · **☐** `usePermission`/CRUD · strangler **≠** app React gestor Sprint 2–3 |
-| **M5 web** (Onda B) | RDO listagem **T5 E**; W1–W3 ícones | Chart; Dashboard | **◐ RDO·laudo** TSK-31…36 · listagem BFF+React; cadastro **7a** + PDF **7b** no **M7** · **◐** gráficos U-56/U-57 (Chart **#2** stub) |
+| **M5 web** (Onda B) | RDO + Chart + Dashboard; **C1–C4** ☑ (**80%**) | Outras rotas `/chart/*` | **◐ RDO·laudo** TSK-31…36 · **◐** gráficos U-56/U-57 (Chart CSS + ☰, não Highcharts) |
 | **M5 EQ-M** (plano v1) | — | **⏸ adiado** | **⏸ Mobile** TSK-46…56 · PDF = greenfield RN · **M\*** vence: integrar **EquipamentosMobile**, não rebuild |
 | **M6** | — | JWT/OpenAPI spike; mobile homolog API | **☐ Fundação auth** TSK-07 · **☐ OpenAPI** TSK-40…41 · ponto natural **entrada Dimas** (Application/API v1) |
 | **M7+** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar (código) | smoke 7c/7d · **P4** medição · CRUD | **◐** TSK-31…36 · **☐** TSK-14…16 gestor · **☐** TSK-24…30 · **◐** RBAC 11…13 |
@@ -57,7 +57,7 @@ Legenda coluna **Dimas:** **◐** parcial vs backlog · **☐** alvo Dimas ainda
 
 **Fora comparativo homolog Equipamentos:** **TSK-32** imutabilidade → trilha **F** / FAPESC (**—**).
 
-**Síntese:** strangler homolog operador (**M4 + M5 web**) alinhado ao plano unificado; **~30–40%** do “valor Dimas” visível na web (P1–P3 + RDO listagem); **~70%+** fundação/gestor/mobile/ETL no backlog TSK, **de forma intencional** até **M6/M7** (mobile **⏸** vs TSK-46…56).
+**Síntese:** strangler homolog operador (**M4 + M5 web**) alinhado ao plano unificado; **~40%** do “valor Dimas” visível na web (P1–P3 + RDO + Chart/Dashboard); **~60%+** fundação/gestor/mobile/ETL no backlog TSK, **de forma intencional** até **M6/M7** (mobile **⏸** vs TSK-46…56).
 
 ---
 
@@ -72,7 +72,7 @@ Legenda: **☑** coberto pelo M* em curso/fechado · **◐** parcial · **☐** 
 | Cadastros gestor cedo | 14…16 | Onda 5 / M7+ | ☐ | Empresa/Colaborador/Equip CRUD React — **fora M4** |
 | Obra · etapa · tarefa | 17…23 | M2, M7 | ◐ | **Leitura** Cards (M2☑); **escrita** cadastro/lista/filtro — **M7+** |
 | Apontamento · medição | 24…30 | M7+, P4 | ☐ | Domínio + API; U-05 Framework antes — **Onda 0/4** |
-| RDO · laudo web | 31…36 | M5 web, M7+ | ◐ | **P5a** listagem + **7a/7b** PDF; Chart stub; **7c/7d** assinar/editar |
+| RDO · laudo web | 31…36 | M5 web, M7+ | ◐ | **P5a** listagem + **7a–7d** + Chart **C1–C4** ☑ + Dashboard; polish `/chart/*` tiles |
 | Relatórios · S3 worker | 37…39 | Onda 5 / M7+ | ☐ | Dapper/Excel/PDF gestor |
 | OpenAPI · ETL · cutover | 40…45 | M6, M8, M10, Onda 6 | ☐ | ETL **adiado** vs PDF mês 4 — **correto** no plano M* |
 | Mobile greenfield | 46…56 | M5, M6 | ⏸ | **Não rebuild** — integrar RN existente |

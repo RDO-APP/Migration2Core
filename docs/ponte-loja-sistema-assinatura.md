@@ -22,4 +22,4 @@ Use `@ponte-loja-sistema-assinatura` em qualquer chat (Loja ou Migração) para 
 
 Ver skill `ponte-loja-sistema-rdo` para facts, gaps, fluxo e protocolo de atualização.
 
-**02/nov/2026 (Migração):** **DNA** = plano Loja × Cte/Cta × 5 papéis. **Operador Contratada** = perfil; **área da obra** = P2–P5 (não misturar). CMS = `col_st_admin`, **não** dono. #29 = dono **atribui** template. Fichas (Chegada/Botões/Saída): manual **§13**. Inventário: `docs/migracao/cms-grupo-menu-pagina-prod.md` §0. Canônico na skill.
+**01/nov/2026 (Migração):** **DNA** = plano Loja × Contratante/Contratada × 5 papéis. Inventário: `docs/migracao/cms-grupo-menu-pagina-prod.md` §0. CMS = `col_st_admin` (plataforma), **não** dono. #29 = dono **atribui** template. Canônico na skill.
