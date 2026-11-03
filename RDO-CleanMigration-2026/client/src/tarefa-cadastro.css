@@ -1,0 +1,138 @@
+.tarefa-cadastro-page .tarefa-medicao-head,
+.tarefa-cadastro-page .header-table {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tarefa-cadastro-page .header-table .pull-right,
+.tarefa-cadastro-page .tarefa-medicao-head .pull-right,
+.tarefa-cadastro-page .rdo-cadastro-footer .pull-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.tarefa-cadastro-page .tarefa-foto-bloco,
+.tarefa-modal .tarefa-foto-bloco {
+  margin-top: 8px;
+}
+
+.tarefa-cadastro-page .tarefa-foto-row,
+.tarefa-modal .tarefa-foto-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tarefa-cadastro-page .tarefa-foto-file,
+.tarefa-modal .tarefa-foto-file {
+  position: relative;
+  flex: 1 1 280px;
+}
+
+.tarefa-cadastro-page .tarefa-foto-file .fa-picture-o,
+.tarefa-modal .tarefa-foto-file .fa-picture-o {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #28496f;
+}
+
+.tarefa-cadastro-page .tarefa-foto-file .form-control,
+.tarefa-modal .tarefa-foto-file .form-control {
+  padding-left: 32px;
+}
+
+.tarefa-cadastro-page .tarefa-foto-bloco .galeria.rdo-galeria,
+.tarefa-modal .tarefa-foto-bloco .galeria.rdo-galeria {
+  display: flex;
+  flex-flow: row wrap;
+  padding: 8px 0;
+}
+
+.tarefa-modal .galeria.rdo-galeria .rdo-galeria-item img {
+  max-width: 160px;
+  max-height: 120px;
+  object-fit: contain;
+}
+
+.tarefa-cadastro-page .tarefa-valor-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tarefa-cadastro-page .tarefa-valor-prefix {
+  color: #28496f;
+  font-weight: 600;
+}
+
+.tarefa-cadastro-page .header-table h4 {
+  display: inline-block;
+  margin: 16px 0 8px;
+  color: #28496f;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.tarefa-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1050;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 24px 12px;
+}
+
+.tarefa-modal {
+  width: min(980px, 100%);
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tarefa-modal-header,
+.tarefa-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.tarefa-modal-footer {
+  border-bottom: 0;
+  border-top: 1px solid #e5e5e5;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.tarefa-modal-header h4 {
+  margin: 0;
+  color: #28496f;
+  text-transform: uppercase;
+}
+
+.tarefa-modal-body {
+  padding: 16px;
+}

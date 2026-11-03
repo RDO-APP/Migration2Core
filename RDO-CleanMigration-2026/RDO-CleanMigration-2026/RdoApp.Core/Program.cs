@@ -27,6 +27,8 @@ builder.Services.AddScoped<RbacRouteService>();
 builder.Services.AddScoped<LoginObraService>();
 builder.Services.AddScoped<HistoricoLoginWriter>();
 builder.Services.AddScoped<CardsQueryService>();
+builder.Services.AddScoped<TarefaCadastroQueryService>();
+builder.Services.AddScoped<TarefaCadastroSaveService>();
 builder.Services.AddScoped<RdoListQueryService>();
 builder.Services.AddScoped<RdoCadastroQueryService>();
 builder.Services.AddScoped<RdoCadastroSaveService>();

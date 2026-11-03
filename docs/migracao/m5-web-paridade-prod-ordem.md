@@ -30,9 +30,9 @@
 | **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7 7a** ☑ SPA `498ebc4` · **7b–7d** editar/PDF/assinar |
 | **5** | `/Obra/Cadastro` | `#/obra/cadastro` | **M7** |
 | **6** | `/Efetivo/Index` | `#/efetivo/index` | **M7** |
-| **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Cadastro` | toolbar + card | **M7** |
+| **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Cadastro` | toolbar + card | **M7** olho/lápis/relógio **SPA** ☑ (`/Tarefa/Cadastro?id=`) · Index/Etapa ainda stub · **impressora / ⋮** próximo |
 | **8** | Menu gestor (colaborador, equipamento, relatórios…) = **P6a** | drawer | **M7+** |
-| **9** | Nova medição | modal cards | **P4 · M7+** |
+| **9** | Nova medição | modal cards | **P4** ☑ smoke 03/nov (`NovaMedicaoModal`) · polish Foto **depois** |
 | — | **P6b** `#/grupo` `#/menu` `#/pagina` (CMS `col_st_admin`) | **não** esta fila | **M10** — prod EQ-L até cutover |
 
 Critério “sintonizado”: mesma **informação e ações principais** que prod para aquela rota (não exige pixel-perfect — **UI-M3** adiado).

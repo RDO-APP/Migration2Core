@@ -5,6 +5,7 @@ import { EscolherPage } from './pages/EscolherPage'
 import { LoginPage } from './pages/LoginPage'
 import { RdoCadastroPage } from './pages/RdoCadastroPage'
 import { RdoIndexPage } from './pages/RdoIndexPage'
+import { TarefaCadastroPage } from './pages/TarefaCadastroPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -14,6 +15,9 @@ function App() {
   }
   if (page === 'escolher') {
     return <EscolherPage />
+  }
+  if (page === 'tarefa-cadastro') {
+    return <TarefaCadastroPage />
   }
   if (page === 'rdo-cadastro') {
     return <RdoCadastroPage />

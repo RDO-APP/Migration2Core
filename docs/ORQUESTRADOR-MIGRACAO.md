@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-03 ~05:55 — Git **`18c1d45`** · Chart **C1–C8** ☑ Lucio (dias/comentários/tarefas + número à direita + ☰ maior)  
+**Atualizado:** 2026-11-03 ~19:30 — cadastro **O8** ☑ (lápis / relógio / **P4 +** smoke Lucio) · schema Q1–Q4 ☑ · Chart **C1–C8** ☑  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -120,7 +120,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **olho/lápis** card P3 (`/Tarefa/Cadastro`) · M7.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — card **impressora** · depois **⋮**; ajustes cadastro (foto persist / NOVO*) **depois**.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -139,10 +139,10 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M2** | **100** | **FECHADO** | — |
 | **M3** | **95** | **FECHADO** | E2E passos 6–7 opcional |
 | **M4** | **88** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ | Smoke **G5/G6** · **UI-M1/M2c** · UI-M5 senha · congela EQ-W formal |
-| **M5 web** | **88** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard | Primeira ação real do **card P3** (olho/lápis) · **DOC-FICHAS** |
+| **M5 web** | **92** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · olho/lápis/relógio + **P4** smoke | **DOC-FICHAS** · impressora/⋮ no card (M7) |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **55** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar (confirm + toastr) | smoke 7c/7d · polish PDF · **P4** · **P6a** · **não** P6b |
+| **M7+** | **70** | **7a–7d** · **olho/lápis/relógio** · **P4** modal (smoke 03/nov O8) | impressora · **⋮** · persist foto / NOVO colab-equip-acidente (**depois**) · **P6a** · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
@@ -158,7 +158,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **Transição suave → estratégia Dimas (com ou sem Dimas):** rampa **Ondas A→D** + gates **G-M4…G-M8** — canônico [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md) § *Transição suave*. **Não** big-bang PDF; **sim** convergência Application/OpenAPI em **M6**.
 - **EQ-W (Razor)** = ponte W1 no `Migration2Core` — **sem** roadmap de features novas.
 - **Migration2Core** = homolog only até Linux L1; backend + host; **sem** prod `:80`.
-- RDS homolog Core: **`homol_rdoapp`** (47 tbl).
+- RDS homolog Core: **`homol_rdoapp`** · mesma instância que prod **`novo_rdoapp`**. **47 tabelas ≠ colunas gêmeas** (lição L11 / cadastro O0). Diff DBeaver: [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql). **2026-11-03:** Q1–Q4 vazios/delta 0 após `ALTER` `tarefa` (4 colunas 11:54) + `MODIFY` varchar `tarefa` 12:22 / `rdo` 12:25. **Nunca** `ALTER` `novo_rdoapp` neste chat. Dados: **43 obras** homolog vs **284** prod — subset de propósito. **P1–P3 / Chart / lista RDO:** queries não pediam as 4 colunas novas; `MODIFY` varchar só alarga — **não** regressão. **PDF L16:** Hi/Hf/Ht no `SELECT` (deixa o catch L12). Detalhe: [`migracao/homolog-p3-tarefa-cadastro-tentativas.md`](migracao/homolog-p3-tarefa-cadastro-tentativas.md).
 - URL homolog: **`https://homolog.sistema.rdoapp.com.br`** (:5081).
 - **EQ-M** prod hoje → API legado; alvo = mesma API que EQ-R (JWT / U-05).
 - **Trilha I (CI):** pausada até E2E homolog com Cards **com dados** (EQ-R preferencial).
@@ -410,11 +410,12 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **C5–C8** ☑. Próximo produto: **olho/lápis** do card de tarefa (`/Tarefa/Cadastro`) — **M7**. **P4** (+) depois.
-2. Log [`migracao/homolog-p5a-chart-tentativas.md`](migracao/homolog-p5a-chart-tentativas.md).
-3. **DOC-FICHAS** — backlog; **não** agora.
-4. **#29 / CMS** — só doc; **não** neste ciclo.
-5. **UI-M1** · **M5 EQ-M** adiado.
+1. Card **impressora** (PDF / relatório horas equipamento) — fila [`migracao/p3-botoes-habilitacao-m7.md`](migracao/p3-botoes-habilitacao-m7.md).
+2. Card **⋮** alterar status.
+3. Ajustes cadastro **depois** (persist Foto Uploads · formulários NOVO colab/equip/acidente) — log [`migracao/homolog-p3-tarefa-cadastro-tentativas.md`](migracao/homolog-p3-tarefa-cadastro-tentativas.md).
+4. **DOC-FICHAS** — backlog; **não** agora.
+5. **#29 / CMS** — só doc; **não** neste ciclo.
+6. **UI-M1** · **M5 EQ-M** adiado.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
@@ -451,6 +452,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | API mobile / Expo | **EQ-M** | Assumir Core homolog sem E3 |
 | Hotfix prod IIS / AngularJS | **EQ-L** | Deploy Core em `:80` prod |
 | OIDC / S3 / SSM homolog | **I** | CI antes gate E6 (Cards EQ-R) |
+| DDL / diff schema RDS | **I** + DBeaver · `homol_rdoapp` | **`ALTER` / `DROP` em `novo_rdoapp`** · contar só tabelas e chamar de gêmeo |
 | PoC blockchain / Termo | **F** | Redirecionar chat **FAPESC Execução** |
 | **Obra demo pós-assinatura** (bat, tenant lead) | Chat **Loja RDO App** `65b6e329-2ae6-4468-9f01-485f21d9d68c` · skill **`criar-obra-assinatura`** · ponte Loja×Sistema | **Rodar** o bat · **Gravar** `homol_rdoapp` · **Commit** Migration2Core para provisionamento · Confundir com **P3** (abaixo) |
 
@@ -493,7 +495,7 @@ Antes de codar ou editar doc de migração, cruzar **sub-trilha** × **superfíc
 | UI web Razor (bugfix ponte) | **EQ-W** | `Migration2Core` `RdoApp.Core` | Não duplicar feature em EQ-W se alvo é **EQ-R**; homolog :5081 |
 | Apontador / services mobile | **EQ-M** | `EquipamentosMobile` | **EQ-L** `api/*` prod hoje; **EQ-R** pacote TS/OpenAPI; E3 cenário homolog |
 | Web API legado AngularJS | **EQ-L** | `Equipamentos` | **EQ-M** consumidores; strangler **EQ-R**; **não** confundir com Core homolog |
-| EF / entidades / DDL homolog | **EQ-W/R** backend | `Migration2Core` + SQL `docs/scripts/` | **`homol_rdoapp`** · `rds-equipamentos-governanca-catalogos.md` · **EQ-M** se apontar homolog |
+| EF / entidades / DDL homolog | **EQ-W/R** backend | `Migration2Core` + SQL `docs/scripts/` | **`homol_rdoapp` só** · governança + [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) (Q1–Q4, não só COUNT tabelas) · **EQ-M** se apontar homolog |
 | EF / prod `novo_rdoapp` | **EQ-L** | `Equipamentos` + Dimas publish | Prod `:80`; **fora** Migration2Core até Onda 6 |
 | Auth (cookie vs JWT) | **EQ-R** + **EQ-M** | Core + mobile | **EQ-W** cookie legado; Loja×Sistema só se licença/login loja |
 | Deploy homolog EC2/CI | **I** | `Migration2Core` branch `ci/*` | Preservar `appsettings.Staging.json`; E6 gate Cards **EQ-R** |

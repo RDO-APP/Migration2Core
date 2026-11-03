@@ -34,18 +34,15 @@ public class RdoPdfService
     private readonly RdoDbContext _context;
     private readonly IWebHostEnvironment _env;
     private readonly IConfiguration _configuration;
-    private readonly ILogger<RdoPdfService> _logger;
 
     public RdoPdfService(
         RdoDbContext context,
         IWebHostEnvironment env,
-        IConfiguration configuration,
-        ILogger<RdoPdfService> logger)
+        IConfiguration configuration)
     {
         _context = context;
         _env = env;
         _configuration = configuration;
-        _logger = logger;
     }
 
     public async Task<byte[]> GenerateAsync(int obraId, int idRdo, bool gerarRelatorioFotografico, CancellationToken cancellationToken)
@@ -332,7 +329,6 @@ public class RdoPdfService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Falha ao renderizar PDF RDO {RdoId} (QuestPDF)", rdo.RdoIdRdo);
             var detail = ex.InnerException?.Message ?? ex.Message;
             throw new InvalidOperationException($"Não foi possível gerar o PDF do RDO. {detail}", ex);
         }
@@ -863,6 +859,7 @@ public class RdoPdfService
         dt.Columns.Add("tar_dt_medicao_horimetro_final");
         dt.Columns.Add("tar_dt_medicao_horimetro_total");
 
+        // L12 evitou Hi/Hf/Ht (coluna ausente no homolog). 2026-11-03 as colunas existem — SELECT direto.
         var rows = await (
             from rt in _context.RdoTarefas.AsNoTracking()
             join t in _context.Tarefas.AsNoTracking() on rt.RtaIdTarefa equals t.TarIdTarefa
@@ -871,27 +868,26 @@ public class RdoPdfService
             where rt.RtaIdRdo == idRdo
             select new
             {
-                t.TarIdTarefa,
                 TarDsTarefa = (string?)t.TarDsTarefa,
                 TarDsComentario = (string?)t.TarDsComentario,
                 SttDsStatus = (string?)st.SttDsStatus,
                 EtaDsEtapa = (string?)e.EtaDsEtapa,
+                t.TarDtMedicaoHorimetroInicial,
+                t.TarDtMedicaoHorimetroFinal,
+                t.TarDtMedicaoHorimetroTotal,
             }
         ).ToListAsync(cancellationToken);
 
-        var horimetro = await TryLoadHorimetroAsync(rows.Select(r => r.TarIdTarefa).ToList(), cancellationToken);
-
         foreach (var item in rows.OrderBy(o => o.EtaDsEtapa).ThenBy(o => o.TarDsTarefa))
         {
-            horimetro.TryGetValue(item.TarIdTarefa, out var h);
             dt.Rows.Add(
                 Str(item.TarDsTarefa),
                 Str(item.TarDsComentario),
                 Str(item.SttDsStatus),
                 Str(item.EtaDsEtapa),
-                h.Hi ?? "",
-                h.Hf ?? "",
-                h.Ht ?? "");
+                FormatHorimetro(item.TarDtMedicaoHorimetroInicial),
+                FormatHorimetro(item.TarDtMedicaoHorimetroFinal),
+                FormatHorimetro(item.TarDtMedicaoHorimetroTotal));
         }
 
         return dt;
@@ -1107,53 +1103,8 @@ public class RdoPdfService
         return dt;
     }
 
-    private async Task<Dictionary<int, (string Hi, string Hf, string Ht)>> TryLoadHorimetroAsync(
-        List<int> tarefaIds,
-        CancellationToken cancellationToken)
-    {
-        var map = new Dictionary<int, (string, string, string)>();
-        if (tarefaIds.Count == 0)
-        {
-            return map;
-        }
-
-        try
-        {
-            var ids = string.Join(",", tarefaIds.Distinct());
-            var sql =
-                "SELECT tar_id_tarefa AS TarId, tar_dt_medicao_horimetro_inicial AS Hi, " +
-                "tar_dt_medicao_horimetro_final AS Hf, tar_dt_medicao_horimetro_total AS Ht " +
-                "FROM tarefa WHERE tar_id_tarefa IN (" + ids + ")";
-            var rows = await _context.Database
-                .SqlQueryRaw<HorimetroSqlRow>(sql)
-                .ToListAsync(cancellationToken);
-
-            foreach (var row in rows)
-            {
-                map[row.TarId] = (
-                    FormatHorimetro(row.Hi),
-                    FormatHorimetro(row.Hf),
-                    FormatHorimetro(row.Ht));
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Horímetro indisponível neste catálogo — Hi/Hf/Ht vazios no PDF.");
-        }
-
-        return map;
-    }
-
     private static string FormatHorimetro(float? value) =>
         value.HasValue ? value.Value.ToString("N", HorimetroFormat) : "";
-
-    private sealed class HorimetroSqlRow
-    {
-        public int TarId { get; set; }
-        public float? Hi { get; set; }
-        public float? Hf { get; set; }
-        public float? Ht { get; set; }
-    }
 
     private static byte[] LoadImageBytes(string? caminho, string? uploadsRoot, string? webRoot, string? contentRoot)
     {

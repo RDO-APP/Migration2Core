@@ -36,15 +36,19 @@ public class TarefaController : Controller
             return redir;
         }
 
-        var titulo = novaMedicao
-            ? "Nova medição (cadastro tarefa)"
-            : modo == "visualizar"
-                ? "Visualizar tarefa"
-                : id is > 0
-                    ? "Editar tarefa"
-                    : "Cadastro de tarefa";
+        if (id is > 0)
+        {
+            var spaTitle = novaMedicao
+                ? "Nova medição"
+                : modo == "visualizar"
+                    ? "Visualizar tarefa"
+                    : "Editar tarefa";
+            return OperadorSpaEntry.ServeSpaIndex(this, _env, spaTitle);
+        }
 
-        var desc = $"Prod: `#/tarefa/cadastro` · id={id?.ToString() ?? "—"} · etapaId={etapaId?.ToString() ?? "—"} · novaMedicao={novaMedicao} · modo={modo ?? "—"} · **M7+** formulário.";
+        var titulo = "Cadastro de tarefa";
+        var desc =
+            $"Prod: `#/tarefa/cadastro` · id=— · etapaId={etapaId?.ToString() ?? "—"} · **M7** nova tarefa (sem id) ainda em migração.";
         return EmMigracaoPage.Render(this, titulo, desc, prodRef: "#/tarefa/cadastro");
     }
 

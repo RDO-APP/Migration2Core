@@ -4,6 +4,7 @@ import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
 type TaskCardAgrupadorProps = {
   tarefa: TarefaCard
   etapaId?: number
+  onNovaMedicao?: (tarefa: TarefaCard) => void
 }
 
 function formatPair(inicio?: string, fim?: string): string {
@@ -13,7 +14,7 @@ function formatPair(inicio?: string, fim?: string): string {
 }
 
 /** M4.7 layout · M4.7b navegação → rotas MVC (EmMigracao até M7). */
-export function TaskCardAgrupador({ tarefa, etapaId }: TaskCardAgrupadorProps) {
+export function TaskCardAgrupador({ tarefa, etapaId, onNovaMedicao }: TaskCardAgrupadorProps) {
   const pct = Math.min(100, Math.max(0, tarefa.percentualConcluido ?? 0))
   const headClass = tarefa.classeStatusCss?.trim() || 'bg-cinza'
   const percentualExtrapolado = tarefa.percentualExtrapolado === 'false'
@@ -79,7 +80,7 @@ export function TaskCardAgrupador({ tarefa, etapaId }: TaskCardAgrupadorProps) {
                   type="button"
                   className="btn btn-simple"
                   title="Nova Medição"
-                  onClick={() => goOperador(nav.novaMedicao)}
+                  onClick={() => (onNovaMedicao ? onNovaMedicao(tarefa) : goOperador(nav.novaMedicao))}
                 >
                   <i className="fa fa-plus" aria-hidden="true" />
                 </button>

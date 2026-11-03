@@ -1,12 +1,14 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { fetchCardsContext } from '../api/cardsApi'
-import type { EtapaComTarefas } from '../api/equipamentos-api.types'
+import type { EtapaComTarefas, TarefaCard } from '../api/equipamentos-api.types'
 import { AddTarefaPlaceholder, TaskCardAgrupador } from '../components/TaskCardAgrupador'
 import { CardsToolbar } from '../components/CardsToolbar'
+import { NovaMedicaoModal } from '../components/NovaMedicaoModal'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
 import '../cards-page.css'
+import '../tarefa-cadastro.css'
 
 function filtroFromUrl(): boolean {
   if (typeof window === 'undefined') return false
@@ -21,6 +23,7 @@ export function CardsPage() {
   const [openEtapas, setOpenEtapas] = useState<Set<number>>(() => new Set())
   const [filtroOpen, setFiltroOpen] = useState(filtroFromUrl)
   const [selectAll, setSelectAll] = useState(false)
+  const [medicao, setMedicao] = useState<TarefaCard | null>(null)
 
   useEffect(() => {
     setFiltroOpen(filtroFromUrl())
@@ -171,7 +174,12 @@ export function CardsPage() {
                           ) : (
                             <>
                               {etapa.tarefas.map((t) => (
-                                <TaskCardAgrupador key={t.id} tarefa={t} etapaId={etapa.id} />
+                                <TaskCardAgrupador
+                                  key={t.id}
+                                  tarefa={t}
+                                  etapaId={etapa.id}
+                                  onNovaMedicao={setMedicao}
+                                />
                               ))}
                               <AddTarefaPlaceholder etapaId={etapa.id} />
                             </>
@@ -186,6 +194,17 @@ export function CardsPage() {
           </div>
         </>
       )}
+      {medicao ? (
+        <NovaMedicaoModal
+          tarefaId={medicao.id}
+          descricaoTarefa={medicao.descricao}
+          onClose={() => setMedicao(null)}
+          onSaved={() => {
+            setMedicao(null)
+            window.location.reload()
+          }}
+        />
+      ) : null}
     </section>,
   )
 }

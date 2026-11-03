@@ -36,9 +36,20 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
             .HasColumnName("tar_id_colaborador_insercao")
             .IsRequired();
 
+        // homol_rdoapp.tarefa: 4 colunas alinhadas ao prod (ALTER 2026-11-03 11:54 · varchar(3) + float).
         builder.Property(t => t.TarCodigoParalizacao)
             .HasColumnName("tar_codigo_paralizacao")
-            .HasMaxLength(50);
+            .HasMaxLength(3)
+            .IsRequired(false);
+
+        builder.Property(t => t.TarDtMedicaoHorimetroInicial)
+            .HasColumnName("tar_dt_medicao_horimetro_inicial");
+
+        builder.Property(t => t.TarDtMedicaoHorimetroFinal)
+            .HasColumnName("tar_dt_medicao_horimetro_final");
+
+        builder.Property(t => t.TarDtMedicaoHorimetroTotal)
+            .HasColumnName("tar_dt_medicao_horimetro_total");
 
         // Properties
         builder.Property(t => t.TarNrAgrupador)
@@ -47,7 +58,7 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
 
         builder.Property(t => t.TarDsTarefa)
             .HasColumnName("tar_ds_tarefa")
-            .HasMaxLength(500)
+            .HasMaxLength(600)
             .IsRequired(false);
 
         builder.Property(t => t.TarNrQtdConstruida)
@@ -68,7 +79,7 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
 
         builder.Property(t => t.TarDsComentario)
             .HasColumnName("tar_ds_comentario")
-            .HasMaxLength(1000)
+            .HasMaxLength(1400)
             .IsRequired(false);
 
         builder.Property(t => t.TarDsFoto)
@@ -107,15 +118,6 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
             .HasColumnName("tar_nr_qtd_previsao")
             .HasColumnType("decimal(18,2)");
 
-        builder.Property(t => t.TarDtMedicaoHorimetroTotal)
-            .HasColumnName("tar_dt_medicao_horimetro_total");
-
-        builder.Property(t => t.TarDtMedicaoHorimetroInicial)
-            .HasColumnName("tar_dt_medicao_horimetro_inicial");
-
-        builder.Property(t => t.TarDtMedicaoHorimetroFinal)
-            .HasColumnName("tar_dt_medicao_horimetro_final");
-
         // Indexes
         builder.HasIndex(t => t.TarIdEtapa);
         builder.HasIndex(t => t.TarIdStatus);
@@ -123,6 +125,5 @@ public class TarefaConfiguration : IEntityTypeConfiguration<Tarefa>
         builder.HasIndex(t => t.TarIdColaboradorInsercao);
         builder.HasIndex(t => t.TarNrAgrupador); // Important for grouping tasks
         builder.HasIndex(t => t.TarDtInicio);
-        builder.HasIndex(t => t.TarCodigoParalizacao);
     }
 }

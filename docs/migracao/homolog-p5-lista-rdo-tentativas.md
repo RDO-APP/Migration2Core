@@ -26,6 +26,7 @@
 | **L13** | **2026-10-31 ~21:25** (código) | Até **29/08** PDF baixa; a partir de **30/08** `[L9-QuestPDF] PDF.gerar: InvalidCastException DBNull→String` | `(string?)` em **todas** as queries do PDF (Pomelo `?? ""` ainda chama GetString); tipos sem materializar entidade; concatenar etapa/tarefa **depois** do SQL; `PDF.cargos` / `PDF.imagens` / etc. | **Pendente smoke** após publish+SSM | 29/08 vs 30/08: mesmo status/tarefas; 30/08 entra foto/comentário/cargo NULL. L12 só cobriu RDO vazio 31/10 | Smoke **27/08 e 30/08**. Banner tem de ser `PDF.imagens` (ou o PDF baixa). |
 | **L14** | **2026-10-31 ~21:50** (código) | PDF gera, layout ≠ RDLC prod | QuestPDF espelha blocos do `Rdo_def.rdlc` (cabeçalho 2×3, tarefas agrupadas, MO∥equip, clima∥acidentes, comentários/assinaturas) | **Pendente smoke** | Prints 28/08 = ouro | Publish+SSM; comparar 28/08 homolog × prod |
 | **L15** | **2026-11-01** | Homolog 27/08: sem logo; faixa **RELATÓRIO FOTOGRÁFICO / Sem fotos neste RDO** (prod não tem) | Logo: `wwwroot/images/logo.jpg` + `Assets/images`; fotos só se houver bytes | **Pendente smoke** | Desktop = homolog; Downloads `(1)` = prod | Publish D→E |
+| **L16** | **2026-11-03** | PDF Hi/Hf/Ht sempre vazios | Schema homolog agora tem as colunas; L12 SQL paralelo + `catch` → vazio. `SELECT` EF direto no `BuildTarefasTableAsync` | **Pendente smoke** pós-publish O4 | NULL no banco = célula vazia; número gravado = imprime | Gerar PDF de RDO cuja `tarefa` tenha horímetro ≠ NULL |
 
 ### Classes
 

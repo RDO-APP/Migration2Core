@@ -310,3 +310,126 @@ export interface DashboardObra {
   barraValores: number[]
   pizzaEfetivo: DashboardSlice[]
 }
+
+export interface TarefaLookup {
+  id: number
+  nome: string
+}
+
+export interface TarefaParalizacao {
+  codigo: string
+  descricao: string
+}
+
+export interface TarefaCadastroColaborador {
+  id: number
+  idObraColaborador: number
+  nome: string
+  descricaoCargo: string
+  telefonePrincipal: string
+  email: string
+  descricaoGrupo: string
+}
+
+export interface TarefaCadastroEquipamento {
+  id: number
+  idObraEquipamento: number
+  tipoEquipamento: string
+  descricao: string
+  tipoAquisicao: string
+  fabricanteFornecedor: string
+  contato: string
+  telefone: string
+}
+
+export interface TarefaCadastroAcidente {
+  id: number
+  descricao: string
+  dataHora: string
+  houveAfastamento: boolean
+}
+
+export interface TarefaCadastroHistorico {
+  idTarefa: number
+  data: string
+  horaInicial: string
+  horaFinal: string
+  descricaoStatusTarefa: string
+  horimetroInicial?: number | null
+  horimetroFinal?: number | null
+  horimetroTotal?: number | null
+  qtdConstruida: number
+  unidadeMedida: string
+  nomeColaborador: string
+  rdoAssinado: boolean
+}
+
+export interface TarefaCadastroImagem {
+  id: number
+  href: string
+}
+
+export interface TarefaCadastro {
+  id: number
+  descricao: string
+  idEtapa: number
+  status: number
+  nomeStatus: string
+  idUnidade: number
+  dataInicio: string
+  dataPrevisaoFim: string
+  qtdPlanejada: number
+  valor: number
+  qtdConstruida: number
+  dataMedicao: string
+  horaInicial: string
+  horaFinal: string
+  horimetroInicial: number
+  horimetroFinal: number
+  horimetroTotal: number
+  comentario: string
+  codigoParalizacao?: string | null
+  rdoAssinado: boolean
+  ultimoHorimetroFinal?: number | null
+  listaColaboradores: TarefaCadastroColaborador[]
+  listaEquipamentos: TarefaCadastroEquipamento[]
+  etapas: TarefaLookup[]
+  statusTarefa: TarefaLookup[]
+  unidades: TarefaLookup[]
+  codigosParalizacao: TarefaParalizacao[]
+  listaHistoricoTarefa?: TarefaCadastroHistorico[]
+  listaImagens?: TarefaCadastroImagem[]
+  listaAcidentes?: TarefaCadastroAcidente[]
+  colaboradoresObra?: TarefaCadastroColaborador[]
+  equipamentosObra?: TarefaCadastroEquipamento[]
+}
+
+export interface TarefaCadastroSaveRequest {
+  id: number
+  novaMedicao: boolean
+  descricao: string
+  idEtapa: number
+  status: number
+  idUnidade: number
+  dataInicio: string
+  dataPrevisaoFim: string
+  qtdPlanejada?: number
+  valor?: number
+  qtdConstruida?: number
+  dataMedicao?: string
+  horaInicial?: string
+  horaFinal?: string
+  horimetroInicial?: number
+  horimetroFinal?: number
+  horimetroTotal?: number
+  comentario?: string
+  codigoParalizacao?: string
+  listaIdsObraColaborador?: number[]
+  listaIdsObraEquipamento?: number[]
+}
+
+export interface TarefaCadastroSaveResult {
+  ok: boolean
+  id?: number
+  errorMessage?: string
+}

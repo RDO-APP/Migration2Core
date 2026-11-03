@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-02 · **Status:** **M4.7** + **P5a RDO** (7a–7d) · **DNA** Loja×grupos [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · §**5** / §**12** · **§13 índice de fichas** (esqueleto, sem conteúdo) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-03 · **Status:** **M4.7** + **P5a RDO** (7a–7d) · schema RDS ①×② **Q1–Q4 ☑** · **P3** olho/lápis/relógio + **P4** modal smoke ☑ · **DNA** Loja×grupos [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · §**5** / §**12** · **§13 índice de fichas** (esqueleto, sem conteúdo) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
@@ -17,7 +17,9 @@ Hosts produto: ① `https://sistema.rdoapp.com.br` · ② `https://homolog.siste
 | **Repositório GitHub** | https://github.com/RDO-APP/Equipamentos | https://github.com/RDO-APP/Migration2Core | https://github.com/RDO-APP/EquipamentosMobile · branch ref. `feature/alteracoes_apontador` | https://github.com/RDO-APP/EquipoToPiscina · IIS `inetpub\piscinas` · **≠** pasta Kiro `Migration2Core/EquipoToPiscina-1/` (só referência) | https://github.com/RDO-APP/RDOAppPiscinasMobile · ref. histórica: https://github.com/RDO-APP/PiscinasMobile |
 | **Banco de dados MySQL (catálogo)** | **`novo_rdoapp`** | **`homol_rdoapp`** | Consumo via API → **`novo_rdoapp`** (prod) | **`piscinas_rdoapp`** · homolog web legado: **`piscinas_rdoapp_homologa`** (`homologacao.piscinas.rdoapp.com.br`) | Consumo via API → **`piscinas_rdoapp`** (prod) · homolog: **`piscinas_rdoapp_homologa`** |
 
-**Notas RDS:** não usar `homol_rdoapp` para Piscinas nem `piscinas_rdoapp*` para Core Equipamentos. CPF teste Equipamentos homolog: `53821963549` / `homol_rdoapp` — **não** confundir com dataset Piscinas/Kiro (`567.065.455-20`).
+**Notas RDS:** uma **instância**, vários **catálogos**. Não usar `homol_rdoapp` para Piscinas nem `piscinas_rdoapp*` para Core Equipamentos. CPF teste Equipamentos homolog: `53821963549` / `homol_rdoapp` — **não** confundir com dataset Piscinas/Kiro (`567.065.455-20`). SQL no **DBeaver nessa instância** (não na EC2, não no PowerShell).
+
+**Paridade schema Equipamentos ①×② (2026-11-03):** `COUNT(*)` de tabelas **não** basta — PDF L11 e GET cadastro 500 (`tar_codigo_paralizacao` / horímetro) com **47 = 47**. Diff canônico [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) (Q1 tabela×colunas · Q2 coluna órfã · Q3 tipo/NULL · Q4 tabela órfã). **Resultado:** Q1–Q4 limpos após `ALTER` `homol_rdoapp.tarefa` 11:54 (código varchar(3) + 3 horímetro float) e `MODIFY` varchar `tarefa` 12:22 / `rdo` 12:25. **Proibido** `ALTER` `novo_rdoapp`. **Dados** homolog = subset (**43** obras vs **284** prod). Detalhe catálogos: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md).
 
 ### ⑥ FAPESC · Trilha F (imutabilidade — fora do fluxo Login→Cards)
 
@@ -367,7 +369,9 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 3. **P2 Escolher:** percorrer **§10.3** bloco a bloco (header, card obra, filtros, legenda)  
 4. **P3 Cards:** percorrer **§10.4** (toolbar, accordion, card tarefa)  
 5. Contagem cards = **agrupador**, não rows DB  
-6. **P4** medição: ③ ou modal ① — escopo apartado (**M7+** web)
+6. **P4** medição: modal React em Cards ② (**smoke 2026-11-03**) — polish Foto persist / NOVO* depois
+7. **Unknown column** / 500 BFF: conferir Q2 do diff schema (`homol_rdoapp` × `novo_rdoapp`) **antes** de `Ignore`/`NotMapped` no EF
+8. Cadastro tarefa (lápis/olho): GET `/api/bff/tarefas/{id}` sem 500 · relógio histórico ☑ · **impressora** ainda não
 
 **Piscinas / Piscineiro:** repetir checklist em prod ④⑤ com CPF/dataset **Piscinas** (não misturar com obra 42 Equipamentos).
 
@@ -388,7 +392,7 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 | **P1** | **#1** | Login | `/Account/Login` | chrome externo (sem header operador) | EQ-W Razor | `Login/index.html` |
 | **P2** | **#2** | Escolher | `/Obra/Escolher` | **header → título → filtros → card obra → legenda** | EQ-R SPA | `escolher.html` |
 | **P3** | **#3** | Etapas / Cards | `/Tarefa/Cards` | **header → toolbar → accordion → card tarefa** | EQ-R SPA | `cards.html` |
-| **P4** | **#4** | Nova medição | modal em Cards | formulário medição | — | modal em `cards.html` · **M7+** |
+| **P4** | **#4** | Nova medição | modal em Cards (`NovaMedicaoModal`) | formulário medição | EQ-R SPA ☑ smoke | modal em `cards.html` |
 
 Detalhe item a item **P2–P3**: §10.3–10.4 · resumo §10.1b. **P1** → **M4.8** · **P4** → **M7+**.
 
@@ -453,7 +457,7 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 | **Accordion** | Títulos etapa (ex. SERVIÇOS PRELIMINARES) | ✅ | Texto OK | **M4.5** estilo | §3.2 |
 | **Card tarefa** | Cabeçalho verde + ícone mão + ⋮ | ✅ | Verde + título only | **M4.6** | §3.3 |
 | **Card tarefa** | Contadores efetivo / equipamento | ✅ | **Ausente** | **M4.6** | BFF futuro |
-| **Card tarefa** | Fila ícones (olho, relógio, editar, impressora, +) | ✅ | **Ausente** | **M4.6** | ações **M7+** |
+| **Card tarefa** | Fila ícones (olho, relógio, editar, impressora, +) | ✅ | olho/lápis/relógio/+ ☑ · **impressora/⋮** pendente | **M4.6** + **M7** | [`p3-botoes-habilitacao-m7.md`](migracao/p3-botoes-habilitacao-m7.md) |
 | **Card tarefa** | Duas linhas de datas + calendário | ✅ | Uma linha; sem ícones | **M4.6** | C3 |
 | **Card tarefa** | Status (PLANEJADA, …) | ✅ | Texto + controle “Finalizada” solto | **M4.6** | |
 | **Card tarefa** | Checkbox + barra % no rodapé | ✅ | % sim; **sem** checkbox | **M4.6** | §3.3 |
@@ -467,7 +471,7 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 | P | Tela | Gap vs prod | Marco |
 |:-:|------|-------------|-------|
 | **P1** | Login | SPA `LoginPage` (Razor só fallback); **Lembrar-me** = cookie 30 dias + CPF no `localStorage` (**não** senha) | **M4.8** ☑ |
-| **P4** | Nova medição (modal) | Inexistente no homolog | **M7+** |
+| **P4** | Nova medição (modal) | SPA `NovaMedicaoModal` ☑ smoke 03/nov · Foto persist **depois** | **M7+** |
 
 ### 10.8 Classes de tela operador — P5 (M5 web) e além
 

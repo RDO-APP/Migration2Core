@@ -45,7 +45,7 @@ public class RdoConfiguration : IEntityTypeConfiguration<Rdo>
 
         builder.Property(e => e.RdoDsComentarioAssinatura)
             .HasColumnName("rdo_ds_comentario_assinatura")
-            .HasMaxLength(500)
+            .HasMaxLength(2000)
             .IsUnicode(false)
             .IsRequired(false);
 
@@ -97,7 +97,7 @@ public class RdoConfiguration : IEntityTypeConfiguration<Rdo>
 
         builder.Property(e => e.RdoDsComentarioGeracao)
             .HasColumnName("rdo_ds_comentario_geracao")
-            .HasMaxLength(500)
+            .HasMaxLength(10000)
             .IsUnicode(false)
             .IsRequired(false);
 

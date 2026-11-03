@@ -2,7 +2,7 @@
 
 **Instância:** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306`  
 **Conta/região:** RDOApp · us-east-2  
-**Atualizado:** 2026-10-17  
+**Atualizado:** 2026-11-03  
 **Relacionado:** [`aws-route53-rdoapp-dns-homolog-tecnico.md`](aws-route53-rdoapp-dns-homolog-tecnico.md) §8
 
 Objetivo: classificar cada **catálogo (schema)** em **manter / reformar / investigar / candidato a apagar**, antes de qualquer `DROP DATABASE`.
@@ -79,7 +79,7 @@ Inventário **2026-10-17** (query §3 passo A):
 | **Piscinas_Homologa** | 47 | 26.0 | **INVESTIGAR → ARQUIVAR→APAGAR?** | **318 obras** vs **106** em `piscinas_rdoapp` / `piscinas_rdoapp_homologa`; **26 MB**, sem EC2 — homolog Piscinas **antigo/ampliado**, não ligado ao IIS |
 | **piscinas_rdoapp_homologa** | 49 | 2.9 | **MANTER** | **106 obras** (= `piscinas_rdoapp` prod); homolog Piscinas ativo (`piscinas_hm`) |
 | **rdoapp_loja** | 22 | 12.1 | **MANTER** | Loja prod |
-| **homol_rdoapp** | **47** | ~5.0 | **MANTER (homolog Core)** | Schema = prod (47 tbl); **43 obras** vs **284** prod; lookups `efetivo_status` (4) + `tarefa_codigo_paralizacao` (22) copiados de prod |
+| **homol_rdoapp** | **47** | ~5.0 | **MANTER (homolog Core)** | **47 tbl.** Colunas/tipos = prod após **2026-11-03** (Q1–Q4). Lookups copiados. **43 obras** vs **284** prod |
 | **rdoapp_loja_homologa** | 23 | 4.7 | **MANTER** | Loja homolog |
 | **piscinas_rdoapp** | 48 | 3.1 | **MANTER** | Piscinas prod; **106 obras** |
 | **rdoapp** | 38 | 2.2 | **INVESTIGAR → ARQUIVAR→APAGAR?** | Legado; só `rdoapp_bkp` na EC2 |
@@ -88,6 +88,8 @@ Inventário **2026-10-17** (query §3 passo A):
 | **GilbertoLegacy** | 2 | 0.0 | **INVESTIGAR → ARQUIVAR→APAGAR?** | 2 tabelas só — snapshot mínimo |
 
 **Não listados** na query (zero tabelas base ou catálogo vazio): conferir na árvore DBeaver se ainda existem `RDOApp`, `tmp` (não entraram no GROUP BY).
+
+**Schema coluna a coluna (2026-11-03 ~12:27):** Q1 47×`delta=0` · Q2 vazio · Q4 vazio · **Q3 vazio** após `MODIFY` `tarefa` 12:22 + `rdo` 12:25. Script: [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql).
 
 | catalogo | qtd_tabelas | mb_aprox | Status revisado (Lucio) |
 |----------|-------------|----------|-------------------------|
@@ -122,7 +124,8 @@ Catálogo **sem linha** no passo B → mais provável **INVESTIGAR** ou **ARQUIV
 
 ### Passo C — paridade schema com `novo_rdoapp` (homolog candidatos)
 
-**Status 2026-10-17:** **concluído** — `homol_rdoapp` **47** tabelas (= `novo_rdoapp`).
+**Status 2026-10-17:** **47 tabelas** (= `novo_rdoapp`) — **não** implica colunas iguais.  
+**Status 2026-11-03 ~12:27:** **Q1–Q4** do [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) limpos (colunas, tipos, NULL, extra). DDL só em `homol_rdoapp`: 4 colunas `tarefa` 11:54; `MODIFY` varchar `tarefa` 12:22 e `rdo` 12:25. **Não** `ALTER` `novo_rdoapp`.
 
 Script versionado (copiar/colar no DBeaver, **um `CREATE` por vez** se Ctrl+Enter só rodar uma linha):  
 [`scripts/homol_rdoapp-sync-tables-from-prod.sql`](scripts/homol_rdoapp-sync-tables-from-prod.sql)
@@ -195,3 +198,4 @@ Guia deploy: [`homolog-ec2-migration2core-proximo.md`](homolog-ec2-migration2cor
 | 2026-10-17 | `homol_rdoapp`: **0** obras com `obr_id_obra` 233–235 (CETI Piscinas homolog) — OK para homolog Equipamentos |
 | 2026-10-17 | **E2E OK:** Core `homolog.sistema` + `homol_rdoapp` · CPF `53821963549` · 7 obras = DBeaver = browser |
 | 2026-10-17 | **DDL homol:** 4 tabelas + lookups; **47/47** tbl vs `novo_rdoapp`; script em `docs/scripts/homol_rdoapp-sync-tables-from-prod.sql` |
+| 2026-11-03 | Diff **coluna a coluna** (Q1–Q4). `tarefa` +4 colunas 11:54; varchar `tarefa`/`rdo` 12:22–12:25. Q3 re-run **vazio** 12:27. Script [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) |

@@ -144,28 +144,16 @@ public class Tarefa
     /// </summary>
     public decimal? TarNrQtdPrevisao { get; set; }
 
-    /// <summary>
-    /// Total hour meter reading
-    /// Maps to: tar_dt_medicao_horimetro_total
-    /// </summary>
+    /// <summary>Maps to: tar_dt_medicao_horimetro_total (prod + homol pós-ALTER 2026-11-03).</summary>
     public float? TarDtMedicaoHorimetroTotal { get; set; }
 
-    /// <summary>
-    /// Foreign key - Stoppage code
-    /// Maps to: tar_codigo_paralizacao
-    /// </summary>
+    /// <summary>Maps to: tar_codigo_paralizacao varchar(3).</summary>
     public string? TarCodigoParalizacao { get; set; }
 
-    /// <summary>
-    /// Initial hour meter reading
-    /// Maps to: tar_dt_medicao_horimetro_inicial
-    /// </summary>
+    /// <summary>Maps to: tar_dt_medicao_horimetro_inicial.</summary>
     public float? TarDtMedicaoHorimetroInicial { get; set; }
 
-    /// <summary>
-    /// Final hour meter reading
-    /// Maps to: tar_dt_medicao_horimetro_final
-    /// </summary>
+    /// <summary>Maps to: tar_dt_medicao_horimetro_final.</summary>
     public float? TarDtMedicaoHorimetroFinal { get; set; }
 
     // Navigation properties (will be added when related entities are implemented)

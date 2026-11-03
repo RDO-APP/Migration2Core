@@ -1,4 +1,12 @@
-export type OperadorPage = 'login' | 'escolher' | 'cards' | 'rdo' | 'rdo-cadastro' | 'chart' | 'dashboard'
+export type OperadorPage =
+  | 'login'
+  | 'escolher'
+  | 'cards'
+  | 'rdo'
+  | 'rdo-cadastro'
+  | 'tarefa-cadastro'
+  | 'chart'
+  | 'dashboard'
 
 /** SPA servida pelo host MVC (Login, Escolher, Cards, P5a módulos). */
 export function detectOperadorPage(pathname = window.location.pathname): OperadorPage {
@@ -8,6 +16,9 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   }
   if (p.includes('/obra/escolher')) {
     return 'escolher'
+  }
+  if (p.includes('/tarefa/cadastro')) {
+    return 'tarefa-cadastro'
   }
   if (p.includes('/rdo/cadastro')) {
     return 'rdo-cadastro'

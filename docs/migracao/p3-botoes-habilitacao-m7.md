@@ -83,11 +83,11 @@ Substituir `{id}` pelo `tarefa.id` do BFF.
 | Controle | Prod | Rota homolog | Marco |
 |----------|------|--------------|-------|
 | ⋮ Alterar status | painel `.status` | `/Tarefa/AlterarStatus?id={id}` | ⏳ M7 |
-| Olho | `visualizar` → cadastro read-only | `/Tarefa/Cadastro?id={id}&modo=visualizar` | ⏳ M7 |
-| Relógio | modal `#historico-tarefa` | `/Tarefa/HistoricoMedicao?id={id}` | ⏳ M7 |
-| Lápis | `#/tarefa/cadastro` | `/Tarefa/Cadastro?id={id}` | ⏳ M7 |
-| Impressora | modal horas equipamento | `/Tarefa/RelatorioHorasEquipamento?id={id}` | ⏳ M7 |
-| + medição | `editar(..., true)` | `/Tarefa/Cadastro?id={id}&novaMedicao=1` | ⏳ **P4 / M7+** |
+| Olho | `visualizar` → cadastro read-only | `/Tarefa/Cadastro?id={id}&modo=visualizar` | ✅ SPA M7 (mesmo form, campos desabilitados) |
+| Relógio | modal `#historico-tarefa` | `/Tarefa/HistoricoMedicao?id={id}` | ✅ SPA M7 (smoke 03/nov) |
+| Lápis | `#/tarefa/cadastro` | `/Tarefa/Cadastro?id={id}` | ✅ SPA M7 (mesmo form, salvar · smoke 03/nov) |
+| Impressora | modal horas equipamento | `/Tarefa/RelatorioHorasEquipamento?id={id}` | ⏳ **próximo** |
+| + medição | `editar(..., true)` | modal P4 em Cards (`NovaMedicaoModal`) | ✅ **P4** smoke 03/nov (Foto persist / NOVO* **depois**) |
 | Lixeira | `deletar` | `/Tarefa/Excluir?id={id}` (não no card M4.7 UI) | ⏳ M7 RBAC |
 | Checkbox card | seleção massa | (local) | ⏳ M7 |
 | Adicionar nova tarefa | `novaTarefa(etapaId)` | `/Tarefa/Cadastro?etapaId={etapaId}` | ⏳ M7 |
