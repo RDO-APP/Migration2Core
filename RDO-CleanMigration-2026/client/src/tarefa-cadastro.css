@@ -110,6 +110,10 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
+.tarefa-modal.tarefa-modal-wide {
+  width: min(1120px, 100%);
+}
+
 .tarefa-modal-header,
 .tarefa-modal-footer {
   display: flex;

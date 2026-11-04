@@ -55,11 +55,12 @@ public class TarefaController : Controller
     [HttpGet]
     public IActionResult HistoricoMedicao(int id)
     {
-        return RequireObraOrRedirect() ?? EmMigracaoPage.Render(
-            this,
-            "Histórico de medições",
-            $"Modal `#historico-tarefa` · tarefaId={id} · **M7+**.",
-            prodRef: "cards.html · data-target=#historico-tarefa");
+        if (RequireObraOrRedirect() is { } redir)
+        {
+            return redir;
+        }
+
+        return Redirect($"/Tarefa/Cards?historico={id}");
     }
 
     [HttpGet]

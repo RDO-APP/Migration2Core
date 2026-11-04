@@ -42,3 +42,42 @@ export async function saveTarefaCadastro(
   })
   return readJson(res, 'salvar tarefa')
 }
+
+export async function downloadRelatorioHorasEquipamento(
+  tarefaId: number,
+  body: { dataInicial: string; dataFinal: string; tipoRelatorio: 'PDF' | 'Excel'; descricaoTarefa: string },
+): Promise<void> {
+  const res = await fetch(`/api/bff/tarefas/${tarefaId}/relatorio-horas-equipamento`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: '*/*', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (res.status === 401) {
+    throw new Error('Sessão expirada ou obra não selecionada. Volte a Escolher obra.')
+  }
+  if (!res.ok) {
+    const text = await res.text()
+    let fromJson: string | undefined
+    try {
+      const j = JSON.parse(text) as { message?: string }
+      fromJson = j.message
+    } catch {
+      /* texto */
+    }
+    throw new Error(fromJson?.trim() || `Erro ${res.status} ao gerar relatório.`)
+  }
+  const blob = await res.blob()
+  const cd = res.headers.get('Content-Disposition') ?? ''
+  const star = /filename\*=UTF-8''([^;]+)/i.exec(cd)
+  const quoted = /filename="?([^";]+)"?/i.exec(cd)
+  const name = decodeURIComponent(
+    star?.[1] ?? quoted?.[1] ?? `relatorio-horas.${body.tipoRelatorio === 'Excel' ? 'xls' : 'pdf'}`,
+  )
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = name
+  a.click()
+  URL.revokeObjectURL(url)
+}

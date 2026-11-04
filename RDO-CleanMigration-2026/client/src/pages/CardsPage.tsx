@@ -4,6 +4,8 @@ import type { EtapaComTarefas, TarefaCard } from '../api/equipamentos-api.types'
 import { AddTarefaPlaceholder, TaskCardAgrupador } from '../components/TaskCardAgrupador'
 import { CardsToolbar } from '../components/CardsToolbar'
 import { NovaMedicaoModal } from '../components/NovaMedicaoModal'
+import { RelatorioHorasEquipamentoModal } from '../components/RelatorioHorasEquipamentoModal'
+import { HistoricoMedicaoModal } from '../components/HistoricoMedicaoModal'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
@@ -24,9 +26,15 @@ export function CardsPage() {
   const [filtroOpen, setFiltroOpen] = useState(filtroFromUrl)
   const [selectAll, setSelectAll] = useState(false)
   const [medicao, setMedicao] = useState<TarefaCard | null>(null)
+  const [relatorioHoras, setRelatorioHoras] = useState<TarefaCard | null>(null)
+  const [historico, setHistorico] = useState<TarefaCard | null>(null)
 
   useEffect(() => {
     setFiltroOpen(filtroFromUrl())
+    const hid = Number(new URLSearchParams(window.location.search).get('historico'))
+    if (Number.isFinite(hid) && hid > 0) {
+      setHistorico({ id: hid, descricao: '', status: 0, nomeStatus: '', idEtapa: 0 })
+    }
   }, [])
 
   useEffect(() => {
@@ -179,6 +187,8 @@ export function CardsPage() {
                                   tarefa={t}
                                   etapaId={etapa.id}
                                   onNovaMedicao={setMedicao}
+                                  onRelatorioHoras={setRelatorioHoras}
+                                  onHistorico={setHistorico}
                                 />
                               ))}
                               <AddTarefaPlaceholder etapaId={etapa.id} />
@@ -202,6 +212,25 @@ export function CardsPage() {
           onSaved={() => {
             setMedicao(null)
             window.location.reload()
+          }}
+        />
+      ) : null}
+      {relatorioHoras ? (
+        <RelatorioHorasEquipamentoModal
+          tarefaId={relatorioHoras.id}
+          descricaoTarefa={relatorioHoras.descricao}
+          onClose={() => setRelatorioHoras(null)}
+        />
+      ) : null}
+      {historico ? (
+        <HistoricoMedicaoModal
+          tarefaId={historico.id}
+          descricaoTarefa={historico.descricao}
+          onClose={() => {
+            setHistorico(null)
+            if (new URLSearchParams(window.location.search).has('historico')) {
+              window.history.replaceState({}, '', '/Tarefa/Cards')
+            }
           }}
         />
       ) : null}

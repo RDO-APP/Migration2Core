@@ -140,3 +140,11 @@ public sealed class TarefaCadastroSaveResultDto
     public int Id { get; init; }
     public string? ErrorMessage { get; init; }
 }
+
+public sealed class HorasEquipamentoReportRequestDto
+{
+    public string DataInicial { get; set; } = "";
+    public string DataFinal { get; set; } = "";
+    public string TipoRelatorio { get; set; } = "PDF";
+    public string? DescricaoTarefa { get; set; }
+}

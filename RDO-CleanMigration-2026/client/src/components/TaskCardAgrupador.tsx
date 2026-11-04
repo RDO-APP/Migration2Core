@@ -5,6 +5,8 @@ type TaskCardAgrupadorProps = {
   tarefa: TarefaCard
   etapaId?: number
   onNovaMedicao?: (tarefa: TarefaCard) => void
+  onRelatorioHoras?: (tarefa: TarefaCard) => void
+  onHistorico?: (tarefa: TarefaCard) => void
 }
 
 function formatPair(inicio?: string, fim?: string): string {
@@ -14,7 +16,13 @@ function formatPair(inicio?: string, fim?: string): string {
 }
 
 /** M4.7 layout · M4.7b navegação → rotas MVC (EmMigracao até M7). */
-export function TaskCardAgrupador({ tarefa, etapaId, onNovaMedicao }: TaskCardAgrupadorProps) {
+export function TaskCardAgrupador({
+  tarefa,
+  etapaId,
+  onNovaMedicao,
+  onRelatorioHoras,
+  onHistorico,
+}: TaskCardAgrupadorProps) {
   const pct = Math.min(100, Math.max(0, tarefa.percentualConcluido ?? 0))
   const headClass = tarefa.classeStatusCss?.trim() || 'bg-cinza'
   const percentualExtrapolado = tarefa.percentualExtrapolado === 'false'
@@ -56,7 +64,7 @@ export function TaskCardAgrupador({ tarefa, etapaId, onNovaMedicao }: TaskCardAg
                   type="button"
                   className="btn btn-simple"
                   title="Histórico de Medições"
-                  onClick={() => goOperador(nav.historicoMedicao)}
+                  onClick={() => (onHistorico ? onHistorico(tarefa) : goOperador(nav.historicoMedicao))}
                 >
                   <i className="fa fa-clock-o" aria-hidden="true" />
                 </button>
@@ -72,7 +80,9 @@ export function TaskCardAgrupador({ tarefa, etapaId, onNovaMedicao }: TaskCardAg
                   type="button"
                   className="btn btn-simple"
                   title="Relatório de Controle de Horas por Equipamento"
-                  onClick={() => goOperador(nav.relatorioHorasEquipamento)}
+                  onClick={() =>
+                    onRelatorioHoras ? onRelatorioHoras(tarefa) : goOperador(nav.relatorioHorasEquipamento)
+                  }
                 >
                   <i className="fa fa-print" aria-hidden="true" />
                 </button>

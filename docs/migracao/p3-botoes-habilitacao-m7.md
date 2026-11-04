@@ -63,16 +63,18 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-| Botão | Prod | Rota homolog | Marco |
-|-------|------|--------------|-------|
-| Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** em `/tarefa/cards` | `/Rdo/Cadastro` | Visível se `shell.showGerarRdo` (BFF) · API **M7** |
-| Editar obra | `editarObra()` · **`permission="editarObra"`** em `/tarefa/cards` | `/Obra/Cadastro` | Visível se `shell.showEditarObra` · tela **M5/M7** |
-| Efetivo diário | `#/efetivo/index` · **sem** `permission` | `/Efetivo` | Sempre visível (prod e homolog) · API **M7** |
-| Lista | `#/tarefa/index` | `/Tarefa/Index` | ⏳ M7 lista EQ-R |
-| Adicionar tarefa | `#/tarefa/cadastro` | `/Tarefa/Cadastro` | ⏳ M7 CRUD |
-| Adicionar etapa | `#/etapa/cadastro` | `/Etapa/Cadastro` | ⏳ M7 CRUD |
-| FILTRO | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ⏳ M7 UI filtro + BFF |
-| SELECIONAR TUDO | modal `#alterar-status` | (checkbox local) · destino massa: `/Tarefa/AlterarStatusEmMassa` | ⏳ M7 |
+| Botão | Prod | Rota homolog | Status (Lucio 04/11) |
+|-------|------|--------------|---------------------|
+| Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** | `/Rdo/Cadastro` | ✅ OK |
+| Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ stub / não funciona |
+| Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo` | ❌ stub / não funciona |
+| FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ❌ msg placeholder M7 |
+| Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` | ❌ stub / sem id |
+| Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | ❌ stub Em migração |
+| LISTA **2.1** | `#/tarefa/index` | `/Tarefa/Index` | ❌ rota; ícone sobrepõe texto |
+| SELECIONAR TUDO **2.2** | modal `#alterar-status` | `/Tarefa/AlterarStatusEmMassa` | ❌ inoperante |
+
+**Menu ☰ (shell):** reformatar + conferir opções vs prod (Equipamentos, Colaboradores, Card de Tarefas, RDOs, Obras, Empresas, Etapas…).
 
 **Accordion etapa:** ✅ expand/collapse (sem rota).
 
@@ -82,11 +84,11 @@ Substituir `{id}` pelo `tarefa.id` do BFF.
 
 | Controle | Prod | Rota homolog | Marco |
 |----------|------|--------------|-------|
-| ⋮ Alterar status | painel `.status` | `/Tarefa/AlterarStatus?id={id}` | ⏳ M7 |
+| ⋮ Alterar status | painel `.status` | `/Tarefa/AlterarStatus?id={id}` | ❌ rota sem painel (Lucio 04/11) |
 | Olho | `visualizar` → cadastro read-only | `/Tarefa/Cadastro?id={id}&modo=visualizar` | ✅ SPA M7 (mesmo form, campos desabilitados) |
-| Relógio | modal `#historico-tarefa` | `/Tarefa/HistoricoMedicao?id={id}` | ✅ SPA M7 (smoke 03/nov) |
+| Relógio | modal `#historico-tarefa` | modal em Cards (`HistoricoMedicaoModal`) | ✅ smoke 04/nov (layout **depois**) |
 | Lápis | `#/tarefa/cadastro` | `/Tarefa/Cadastro?id={id}` | ✅ SPA M7 (mesmo form, salvar · smoke 03/nov) |
-| Impressora | modal horas equipamento | `/Tarefa/RelatorioHorasEquipamento?id={id}` | ⏳ **próximo** |
+| Impressora | modal horas equipamento | modal + BFF PDF/Excel | 🟡 gera · **formatação PDF + Excel** pendente |
 | + medição | `editar(..., true)` | modal P4 em Cards (`NovaMedicaoModal`) | ✅ **P4** smoke 03/nov (Foto persist / NOVO* **depois**) |
 | Lixeira | `deletar` | `/Tarefa/Excluir?id={id}` (não no card M4.7 UI) | ⏳ M7 RBAC |
 | Checkbox card | seleção massa | (local) | ⏳ M7 |
