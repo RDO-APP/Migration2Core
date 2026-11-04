@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-04 ~13:00 — card ⋮ status (painel+BFF) · impressora gera (formatação depois) · backlog toolbar/LISTA/menu  
+**Atualizado:** 2026-11-04 ~15:35 — ⋮ hover fix · pendência futura: Pausada via ⋮ exige código paralisação  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -142,7 +142,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **74** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ | formatação PDF+Excel impressora · toolbar (Editar obra, Efetivo, Filtro, +Tarefa, +Etapa) · LISTA · SELECIONAR TUDO · menu ☰ vs prod · polish cadastro · **P6a** · **não** P6b |
+| **M7+** | **74** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ | formatação PDF+Excel impressora · **3.1** ⋮ Pausada+código · toolbar (Editar obra, Efetivo, Filtro, +Tarefa, +Etapa) · LISTA · SELECIONAR TUDO · menu ☰ vs prod · polish cadastro · **P6a** · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
@@ -434,7 +434,8 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **1.5** | Adicionar etapa | ❌ | Stub Em migração |
 | **2.1** | LISTA | ❌ | Tem rota; inoperante (ícone sobrepõe texto) |
 | **2.2** | SELECIONAR TUDO | ❌ | Checkbox sem ação / massa |
-| **3** | Card **⋮** mudar status | 🟡 código | Painel + BFF 04/nov — **smoke pós-deploy** |
+| **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover CSS `09ae5fe` |
+| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Hoje = paridade prod (`AtualizarStatus` sem código). **Melhoria:** ao escolher Pausada no ⋮, exigir/selecionar código (como cadastro/nova medição) — Lucio 04/11 |
 | **4** | Impressora PDF+Excel | 🟡 | Gera arquivo; **formatação** pendente |
 | **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar todas opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |
