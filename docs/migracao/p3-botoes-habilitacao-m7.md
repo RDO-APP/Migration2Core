@@ -69,8 +69,8 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 | Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ stub / não funciona |
 | Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo` | ❌ stub / não funciona |
 | FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | 🟡 painel + filtro cliente — smoke pós-deploy |
-| Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` | ❌ stub / sem id |
-| Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | ❌ stub Em migração |
+| Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` · `?etapaId=` | 🟡 SPA create + BFF — smoke pós-deploy |
+| Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | 🟡 SPA Nome/Ordem + BFF — smoke pós-deploy |
 | LISTA **2.1** | `#/tarefa/index` | `/Tarefa/Index` | ❌ rota; ícone sobrepõe texto |
 | SELECIONAR TUDO **2.2** | modal `#alterar-status` | `/Tarefa/AlterarStatusEmMassa` | ❌ inoperante |
 
@@ -93,7 +93,7 @@ Substituir `{id}` pelo `tarefa.id` do BFF.
 | + medição | `editar(..., true)` | modal P4 em Cards (`NovaMedicaoModal`) | ✅ **P4** smoke 03/nov (Foto persist / NOVO* **depois**) |
 | Lixeira | `deletar` | `/Tarefa/Excluir?id={id}` (não no card M4.7 UI) | ⏳ M7 RBAC |
 | Checkbox card | seleção massa | (local) | ⏳ M7 |
-| Adicionar nova tarefa | `novaTarefa(etapaId)` | `/Tarefa/Cadastro?etapaId={etapaId}` | ⏳ M7 |
+| Adicionar nova tarefa | `novaTarefa(etapaId)` | `/Tarefa/Cadastro?etapaId={etapaId}` | 🟡 SPA create (mesmo 1.4) |
 
 ---
 

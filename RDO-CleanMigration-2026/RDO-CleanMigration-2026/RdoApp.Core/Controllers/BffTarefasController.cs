@@ -28,6 +28,28 @@ public class BffTarefasController : ControllerBase
         _status = status;
     }
 
+    [HttpGet("novo")]
+    public async Task<IActionResult> GetNovo([FromQuery] int? etapaId, CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        try
+        {
+            var payload = await _query.GetBlankAsync(obraId, etapaId, cancellationToken);
+            return Ok(payload);
+        }
+        catch (Exception ex)
+        {
+            var inner = ex.InnerException?.Message;
+            var detail = string.IsNullOrWhiteSpace(inner) ? ex.Message : $"{ex.Message} | {inner}";
+            return StatusCode(500, new { message = $"Erro 500 no servidor (nova tarefa). {ex.GetType().Name}: {detail}" });
+        }
+    }
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
     {

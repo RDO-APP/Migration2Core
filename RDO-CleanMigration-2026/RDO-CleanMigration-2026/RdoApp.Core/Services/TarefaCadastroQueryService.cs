@@ -11,6 +11,7 @@ public class TarefaCadastroQueryService
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
     private const int StatusRdoAssinado = 2;
     private const int StatusRdoAssinado2 = 3;
+    private const int StatusPlanejadaConst = 1;
 
     private readonly RdoDbContext _context;
 
@@ -245,6 +246,79 @@ public class TarefaCadastroQueryService
                     HouveAfastamento = a.AciStAfastamento == "s"
                 })
                 .ToList(),
+            ColaboradoresObra = await LoadColaboradoresObraAsync(obraId, cancellationToken),
+            EquipamentosObra = await LoadEquipamentosObraAsync(obraId, cancellationToken)
+        };
+    }
+
+
+    public async Task<TarefaCadastroDto> GetBlankAsync(
+        int obraId,
+        int? etapaId,
+        CancellationToken cancellationToken)
+    {
+        var etapas = await _context.Etapas.AsNoTracking()
+            .Where(e => e.EtaIdObra == obraId)
+            .OrderBy(e => e.EtaNrOrderm)
+            .Select(e => new TarefaLookupDto { Id = e.EtaIdEtapa, Nome = e.EtaDsEtapa ?? "" })
+            .ToListAsync(cancellationToken);
+
+        var status = await _context.StatusTarefas.AsNoTracking()
+            .OrderBy(s => s.SttIdStatus)
+            .Select(s => new TarefaLookupDto { Id = s.SttIdStatus, Nome = s.SttDsStatus ?? "" })
+            .ToListAsync(cancellationToken);
+
+        var unidades = await _context.UnidadesDeMedida.AsNoTracking()
+            .OrderBy(u => u.UnmDsUnidade)
+            .Select(u => new TarefaLookupDto { Id = u.UnmIdUnidade, Nome = u.UnmDsUnidade ?? "" })
+            .ToListAsync(cancellationToken);
+
+        var paralizacoes = await _context.TarefaCodigoParalizacoes.AsNoTracking()
+            .OrderBy(p => p.TarcpCodigoParalizacao)
+            .Select(p => new TarefaParalizacaoDto
+            {
+                Codigo = p.TarcpCodigoParalizacao,
+                Descricao = p.TarcpDsParalizacao ?? ""
+            })
+            .ToListAsync(cancellationToken);
+
+        var idEtapa = 0;
+        if (etapaId is > 0 && etapas.Any(e => e.Id == etapaId.Value))
+        {
+            idEtapa = etapaId.Value;
+        }
+
+        return new TarefaCadastroDto
+        {
+            Id = 0,
+            Descricao = "",
+            IdEtapa = idEtapa,
+            Status = StatusPlanejadaConst,
+            NomeStatus = "Planejada",
+            IdUnidade = 0,
+            DataInicio = "",
+            DataPrevisaoFim = "",
+            QtdPlanejada = 0,
+            Valor = 0,
+            QtdConstruida = 0,
+            DataMedicao = "",
+            HoraInicial = "",
+            HoraFinal = "",
+            HorimetroInicial = 0,
+            HorimetroFinal = 0,
+            HorimetroTotal = 0,
+            Comentario = "",
+            CodigoParalizacao = null,
+            RdoAssinado = false,
+            ListaColaboradores = Array.Empty<TarefaCadastroColaboradorDto>(),
+            ListaEquipamentos = Array.Empty<TarefaCadastroEquipamentoDto>(),
+            Etapas = etapas,
+            StatusTarefa = status,
+            Unidades = unidades,
+            CodigosParalizacao = paralizacoes,
+            ListaHistoricoTarefa = Array.Empty<TarefaCadastroHistoricoDto>(),
+            ListaImagens = Array.Empty<TarefaCadastroImagemDto>(),
+            ListaAcidentes = Array.Empty<TarefaCadastroAcidenteDto>(),
             ColaboradoresObra = await LoadColaboradoresObraAsync(obraId, cancellationToken),
             EquipamentosObra = await LoadEquipamentosObraAsync(obraId, cancellationToken)
         };

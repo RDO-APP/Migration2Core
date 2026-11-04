@@ -47,10 +47,7 @@ public class TarefaCadastroSaveService
         TarefaCadastroSaveRequestDto request,
         CancellationToken cancellationToken)
     {
-        if (request.Id <= 0)
-        {
-            return Fail("Informe a tarefa.");
-        }
+        var isCreate = request.Id <= 0;
 
         var descricao = (request.Descricao ?? "").Trim();
         if (descricao.Length < 3)
@@ -107,6 +104,107 @@ public class TarefaCadastroSaveService
             return Fail("Etapa não pertence à obra selecionada.");
         }
 
+        var obraInicio = await _context.Obras.AsNoTracking()
+            .Where(o => o.ObrIdObra == obraId)
+            .Select(o => o.ObrDtInicio)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (dataInicio.Date < obraInicio.Date)
+        {
+            return Fail("A Data Inicial da Tarefa não pode ser menor do que a Data Inicial da Obra.");
+        }
+
+        if (dataPrevisaoFim.Date < obraInicio.Date)
+        {
+            return Fail("A Data de Previsão de Final da Tarefa não pode ser menor do que a Data Inicial da Obra.");
+        }
+
+        if (isCreate)
+        {
+            if (request.NovaMedicao)
+            {
+                return Fail("Nova medição exige tarefa existente.");
+            }
+
+            var donoId = await _context.Obras.AsNoTracking()
+                .Where(o => o.ObrIdObra == obraId)
+                .Select(o => o.ObrIdDono)
+                .FirstOrDefaultAsync(cancellationToken);
+            var lim = 0;
+            if (donoId is > 0)
+            {
+                var licId = await _context.Empresas.AsNoTracking()
+                    .Where(e => e.EmpIdEmpresa == donoId.Value)
+                    .Select(e => e.EmpIdLicenca)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (licId is > 0)
+                {
+                    lim = await _context.Licencas.AsNoTracking()
+                        .Where(l => l.LicIdLicenca == licId.Value)
+                        .Select(l => l.LicQtdTarefasObra)
+                        .FirstOrDefaultAsync(cancellationToken);
+                }
+            }
+
+            if (lim > 0)
+            {
+                var qtdAgrupadores = await (
+                    from tar in _context.Tarefas.AsNoTracking()
+                    join et in _context.Etapas.AsNoTracking() on tar.TarIdEtapa equals et.EtaIdEtapa
+                    where et.EtaIdObra == obraId
+                    select tar.TarNrAgrupador
+                ).Distinct().CountAsync(cancellationToken);
+                if (qtdAgrupadores >= lim)
+                {
+                    return Fail(
+                        "A licença adquirida só permite adicionar " + lim +
+                        " tarefas por obra. Favor verificar com o administrador.");
+                }
+            }
+
+            var horaInicialC = ParseTime(request.HoraInicial);
+            var horaFinalC = ParseTime(request.HoraFinal);
+            var horimetroIniC = request.HorimetroInicial ?? 0;
+            var horimetroFimC = request.HorimetroFinal ?? 0;
+            var horimetroTotalC = request.HorimetroTotal ?? Math.Max(0, horimetroFimC - horimetroIniC);
+
+            var created = new Tarefa
+            {
+                TarNrAgrupador = Guid.NewGuid(),
+                TarIdStatus = request.Status,
+                TarIdEtapa = request.IdEtapa,
+                TarIdUnidade = request.IdUnidade > 0 ? request.IdUnidade : null,
+                TarDsTarefa = descricao,
+                TarNrQtdConstruida = request.QtdConstruida ?? 0,
+                TarDtInicio = dataInicio.Date,
+                TarDtPrevisaoFim = dataPrevisaoFim.Date,
+                TarDtFim = request.Status == StatusFinalizada ? DateTime.Today : null,
+                TarDsComentario = request.Comentario ?? "",
+                TarDsFoto = "",
+                TarNrHorasTrabalhadas = null,
+                TarDtMedicaoHoraInicial = horaInicialC,
+                TarDtMedicaoHoraFinal = horaFinalC,
+                TarDtMedicao = dataMedicao.Date,
+                TarVlValorUnitario = request.Valor ?? 0,
+                TarIdColaboradorInsercao = colaboradorId > 0 ? colaboradorId : 0,
+                TarDtInsercao = DateTime.Now,
+                TarDtUltimaAtualizacao = DateTime.Now,
+                TarNrQtdPrevisao = request.QtdPlanejada ?? 0,
+                TarDtMedicaoHorimetroTotal = horimetroTotalC,
+                TarCodigoParalizacao = string.IsNullOrWhiteSpace(request.CodigoParalizacao)
+                    ? null
+                    : request.CodigoParalizacao,
+                TarDtMedicaoHorimetroInicial = horimetroIniC,
+                TarDtMedicaoHorimetroFinal = horimetroFimC
+            };
+
+            _context.Tarefas.Add(created);
+            await _context.SaveChangesAsync(cancellationToken);
+            await SyncVinculosAsync(created.TarIdTarefa, obraId, request, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return new TarefaCadastroSaveResultDto { Ok = true, Id = created.TarIdTarefa };
+        }
+
         var entity = await _context.Tarefas
             .FirstOrDefaultAsync(t => t.TarIdTarefa == request.Id, cancellationToken);
         if (entity == null)
@@ -121,21 +219,6 @@ public class TarefaCadastroSaveService
         if (entityObra != obraId)
         {
             return Fail("Tarefa não pertence à obra selecionada.");
-        }
-
-        var obraInicio = await _context.Obras.AsNoTracking()
-            .Where(o => o.ObrIdObra == obraId)
-            .Select(o => o.ObrDtInicio)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (dataInicio.Date < obraInicio.Date)
-        {
-            return Fail("A Data Inicial da Tarefa não pode ser menor do que a Data Inicial da Obra.");
-        }
-
-        if (dataPrevisaoFim.Date < obraInicio.Date)
-        {
-            return Fail("A Data de Previsão de Final da Tarefa não pode ser menor do que a Data Inicial da Obra.");
         }
 
         var rdoAssinadoNoDia = await (

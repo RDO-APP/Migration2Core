@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage'
 import { RdoCadastroPage } from './pages/RdoCadastroPage'
 import { RdoIndexPage } from './pages/RdoIndexPage'
 import { TarefaCadastroPage } from './pages/TarefaCadastroPage'
+import { EtapaCadastroPage } from './pages/EtapaCadastroPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -18,6 +19,9 @@ function App() {
   }
   if (page === 'tarefa-cadastro') {
     return <TarefaCadastroPage />
+  }
+  if (page === 'etapa-cadastro') {
+    return <EtapaCadastroPage />
   }
   if (page === 'rdo-cadastro') {
     return <RdoCadastroPage />

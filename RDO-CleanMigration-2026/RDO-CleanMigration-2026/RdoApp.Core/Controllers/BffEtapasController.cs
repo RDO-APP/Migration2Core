@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RdoApp.Core.Infrastructure;
+using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Services;
 
 namespace RdoApp.Core.Controllers;
@@ -11,15 +12,14 @@ namespace RdoApp.Core.Controllers;
 public class BffEtapasController : ControllerBase
 {
     private readonly CardsQueryService _cards;
+    private readonly EtapaCadastroService _etapa;
 
-    public BffEtapasController(CardsQueryService cards)
+    public BffEtapasController(CardsQueryService cards, EtapaCadastroService etapa)
     {
         _cards = cards;
+        _etapa = etapa;
     }
 
-    /// <summary>
-    /// M2 BFF — homolog RDS only (DefaultConnection / homol_rdoapp). Session cookie required.
-    /// </summary>
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
@@ -39,5 +39,42 @@ public class BffEtapasController : ControllerBase
 
         payload.UsuarioNome = User.Identity?.Name ?? string.Empty;
         return Ok(payload);
+    }
+
+    [HttpGet("cadastro")]
+    public async Task<IActionResult> CadastroBlank(CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        return Ok(await _etapa.GetBlankAsync(obraId, cancellationToken));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(
+        [FromBody] EtapaCadastroSaveRequestDto? body,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        if (body == null)
+        {
+            return BadRequest(new EtapaCadastroSaveResultDto { Ok = false, ErrorMessage = "Corpo inválido." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _etapa.CreateAsync(obraId, body, cancellationToken);
+        if (!result.Ok)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 }

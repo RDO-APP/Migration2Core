@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { fetchTarefaCadastro, saveTarefaCadastro } from '../api/tarefaApi'
+import { fetchTarefaCadastro, fetchTarefaCadastroNovo, saveTarefaCadastro } from '../api/tarefaApi'
 import type {
   TarefaCadastro,
   TarefaCadastroColaborador,
@@ -26,8 +26,10 @@ import '../tarefa-cadastro.css'
 function queryFlags() {
   const q = new URLSearchParams(window.location.search)
   const id = Number(q.get('id'))
+  const etapaId = Number(q.get('etapaId'))
   return {
     id: Number.isFinite(id) && id > 0 ? id : 0,
+    etapaId: Number.isFinite(etapaId) && etapaId > 0 ? etapaId : 0,
     visualizar: q.get('modo') === 'visualizar',
     novaMedicao: q.get('novaMedicao') === '1' || q.get('novaMedicao') === 'true',
   }
@@ -85,20 +87,18 @@ export function TarefaCadastroPage() {
   const visualizar = flags.visualizar
   const novaMedicao = flags.novaMedicao && !visualizar
 
+  const isNova = flags.id <= 0
+
   useEffect(() => {
     let cancelled = false
-    if (flags.id <= 0) {
-      setError('Informe a tarefa.')
-      setLoading(false)
-      return
-    }
-    fetchTarefaCadastro(flags.id)
+    const load = flags.id > 0 ? fetchTarefaCadastro(flags.id) : fetchTarefaCadastroNovo(flags.etapaId || undefined)
+    load
       .then((dto) => {
         if (cancelled) return
         setData(dto)
         setDescricao(dto.descricao)
         setIdEtapa(dto.idEtapa)
-        setStatus(dto.status)
+        setStatus(dto.status || STATUS_PLANEJADA)
         setIdUnidade(dto.idUnidade)
         setDataInicio(dto.dataInicio)
         setDataPrevisaoFim(dto.dataPrevisaoFim)
@@ -126,9 +126,9 @@ export function TarefaCadastroPage() {
     return () => {
       cancelled = true
     }
-  }, [flags.id, novaMedicao])
+  }, [flags.id, flags.etapaId, novaMedicao])
 
-  const headerLocked = visualizar || (data != null && data.status !== STATUS_PLANEJADA)
+  const headerLocked = visualizar || (!isNova && data != null && data.status !== STATUS_PLANEJADA)
   const medicaoLocked = visualizar || data?.rdoAssinado === true
   const statusOpts = statusOptionsFor(data?.statusTarefa ?? [], data?.status ?? 0, novaMedicao)
   const totalH = horimetroTotal(horimetroInicial, horimetroFinal)
@@ -242,7 +242,13 @@ export function TarefaCadastroPage() {
     }
   }
 
-  const title = visualizar ? 'Visualizar tarefa' : novaMedicao ? 'Nova medição' : 'Tarefa / Medição'
+  const title = visualizar
+    ? 'Visualizar tarefa'
+    : novaMedicao
+      ? 'Nova medição'
+      : isNova
+        ? 'Nova tarefa'
+        : 'Tarefa / Medição'
 
   return (
     <OperadorShell variant="cards" obraNome={shell?.obraNome} shell={shell}>

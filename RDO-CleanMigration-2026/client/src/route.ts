@@ -5,6 +5,7 @@ export type OperadorPage =
   | 'rdo'
   | 'rdo-cadastro'
   | 'tarefa-cadastro'
+  | 'etapa-cadastro'
   | 'chart'
   | 'dashboard'
 
@@ -19,6 +20,9 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   }
   if (p.includes('/tarefa/cadastro')) {
     return 'tarefa-cadastro'
+  }
+  if (p.includes('/etapa/cadastro')) {
+    return 'etapa-cadastro'
   }
   if (p.includes('/rdo/cadastro')) {
     return 'rdo-cadastro'

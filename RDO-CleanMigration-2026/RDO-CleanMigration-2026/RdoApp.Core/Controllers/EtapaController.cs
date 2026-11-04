@@ -7,18 +7,16 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class EtapaController : Controller
 {
+    private readonly IWebHostEnvironment _env;
+
+    public EtapaController(IWebHostEnvironment env)
+    {
+        _env = env;
+    }
+
     [HttpGet]
     public IActionResult Cadastro()
     {
-        if (!ObraSessionHelper.HasObraSelected(HttpContext))
-        {
-            return RedirectToAction(nameof(ObraController.Escolher), "Obra");
-        }
-
-        return EmMigracaoPage.Render(
-            this,
-            "Cadastro de etapa",
-            "CRUD etapa · **M7+**.",
-            prodRef: "#/etapa/cadastro");
+        return OperadorSpaEntry.ServeSpaIndex(this, _env, "Nova etapa");
     }
 }

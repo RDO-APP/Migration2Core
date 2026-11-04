@@ -36,20 +36,14 @@ public class TarefaController : Controller
             return redir;
         }
 
-        if (id is > 0)
-        {
-            var spaTitle = novaMedicao
+        var spaTitle = id is > 0
+            ? (novaMedicao
                 ? "Nova medição"
                 : modo == "visualizar"
                     ? "Visualizar tarefa"
-                    : "Editar tarefa";
-            return OperadorSpaEntry.ServeSpaIndex(this, _env, spaTitle);
-        }
-
-        var titulo = "Cadastro de tarefa";
-        var desc =
-            $"Prod: `#/tarefa/cadastro` · id=— · etapaId={etapaId?.ToString() ?? "—"} · **M7** nova tarefa (sem id) ainda em migração.";
-        return EmMigracaoPage.Render(this, titulo, desc, prodRef: "#/tarefa/cadastro");
+                    : "Editar tarefa")
+            : "Nova tarefa";
+        return OperadorSpaEntry.ServeSpaIndex(this, _env, spaTitle);
     }
 
     [HttpGet]

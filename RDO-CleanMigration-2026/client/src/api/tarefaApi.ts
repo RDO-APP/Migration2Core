@@ -31,6 +31,15 @@ export async function fetchTarefaCadastro(id: number): Promise<TarefaCadastro> {
   return readJson(res, 'cadastro tarefa')
 }
 
+export async function fetchTarefaCadastroNovo(etapaId?: number): Promise<TarefaCadastro> {
+  const q = etapaId && etapaId > 0 ? `?etapaId=${etapaId}` : ''
+  const res = await fetch(`/api/bff/tarefas/novo${q}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'nova tarefa')
+}
+
 export async function saveTarefaCadastro(
   body: TarefaCadastroSaveRequest,
 ): Promise<TarefaCadastroSaveResult> {
