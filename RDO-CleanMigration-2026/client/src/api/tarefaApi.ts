@@ -1,4 +1,4 @@
-import type { TarefaCadastro, TarefaCadastroSaveRequest, TarefaCadastroSaveResult } from './equipamentos-api.types'
+import type { TarefaCadastro, TarefaCadastroSaveRequest, TarefaCadastroSaveResult, TarefaStatusUpdateResult } from './equipamentos-api.types'
 
 async function readJson<T>(res: Response, fallback: string): Promise<T> {
   if (res.status === 401) {
@@ -80,4 +80,17 @@ export async function downloadRelatorioHorasEquipamento(
   a.download = name
   a.click()
   URL.revokeObjectURL(url)
+}
+
+export async function atualizarStatusTarefa(
+  tarefaId: number,
+  idStatus: number,
+): Promise<TarefaStatusUpdateResult> {
+  const res = await fetch(`/api/bff/tarefas/${tarefaId}/status`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idStatus }),
+  })
+  return readJson(res, 'atualizar status')
 }

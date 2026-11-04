@@ -84,7 +84,7 @@ Substituir `{id}` pelo `tarefa.id` do BFF.
 
 | Controle | Prod | Rota homolog | Marco |
 |----------|------|--------------|-------|
-| ⋮ Alterar status | painel `.status` | `/Tarefa/AlterarStatus?id={id}` | ❌ rota sem painel (Lucio 04/11) |
+| ⋮ Alterar status | painel `.status` | painel no card + `POST /api/bff/tarefas/{id}/status` | ✅ código 04/nov (smoke pós-deploy) |
 | Olho | `visualizar` → cadastro read-only | `/Tarefa/Cadastro?id={id}&modo=visualizar` | ✅ SPA M7 (mesmo form, campos desabilitados) |
 | Relógio | modal `#historico-tarefa` | modal em Cards (`HistoricoMedicaoModal`) | ✅ smoke 04/nov (layout **depois**) |
 | Lápis | `#/tarefa/cadastro` | `/Tarefa/Cadastro?id={id}` | ✅ SPA M7 (mesmo form, salvar · smoke 03/nov) |

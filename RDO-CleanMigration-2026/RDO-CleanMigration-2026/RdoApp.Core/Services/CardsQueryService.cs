@@ -89,13 +89,10 @@ public class CardsQueryService
             tarefaRows.Select(t => t.TarNrAgrupador).Distinct(),
             cancellationToken);
 
-        var statusIds = tarefaRows.Select(t => t.TarIdStatus).Distinct().ToList();
-        var statusMap = statusIds.Count == 0
-            ? new Dictionary<int, string>()
-            : await _context.StatusTarefas.AsNoTracking()
-                .Where(s => statusIds.Contains(s.SttIdStatus))
-                .Select(s => new { s.SttIdStatus, Nome = s.SttDsStatus ?? string.Empty })
-                .ToDictionaryAsync(x => x.SttIdStatus, x => x.Nome, cancellationToken);
+        var allStatus = await _context.StatusTarefas.AsNoTracking()
+            .Select(s => new { s.SttIdStatus, Nome = s.SttDsStatus ?? string.Empty })
+            .ToListAsync(cancellationToken);
+        var statusMap = allStatus.ToDictionary(x => x.SttIdStatus, x => x.Nome);
 
         var tarefasByEtapa = tarefaRows
             .GroupBy(t => t.TarIdEtapa)
@@ -131,7 +128,7 @@ public class CardsQueryService
                 Ordem = e.EtaNrOrderm,
                 IdObra = e.EtaIdObra,
                 TituloObra = obraNome,
-                Tarefas = cards.Select(t => MapTarefaCard(t, statusMap, periodosPorAgrupador, colabCounts, equipCounts)).ToList()
+                Tarefas = cards.Select(t => MapTarefaCard(t, statusMap, periodosPorAgrupador, colabCounts, equipCounts, allStatus.Select(s => (s.SttIdStatus, s.Nome)).ToList())).ToList()
             });
         }
 
@@ -221,7 +218,8 @@ public class CardsQueryService
         IReadOnlyDictionary<int, string> statusMap,
         IReadOnlyDictionary<Guid, PeriodoExecucao> periodosPorAgrupador,
         IReadOnlyDictionary<int, int> colabCounts,
-        IReadOnlyDictionary<int, int> equipCounts)
+        IReadOnlyDictionary<int, int> equipCounts,
+        IReadOnlyList<(int Id, string Nome)> allStatus)
     {
         periodosPorAgrupador.TryGetValue(row.TarNrAgrupador, out var periodo);
         var entity = new Tarefa
@@ -238,6 +236,18 @@ public class CardsQueryService
         var execPrimeira = periodo?.PrimeiroDia;
         var execUltima = periodo?.UltimoDia;
         var existeExec = execPrimeira != null && execUltima != null;
+
+        var permitidos = IdsStatusPermitidos(row.TarIdStatus);
+        var listaStatus = allStatus
+            .Where(s => permitidos.Contains(s.Id))
+            .OrderBy(s => s.Id)
+            .Select(s => new StatusPermitidoDto
+            {
+                Id = s.Id,
+                Nome = s.Nome,
+                CssClass = ClasseStatusCss(s.Id)
+            })
+            .ToList();
 
         return new TarefaCardDto
         {
@@ -256,6 +266,7 @@ public class CardsQueryService
             PrimeiraExecucao = existeExec ? FormatDate(execPrimeira!.Value) : "",
             UltimaExecucao = existeExec ? FormatDate(execUltima!.Value) : "",
             ExisteExecucao = existeExec,
+            ListaStatusPermitidos = listaStatus,
         };
     }
 }

@@ -1,5 +1,12 @@
 namespace RdoApp.Core.Models.Dtos;
 
+public sealed class StatusPermitidoDto
+{
+    public int Id { get; init; }
+    public string Nome { get; init; } = "";
+    public string CssClass { get; init; } = "bg-cinza";
+}
+
 public sealed class TarefaCardDto
 {
     public int Id { get; init; }
@@ -17,6 +24,19 @@ public sealed class TarefaCardDto
     public string? PrimeiraExecucao { get; init; }
     public string? UltimaExecucao { get; init; }
     public bool ExisteExecucao { get; init; }
+    public IReadOnlyList<StatusPermitidoDto> ListaStatusPermitidos { get; init; } = Array.Empty<StatusPermitidoDto>();
+}
+
+public sealed class TarefaStatusUpdateRequestDto
+{
+    public int IdStatus { get; init; }
+}
+
+public sealed class TarefaStatusUpdateResultDto
+{
+    public bool Ok { get; init; }
+    public int? Id { get; init; }
+    public string? ErrorMessage { get; init; }
 }
 
 public sealed class EtapaComTarefasDto

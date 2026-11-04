@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-04 ~12:35 — card relógio ☑ · backlog P3 toolbar/⋮/menu (Lucio) · impressora PDF+Excel formatação pendente  
+**Atualizado:** 2026-11-04 ~13:00 — card ⋮ status (painel+BFF) · impressora gera (formatação depois) · backlog toolbar/LISTA/menu  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -120,7 +120,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — commit/push · formatação impressora · fila toolbar/⋮/LISTA/menu P3.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — commit/push+deploy ⋮ · smoke status · formatação impressora · toolbar/LISTA/menu.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -142,7 +142,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **72** | **7a–7d** · olho/lápis/relógio/+ · impressora **gera** · Gerar RDO ☑ | formatação PDF+Excel impressora · ⋮ status · toolbar (Editar obra, Efetivo, Filtro, +Tarefa, +Etapa) · LISTA · SELECIONAR TUDO · menu ☰ vs prod · polish cadastro · **P6a** · **não** P6b |
+| **M7+** | **74** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ | formatação PDF+Excel impressora · toolbar (Editar obra, Efetivo, Filtro, +Tarefa, +Etapa) · LISTA · SELECIONAR TUDO · menu ☰ vs prod · polish cadastro · **P6a** · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
@@ -412,7 +412,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 1. **Commit + push** Migration2Core (impressora + relógio) · sync OneDrive docs.
 2. **Impressora** — formatação **PDF e Excel** vs prod (gaps Lucio).
-3. Card **⋮** alterar status (rota existe, não funciona).
+3. Card **⋮** — smoke pós-deploy (painel + POST status).
 4. Toolbar P3 (só **Gerar RDO** OK hoje) — ver § [Pendências P3 Cards](#pendências-p3-cards-etapa--tarefas-lucio-0411).
 5. **LISTA** + **SELECIONAR TUDO**.
 6. Menu principal **☰** — reformatar + conferir opções vs prod.
@@ -434,7 +434,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **1.5** | Adicionar etapa | ❌ | Stub Em migração |
 | **2.1** | LISTA | ❌ | Tem rota; inoperante (ícone sobrepõe texto) |
 | **2.2** | SELECIONAR TUDO | ❌ | Checkbox sem ação / massa |
-| **3** | Card **⋮** mudar status | ❌ | Rota Em migração; painel prod ausente |
+| **3** | Card **⋮** mudar status | 🟡 código | Painel + BFF 04/nov — **smoke pós-deploy** |
 | **4** | Impressora PDF+Excel | 🟡 | Gera arquivo; **formatação** pendente |
 | **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar todas opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |

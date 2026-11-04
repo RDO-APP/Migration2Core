@@ -14,15 +14,18 @@ public class BffTarefasController : ControllerBase
     private readonly TarefaCadastroQueryService _query;
     private readonly TarefaCadastroSaveService _save;
     private readonly HorasEquipamentoReportService _horas;
+    private readonly TarefaStatusUpdateService _status;
 
     public BffTarefasController(
         TarefaCadastroQueryService query,
         TarefaCadastroSaveService save,
-        HorasEquipamentoReportService horas)
+        HorasEquipamentoReportService horas,
+        TarefaStatusUpdateService status)
     {
         _query = query;
         _save = save;
         _horas = horas;
+        _status = status;
     }
 
     [HttpGet("{id:int}")]
@@ -119,6 +122,42 @@ public class BffTarefasController : ControllerBase
             var inner = ex.InnerException?.Message;
             var detail = string.IsNullOrWhiteSpace(inner) ? ex.Message : $"{ex.Message} | {inner}";
             return StatusCode(500, new { message = $"Erro ao gerar relatório. {ex.GetType().Name}: {detail}" });
+        }
+    }
+
+
+    [HttpPost("{id:int}/status")]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> AtualizarStatus(
+        int id,
+        [FromBody] TarefaStatusUpdateRequestDto? body,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        if (body == null || body.IdStatus <= 0)
+        {
+            return BadRequest(new TarefaStatusUpdateResultDto { Ok = false, ErrorMessage = "Status inválido." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var colaboradorId = LoginSessionHelper.GetColaboradorId(HttpContext);
+        try
+        {
+            var result = await _status.AtualizarAsync(obraId, colaboradorId, id, body.IdStatus, cancellationToken);
+            if (!result.Ok)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new TarefaStatusUpdateResultDto { Ok = false, ErrorMessage = ex.Message });
         }
     }
 }

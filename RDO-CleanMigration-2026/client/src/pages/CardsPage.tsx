@@ -189,6 +189,7 @@ export function CardsPage() {
                                   onNovaMedicao={setMedicao}
                                   onRelatorioHoras={setRelatorioHoras}
                                   onHistorico={setHistorico}
+                                  onStatusChanged={() => window.location.reload()}
                                 />
                               ))}
                               <AddTarefaPlaceholder etapaId={etapa.id} />

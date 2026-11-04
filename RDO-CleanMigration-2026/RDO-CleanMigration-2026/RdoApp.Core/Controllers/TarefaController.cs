@@ -76,11 +76,12 @@ public class TarefaController : Controller
     [HttpGet]
     public IActionResult AlterarStatus(int id)
     {
-        return RequireObraOrRedirect() ?? EmMigracaoPage.Render(
-            this,
-            "Alterar status da tarefa",
-            $"Painel ⋮ / `listaStatusPermitidos` · tarefaId={id} · **M7+**.",
-            prodRef: "cards.html · .bt-status");
+        if (RequireObraOrRedirect() is { } redir)
+        {
+            return redir;
+        }
+
+        return Redirect("/Tarefa/Cards");
     }
 
     [HttpGet]

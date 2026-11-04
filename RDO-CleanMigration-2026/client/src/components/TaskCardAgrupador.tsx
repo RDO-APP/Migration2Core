@@ -1,5 +1,8 @@
-import type { TarefaCard } from '../api/equipamentos-api.types'
+import { useEffect, useState } from 'react'
+import type { StatusPermitido, TarefaCard } from '../api/equipamentos-api.types'
+import { atualizarStatusTarefa } from '../api/tarefaApi'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { showToast } from '../toast'
 
 type TaskCardAgrupadorProps = {
   tarefa: TarefaCard
@@ -7,6 +10,7 @@ type TaskCardAgrupadorProps = {
   onNovaMedicao?: (tarefa: TarefaCard) => void
   onRelatorioHoras?: (tarefa: TarefaCard) => void
   onHistorico?: (tarefa: TarefaCard) => void
+  onStatusChanged?: () => void
 }
 
 function formatPair(inicio?: string, fim?: string): string {
@@ -15,13 +19,14 @@ function formatPair(inicio?: string, fim?: string): string {
   return `${a} À ${b}`
 }
 
-/** M4.7 layout · M4.7b navegação → rotas MVC (EmMigracao até M7). */
+/** M4.7 layout · M7 painel ⋮ status (paridade cards.html). */
 export function TaskCardAgrupador({
   tarefa,
   etapaId,
   onNovaMedicao,
   onRelatorioHoras,
   onHistorico,
+  onStatusChanged,
 }: TaskCardAgrupadorProps) {
   const pct = Math.min(100, Math.max(0, tarefa.percentualConcluido ?? 0))
   const headClass = tarefa.classeStatusCss?.trim() || 'bg-cinza'
@@ -30,6 +35,40 @@ export function TaskCardAgrupador({
   const colab = tarefa.quantidadeColaboradores ?? 0
   const equip = tarefa.quantidadeEquipamentos ?? 0
   const nav = P3_NAV.card(tarefa.id, etapaId)
+  const lista: StatusPermitido[] = tarefa.listaStatusPermitidos ?? []
+  const [statusOpen, setStatusOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (!statusOpen) return
+    function onDocClick() {
+      setStatusOpen(false)
+    }
+    document.addEventListener('click', onDocClick)
+    return () => document.removeEventListener('click', onDocClick)
+  }, [statusOpen])
+
+  async function onPickStatus(idStatus: number) {
+    if (saving) return
+    setStatusOpen(false)
+    setSaving(true)
+    try {
+      const result = await atualizarStatusTarefa(tarefa.id, idStatus)
+      if (!result.ok) {
+        showToast('error', result.errorMessage || 'Falha ao alterar status.')
+        return
+      }
+      showToast('success', 'Status alterado com sucesso.')
+      onStatusChanged?.()
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Falha ao alterar status.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const finalizadaOnly =
+    lista.length === 1 && lista[0]?.nome?.toLowerCase() === 'finalizada'
 
   return (
     <div className="item">
@@ -41,7 +80,11 @@ export function TaskCardAgrupador({
             type="button"
             className="fa fa-ellipsis-v btn btn-simple bt-status"
             title="Alterar Status"
-            onClick={() => goOperador(nav.alterarStatus)}
+            disabled={saving}
+            onClick={(e) => {
+              e.stopPropagation()
+              setStatusOpen((v) => !v)
+            }}
           />
           <div className="icones">
             <div className="inf no-padding-right">
@@ -131,6 +174,30 @@ export function TaskCardAgrupador({
             />
             <span className="azul">{pct}%</span>
           </div>
+        </div>
+
+        <div
+          className={`status${statusOpen ? ' active' : ''}`}
+          onClick={(e) => e.stopPropagation()}
+          role="presentation"
+        >
+          {lista.map((st) => (
+            <button
+              key={st.id}
+              type="button"
+              className={`btn ${st.cssClass}`}
+              disabled={saving}
+              onClick={() => onPickStatus(st.id)}
+            >
+              <i
+                className="icon-"
+                aria-hidden="true"
+                style={finalizadaOnly ? { top: '26%' } : undefined}
+              />
+              <span>{st.nome}</span>
+              <i className="fa" aria-hidden="true" style={finalizadaOnly ? { top: '33%' } : undefined} />
+            </button>
+          ))}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
 **Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-04  
-**P3 backlog Lucio:** toolbar (só Gerar RDO OK) · LISTA · SELECIONAR TUDO · ⋮ status · impressora PDF+Excel formatação · menu ☰ vs prod — orquestrador § Pendências P3 Cards.  
+**P3 backlog Lucio:** toolbar (só Gerar RDO OK) · LISTA · SELECIONAR TUDO · impressora PDF+Excel formatação · menu ☰ vs prod — ⋮ status código 04/nov (smoke) — orquestrador § Pendências P3 Cards.  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).

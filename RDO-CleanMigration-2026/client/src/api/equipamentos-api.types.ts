@@ -2,6 +2,12 @@
  * Contrato M1 — espelho docs Migration2Core (EQ-R Cards M2).
  */
 
+export interface StatusPermitido {
+  id: number
+  nome: string
+  cssClass: string
+}
+
 export interface TarefaCard {
   id: number
   descricao: string
@@ -18,6 +24,13 @@ export interface TarefaCard {
   primeiraExecucao?: string
   ultimaExecucao?: string
   existeExecucao?: boolean
+  listaStatusPermitidos?: StatusPermitido[]
+}
+
+export interface TarefaStatusUpdateResult {
+  ok: boolean
+  id?: number
+  errorMessage?: string
 }
 
 export interface ShellNavItem {

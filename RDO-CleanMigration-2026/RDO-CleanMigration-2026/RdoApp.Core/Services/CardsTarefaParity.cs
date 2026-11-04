@@ -24,6 +24,18 @@ internal static class CardsTarefaParity
             _ => "bg-cinza"
         };
 
+    /// <summary>Paridade <c>StatusTarefaModel.ListaStatusTarefaPermitidos</c>.</summary>
+    internal static IReadOnlyList<int> IdsStatusPermitidos(int statusAtual) =>
+        statusAtual switch
+        {
+            1 => new[] { 1, 2, 3, 4, 5 },
+            2 => new[] { 2, 3, 4, 5 },
+            3 => new[] { 3 },
+            4 => new[] { 2, 3, 4, 5 },
+            5 => new[] { 5 },
+            _ => new[] { 1, 2 }
+        };
+
     internal static double CalcularPercentualConcluido(Tarefa tar, PeriodoExecucao? periodo)
     {
         if (tar.TarIdStatus == 1)
