@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-04 ~15:50 — SELECIONAR TUDO + status em massa (código) · publish quando Lucio pedir  
+**Atualizado:** 2026-11-04 ~20:10 — pendências: massa RBAC/smoke · formatação impressora · próximo código = FILTRO  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -410,13 +410,12 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Commit + push** Migration2Core (impressora + relógio) · sync OneDrive docs.
-2. **Impressora** — formatação **PDF e Excel** vs prod (gaps Lucio).
-3. Card **⋮** — smoke pós-deploy (painel + POST status).
-4. Toolbar P3 (só **Gerar RDO** OK hoje) — ver § [Pendências P3 Cards](#pendências-p3-cards-etapa--tarefas-lucio-0411).
-5. **LISTA** + **SELECIONAR TUDO**.
-6. Menu principal **☰** — reformatar + conferir opções vs prod.
-7. Polish relógio/cadastro **depois** · **DOC-FICHAS** / **#29** / **UI-M1** / **M5 EQ-M** — backlog.
+1. **FILTRO** Cards (1.3) — painel real vs placeholder `?filtro=1` (**próximo código**).
+2. Publish/deploy pacote acumulado quando Lucio pedir (⋮ · select-all · massa `61bc345`).
+3. Toolbar 1.1–1.5 (Editar obra · Efetivo · +Tarefa · +Etapa).
+4. **LISTA** (2.1).
+5. Menu **☰** vs prod (5).
+6. Backlog format/polish — ver tabela § Pendências P3.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
@@ -433,11 +432,12 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **1.4** | Adicionar tarefa | ❌ | Vai para stub / sem id |
 | **1.5** | Adicionar etapa | ❌ | Stub Em migração |
 | **2.1** | LISTA | ❌ | Tem rota; inoperante (ícone sobrepõe texto) |
-| **2.2** | SELECIONAR TUDO | 🟡 código | Seleção cards + contador + modal massa BFF — **smoke pós-deploy** |
-| **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover CSS `09ae5fe` |
-| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Hoje = paridade prod (`AtualizarStatus` sem código). **Melhoria:** ao escolher Pausada no ⋮, exigir/selecionar código (como cadastro/nova medição) — Lucio 04/11 |
-| **4** | Impressora PDF+Excel | 🟡 | Gera arquivo; **formatação** pendente |
-| **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar todas opções vs prod |
+| **2.2** | SELECIONAR TUDO | ✅ código | Seleção + sombra · smoke Lucio OK 04/11 |
+| **2.3** | Alterar status em massa (botão) | 🟡 | Código `61bc345` (sempre visível homolog). **Cobrar depois:** Lucio vê o botão azul ao lado de SELECIONAR TUDO? Re-gate RBAC `aterarStatusEmMassa` |
+| **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |
+| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Melhoria além da prod (AtualizarStatus sem código) — Lucio 04/11 |
+| **4** | Impressora PDF + Excel | 🟡 | Gera arquivo; **formatação** vs prod (**MS-Excel e PDF**) — Lucio 04/11 |
+| **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |
 
 ---
