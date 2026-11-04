@@ -11,6 +11,11 @@ import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
 import { showToast } from '../toast'
+import {
+  EMPTY_FILTRO,
+  aplicarFiltroEtapas,
+  type CardsFiltroState,
+} from '../cardsFiltro'
 import '../cards-page.css'
 import '../tarefa-cadastro.css'
 
@@ -31,11 +36,18 @@ export function CardsPage() {
   const [medicao, setMedicao] = useState<TarefaCard | null>(null)
   const [relatorioHoras, setRelatorioHoras] = useState<TarefaCard | null>(null)
   const [historico, setHistorico] = useState<TarefaCard | null>(null)
+  const [filtroDraft, setFiltroDraft] = useState<CardsFiltroState>(EMPTY_FILTRO)
+  const [filtroAplicado, setFiltroAplicado] = useState<CardsFiltroState>(EMPTY_FILTRO)
 
-  const allTarefaIds = useMemo(() => {
-    if (!data) return [] as number[]
-    return data.etapas.flatMap((e) => e.tarefas.map((t) => t.id))
-  }, [data])
+  const etapasVisiveis = useMemo(() => {
+    if (!data) return [] as EtapaComTarefas[]
+    return aplicarFiltroEtapas(data.etapas, filtroAplicado)
+  }, [data, filtroAplicado])
+
+  const allTarefaIds = useMemo(
+    () => etapasVisiveis.flatMap((e) => e.tarefas.map((t) => t.id)),
+    [etapasVisiveis],
+  )
 
   const selectAll =
     allTarefaIds.length > 0 && allTarefaIds.every((id) => selectedIds.has(id))
@@ -81,12 +93,19 @@ export function CardsPage() {
   }
 
   function onToggleFiltro() {
-    if (filtroOpen) {
-      setFiltroOpen(false)
-      window.history.replaceState({}, '', '/Tarefa/Cards')
-      return
+    setFiltroOpen((open) => {
+      const next = !open
+      window.history.replaceState({}, '', next ? '/Tarefa/Cards?filtro=1' : '/Tarefa/Cards')
+      return next
+    })
+  }
+
+  function onPesquisarFiltro() {
+    setFiltroAplicado({ ...filtroDraft })
+    if (data) {
+      const ids = aplicarFiltroEtapas(data.etapas, filtroDraft).map((e) => e.id)
+      setOpenEtapas(new Set(ids))
     }
-    goOperador(P3_NAV.toolbar.filtroQuery)
   }
 
   function onSelectAllChange(checked: boolean) {
@@ -165,10 +184,18 @@ export function CardsPage() {
         }
         showCriarNovoTarefa={shell?.showCriarNovoTarefa === true}
         showCriarNovaEtapa={shell?.showCriarNovaEtapa === true}
+        filtroDraft={filtroDraft}
+        onFiltroDraftChange={setFiltroDraft}
+        onPesquisarFiltro={onPesquisarFiltro}
+        etapasOpts={data.etapas.map((e) => ({ id: e.id, titulo: e.titulo }))}
       />
 
-      {data.etapas.length === 0 ? (
-        <label className="col-xs-12 no-padding cards-empty-label">Nenhum registro encontrado.</label>
+      {etapasVisiveis.length === 0 ? (
+        <label className="col-xs-12 no-padding cards-empty-label">
+          {data.etapas.length === 0
+            ? 'Nenhum registro encontrado.'
+            : 'Nenhuma tarefa correspondente ao filtro.'}
+        </label>
       ) : (
         <>
           <div className="cards-select-all-row">
@@ -201,7 +228,7 @@ export function CardsPage() {
 
           <div className="lista-tarefas">
             <div className="panel-group accordion" id="accordion">
-              {data.etapas.map((etapa: EtapaComTarefas) => {
+              {etapasVisiveis.map((etapa: EtapaComTarefas) => {
                 const open = openEtapas.has(etapa.id)
                 return (
                   <div key={etapa.id} className="panel panel-default">

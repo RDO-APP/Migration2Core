@@ -68,7 +68,7 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 | Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** | `/Rdo/Cadastro` | ✅ OK |
 | Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ stub / não funciona |
 | Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo` | ❌ stub / não funciona |
-| FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ❌ msg placeholder M7 |
+| FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | 🟡 painel + filtro cliente — smoke pós-deploy |
 | Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` | ❌ stub / sem id |
 | Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | ❌ stub Em migração |
 | LISTA **2.1** | `#/tarefa/index` | `/Tarefa/Index` | ❌ rota; ícone sobrepõe texto |

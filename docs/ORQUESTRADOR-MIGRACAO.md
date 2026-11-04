@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-04 ~20:10 — pendências: massa RBAC/smoke · formatação impressora · próximo código = FILTRO  
+**Atualizado:** 2026-11-04 ~20:20 — FILTRO 1.3 código (cliente) · smoke pós-deploy · massa RBAC · formatação impressora  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -410,7 +410,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **FILTRO** Cards (1.3) — painel real vs placeholder `?filtro=1` (**próximo código**).
+1. Smoke **FILTRO** (1.3) pós-deploy · depois toolbar 1.1–1.5 / LISTA / ☰.
 2. Publish/deploy pacote acumulado quando Lucio pedir (⋮ · select-all · massa `61bc345`).
 3. Toolbar 1.1–1.5 (Editar obra · Efetivo · +Tarefa · +Etapa).
 4. **LISTA** (2.1).
@@ -428,7 +428,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | — | **Gerar RDO** | ✅ OK | Único dos 6 da toolbar funcional |
 | **1.1** | Editar obra | ❌ | Ícone/rota; tela ainda stub/M7 |
 | **1.2** | Efetivo diário | ❌ | Idem |
-| **1.3** | FILTRO | ❌ | Msg placeholder M7 (`?filtro=1`) |
+| **1.3** | FILTRO | 🟡 código | Painel real + filtro cliente — **smoke pós-deploy** |
 | **1.4** | Adicionar tarefa | ❌ | Vai para stub / sem id |
 | **1.5** | Adicionar etapa | ❌ | Stub Em migração |
 | **2.1** | LISTA | ❌ | Tem rota; inoperante (ícone sobrepõe texto) |
