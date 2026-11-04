@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { fetchCardsContext } from '../api/cardsApi'
 import type { EtapaComTarefas, TarefaCard } from '../api/equipamentos-api.types'
 import { AddTarefaPlaceholder, TaskCardAgrupador } from '../components/TaskCardAgrupador'
@@ -6,9 +6,11 @@ import { CardsToolbar } from '../components/CardsToolbar'
 import { NovaMedicaoModal } from '../components/NovaMedicaoModal'
 import { RelatorioHorasEquipamentoModal } from '../components/RelatorioHorasEquipamentoModal'
 import { HistoricoMedicaoModal } from '../components/HistoricoMedicaoModal'
+import { AlterarStatusMassaModal } from '../components/AlterarStatusMassaModal'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { showToast } from '../toast'
 import '../cards-page.css'
 import '../tarefa-cadastro.css'
 
@@ -24,10 +26,19 @@ export function CardsPage() {
   const [loading, setLoading] = useState(true)
   const [openEtapas, setOpenEtapas] = useState<Set<number>>(() => new Set())
   const [filtroOpen, setFiltroOpen] = useState(filtroFromUrl)
-  const [selectAll, setSelectAll] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(() => new Set())
+  const [massaOpen, setMassaOpen] = useState(false)
   const [medicao, setMedicao] = useState<TarefaCard | null>(null)
   const [relatorioHoras, setRelatorioHoras] = useState<TarefaCard | null>(null)
   const [historico, setHistorico] = useState<TarefaCard | null>(null)
+
+  const allTarefaIds = useMemo(() => {
+    if (!data) return [] as number[]
+    return data.etapas.flatMap((e) => e.tarefas.map((t) => t.id))
+  }, [data])
+
+  const selectAll =
+    allTarefaIds.length > 0 && allTarefaIds.every((id) => selectedIds.has(id))
 
   useEffect(() => {
     setFiltroOpen(filtroFromUrl())
@@ -44,6 +55,7 @@ export function CardsPage() {
         if (!cancelled) {
           setData(ctx)
           setOpenEtapas(new Set())
+          setSelectedIds(new Set())
         }
       })
       .catch((e: unknown) => {
@@ -78,7 +90,25 @@ export function CardsPage() {
   }
 
   function onSelectAllChange(checked: boolean) {
-    setSelectAll(checked)
+    if (checked) setSelectedIds(new Set(allTarefaIds))
+    else setSelectedIds(new Set())
+  }
+
+  function onToggleSelect(tarefaId: number, selected: boolean) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (selected) next.add(tarefaId)
+      else next.delete(tarefaId)
+      return next
+    })
+  }
+
+  function onAbrirStatusMassa() {
+    if (selectedIds.size === 0) {
+      showToast('error', 'Selecione ao menos uma tarefa.')
+      return
+    }
+    setMassaOpen(true)
   }
 
   const shellWrap = (body: ReactNode) => (
@@ -112,6 +142,12 @@ export function CardsPage() {
 
   return shellWrap(
     <section className="cards-page">
+      {selectedIds.size > 0 ? (
+        <div className="contador-selecionados active" aria-live="polite">
+          <i className="fa fa-check" aria-hidden="true" />
+          <strong>{selectedIds.size}</strong> selecionada(s)
+        </div>
+      ) : null}
       <CardsToolbar
         filtroOpen={filtroOpen}
         onToggleFiltro={onToggleFiltro}
@@ -150,7 +186,7 @@ export function CardsPage() {
               <button
                 type="button"
                 className="btn btn-blue btn-menor cards-alterar-status-massa"
-                onClick={() => goOperador(P3_NAV.toolbar.alterarStatusEmMassa)}
+                onClick={onAbrirStatusMassa}
               >
                 <i className="fa fa-play-circle" aria-hidden />
                 alterar status em massa
@@ -186,6 +222,8 @@ export function CardsPage() {
                                   key={t.id}
                                   tarefa={t}
                                   etapaId={etapa.id}
+                                  selected={selectedIds.has(t.id)}
+                                  onToggleSelect={onToggleSelect}
                                   onNovaMedicao={setMedicao}
                                   onRelatorioHoras={setRelatorioHoras}
                                   onHistorico={setHistorico}
@@ -232,6 +270,16 @@ export function CardsPage() {
             if (new URLSearchParams(window.location.search).has('historico')) {
               window.history.replaceState({}, '', '/Tarefa/Cards')
             }
+          }}
+        />
+      ) : null}
+      {massaOpen ? (
+        <AlterarStatusMassaModal
+          tarefaIds={[...selectedIds]}
+          onClose={() => setMassaOpen(false)}
+          onSaved={() => {
+            setMassaOpen(false)
+            window.location.reload()
           }}
         />
       ) : null}

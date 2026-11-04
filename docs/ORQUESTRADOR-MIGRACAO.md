@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-04 ~15:35 — ⋮ hover fix · pendência futura: Pausada via ⋮ exige código paralisação  
+**Atualizado:** 2026-11-04 ~15:50 — SELECIONAR TUDO + status em massa (código) · publish quando Lucio pedir  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -433,7 +433,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **1.4** | Adicionar tarefa | ❌ | Vai para stub / sem id |
 | **1.5** | Adicionar etapa | ❌ | Stub Em migração |
 | **2.1** | LISTA | ❌ | Tem rota; inoperante (ícone sobrepõe texto) |
-| **2.2** | SELECIONAR TUDO | ❌ | Checkbox sem ação / massa |
+| **2.2** | SELECIONAR TUDO | 🟡 código | Seleção cards + contador + modal massa BFF — **smoke pós-deploy** |
 | **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover CSS `09ae5fe` |
 | **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Hoje = paridade prod (`AtualizarStatus` sem código). **Melhoria:** ao escolher Pausada no ⋮, exigir/selecionar código (como cadastro/nova medição) — Lucio 04/11 |
 | **4** | Impressora PDF+Excel | 🟡 | Gera arquivo; **formatação** pendente |

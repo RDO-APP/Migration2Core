@@ -33,6 +33,13 @@ export interface TarefaStatusUpdateResult {
   errorMessage?: string
 }
 
+export interface TarefaStatusMassaResult {
+  ok: boolean
+  updated?: number
+  failed?: number
+  errorMessage?: string
+}
+
 export interface ShellNavItem {
   titulo: string
   href: string

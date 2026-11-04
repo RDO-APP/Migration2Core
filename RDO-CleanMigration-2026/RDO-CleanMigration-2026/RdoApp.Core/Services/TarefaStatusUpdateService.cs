@@ -101,6 +101,58 @@ public class TarefaStatusUpdateService
         return new TarefaStatusUpdateResultDto { Ok = true, Id = clone.TarIdTarefa };
     }
 
+    public async Task<TarefaStatusMassaResultDto> AtualizarEmMassaAsync(
+        int obraId,
+        int colaboradorId,
+        IReadOnlyList<int> ids,
+        int idStatus,
+        CancellationToken cancellationToken)
+    {
+        if (idStatus <= 0)
+        {
+            return new TarefaStatusMassaResultDto { Ok = false, ErrorMessage = "Status inválido." };
+        }
+
+        var distinct = ids.Where(x => x > 0).Distinct().ToList();
+        if (distinct.Count == 0)
+        {
+            return new TarefaStatusMassaResultDto { Ok = false, ErrorMessage = "Selecione ao menos uma tarefa." };
+        }
+
+        var updated = 0;
+        var failed = 0;
+        string? lastError = null;
+        foreach (var id in distinct)
+        {
+            var r = await AtualizarAsync(obraId, colaboradorId, id, idStatus, cancellationToken);
+            if (r.Ok) updated++;
+            else
+            {
+                failed++;
+                lastError = r.ErrorMessage;
+            }
+        }
+
+        if (updated == 0)
+        {
+            return new TarefaStatusMassaResultDto
+            {
+                Ok = false,
+                Updated = 0,
+                Failed = failed,
+                ErrorMessage = lastError ?? "Nenhuma tarefa atualizada."
+            };
+        }
+
+        return new TarefaStatusMassaResultDto
+        {
+            Ok = true,
+            Updated = updated,
+            Failed = failed,
+            ErrorMessage = failed > 0 ? $"{failed} não puderam mudar (status não permitido)." : null
+        };
+    }
+
     private static TarefaStatusUpdateResultDto Fail(string message) =>
         new() { Ok = false, ErrorMessage = message };
 }

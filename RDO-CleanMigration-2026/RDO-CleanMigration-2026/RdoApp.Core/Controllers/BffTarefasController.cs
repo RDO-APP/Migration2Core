@@ -160,4 +160,39 @@ public class BffTarefasController : ControllerBase
             return BadRequest(new TarefaStatusUpdateResultDto { Ok = false, ErrorMessage = ex.Message });
         }
     }
+
+    [HttpPost("status-em-massa")]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> AtualizarStatusEmMassa(
+        [FromBody] TarefaStatusMassaRequestDto? body,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        if (body == null || body.IdStatus <= 0)
+        {
+            return BadRequest(new TarefaStatusMassaResultDto { Ok = false, ErrorMessage = "Status inválido." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var colaboradorId = LoginSessionHelper.GetColaboradorId(HttpContext);
+        try
+        {
+            var result = await _status.AtualizarEmMassaAsync(
+                obraId, colaboradorId, body.Ids ?? Array.Empty<int>(), body.IdStatus, cancellationToken);
+            if (!result.Ok)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new TarefaStatusMassaResultDto { Ok = false, ErrorMessage = ex.Message });
+        }
+    }
 }

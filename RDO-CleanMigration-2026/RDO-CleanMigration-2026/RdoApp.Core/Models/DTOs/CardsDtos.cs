@@ -56,3 +56,17 @@ public sealed class CardsContextDto
     public string UsuarioNome { get; set; } = "";
     public IReadOnlyList<EtapaComTarefasDto> Etapas { get; init; } = Array.Empty<EtapaComTarefasDto>();
 }
+
+public sealed class TarefaStatusMassaRequestDto
+{
+    public IReadOnlyList<int> Ids { get; init; } = Array.Empty<int>();
+    public int IdStatus { get; init; }
+}
+
+public sealed class TarefaStatusMassaResultDto
+{
+    public bool Ok { get; init; }
+    public int Updated { get; init; }
+    public int Failed { get; init; }
+    public string? ErrorMessage { get; init; }
+}

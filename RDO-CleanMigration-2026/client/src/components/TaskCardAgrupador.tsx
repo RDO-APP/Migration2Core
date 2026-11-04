@@ -7,6 +7,8 @@ import { showToast } from '../toast'
 type TaskCardAgrupadorProps = {
   tarefa: TarefaCard
   etapaId?: number
+  selected?: boolean
+  onToggleSelect?: (tarefaId: number, selected: boolean) => void
   onNovaMedicao?: (tarefa: TarefaCard) => void
   onRelatorioHoras?: (tarefa: TarefaCard) => void
   onHistorico?: (tarefa: TarefaCard) => void
@@ -23,6 +25,8 @@ function formatPair(inicio?: string, fim?: string): string {
 export function TaskCardAgrupador({
   tarefa,
   etapaId,
+  selected = false,
+  onToggleSelect,
   onNovaMedicao,
   onRelatorioHoras,
   onHistorico,
@@ -72,7 +76,7 @@ export function TaskCardAgrupador({
 
   return (
     <div className="item">
-      <div className="card">
+      <div className={`card${selected ? ' checked-count' : ''}`}>
         <div className={`head ${headClass}`}>
           <i className="icon-" aria-hidden="true" />
           <h5>{tarefa.descricao}</h5>
@@ -158,7 +162,12 @@ export function TaskCardAgrupador({
         <div className="col-xs-12 task-card-foot">
           <div className="checkbox">
             <label>
-              <input type="checkbox" readOnly aria-label={`Selecionar ${tarefa.descricao}`} />
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={(e) => onToggleSelect?.(tarefa.id, e.target.checked)}
+                aria-label={`Selecionar ${tarefa.descricao}`}
+              />
             </label>
           </div>
           <div className="progress progress-line-info task-card-progress">

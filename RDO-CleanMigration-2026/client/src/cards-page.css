@@ -888,3 +888,41 @@
   content: "\f00c";
   font-family: FontAwesome, sans-serif;
 }
+
+
+.lista-tarefas .item .card.checked-count {
+  box-shadow: 0 0 12px 0 rgba(13, 96, 148, 1);
+}
+
+.contador-selecionados {
+  text-align: center;
+  display: block;
+  position: fixed;
+  top: -27px;
+  background: #fff;
+  padding: 6px 2px 2px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 236px;
+  font-size: 11px;
+  color: #28496f;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  transition: top 1s ease;
+  z-index: 30;
+}
+
+.contador-selecionados.active {
+  top: 76px;
+}
+
+.contador-selecionados strong {
+  font-size: 13px;
+}
+
+.contador-selecionados i {
+  position: relative;
+  left: -5px;
+  font-size: 12px;
+  margin-right: 4px;
+}
