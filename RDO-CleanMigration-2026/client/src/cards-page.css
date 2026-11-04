@@ -720,11 +720,79 @@
 
 
 /* === card status panel (⋮) === */
-.bg-verde { background: #57B257; }
-.bg-azul { background: #51BCDC; }
-.bg-vermelho { background: #D04541; }
-.bg-cinza { background: #999999; }
-.bg-laranja { background: #FF8000; }
+/* Cores sólidas — BS5 .btn:hover apaga background (prod usa <a> + custom.css) */
+.lista-tarefas .card .status .btn.bg-verde,
+.lista-tarefas .card .status .btn.bg-verde:hover,
+.lista-tarefas .card .status .btn.bg-verde:focus,
+.lista-tarefas .card .status .btn.bg-verde:active {
+  background-color: #57B257 !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+.lista-tarefas .card .status .btn.bg-verde:hover,
+.lista-tarefas .card .status .btn.bg-verde:focus {
+  background-color: #4ea04e !important;
+}
+
+.lista-tarefas .card .status .btn.bg-azul,
+.lista-tarefas .card .status .btn.bg-azul:hover,
+.lista-tarefas .card .status .btn.bg-azul:focus,
+.lista-tarefas .card .status .btn.bg-azul:active {
+  background-color: #51BCDC !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+.lista-tarefas .card .status .btn.bg-azul:hover,
+.lista-tarefas .card .status .btn.bg-azul:focus {
+  background-color: #49a9c6 !important;
+}
+
+.lista-tarefas .card .status .btn.bg-vermelho,
+.lista-tarefas .card .status .btn.bg-vermelho:hover,
+.lista-tarefas .card .status .btn.bg-vermelho:focus,
+.lista-tarefas .card .status .btn.bg-vermelho:active {
+  background-color: #D04541 !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.lista-tarefas .card .status .btn.bg-cinza,
+.lista-tarefas .card .status .btn.bg-cinza:hover,
+.lista-tarefas .card .status .btn.bg-cinza:focus,
+.lista-tarefas .card .status .btn.bg-cinza:active {
+  background-color: #999999 !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.lista-tarefas .card .status .btn.bg-laranja,
+.lista-tarefas .card .status .btn.bg-laranja:hover,
+.lista-tarefas .card .status .btn.bg-laranja:focus,
+.lista-tarefas .card .status .btn.bg-laranja:active {
+  background-color: #FF8000 !important;
+  background-image: none !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+.lista-tarefas .card .status .btn.bg-laranja:hover,
+.lista-tarefas .card .status .btn.bg-laranja:focus {
+  background-color: #E67300 !important;
+}
+
+.lista-tarefas .item .head.bg-verde { background-color: #57B257; }
+.lista-tarefas .item .head.bg-azul { background-color: #51BCDC; }
+.lista-tarefas .item .head.bg-vermelho { background-color: #D04541; }
+.lista-tarefas .item .head.bg-cinza { background-color: #999999; }
+.lista-tarefas .item .head.bg-laranja { background-color: #FF8000; }
 
 .lista-tarefas .card .status {
   float: left;
@@ -738,7 +806,7 @@
   height: 0;
   overflow: hidden;
   z-index: 20;
-  transition: all 1s ease;
+  transition: top 1s ease, height 1s ease;
   transition-delay: .2s;
 }
 
@@ -751,6 +819,7 @@
 .lista-tarefas .card .status .btn {
   flex: 1;
   height: auto;
+  min-height: 0;
   position: relative;
   text-align: left;
   text-transform: uppercase;
@@ -761,6 +830,11 @@
   transform: translateY(-70px) scale(.5);
   transition: transform .4s;
   z-index: 9;
+  --bs-btn-bg: transparent;
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-active-bg: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-focus-shadow-rgb: 0, 0, 0;
 }
 
 .lista-tarefas .card .status .btn:nth-child(1) { transition-delay: .5s; z-index: 5; }
