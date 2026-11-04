@@ -182,16 +182,21 @@ export function CardsPage() {
                 SELECIONAR TUDO
               </label>
             </div>
-            {shell?.showAlterarStatusEmMassa === true ? (
-              <button
-                type="button"
-                className="btn btn-blue btn-menor cards-alterar-status-massa"
-                onClick={onAbrirStatusMassa}
-              >
-                <i className="fa fa-play-circle" aria-hidden />
-                alterar status em massa
-              </button>
-            ) : null}
+            {/* Prod: permission aterarStatusEmMassa. Homolog: sempre ao lado de SELECIONAR TUDO
+                (RBAC fino depois — senão some e o smoke não acha o controle). */}
+            <button
+              type="button"
+              className="btn btn-blue btn-menor cards-alterar-status-massa"
+              onClick={onAbrirStatusMassa}
+              title={
+                shell?.showAlterarStatusEmMassa === false
+                  ? 'Homolog: visível para smoke (prod exige aterarStatusEmMassa)'
+                  : 'Alterar status em massa'
+              }
+            >
+              <i className="fa fa-play-circle" aria-hidden />
+              alterar status em massa
+            </button>
           </div>
 
           <div className="lista-tarefas">

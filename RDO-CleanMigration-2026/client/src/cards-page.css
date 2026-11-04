@@ -926,3 +926,28 @@
   font-size: 12px;
   margin-right: 4px;
 }
+
+
+/* mass status btn — ao lado de SELECIONAR TUDO */
+.cards-select-all-row .cards-alterar-status-massa {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 14px;
+  background: #28496f;
+  color: #fff;
+  border: none;
+  text-transform: lowercase;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.cards-select-all-row .cards-alterar-status-massa:hover {
+  background: #1c334d;
+  color: #fff;
+}
+
+.cards-select-all-row .cards-alterar-status-massa .fa {
+  font-size: 14px;
+}
