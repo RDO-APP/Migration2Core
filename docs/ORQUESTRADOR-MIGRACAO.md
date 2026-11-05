@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-04 ~20:55 — ADICIONAR TAREFA/ETAPA 1.4–1.5 código · FILTRO 1.3 · smoke pós-deploy  
+**Atualizado:** 2026-11-05 ~10:30 — smoke Cards OK (filtro/massa/select/+tarefa/+etapa) · próximo código = LISTA · Editar obra · Efetivo · polish Voltar/Salvar  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -410,33 +410,33 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. Publish/deploy quando Lucio pedir (FILTRO · +Tarefa · +Etapa · ⋮ · select-all · massa).
-2. Smoke **1.3 FILTRO** · **1.4 ADICIONAR TAREFA** · **1.5 ADICIONAR ETAPA** pós-deploy.
-3. Toolbar 1.1–1.2 (Editar obra · Efetivo).
-4. **LISTA** (2.1).
-5. Menu **☰** vs prod (5).
-6. Backlog format/polish — ver tabela § Pendências P3.
+1. **LISTA** (2.1) — SPA vs stub Em migração `/Tarefa/Index` (**próximo código**).
+2. **Editar obra** (1.1) + **Efetivo diário** (1.2).
+3. Polish **Voltar / SALVAR** no cadastro etapa (e alinhar tarefa se mesmo chrome) — **1.5a**.
+4. Menu **☰** vs prod (5).
+5. Backlog format — impressora (4) · relógio fino · re-gate RBAC massa se necessário.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
-### Pendências P3 Cards (Etapas / Tarefas) — Lucio 04/11
+### Pendências P3 Cards (Etapas / Tarefas) — Lucio 05/11
 
 Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.md`](migracao/p3-botoes-habilitacao-m7.md).
 
 | # | Controle | Status homolog | Nota |
 |---|----------|----------------|------|
-| — | **Gerar RDO** | ✅ OK | Único dos 6 da toolbar funcional |
-| **1.1** | Editar obra | ❌ | Ícone/rota; tela ainda stub/M7 |
-| **1.2** | Efetivo diário | ❌ | Idem |
-| **1.3** | FILTRO | 🟡 código | Painel real + filtro cliente — **smoke pós-deploy** |
-| **1.4** | Adicionar tarefa | 🟡 código | SPA nova tarefa + BFF create — **smoke pós-deploy** |
-| **1.5** | Adicionar etapa | 🟡 código | SPA Nome/Ordem + BFF create — **smoke pós-deploy** |
-| **2.1** | LISTA | ❌ | Tem rota; inoperante (ícone sobrepõe texto) |
-| **2.2** | SELECIONAR TUDO | ✅ código | Seleção + sombra · smoke Lucio OK 04/11 |
-| **2.3** | Alterar status em massa (botão) | 🟡 | Código `61bc345` (sempre visível homolog). **Cobrar depois:** Lucio vê o botão azul ao lado de SELECIONAR TUDO? Re-gate RBAC `aterarStatusEmMassa` |
+| — | **Gerar RDO** | ✅ OK | Toolbar |
+| **1.1** | Editar obra | ❌ **falta** | Ícone/rota; tela stub/M7 — Lucio 05/11 |
+| **1.2** | Efetivo diário | ❌ **falta** | Idem — Lucio 05/11 |
+| **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
+| **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
+| **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |
+| **1.5a** | Voltar / SALVAR (cadastro etapa) | ⬜ polish | Ícone+texto empilhados / SALVAR sem ícone · desalinhados — print Lucio 05/11 · alinhar chrome prod (inline ícone+label) |
+| **2.1** | LISTA | ❌ **falta** | Só rota → stub Em migração `/Tarefa/Index` (print Lucio 05/11) — **próximo código** |
+| **2.2** | SELECIONAR TUDO | ✅ smoke | Lucio 05/11 (já OK 04/11) |
+| **2.3** | Alterar status em massa | ✅ smoke | Lucio 05/11 · depois: re-gate RBAC `aterarStatusEmMassa` se quiser |
 | **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |
-| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Melhoria além da prod (AtualizarStatus sem código) — Lucio 04/11 |
-| **4** | Impressora PDF + Excel | 🟡 | Gera arquivo; **formatação** vs prod (**MS-Excel e PDF**) — Lucio 04/11 |
+| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Melhoria além da prod — Lucio 04/11 |
+| **4** | Impressora PDF + Excel | 🟡 | Gera arquivo; **formatação** vs prod — Lucio 04/11 |
 | **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |
 

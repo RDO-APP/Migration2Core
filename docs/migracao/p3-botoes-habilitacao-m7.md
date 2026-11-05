@@ -63,16 +63,17 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-| Botão | Prod | Rota homolog | Status (Lucio 04/11) |
+| Botão | Prod | Rota homolog | Status (Lucio 05/11) |
 |-------|------|--------------|---------------------|
 | Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** | `/Rdo/Cadastro` | ✅ OK |
-| Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ stub / não funciona |
-| Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo` | ❌ stub / não funciona |
-| FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | 🟡 painel + filtro cliente — smoke pós-deploy |
-| Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` · `?etapaId=` | 🟡 SPA create + BFF — smoke pós-deploy |
-| Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | 🟡 SPA Nome/Ordem + BFF — smoke pós-deploy |
-| LISTA **2.1** | `#/tarefa/index` | `/Tarefa/Index` | ❌ rota; ícone sobrepõe texto |
-| SELECIONAR TUDO **2.2** | modal `#alterar-status` | `/Tarefa/AlterarStatusEmMassa` | ❌ inoperante |
+| Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ **falta** (stub) |
+| Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo` | ❌ **falta** (stub) |
+| FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ✅ smoke |
+| Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` · `?etapaId=` | ✅ smoke |
+| Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | ✅ smoke · polish Voltar/SALVAR **1.5a** |
+| LISTA **2.1** | `#/tarefa/index` | `/Tarefa/Index` | ❌ stub Em migração (print 05/11) |
+| SELECIONAR TUDO **2.2** | modal `#alterar-status` | Cards (SPA) | ✅ smoke |
+| Status em massa **2.3** | `#alterar-status` | BFF massa | ✅ smoke |
 
 **Menu ☰ (shell):** reformatar + conferir opções vs prod (Equipamentos, Colaboradores, Card de Tarefas, RDOs, Obras, Empresas, Etapas…).
 

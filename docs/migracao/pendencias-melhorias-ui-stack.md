@@ -91,6 +91,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M2b** | Barra progresso P2/P3: cores `custom.css` (`#28496f` / `#eee`), % legível | P | **M4.7** | 🟡 em curso |
 | **UI-M4** | Documentar hashes SPA pós-build no runbook deploy | P | I0 / ops | ☐ |
 | **UI-M2d** | **Drawer menu mobile:** CSS prod — gap **logo ↔ ☰**, hamburger 63px desktop · `operador-shell.css` **2026-10-26** | P | **M4.7g** | 🟡 smoke Lucio |
+| **UI-P3-1.5a** | Cadastro etapa (e chrome similar): botões **Voltar / SALVAR** — ícone+texto empilhados / desalinhados vs prod (inline) | P | smoke 1.5 ✅ 05/11 | ⬜ |
 | **UI-M4-layout** | Faixa desktop **FILTRO / ADICIONAR TAREFA / ETAPA** — alinhamento e tamanho vs prod (Lucio aceita menor hoje; refinamento no redesign) | P | **UI-M3** (Fase B) | ⏸ |
 | **UI-M5** | Login: smoke Esqueci senha SMTP homolog | P | M4.8 | ☐ |
 | **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core · mapa `LegacyOperadorRoutes` + `ModuloLegadoController` **2026-10-26** | M | **M5** + trilha **M4.7g** stubs | 🟡 smoke G5 |
