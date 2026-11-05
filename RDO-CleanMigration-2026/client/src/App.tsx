@@ -1,4 +1,5 @@
 import { CardsPage } from './pages/CardsPage'
+import { TarefaIndexPage } from './pages/TarefaIndexPage'
 import { ChartIndexPage } from './pages/ChartIndexPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { EscolherPage } from './pages/EscolherPage'
@@ -16,6 +17,9 @@ function App() {
   }
   if (page === 'escolher') {
     return <EscolherPage />
+  }
+  if (page === 'tarefa-index') {
+    return <TarefaIndexPage />
   }
   if (page === 'tarefa-cadastro') {
     return <TarefaCadastroPage />

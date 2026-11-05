@@ -110,26 +110,15 @@ export function EtapaCadastroPage() {
                 </div>
               </div>
             </form>
-            <div className="col-xs-12 no-padding">
-              <div className="pull-right" style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                <button
-                  type="button"
-                  className="btn btn-blue"
-                  onClick={() => window.history.back()}
-                >
-                  <i className="fa fa-arrow-left" aria-hidden />
-                  Voltar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-blue"
-                  disabled={saving}
-                  onClick={() => void onSave()}
-                >
-                  <i className="icon-check" aria-hidden />
-                  SALVAR
-                </button>
-              </div>
+            <div className="col-xs-12 no-padding cadastro-form-actions">
+              <button type="button" className="btn btn-blue" onClick={() => window.history.back()}>
+                <i className="fa fa-arrow-left" aria-hidden />
+                <span>Voltar</span>
+              </button>
+              <button type="button" className="btn btn-blue" disabled={saving} onClick={() => void onSave()}>
+                <i className="fa fa-check" aria-hidden />
+                <span>SALVAR</span>
+              </button>
             </div>
           </>
         )}

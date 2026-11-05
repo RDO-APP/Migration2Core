@@ -140,3 +140,39 @@
 .tarefa-modal-body {
   padding: 16px;
 }
+
+
+/* 1.5a — Voltar / SALVAR inline (paridade prod) */
+.cadastro-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  clear: both;
+}
+.cadastro-form-actions .btn {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  min-height: 40px;
+  padding: 8px 16px;
+}
+.cadastro-form-actions .btn i,
+.cadastro-form-actions .btn i.fa,
+.cadastro-form-actions .btn i[class*="icon-"] {
+  display: inline-block !important;
+  position: static !important;
+  float: none !important;
+  margin: 0 !important;
+  top: auto !important;
+  line-height: 1;
+  font-size: 14px;
+}
+.cadastro-form-actions .btn span {
+  display: inline;
+  line-height: 1.2;
+}

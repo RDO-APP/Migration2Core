@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-05 ~10:30 — smoke Cards OK (filtro/massa/select/+tarefa/+etapa) · próximo código = LISTA · Editar obra · Efetivo · polish Voltar/Salvar  
+**Atualizado:** 2026-11-05 ~14:00 — LISTA SPA `/Tarefa/Index` no Git · próximo = Efetivo 1.2 · depois Editar obra 1.1 · polish Voltar/Salvar no mesmo commit LISTA  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -410,7 +410,9 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **LISTA** (2.1) — SPA vs stub Em migração `/Tarefa/Index` (**próximo código**).
+1. **Efetivo** (1.2) — SPA + BFF (**próximo código**).
+2. **Editar obra** (1.1) — SPA cadastro.
+3. ~~**LISTA** (2.1)~~ — SPA `/Tarefa/Index` (commit desta sessão).
 2. **Editar obra** (1.1) + **Efetivo diário** (1.2).
 3. Polish **Voltar / SALVAR** no cadastro etapa (e alinhar tarefa se mesmo chrome) — **1.5a**.
 4. Menu **☰** vs prod (5).
@@ -431,7 +433,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
 | **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |
 | **1.5a** | Voltar / SALVAR (cadastro etapa) | ⬜ polish | Ícone+texto empilhados / SALVAR sem ícone · desalinhados — print Lucio 05/11 · alinhar chrome prod (inline ícone+label) |
-| **2.1** | LISTA | ❌ **falta** | Só rota → stub Em migração `/Tarefa/Index` (print Lucio 05/11) — **próximo código** |
+| **2.1** | LISTA | 🟡 **código** | SPA `TarefaIndexPage` + `ServeSpaIndex` `/Tarefa/Index` — **aguardando publish/deploy Lucio** |
 | **2.2** | SELECIONAR TUDO | ✅ smoke | Lucio 05/11 (já OK 04/11) |
 | **2.3** | Alterar status em massa | ✅ smoke | Lucio 05/11 · depois: re-gate RBAC `aterarStatusEmMassa` se quiser |
 | **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |

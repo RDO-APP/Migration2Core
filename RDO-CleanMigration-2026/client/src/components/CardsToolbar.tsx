@@ -10,6 +10,7 @@ type CardsToolbarProps = {
   onNovaTarefa: () => void
   onNovaEtapa: () => void
   onLista: () => void
+  viewToggle?: "lista" | "cards"
   onGerarRdo: () => void
   onEfetivoDiario: () => void
   onEditarObra: () => void
@@ -30,6 +31,7 @@ export function CardsToolbar({
   onNovaTarefa,
   onNovaEtapa,
   onLista,
+  viewToggle = "cards",
   onGerarRdo,
   onEfetivoDiario,
   onEditarObra,
@@ -122,8 +124,8 @@ export function CardsToolbar({
       <div className="cards-toolbar-row hidden-xs">
         <div className="cards-toolbar-row-left">
           <button type="button" className="btn btn-simple btn-view btn-card" onClick={onLista}>
-            <i className="fa fa-columns" aria-hidden />
-            <span>LISTA</span>
+            <i className={viewToggle === "lista" ? "fa fa-table" : "fa fa-columns"} aria-hidden />
+            <span>{viewToggle === "lista" ? "CARDS" : "LISTA"}</span>
           </button>
         </div>
         <div className="cards-toolbar-row-right">

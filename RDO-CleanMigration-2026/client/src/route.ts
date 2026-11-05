@@ -2,6 +2,7 @@ export type OperadorPage =
   | 'login'
   | 'escolher'
   | 'cards'
+  | 'tarefa-index'
   | 'rdo'
   | 'rdo-cadastro'
   | 'tarefa-cadastro'
@@ -20,6 +21,9 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   }
   if (p.includes('/tarefa/cadastro')) {
     return 'tarefa-cadastro'
+  }
+  if (p.includes('/tarefa/index')) {
+    return 'tarefa-index'
   }
   if (p.includes('/etapa/cadastro')) {
     return 'etapa-cadastro'

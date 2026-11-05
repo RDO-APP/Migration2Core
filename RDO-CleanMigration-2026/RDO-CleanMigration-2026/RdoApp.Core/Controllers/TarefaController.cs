@@ -19,14 +19,8 @@ public class TarefaController : Controller
         OperadorSpaEntry.ServeSpaIndex(this, _env, "Tarefas");
 
     [HttpGet]
-    public IActionResult Index()
-    {
-        return RequireObraOrRedirect() ?? EmMigracaoPage.Render(
-            this,
-            "Lista de tarefas",
-            "Visualização em colunas (`#/tarefa/index`) em migração (M7+).",
-            prodRef: "#/tarefa/index");
-    }
+    public IActionResult Index() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Lista de tarefas");
 
     [HttpGet]
     public IActionResult Cadastro(int? id, int? etapaId, string? modo, bool novaMedicao = false)
