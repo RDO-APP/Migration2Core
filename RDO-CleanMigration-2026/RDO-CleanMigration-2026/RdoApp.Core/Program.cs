@@ -30,6 +30,7 @@ builder.Services.AddScoped<CardsQueryService>();
 builder.Services.AddScoped<TarefaCadastroQueryService>();
 builder.Services.AddScoped<TarefaCadastroSaveService>();
 builder.Services.AddScoped<EtapaCadastroService>();
+builder.Services.AddScoped<EfetivoQueryService>();
 builder.Services.AddScoped<HorasEquipamentoReportService>();
 builder.Services.AddScoped<TarefaStatusUpdateService>();
 builder.Services.AddScoped<RdoListQueryService>();

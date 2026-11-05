@@ -7,18 +7,11 @@ namespace RdoApp.Core.Controllers;
 [Authorize]
 public class EfetivoController : Controller
 {
-    [HttpGet]
-    public IActionResult Index()
-    {
-        if (!ObraSessionHelper.HasObraSelected(HttpContext))
-        {
-            return RedirectToAction(nameof(ObraController.Escolher), "Obra");
-        }
+    private readonly IWebHostEnvironment _env;
 
-        return EmMigracaoPage.Render(
-            this,
-            "Efetivo diário",
-            "Tela efetivo · **M7+** (escopo Dimas).",
-            prodRef: "#/efetivo/index");
-    }
+    public EfetivoController(IWebHostEnvironment env) => _env = env;
+
+    [HttpGet]
+    public IActionResult Index() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Efetivo diário");
 }

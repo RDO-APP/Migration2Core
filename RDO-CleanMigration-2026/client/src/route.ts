@@ -9,6 +9,7 @@ export type OperadorPage =
   | 'etapa-cadastro'
   | 'chart'
   | 'dashboard'
+  | 'efetivo'
 
 /** SPA servida pelo host MVC (Login, Escolher, Cards, P5a módulos). */
 export function detectOperadorPage(pathname = window.location.pathname): OperadorPage {
@@ -39,6 +40,9 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   }
   if (p.includes('/dashboard')) {
     return 'dashboard'
+  }
+  if (p.includes('/efetivo')) {
+    return 'efetivo'
   }
   if (p.includes('/tarefa/cards')) {
     return 'cards'

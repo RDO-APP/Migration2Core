@@ -1,0 +1,53 @@
+.efetivo-page .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.efetivo-page .panel-heading h3 {
+  margin: 0;
+}
+
+.efetivo-filtros {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.efetivo-filtros .form-group {
+  margin-bottom: 0;
+}
+
+.efetivo-filtros-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.efetivo-page .lista-tarefas {
+  margin-top: 0.5rem;
+}
+
+.efetivo-page .efetivo-empty {
+  display: block;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.efetivo-page select.form-control {
+  padding-bottom: 0;
+}
+
+@media (max-width: 991px) {
+  .efetivo-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575px) {
+  .efetivo-filtros {
+    grid-template-columns: 1fr;
+  }
+}

@@ -67,7 +67,7 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 |-------|------|--------------|---------------------|
 | Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** | `/Rdo/Cadastro` | ✅ OK |
 | Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ **falta** (stub) |
-| Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo` | ❌ **falta** (stub) |
+| Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo/Index` | 🟡 SPA+BFF (filtro/lista/status; copiar/novo colab depois) |
 | FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ✅ smoke |
 | Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` · `?etapaId=` | ✅ smoke |
 | Adicionar etapa **1.5** | `#/etapa/cadastro` | `/Etapa/Cadastro` | ✅ smoke · polish Voltar/SALVAR **1.5a** |

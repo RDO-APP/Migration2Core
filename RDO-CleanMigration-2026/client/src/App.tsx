@@ -8,6 +8,7 @@ import { RdoCadastroPage } from './pages/RdoCadastroPage'
 import { RdoIndexPage } from './pages/RdoIndexPage'
 import { TarefaCadastroPage } from './pages/TarefaCadastroPage'
 import { EtapaCadastroPage } from './pages/EtapaCadastroPage'
+import { EfetivoIndexPage } from './pages/EfetivoIndexPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -38,6 +39,9 @@ function App() {
   }
   if (page === 'dashboard') {
     return <DashboardPage />
+  }
+  if (page === 'efetivo') {
+    return <EfetivoIndexPage />
   }
   return <CardsPage />
 }
