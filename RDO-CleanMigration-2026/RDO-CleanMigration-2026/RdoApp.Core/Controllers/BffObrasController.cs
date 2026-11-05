@@ -14,11 +14,13 @@ public class BffObrasController : ControllerBase
 {
     private readonly ObrasQueryService _obras;
     private readonly LoginObraService _loginObra;
+    private readonly ObraCadastroService _cadastro;
 
-    public BffObrasController(ObrasQueryService obras, LoginObraService loginObra)
+    public BffObrasController(ObrasQueryService obras, LoginObraService loginObra, ObraCadastroService cadastro)
     {
         _obras = obras;
         _loginObra = loginObra;
+        _cadastro = cadastro;
     }
 
     /// <summary>M4.4 — obras do colaborador logado (cookie session).</summary>
@@ -89,6 +91,33 @@ public class BffObrasController : ControllerBase
             Success = true,
             RedirectUrl = Url.Action("Cards", "Tarefa") ?? "/Tarefa/Cards",
         });
+    }
+
+
+
+    [HttpGet("cadastro")]
+    public async Task<IActionResult> GetCadastro(CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var dto = await _cadastro.GetAsync(obraId, cancellationToken);
+        if (dto == null) return NotFound(new { message = "Obra nao encontrada." });
+        return Ok(dto);
+    }
+
+    [HttpPut("cadastro")]
+    public async Task<IActionResult> PutCadastro([FromBody] ObraCadastroSaveRequestDto? body, CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        if (body == null) return BadRequest(new ObraCadastroSaveResultDto { Ok = false, ErrorMessage = "Corpo invalido." });
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _cadastro.SaveAsync(obraId, body, cancellationToken);
+        if (!result.Ok) return BadRequest(result);
+        if (!string.IsNullOrWhiteSpace(result.ObraNome))
+            HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome);
+        return Ok(result);
     }
 
     private bool TryColaboradorId(out int colaboradorId)

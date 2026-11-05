@@ -66,7 +66,7 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 | Botão | Prod | Rota homolog | Status (Lucio 05/11) |
 |-------|------|--------------|---------------------|
 | Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** | `/Rdo/Cadastro` | ✅ OK |
-| Editar obra **1.1** | `editarObra()` · **`permission="editarObra"`** | `/Obra/Cadastro` | ❌ **falta** (stub) |
+| Editar obra **1.1** | `#/obra/cadastro` | `/Obra/Cadastro` | 🟡 SPA+BFF campos principais (contratante/logo depois) |
 | Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo/Index` | 🟡 SPA+BFF (filtro/lista/status; copiar/novo colab depois) |
 | FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ✅ smoke |
 | Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` · `?etapaId=` | ✅ smoke |

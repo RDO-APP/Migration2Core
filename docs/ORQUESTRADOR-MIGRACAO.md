@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-05 ~19:15 — Efetivo 1.2 SPA+BFF no Git · próximo = Editar obra 1.1 · smoke LISTA+Efetivo pós-deploy  
+**Atualizado:** 2026-11-05 ~19:30 — Editar obra 1.1 + Efetivo 1.2 + LISTA no Git · próximo = smoke pós-deploy Lucio  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -410,9 +410,9 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Editar obra** (1.1) — SPA cadastro (**próximo código**).
-2. ~~**Efetivo** (1.2)~~ — SPA+BFF `/Efetivo/Index` (commit desta sessão).
-3. ~~**LISTA** (2.1)~~ — SPA `/Tarefa/Index`.
+1. Smoke pós-deploy: LISTA · Efetivo · Editar obra (**próximo Lucio**).
+2. ~~**Editar obra** (1.1)~~ — SPA+BFF campos principais (sem contratante/logo).
+3. ~~**Efetivo** (1.2)~~ · ~~**LISTA** (2.1)~~.
 2. **Editar obra** (1.1) + **Efetivo diário** (1.2).
 3. Polish **Voltar / SALVAR** no cadastro etapa (e alinhar tarefa se mesmo chrome) — **1.5a**.
 4. Menu **☰** vs prod (5).
@@ -427,7 +427,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | # | Controle | Status homolog | Nota |
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
-| **1.1** | Editar obra | ❌ **falta** | Ícone/rota; tela stub/M7 — Lucio 05/11 |
+| **1.1** | Editar obra | 🟡 **código** | SPA+BFF nome/datas/endereço/áreas — **aguardando publish/deploy** (contratante/logo depois) |
 | **1.2** | Efetivo diário | 🟡 **código** | SPA+BFF filtro/lista/status — **aguardando publish/deploy** (sem Copiar/Novo colaborador ainda) |
 | **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |

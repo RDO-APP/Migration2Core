@@ -153,17 +153,9 @@ namespace RdoApp.Core.Controllers
             }
         }
 
-        /// <summary>GET: /Obra/Cadastro — placeholder até port Angular cadastro.</summary>
+        /// <summary>GET: /Obra/Cadastro — SPA editar obra selecionada.</summary>
         [HttpGet]
-        public IActionResult Cadastro()
-        {
-            return EmMigracaoPage.Render(
-                this,
-                "Nova obra / cadastro",
-                "Cadastro ou edição de obra (`editarObra`) · **M5+**.",
-                voltarUrl: "/Tarefa/Cards",
-                voltarRotulo: "Voltar para tarefas",
-                prodRef: "#/obra/cadastro");
-        }
+        public IActionResult Cadastro() =>
+            OperadorSpaEntry.ServeSpaIndex(this, _env, "Obra");
     }
 }
