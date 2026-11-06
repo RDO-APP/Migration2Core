@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-05 ~19:30 — Editar obra 1.1 + Efetivo 1.2 + LISTA no Git · próximo = smoke pós-deploy Lucio  
+**Atualizado:** 2026-11-06 — CAT-PARALIZ-01 na pendências · M7+ atualizado (LISTA/Efetivo/Obra no Git `1bb526c`) · próximo = smoke pós-deploy Lucio  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -120,7 +120,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — commit/push+deploy ⋮ · smoke status · formatação impressora · toolbar/LISTA/menu.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — smoke LISTA/Efetivo/Obra pós-deploy · impressora · menu ☰ · **CAT-PARALIZ-01** · 3.1.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -142,7 +142,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **74** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ | formatação PDF+Excel impressora · **3.1** ⋮ Pausada+código · toolbar (Editar obra, Efetivo, Filtro, +Tarefa, +Etapa) · LISTA · SELECIONAR TUDO · menu ☰ vs prod · polish cadastro · **P6a** · **não** P6b |
+| **M7+** | **82** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ · FILTRO/+tarefa/+etapa ☑ smoke · SELECIONAR TUDO/massa ☑ · LISTA+Efetivo+Editar obra **código** `1bb526c` · polish Voltar/Salvar **código** | smoke pós-deploy LISTA/Efetivo/Obra · formatação PDF+Excel impressora · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** códigos por empresa · menu ☰ vs prod · gaps Efetivo Copiar/Novo · Obra contratante/logo · **P6a** · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
@@ -410,13 +410,12 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. Smoke pós-deploy: LISTA · Efetivo · Editar obra (**próximo Lucio**).
-2. ~~**Editar obra** (1.1)~~ — SPA+BFF campos principais (sem contratante/logo).
-3. ~~**Efetivo** (1.2)~~ · ~~**LISTA** (2.1)~~.
-2. **Editar obra** (1.1) + **Efetivo diário** (1.2).
-3. Polish **Voltar / SALVAR** no cadastro etapa (e alinhar tarefa se mesmo chrome) — **1.5a**.
+1. Smoke pós-deploy Lucio: **LISTA** · **Efetivo** · **Editar obra** (`1bb526c`) — publish+deploy se ainda não rodou.
+2. ~~**Editar obra** (1.1) / **Efetivo** (1.2) / **LISTA** (2.1)~~ — código no Git; gaps: Obra contratante/logo · Efetivo Copiar/Novo colab.
+3. Polish **Voltar / SALVAR** (**1.5a**) — código `10616e0` · confirmar smoke.
 4. Menu **☰** vs prod (5).
-5. Backlog format — impressora (4) · relógio fino · re-gate RBAC massa se necessário.
+5. Impressora formatação (4) · **3.1** Pausada+código · **CAT-PARALIZ-01** códigos por empresa ([`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)).
+6. Re-gate RBAC massa se necessário.
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
@@ -437,7 +436,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **2.2** | SELECIONAR TUDO | ✅ smoke | Lucio 05/11 (já OK 04/11) |
 | **2.3** | Alterar status em massa | ✅ smoke | Lucio 05/11 · depois: re-gate RBAC `aterarStatusEmMassa` se quiser |
 | **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |
-| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Melhoria além da prod — Lucio 04/11 |
+| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Além da prod — Lucio 04/11 · depende catálogo; ver **CAT-PARALIZ-01** (por empresa) |
 | **4** | Impressora PDF + Excel | 🟡 | Gera arquivo; **formatação** vs prod — Lucio 04/11 |
 | **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |

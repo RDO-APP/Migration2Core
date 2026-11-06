@@ -1,7 +1,7 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-04  
-**P3 backlog Lucio:** toolbar · LISTA · SELECIONAR TUDO · impressora formatação · menu ☰ · **futuro 3.1** ⋮ Pausada com código paralisação — orquestrador § Pendências P3 Cards.  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-06  
+**P3 backlog Lucio:** impressora formatação · menu ☰ · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** códigos por empresa · polish 1.5a smoke · gaps Efetivo (Copiar/Novo colab) / Obra (contratante/logo) — orquestrador § Pendências P3. LISTA/Efetivo/Editar obra = **código** `1bb526c` (smoke pós-deploy).  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).
@@ -33,7 +33,7 @@ Legenda **Stack:** **L** = só prod · **M** = moderno Core · **H** = híbrido 
 | **P4** Nova medição | React `NovaMedicaoModal` (smoke 03/nov) | Prod: modal BS3 + Angular | Foto persist / NOVO* depois | **M7+:** polish · **UI-M3:** componente/modal moderno |
 | **P5a** `/Chart/Index` · `/chart/rdos` | React SPA + BFF | CSS 5 faixas + ☰ export (**C1–C4** ☑, não Highcharts) | M5 web #2 | **DOC-FICHAS** · tiles `/chart/*` · **UI-M3** depois |
 | **P5a** `/Dashboard/Index` | React SPA + BFF | CSS de paridade | M5 web #3 no ar | **DOC-FICHAS** · **UI-M3** depois |
-| **Stubs** Efetivo, Tarefa/*, Obra/Cadastro… | Razor `EmMigracao.cshtml` | BS5 mínimo num card | Placeholder até SPA+BFF ([`m5-web-paridade-prod-ordem.md`](m5-web-paridade-prod-ordem.md)) | **M7** cadastros/listagens · **UI-M3** não prioriza stub |
+| **Stubs** residuais (Paralizações CRUD, etc.) | Razor `EmMigracao` / SPA parcial | BS5 mínimo | Efetivo/Obra/LISTA já SPA `1bb526c` | **M7** Paralizações CRUD + CAT-PARALIZ-01 · **UI-M3** não prioriza stub |
 | **Shell** header/menu (P2–P5a) | `OperadorShell` + `header.css` / `operador-shell.css` | FA/fontello parcial | RBAC + nav prod | **M4.7g / UI-M2d** drawer · **UI-M1/M2c** ícones · **UI-M3** tokens |
 
 **Gates UI-M3 (Fase B — trocar motor visual):** (1) **M4.7 ☑** + smoke P2/P3 · (2) **M7** mapeou modais/ações principais · (3) branch dedicada · ordem **Escolher → Cards → RDO → Login** · ver [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md).
@@ -91,11 +91,14 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M2b** | Barra progresso P2/P3: cores `custom.css` (`#28496f` / `#eee`), % legível | P | **M4.7** | 🟡 em curso |
 | **UI-M4** | Documentar hashes SPA pós-build no runbook deploy | P | I0 / ops | ☐ |
 | **UI-M2d** | **Drawer menu mobile:** CSS prod — gap **logo ↔ ☰**, hamburger 63px desktop · `operador-shell.css` **2026-10-26** | P | **M4.7g** | 🟡 smoke Lucio |
-| **UI-P3-1.5a** | Cadastro etapa (e chrome similar): botões **Voltar / SALVAR** — ícone+texto empilhados / desalinhados vs prod (inline) | P | smoke 1.5 ✅ 05/11 | ⬜ |
+| **UI-P3-1.5a** | Cadastro etapa (e chrome similar): botões **Voltar / SALVAR** — ícone+texto empilhados / desalinhados vs prod (inline) | P | smoke 1.5 ✅ 05/11 | 🟡 código 10616e0 · smoke pós-deploy |
 | **UI-M4-layout** | Faixa desktop **FILTRO / ADICIONAR TAREFA / ETAPA** — alinhamento e tamanho vs prod (Lucio aceita menor hoje; refinamento no redesign) | P | **UI-M3** (Fase B) | ⏸ |
 | **UI-M5** | Login: smoke Esqueci senha SMTP homolog | P | M4.8 | ☐ |
 | **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core · mapa `LegacyOperadorRoutes` + `ModuloLegadoController` **2026-10-26** | M | **M5** + trilha **M4.7g** stubs | 🟡 smoke G5 |
-| **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod `main.js` + modal) | M | **M7** · não UI-M3 | ☐ |
+| **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod main.js + modal) | M | **M7** · não UI-M3 | ✅ smoke 05/11 |
+
+
+| **CAT-PARALIZ-01** | **Códigos de paralisação por empresa** — hoje `tarefa_codigo_paralizacao` é **global** (PK = código 3 chars). Melhor: `tarcp_id_empresa` + PK composta `(empresa, código)`; telas/APIs filtram pela empresa da sessão/obra; migrar clonando os ~22 códigos por empresa; join descrição = código+empresa. **Evitar** prefixo no código e escopo por obra. Até o ALTER: **não** liberar CRUD de paralização a cliente (só admin RDO). Relacionado **3.1** (⋮ Pausada). **Proibido** `ALTER novo_rdoapp` sem Lucio. | G | **M7+** (dados/tenant) | ⬜ backlog 06/11 |
 
 **Adiado de propósito (não fazer no meio do M4):**
 
@@ -129,6 +132,25 @@ flowchart LR
 3. **Por último:** UI-M3 (trocar motor visual + **Fase B** fontello/FA) — o item que **não** pausar o resto.
 
 ---
+
+
+---
+
+## Catálogo tenant — códigos de paralisação (06/11)
+
+**Problema:** tabela `tarefa_codigo_paralizacao` compartilhada por todas as empresas no mesmo RDS; CRUD de uma afeta as outras.
+
+**Decisão (melhor forma):** escopo por **empresa** (não por obra).
+
+| Passo | Ação |
+|-------|------|
+| 1 | Coluna `tarcp_id_empresa` (FK empresa) |
+| 2 | PK composta `(tarcp_id_empresa, tarcp_codigo_paralizacao)` (ou surrogate + unique) |
+| 3 | Listagem/CRUD/combo Pausada filtram pela empresa da sessão/obra |
+| 4 | Migração: clonar códigos atuais (~22) **por empresa** (ou defaults + cópia na 1ª edição) |
+| 5 | `tarefa.tar_codigo_paralizacao` segue varchar(3); descrição via join código **+** empresa da obra |
+
+**ID backlog:** **CAT-PARALIZ-01** · marco **M7+** · ver também orquestrador **3.1**.
 
 ## Links
 
