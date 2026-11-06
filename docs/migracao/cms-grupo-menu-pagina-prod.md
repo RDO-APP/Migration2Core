@@ -94,21 +94,34 @@ Só **dois** menus no prod:
 
 Ordem na tela:
 
-| Título | URL (prod) | Homolog EQ-R hoje |
-|--------|------------|-------------------|
-| Equipamentos | `/equipamentos/index` | stub / M7+ |
-| Colaboradores | `/colaborador/index` | **P6a** stub |
-| Efetivo Diário | `/efetivo/index` | P5a stub/parcial |
-| Card de Tarefas | `/tarefa/cards` | **P3** React |
-| RDOs | `/rdo/index` | **P5a** React |
-| Obras | `/obra/index` | stub |
-| Empresas | `/empresa/index` | stub |
-| Etapas | `/etapa/index` | stub |
-| Códigos de Paralizações | `/tarefa/paralizacoes/index` | stub |
+| Título | URL (prod) | Homolog EQ-R (06/11 · tip `1bb526c`) |
+|--------|------------|--------------------------------------|
+| Equipamentos | `/equipamentos/index` | stub EmMigracao `/equipamentos/index` |
+| Colaboradores | `/colaborador/index` | stub **P6a** `/colaborador/index` |
+| Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` (sem Copiar/Novo colab) |
+| Card de Tarefas | `/tarefa/cards` | ✅ SPA `/Tarefa/Cards` |
+| RDOs | `/rdo/index` | ✅ SPA `/Rdo/Index` |
+| Obras | `/obra/index` | stub EmMigracao `/obra/index` |
+| Empresas | `/empresa/index` | stub EmMigracao `/empresa/index` |
+| Etapas | `/etapa/index` | stub EmMigracao `/etapa/index` (+ cadastro SPA `/Etapa/Cadastro`) |
+| Códigos de Paralizações | `/tarefa/paralizacoes/index` | stub EmMigracao · **CAT-PARALIZ-01** antes de CRUD real |
 
 Chart, Dashboard, Grupo, Menu, Página **não** estão neste menu. Chart/Dashboard entram por **header** + `ObterRotasDefault` / `grupo_pagina_acao` (`/chart`, `/dashboard/index`) — ver [`m4-7g-rbac-shell-p1-p3.md`](m4-7g-rbac-shell-p1-p3.md).
 
 ---
+
+
+### 2.2 Header (fora do drawer) — botões/ícones prod
+
+| Controle | URL prod | Homolog | Gate RBAC shell |
+|----------|----------|---------|-----------------|
+| Gráfico geral (chart) | `/chart` | ✅ SPA `/Chart/Index` | `showChart` ← `visualizar` `/chart` |
+| Dashboard da obra | `/dashboard/index` | ✅ SPA `/Dashboard/Index` | `showDashboardObra` ← `acessarDashboard` |
+| Nova obra (se perfil) | `/obra/cadastro` | 🟡 SPA editar obra selecionada `/Obra/Cadastro` (não “nova” full) | `showNovaObra` ← `visualizar` `/obra/cadastro` |
+| Trocar senha (user menu) | `/colaborador/alterarsenha` | `/Account/ChangePassword` | sempre no menu usuário |
+| Logo | — | `/Obra/Escolher` | — |
+
+**Smoke G5 (menu ☰):** logado + obra → abrir cada item do drawer → **200** (SPA ou EmMigracao), **sem 404**. Admin (`grupo`/`menu`/`pagina`) só se `col_st_admin`.
 
 ## 3. Grupos (prints `#/grupo/index` páginas 1–2)
 

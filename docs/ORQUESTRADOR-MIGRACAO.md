@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-06 — CAT-PARALIZ-01 na pendências · M7+ atualizado (LISTA/Efetivo/Obra no Git `1bb526c`) · próximo = smoke pós-deploy Lucio  
+**Atualizado:** 2026-11-06 ~14:40 — próximo = **menu ☰ G5** (inventário prod §2.1–2.2 cms) · Lucio confirma polish etapa depois · tip código `1bb526c`  
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -410,12 +410,12 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. Smoke pós-deploy Lucio: **LISTA** · **Efetivo** · **Editar obra** (`1bb526c`) — publish+deploy se ainda não rodou.
-2. ~~**Editar obra** (1.1) / **Efetivo** (1.2) / **LISTA** (2.1)~~ — código no Git; gaps: Obra contratante/logo · Efetivo Copiar/Novo colab.
-3. Polish **Voltar / SALVAR** (**1.5a**) — código `10616e0` · confirmar smoke.
-4. Menu **☰** vs prod (5).
-5. Impressora formatação (4) · **3.1** Pausada+código · **CAT-PARALIZ-01** códigos por empresa ([`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)).
-6. Re-gate RBAC massa se necessário.
+1. **Menu ☰ G5** — smoke cada item do drawer + header (tabela [`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2); anotar 404 vs EmMigracao vs SPA.
+2. Lucio confirma polish **1.5a** cadastro etapa (Voltar/SALVAR) quando puder.
+3. Gaps já no Git: Obra contratante/logo · Efetivo Copiar/Novo colab · LISTA/Efetivo/Obra smoke se deploy pendente.
+4. Impressora formatação · **3.1** · **CAT-PARALIZ-01**.
+5. Depois G5 estável: priorizar SPA dos stubs do drawer (Obras / Etapas / Equipamentos / …) uma a uma.
+
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 

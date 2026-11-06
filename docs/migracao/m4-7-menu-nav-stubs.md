@@ -1,6 +1,6 @@
 # M4.7 / M5-nav — Menu drawer + botões P3 (B–D)
 
-**Atualizado:** 2026-10-26 · **Mapa href:** `RdoApp.Core/Infrastructure/LegacyOperadorRoutes.cs` · **Stubs:** `ModuloLegadoController` + controllers Tarefa/Rdo/Chart/Efetivo/Obra/Etapa
+**Atualizado:** 2026-11-06 — inventário alinhado cms §2.1–2.2 · Efetivo SPA · smoke G5 próximo · **Mapa href:** `RdoApp.Core/Infrastructure/LegacyOperadorRoutes.cs` · **Stubs:** `ModuloLegadoController` + controllers Tarefa/Rdo/Chart/Efetivo/Obra/Etapa
 
 ## B — Menu principal
 
