@@ -83,7 +83,9 @@ public class RbacRouteService
             ListaPagina = new List<PaginaViewModel>()
         };
 
-        foreach (var top in menuPaginas.Where(x => x.PaginaPaiId == null).OrderBy(x => x.Ordem))
+        // Legado LoginModel.ObterMenu: pai = mpa_id_pagina_pai null; filhos = mpa_id_pagina_pai == pagina.id (não menu_pagina.id).
+        // MySQL às vezes grava 0 em vez de NULL — tratar 0 como raiz.
+        foreach (var top in menuPaginas.Where(IsMenuRoot).OrderBy(x => x.Ordem))
         {
             var pai = new PaginaViewModel
             {
@@ -91,7 +93,7 @@ public class RbacRouteService
                 Titulo = top.Titulo,
                 Caminho = top.Caminho,
                 CssClass = top.CssClass,
-                Paginas = GetChildPages(menuPaginas, top.MenuPaginaId)
+                Paginas = GetChildPages(menuPaginas, top.PaginaId)
             };
             result.ListaPagina.Add(pai);
         }
@@ -108,10 +110,13 @@ public class RbacRouteService
         string Titulo,
         string Caminho);
 
-    private static List<PaginaViewModel> GetChildPages(List<MenuPaginaRow> menuPaginas, int parentMenuPaginaId)
+    private static bool IsMenuRoot(MenuPaginaRow row) =>
+        row.PaginaPaiId is null or 0;
+
+    private static List<PaginaViewModel> GetChildPages(List<MenuPaginaRow> menuPaginas, int parentPaginaId)
     {
         return menuPaginas
-            .Where(m => m.PaginaPaiId == parentMenuPaginaId)
+            .Where(m => m.PaginaPaiId == parentPaginaId)
             .OrderBy(m => m.Ordem)
             .Select(m => new PaginaViewModel
             {

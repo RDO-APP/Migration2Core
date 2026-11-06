@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using RdoApp.Core.Infrastructure;
@@ -21,6 +22,7 @@ public class ShellContextService
         var tokens = _antiforgery.GetAndStoreTokens(context);
         var login = TryReadLogin(context);
 
+        // Prod NavController: listaPagina.sort por titulo (in-place) — mesma ordem alfabética no drawer.
         var menu = FlattenMenuPages(login?.Menu?.ListaPagina)
             .Where(p => !string.IsNullOrWhiteSpace(p.Titulo))
             .Select(p => new ShellNavItemDto
@@ -30,6 +32,7 @@ public class ShellContextService
                 Href = LegacyOperadorRoutes.MapHref(p.Caminho),
             })
             .Where(i => !string.Equals(i.Href, "#", StringComparison.Ordinal))
+            .OrderBy(i => i.Titulo, StringComparer.Ordinal)
             .ToList();
 
         return new ShellContextDto
