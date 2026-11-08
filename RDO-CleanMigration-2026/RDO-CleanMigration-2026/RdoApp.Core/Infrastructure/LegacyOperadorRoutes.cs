@@ -23,7 +23,7 @@ public static class LegacyOperadorRoutes
             "/chart/rdos" or "/chart/diaimprodutivo" or "/chart/tarefa" or "/chart/comentario" => path,
             "/obra/cadastro" or "/obra/cadastro/index" => "/Obra/Cadastro",
             "/obra/escolher" => "/Obra/Escolher",
-            "/obra/index" => "/obra/index",
+            "/obra/index" => "/Obra/Index",
             "/dashboard/index" => "/Dashboard/Index",
             "/tarefa/cards" or "/tarefa/cards/index" => "/Tarefa/Cards",
             "/tarefa/index" => "/Tarefa/Index",

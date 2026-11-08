@@ -95,6 +95,31 @@ public class BffObrasController : ControllerBase
 
 
 
+
+    [HttpGet("lista")]
+    public async Task<IActionResult> Lista([FromQuery] string? descricao, CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out var colaboradorId))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
+        return Ok(await _obras.ListIndexAsync(colaboradorId, descricao, obraNome, cancellationToken));
+    }
+
+    [HttpDelete("{idObra:int}")]
+    public async Task<IActionResult> Delete(int idObra, CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out var colaboradorId))
+        {
+            return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
+        }
+
+        var result = await _obras.DeleteAsync(colaboradorId, idObra, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
+    }
+
     [HttpGet("cadastro")]
     public async Task<IActionResult> GetCadastro(CancellationToken cancellationToken)
     {

@@ -153,9 +153,15 @@ namespace RdoApp.Core.Controllers
             }
         }
 
+        /// <summary>GET: /Obra/Index — SPA listagem menu ☰ Obras.</summary>
+        [HttpGet]
+        public IActionResult Index() =>
+            OperadorSpaEntry.ServeSpaIndex(this, _env, "Obras");
+
         /// <summary>GET: /Obra/Cadastro — SPA editar obra selecionada.</summary>
         [HttpGet]
         public IActionResult Cadastro() =>
             OperadorSpaEntry.ServeSpaIndex(this, _env, "Obra");
     }
 }
+

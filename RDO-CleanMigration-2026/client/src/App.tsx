@@ -11,6 +11,7 @@ import { EtapaCadastroPage } from './pages/EtapaCadastroPage'
 import { EtapaIndexPage } from './pages/EtapaIndexPage'
 import { EfetivoIndexPage } from './pages/EfetivoIndexPage'
 import { ObraCadastroPage } from './pages/ObraCadastroPage'
+import { ObraIndexPage } from './pages/ObraIndexPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -50,6 +51,9 @@ function App() {
   }
   if (page === 'obra-cadastro') {
     return <ObraCadastroPage />
+  }
+  if (page === 'obra-index') {
+    return <ObraIndexPage />
   }
   return <CardsPage />
 }

@@ -86,6 +86,113 @@ public class ObrasQueryService
         };
     }
 
+
+    /// <summary>Menu ☰ Obras — listagem do colaborador (paridade ObraModel.Lista parcial: filtro nome).</summary>
+    public async Task<ObraIndexListResponseDto> ListIndexAsync(
+        int colaboradorId,
+        string? descricao,
+        string? obraNomeSessao,
+        CancellationToken cancellationToken = default)
+    {
+        var q =
+            from oc in _context.ObraColaboradores.AsNoTracking()
+            join o in _context.Obras.AsNoTracking() on oc.OcoIdObra equals o.ObrIdObra
+            join m in _context.Municipios.AsNoTracking() on o.ObrIdMunicipio equals m.MunIdMunicipio into mj
+            from m in mj.DefaultIfEmpty()
+            join uf in _context.UFs.AsNoTracking() on (m != null ? m.MunIdUf : 0) equals uf.UfeIdUf into ufj
+            from uf in ufj.DefaultIfEmpty()
+            join ec in _context.Empresas.AsNoTracking() on o.ObrIdEmpresaContratante equals ec.EmpIdEmpresa into ecj
+            from ec in ecj.DefaultIfEmpty()
+            join ed in _context.Empresas.AsNoTracking() on o.ObrIdEmpresaContratada equals ed.EmpIdEmpresa into edj
+            from ed in edj.DefaultIfEmpty()
+            where oc.OcoIdColaborador == colaboradorId
+            select new
+            {
+                o.ObrIdObra,
+                Descricao = o.ObrDsObra ?? "",
+                o.ObrDtInicio,
+                o.ObrDtFim,
+                Cidade = m != null ? m.MunDsMunicipio ?? "" : "",
+                Uf = uf != null ? uf.UfeDsSigla ?? "" : "",
+                Contratante = ec != null ? ec.EmpNmFantasia ?? "" : "",
+                Contratada = ed != null ? ed.EmpNmFantasia ?? "" : "",
+            };
+
+        var filtro = (descricao ?? "").Trim();
+        if (filtro.Length > 0)
+        {
+            var lower = filtro.ToLowerInvariant();
+            q = q.Where(x => x.Descricao.ToLower().Contains(lower));
+        }
+
+        var rows = await q.OrderBy(x => x.Descricao).ToListAsync(cancellationToken);
+        var hoje = DateTime.Now.Date;
+        var items = rows.Select(r =>
+        {
+            var cidadeEstado = string.IsNullOrEmpty(r.Uf)
+                ? r.Cidade
+                : $"{r.Cidade}/{r.Uf}";
+            var fim = r.ObrDtFim ?? DateTime.MinValue;
+            var dias = fim == DateTime.MinValue
+                ? (hoje - r.ObrDtInicio.Date).Days
+                : (fim.Date - r.ObrDtInicio.Date).Days;
+            return new ObraIndexItemDto
+            {
+                IdObra = r.ObrIdObra,
+                Descricao = r.Descricao,
+                DescricaoContratante = r.Contratante,
+                DescricaoContratada = r.Contratada,
+                DataInicio = r.ObrDtInicio.ToString("dd/MM/yyyy"),
+                DataConclusao = r.ObrDtFim == null || r.ObrDtFim == DateTime.MinValue
+                    ? ""
+                    : r.ObrDtFim.Value.ToString("dd/MM/yyyy"),
+                CidadeEstado = cidadeEstado,
+                DiasDecorridos = dias,
+            };
+        }).ToList();
+
+        return new ObraIndexListResponseDto
+        {
+            ObraNomeSessao = obraNomeSessao ?? "",
+            Items = items,
+        };
+    }
+
+    public async Task<ObraIndexActionResultDto> DeleteAsync(
+        int colaboradorId,
+        int idObra,
+        CancellationToken cancellationToken = default)
+    {
+        var vinculado = await _context.ObraColaboradores.AsNoTracking()
+            .AnyAsync(oc => oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == idObra, cancellationToken);
+        if (!vinculado)
+        {
+            return new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Obra não encontrada ou sem permissão." };
+        }
+
+        var entity = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == idObra, cancellationToken);
+        if (entity == null)
+        {
+            return new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Obra não encontrada." };
+        }
+
+        _context.Obras.Remove(entity);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            return new ObraIndexActionResultDto
+            {
+                Ok = false,
+                ErrorMessage = "Não é possível excluir esta obra. Existem registros dependentes.",
+            };
+        }
+
+        return new ObraIndexActionResultDto { Ok = true };
+    }
+
     private sealed class ObraEscolherRow
     {
         public int IdObra { get; init; }

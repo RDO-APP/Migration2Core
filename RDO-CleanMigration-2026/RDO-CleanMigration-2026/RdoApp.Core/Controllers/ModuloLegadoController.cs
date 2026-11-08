@@ -41,16 +41,6 @@ public class ModuloLegadoController : Controller
     public IActionResult EmpresaCadastro() =>
         Stub("Cadastro empresa", "#/empresa/cadastro", "Formulário empresa (M7+).");
 
-    [HttpGet("/obra/index")]
-    public IActionResult ObraLista() =>
-        EmMigracaoPage.Render(
-            this,
-            "Obras",
-            "Listagem de obras (M5+).",
-            voltarUrl: "/Obra/Escolher",
-            voltarRotulo: "Escolher obra",
-            prodRef: "#/obra/index");
-
     [HttpGet("/pagina/cadastro")]
     public IActionResult PaginaCadastro() =>
         Stub("Cadastro página/menu", "#/pagina/cadastro", "Admin páginas (M7+).", voltarUrl: "/Obra/Escolher");

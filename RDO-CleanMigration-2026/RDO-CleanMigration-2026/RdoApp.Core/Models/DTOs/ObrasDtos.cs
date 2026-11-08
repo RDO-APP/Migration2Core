@@ -31,3 +31,27 @@ public sealed class SelecionarObraResponse
     public string? ErrorMessage { get; init; }
     public string? RedirectUrl { get; init; }
 }
+
+public sealed class ObraIndexItemDto
+{
+    public int IdObra { get; init; }
+    public string Descricao { get; init; } = "";
+    public string DescricaoContratante { get; init; } = "";
+    public string DescricaoContratada { get; init; } = "";
+    public string DataInicio { get; init; } = "";
+    public string DataConclusao { get; init; } = "";
+    public string CidadeEstado { get; init; } = "";
+    public int DiasDecorridos { get; init; }
+}
+
+public sealed class ObraIndexListResponseDto
+{
+    public string ObraNomeSessao { get; init; } = "";
+    public IReadOnlyList<ObraIndexItemDto> Items { get; init; } = [];
+}
+
+public sealed class ObraIndexActionResultDto
+{
+    public bool Ok { get; init; }
+    public string? ErrorMessage { get; init; }
+}
