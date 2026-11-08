@@ -1,7 +1,7 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-06  
-**P3 backlog Lucio:** impressora formatação · menu ☰ · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** códigos por empresa · polish 1.5a smoke · gaps Efetivo (Copiar/Novo colab) / Obra (contratante/logo) — orquestrador § Pendências P3. LISTA/Efetivo/Editar obra = **código** `1bb526c` (smoke pós-deploy).  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-08  
+**P3 backlog Lucio:** impressora formatação · menu ☰ · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** · **DOC-DNA-01** (#29 dono / admin CPF) · polish 1.5a smoke · gaps Efetivo/Obra — orquestrador § Pendências P3. LISTA/Efetivo/Editar obra = **código** `1bb526c` · Etapas index SPA `5233d32` (smoke pós-deploy).  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).
@@ -96,9 +96,8 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M5** | Login: smoke Esqueci senha SMTP homolog | P | M4.8 | ☐ |
 | **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core · mapa `LegacyOperadorRoutes` + `ModuloLegadoController` **2026-10-26** | M | **M5** + trilha **M4.7g** stubs | 🟡 smoke G5 |
 | **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod main.js + modal) | M | **M7** · não UI-M3 | ✅ smoke 05/11 |
-
-
 | **CAT-PARALIZ-01** | **Códigos de paralisação por empresa** — hoje `tarefa_codigo_paralizacao` é **global** (PK = código 3 chars). Melhor: `tarcp_id_empresa` + PK composta `(empresa, código)`; telas/APIs filtram pela empresa da sessão/obra; migrar clonando os ~22 códigos por empresa; join descrição = código+empresa. **Evitar** prefixo no código e escopo por obra. Até o ALTER: **não** liberar CRUD de paralização a cliente (só admin RDO). Relacionado **3.1** (⋮ Pausada). **Proibido** `ALTER novo_rdoapp` sem Lucio. | G | **M7+** (dados/tenant) | ⬜ backlog 06/11 |
+| **DOC-DNA-01** | **DNA perfis / #29 dono** — fechar ficha antes de UI do dono da assinatura. Já sabido: 15 templates (5×3), 2 menus, CMS P6b só `col_st_admin`, dono **atribui** (não edita GPA). Falta: snapshot CPF admin `380.181.694-03` (`col_id`, `col_st_admin`, prod×homol); ids reais dos 15 `gru_id`; export GPA completo; dono = empresa Loja × `obr_id_dono` × quem atribui; fluxo UI #29 + troca de plano; § único **admin CPF ≠ dono ≠ Operador obra**. Canônico: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md) §0/§6 · orquestrador **#29**. **Não** é análise agora — backlog doc. | M | **#29** pós-M7 · ≠ P6b M10 | ⬜ backlog 08/11 |
 
 **Adiado de propósito (não fazer no meio do M4):**
 
@@ -152,9 +151,32 @@ flowchart LR
 
 **ID backlog:** **CAT-PARALIZ-01** · marco **M7+** · ver também orquestrador **3.1**.
 
+---
+
+## DNA / dono da assinatura (DOC-DNA-01)
+
+**Problema:** DNA de perfis é o núcleo do produto; #29 (dono atribui perfil) não pode começar sem ficha fechada. Admin plataforma (CPF `380.181.694-03` / `col_st_admin`) **≠** dono da assinatura **≠** Operador na obra.
+
+**Já documentado (não reabrir):** cms §0 · 15 templates · 2 menus · P6a vs P6b · dono só atribui 5 papéis da licença · sem CMS/checkboxes no cliente.
+
+**Gaps a fechar na ficha (quando Lucio pedir — sem análise agora):**
+
+| # | Gap |
+|---|-----|
+| 1 | Snapshot CPF admin → `colaborador` / `col_st_admin` / empresa (prod × homol) |
+| 2 | Lista canônica dos 15 `gru_id` × licença (ids RDS) |
+| 3 | Export GPA completo (`grupo ⋈ grupo_pagina_acao ⋈ pagina ⋈ acao`) |
+| 4 | Modelo dono: empresa Loja × `obra.obr_id_dono` × usuário que atribui |
+| 5 | Fluxo UI #29 + efeito de troca de plano Loja |
+| 6 | § único: admin CPF ≠ dono ≠ Operador obra |
+
+**ID backlog:** **DOC-DNA-01** · issue **#29** · **≠** P6b (M10) · ver [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md).
+
 ## Links
 
 - Paridade blocos: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §10  
 - M4 checklist: [`m4-execucao-checklist.md`](m4-execucao-checklist.md)  
 - Decisão React vs Razor: [`migracao-frontend-razor-react-decisao.md`](../migracao-frontend-razor-react-decisao.md)  
-- Orquestrador: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § Pendências melhorias UI  
+- Orquestrador: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § Pendências melhorias UI · § DNA / **#29**  
+- CMS DNA: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md) §0 / §6  
+
