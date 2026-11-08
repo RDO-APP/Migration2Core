@@ -42,6 +42,7 @@ builder.Services.AddScoped<RdoPdfService>();
 builder.Services.AddScoped<GraficoQueryService>();
 builder.Services.AddScoped<DashboardQueryService>();
 builder.Services.AddScoped<ObrasQueryService>();
+builder.Services.AddScoped<ObraIndexService>();
 builder.Services.AddScoped<ShellContextService>();
 builder.Services.AddScoped<RecuperarSenhaService>();
 

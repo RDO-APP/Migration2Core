@@ -44,8 +44,14 @@ function parseOptInt(v: string): number | null {
   return Number.isFinite(n) ? Math.trunc(n) : null
 }
 
+function modoFromUrl(): 'editar' | 'visualizar' {
+  const m = new URLSearchParams(window.location.search).get('modo')?.toLowerCase()
+  return m === 'visualizar' ? 'visualizar' : 'editar'
+}
+
 export function ObraCadastroPage() {
   const { shell } = useShellContext()
+  const modo = modoFromUrl()
   const [form, setForm] = useState<FormState | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -113,7 +119,7 @@ export function ObraCadastroPage() {
     }
   }
 
-  const disabled = !!form?.finalizada
+  const disabled = !!form?.finalizada || modo === 'visualizar'
 
   return (
     <OperadorShell variant="cards" obraNome={form?.descricao || shell?.obraNome} shell={shell}>
@@ -127,7 +133,9 @@ export function ObraCadastroPage() {
           <p className="error">{error}</p>
         ) : form ? (
           <>
-            {form.finalizada ? (
+            {modo === 'visualizar' ? (
+              <p className="muted">Modo visualizar — campos somente leitura.</p>
+            ) : form.finalizada ? (
               <p className="muted">Obra finalizada — campos somente leitura.</p>
             ) : null}
             <form
@@ -272,19 +280,21 @@ export function ObraCadastroPage() {
               </div>
             </form>
             <div className="col-xs-12 no-padding cadastro-form-actions">
-              <button type="button" className="btn btn-blue" onClick={() => window.history.back()}>
+              <button type="button" className="btn btn-blue" onClick={() => goOperador('/Obra/Index')}>
                 <i className="fa fa-arrow-left" aria-hidden />
                 <span>Voltar</span>
               </button>
-              <button
-                type="button"
-                className="btn btn-blue"
-                disabled={saving || disabled}
-                onClick={() => void onSave()}
-              >
-                <i className="fa fa-check" aria-hidden />
-                <span>SALVAR</span>
-              </button>
+              {modo === 'visualizar' ? null : (
+                <button
+                  type="button"
+                  className="btn btn-blue"
+                  disabled={saving || disabled}
+                  onClick={() => void onSave()}
+                >
+                  <i className="fa fa-check" aria-hidden />
+                  <span>SALVAR</span>
+                </button>
+              )}
             </div>
           </>
         ) : null}

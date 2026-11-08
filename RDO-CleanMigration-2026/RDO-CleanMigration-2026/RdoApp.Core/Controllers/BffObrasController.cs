@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Services;
+using RdoApp.Core.Utils;
 
 namespace RdoApp.Core.Controllers;
 
@@ -13,12 +14,18 @@ namespace RdoApp.Core.Controllers;
 public class BffObrasController : ControllerBase
 {
     private readonly ObrasQueryService _obras;
+    private readonly ObraIndexService _obraIndex;
     private readonly LoginObraService _loginObra;
     private readonly ObraCadastroService _cadastro;
 
-    public BffObrasController(ObrasQueryService obras, LoginObraService loginObra, ObraCadastroService cadastro)
+    public BffObrasController(
+        ObrasQueryService obras,
+        ObraIndexService obraIndex,
+        LoginObraService loginObra,
+        ObraCadastroService cadastro)
     {
         _obras = obras;
+        _obraIndex = obraIndex;
         _loginObra = loginObra;
         _cadastro = cadastro;
     }
@@ -96,8 +103,8 @@ public class BffObrasController : ControllerBase
 
 
 
-    [HttpGet("lista")]
-    public async Task<IActionResult> Lista([FromQuery] string? descricao, CancellationToken cancellationToken)
+    [HttpGet("index/bootstrap")]
+    public async Task<IActionResult> IndexBootstrap(CancellationToken cancellationToken)
     {
         if (!TryColaboradorId(out var colaboradorId))
         {
@@ -105,7 +112,48 @@ public class BffObrasController : ControllerBase
         }
 
         var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
-        return Ok(await _obras.ListIndexAsync(colaboradorId, descricao, obraNome, cancellationToken));
+        return Ok(await _obraIndex.BootstrapAsync(HttpContext, colaboradorId, obraNome, cancellationToken));
+    }
+
+    [HttpGet("index/municipios")]
+    public async Task<IActionResult> IndexMunicipios([FromQuery] int idUf, CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out _))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        return Ok(await _obraIndex.MunicipiosByUfAsync(idUf, cancellationToken));
+    }
+
+    [HttpGet("lista")]
+    public async Task<IActionResult> Lista(
+        [FromQuery] string? descricao,
+        [FromQuery] int idContratante = 0,
+        [FromQuery] string? dataInicioDe = null,
+        [FromQuery] string? dataInicioAte = null,
+        [FromQuery] int idUf = 0,
+        [FromQuery] int idMunicipio = 0,
+        [FromQuery] int statusObra = 0,
+        CancellationToken cancellationToken = default)
+    {
+        if (!TryColaboradorId(out var colaboradorId))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        var filter = new ObraIndexFilterDto
+        {
+            Descricao = descricao,
+            IdContratante = idContratante,
+            DataInicioDe = dataInicioDe,
+            DataInicioAte = dataInicioAte,
+            IdUf = idUf,
+            IdMunicipio = idMunicipio,
+            StatusObra = statusObra,
+        };
+        var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
+        return Ok(await _obraIndex.ListAsync(colaboradorId, filter, obraNome, cancellationToken));
     }
 
     [HttpDelete("{idObra:int}")]
@@ -116,7 +164,35 @@ public class BffObrasController : ControllerBase
             return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
         }
 
-        var result = await _obras.DeleteAsync(colaboradorId, idObra, cancellationToken);
+        if (!PermissionHelper.HasPermission(HttpContext, "deletar", "/obra/index"))
+        {
+            return Forbid();
+        }
+
+        var result = await _obraIndex.DeleteAsync(colaboradorId, idObra, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("convidar")]
+    public async Task<IActionResult> Convidar([FromBody] ObraConviteRequestDto? body, CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out var colaboradorId))
+        {
+            return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
+        }
+
+        if (!PermissionHelper.HasPermission(HttpContext, "enviarConvite", "/obra/index"))
+        {
+            return Forbid();
+        }
+
+        if (body == null || body.IdObra <= 0)
+        {
+            return BadRequest(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Obra inválida." });
+        }
+
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var result = await _obraIndex.ConvidarAsync(colaboradorId, body, baseUrl, cancellationToken);
         return result.Ok ? Ok(result) : BadRequest(result);
     }
 
