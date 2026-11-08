@@ -83,13 +83,17 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
   const showOperadorObraNav =
     variant === 'cards' || variant === 'rdo' || variant === 'chart' || variant === 'dashboard'
 
+  /** P2 Escolher: sem obra selecionada — drawer ☰ só após entrar na área da obra (P3+). */
+  const showDrawerMenu = variant !== 'escolher'
+  const drawerOpen = showDrawerMenu && mobileMenuOpen
+
   return (
     <div
       className={`operador-app base ${variant === 'escolher' ? 'tema-azul' : 'tema-azul-claro'}${
-        mobileMenuOpen ? ' operador-menu-open' : ''
+        drawerOpen ? ' operador-menu-open' : ''
       }`}
     >
-      {mobileMenuOpen ? (
+      {drawerOpen ? (
         <button
           type="button"
           className="operador-menu-backdrop"
@@ -104,6 +108,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
               <i className="icon-logo" aria-hidden />
             </a>
             <div className="menu-lateral">
+              {showDrawerMenu ? (
               <ul className="nav-mobile">
                 <li className="menu-container">
                   <input
@@ -191,6 +196,7 @@ export function OperadorShell({ variant, obraNome, usuarioNome, shell, children 
                   </div>
                 </li>
               </ul>
+              ) : null}
               {showOperadorObraNav && tituloObra ? <h2 id="tituloObra">{tituloObra}</h2> : null}
             </div>
           </div>
