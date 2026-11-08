@@ -41,10 +41,6 @@ public class ModuloLegadoController : Controller
     public IActionResult EmpresaCadastro() =>
         Stub("Cadastro empresa", "#/empresa/cadastro", "Formulário empresa (M7+).");
 
-    [HttpGet("/etapa/index")]
-    public IActionResult Etapa() =>
-        Stub("Etapas", "#/etapa/index", "CRUD de etapas (M7+).");
-
     [HttpGet("/obra/index")]
     public IActionResult ObraLista() =>
         EmMigracaoPage.Render(

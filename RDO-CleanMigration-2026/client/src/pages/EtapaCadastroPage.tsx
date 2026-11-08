@@ -2,13 +2,20 @@ import { useEffect, useState } from 'react'
 import { fetchEtapaCadastroBlank, saveEtapaCadastro } from '../api/etapaApi'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
-import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
+import { goOperador } from '../nav/p3-operador-routes'
 import { flashToast, showToast } from '../toast'
 import '../rdo-cadastro.css'
 import '../tarefa-cadastro.css'
 
+function idFromUrl(): number | undefined {
+  const raw = new URLSearchParams(window.location.search).get('id')
+  const n = raw ? Number(raw) : NaN
+  return Number.isFinite(n) && n > 0 ? n : undefined
+}
+
 export function EtapaCadastroPage() {
   const { shell } = useShellContext()
+  const editId = idFromUrl()
   const [titulo, setTitulo] = useState('')
   const [ordem, setOrdem] = useState('')
   const [loading, setLoading] = useState(true)
@@ -17,9 +24,11 @@ export function EtapaCadastroPage() {
 
   useEffect(() => {
     let cancelled = false
-    fetchEtapaCadastroBlank()
+    fetchEtapaCadastroBlank(editId)
       .then((b) => {
-        if (!cancelled) setOrdem(String(b.ordemSugerida || ''))
+        if (cancelled) return
+        if (b.titulo) setTitulo(b.titulo)
+        setOrdem(String(b.ordemSugerida || ''))
       })
       .catch((e: unknown) => {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Falha ao carregar.')
@@ -30,7 +39,7 @@ export function EtapaCadastroPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [editId])
 
   async function onSave() {
     const nome = titulo.trim()
@@ -45,13 +54,17 @@ export function EtapaCadastroPage() {
     }
     setSaving(true)
     try {
-      const result = await saveEtapaCadastro({ titulo: nome, ordem: n })
+      const result = await saveEtapaCadastro({
+        id: editId,
+        titulo: nome,
+        ordem: n,
+      })
       if (!result.ok) {
         showToast('error', result.errorMessage || 'Não foi possível salvar.')
         return
       }
       flashToast('success', 'Registro salvo com sucesso.')
-      goOperador(P3_NAV.header.tarefaCards)
+      goOperador('/Etapa/Index')
     } catch (e: unknown) {
       showToast('error', e instanceof Error ? e.message : 'Não foi possível salvar.')
     } finally {
@@ -111,7 +124,7 @@ export function EtapaCadastroPage() {
               </div>
             </form>
             <div className="col-xs-12 no-padding cadastro-form-actions">
-              <button type="button" className="btn btn-blue" onClick={() => window.history.back()}>
+              <button type="button" className="btn btn-blue" onClick={() => goOperador('/Etapa/Index')}>
                 <i className="fa fa-arrow-left" aria-hidden />
                 <span>Voltar</span>
               </button>

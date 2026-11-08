@@ -39,7 +39,7 @@ public static class LegacyOperadorRoutes
             "/equipamentos/cadastro" or "/equipamento/cadastro" => "/equipamentos/cadastro",
             "/empresa/index" => "/empresa/index",
             "/empresa/cadastro" => "/empresa/cadastro",
-            "/etapa/index" => "/etapa/index",
+            "/etapa/index" => "/Etapa/Index",
             "/etapa/cadastro" => "/Etapa/Cadastro",
             "/grupo/index" => "/grupo/index",
             "/grupo/cadastro" => "/grupo/cadastro",

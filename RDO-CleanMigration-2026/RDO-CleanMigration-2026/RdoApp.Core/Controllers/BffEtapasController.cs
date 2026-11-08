@@ -20,6 +20,7 @@ public class BffEtapasController : ControllerBase
         _etapa = etapa;
     }
 
+    /// <summary>Cards P3 — não confundir com listagem do menu Etapas.</summary>
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
@@ -41,8 +42,8 @@ public class BffEtapasController : ControllerBase
         return Ok(payload);
     }
 
-    [HttpGet("cadastro")]
-    public async Task<IActionResult> CadastroBlank(CancellationToken cancellationToken)
+    [HttpGet("lista")]
+    public async Task<IActionResult> Lista([FromQuery] string? titulo, CancellationToken cancellationToken)
     {
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
         {
@@ -50,6 +51,30 @@ public class BffEtapasController : ControllerBase
         }
 
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
+        return Ok(await _etapa.ListAsync(obraId, obraNome, titulo, cancellationToken));
+    }
+
+    [HttpGet("cadastro")]
+    public async Task<IActionResult> CadastroBlank([FromQuery] int? id, CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        if (id is > 0)
+        {
+            var edit = await _etapa.GetForEditAsync(obraId, id.Value, cancellationToken);
+            if (edit == null)
+            {
+                return NotFound(new { message = "Etapa não encontrada." });
+            }
+
+            return Ok(edit);
+        }
+
         return Ok(await _etapa.GetBlankAsync(obraId, cancellationToken));
     }
 
@@ -69,12 +94,47 @@ public class BffEtapasController : ControllerBase
         }
 
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
-        var result = await _etapa.CreateAsync(obraId, body, cancellationToken);
-        if (!result.Ok)
+        if (body.Id is > 0)
         {
-            return BadRequest(result);
+            var updated = await _etapa.UpdateAsync(obraId, body.Id.Value, body, cancellationToken);
+            return updated.Ok ? Ok(updated) : BadRequest(updated);
         }
 
-        return Ok(result);
+        var result = await _etapa.CreateAsync(obraId, body, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(
+        int id,
+        [FromBody] EtapaCadastroSaveRequestDto? body,
+        CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        if (body == null)
+        {
+            return BadRequest(new EtapaCadastroSaveResultDto { Ok = false, ErrorMessage = "Corpo inválido." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _etapa.UpdateAsync(obraId, id, body, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _etapa.DeleteAsync(obraId, id, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
     }
 }

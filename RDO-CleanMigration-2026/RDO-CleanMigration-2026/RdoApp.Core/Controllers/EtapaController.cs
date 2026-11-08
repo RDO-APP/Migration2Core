@@ -15,8 +15,10 @@ public class EtapaController : Controller
     }
 
     [HttpGet]
-    public IActionResult Cadastro()
-    {
-        return OperadorSpaEntry.ServeSpaIndex(this, _env, "Nova etapa");
-    }
+    public IActionResult Index() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Etapas");
+
+    [HttpGet]
+    public IActionResult Cadastro() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Nova etapa");
 }

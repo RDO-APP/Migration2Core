@@ -1,9 +1,24 @@
-export type EtapaCadastroBlank = { ordemSugerida: number }
+export type EtapaCadastroBlank = {
+  id?: number
+  titulo?: string
+  ordemSugerida: number
+}
 
 export type EtapaCadastroSaveResult = {
   ok: boolean
   id?: number
   errorMessage?: string
+}
+
+export type EtapaListItem = {
+  id: number
+  titulo: string
+  ordem: number
+}
+
+export type EtapaListResponse = {
+  obraNome: string
+  items: EtapaListItem[]
 }
 
 async function readJson<T>(res: Response, fallback: string): Promise<T> {
@@ -24,8 +39,20 @@ async function readJson<T>(res: Response, fallback: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export async function fetchEtapaCadastroBlank(): Promise<EtapaCadastroBlank> {
-  const res = await fetch('/api/bff/etapas/cadastro', {
+export async function fetchEtapaLista(titulo = ''): Promise<EtapaListResponse> {
+  const q = new URLSearchParams()
+  if (titulo.trim()) q.set('titulo', titulo.trim())
+  const qs = q.toString()
+  const res = await fetch(`/api/bff/etapas/lista${qs ? `?${qs}` : ''}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'lista etapas')
+}
+
+export async function fetchEtapaCadastroBlank(id?: number): Promise<EtapaCadastroBlank> {
+  const q = id && id > 0 ? `?id=${id}` : ''
+  const res = await fetch(`/api/bff/etapas/cadastro${q}`, {
     credentials: 'include',
     headers: { Accept: 'application/json' },
   })
@@ -33,6 +60,7 @@ export async function fetchEtapaCadastroBlank(): Promise<EtapaCadastroBlank> {
 }
 
 export async function saveEtapaCadastro(body: {
+  id?: number
   titulo: string
   ordem: number
 }): Promise<EtapaCadastroSaveResult> {
@@ -43,4 +71,13 @@ export async function saveEtapaCadastro(body: {
     body: JSON.stringify(body),
   })
   return readJson(res, 'salvar etapa')
+}
+
+export async function deleteEtapa(id: number): Promise<EtapaCadastroSaveResult> {
+  const res = await fetch(`/api/bff/etapas/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'excluir etapa')
 }

@@ -8,6 +8,7 @@ import { RdoCadastroPage } from './pages/RdoCadastroPage'
 import { RdoIndexPage } from './pages/RdoIndexPage'
 import { TarefaCadastroPage } from './pages/TarefaCadastroPage'
 import { EtapaCadastroPage } from './pages/EtapaCadastroPage'
+import { EtapaIndexPage } from './pages/EtapaIndexPage'
 import { EfetivoIndexPage } from './pages/EfetivoIndexPage'
 import { ObraCadastroPage } from './pages/ObraCadastroPage'
 import { detectOperadorPage } from './route'
@@ -28,6 +29,9 @@ function App() {
   }
   if (page === 'etapa-cadastro') {
     return <EtapaCadastroPage />
+  }
+  if (page === 'etapa-index') {
+    return <EtapaIndexPage />
   }
   if (page === 'rdo-cadastro') {
     return <RdoCadastroPage />
