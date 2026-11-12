@@ -1,6 +1,7 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-06 ~14:40 — próximo = **menu ☰ G5** (inventário prod §2.1–2.2 cms) · Lucio confirma polish etapa depois · tip código `1bb526c`  
+**Atualizado:** 2026-11-12 ~09:00 — tip código **`b90cc54`** · drawer **P6a** listagens SPA (Obra/Etapa/Empresa/Colaborador/Equipamento) · próximo = smoke G5 + Relatórios/cadastros stubs · polish etapa **1.5a**  
+
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
 **Fonte única docs:** este arquivo e irmãos em **`Migration2Core/docs/`** no GitHub — índice [`README.md`](README.md).
@@ -120,7 +121,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — smoke LISTA/Efetivo/Obra pós-deploy · impressora · menu ☰ · **CAT-PARALIZ-01** · 3.1.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — smoke **G5** drawer pós-`b90cc54` · Relatórios/Paralizações stubs · cadastros P6a EmMigracao · impressora · **CAT-PARALIZ-01** · 3.1.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -142,7 +143,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **82** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ · FILTRO/+tarefa/+etapa ☑ smoke · SELECIONAR TUDO/massa ☑ · LISTA+Efetivo+Editar obra **código** `1bb526c` · polish Voltar/Salvar **código** | smoke pós-deploy LISTA/Efetivo/Obra · formatação PDF+Excel impressora · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** códigos por empresa · menu ☰ vs prod · gaps Efetivo Copiar/Novo · Obra contratante/logo · **P6a** · **não** P6b |
+| **M7+** | **85** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ · FILTRO/+tarefa/+etapa ☑ · SELECIONAR TUDO/massa ☑ · LISTA+Efetivo+Editar obra **código** · **P6a index** Obra/Etapa/Empresa/Colaborador/Equipamento SPA+BFF **`b90cc54`** (cadastros ainda EmMigracao) | smoke G5 drawer · Relatórios/Paralizações stubs · cadastros P6a · formatação PDF+Excel impressora · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** · gaps Efetivo Copiar/Novo · Obra contratante/logo · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
@@ -410,11 +411,11 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Menu ☰ G5** — smoke cada item do drawer + header (tabela [`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2); anotar 404 vs EmMigracao vs SPA.
-2. Lucio confirma polish **1.5a** cadastro etapa (Voltar/SALVAR) quando puder.
-3. Gaps já no Git: Obra contratante/logo · Efetivo Copiar/Novo colab · LISTA/Efetivo/Obra smoke se deploy pendente.
-4. Impressora formatação · **3.1** · **CAT-PARALIZ-01**.
-5. Depois G5 estável: priorizar SPA dos stubs do drawer (Obras / Etapas / Equipamentos / …) uma a uma.
+1. **Smoke G5** — drawer + header pós-deploy `b90cc54` ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2): 7 listagens SPA · stubs = Paralizações + Relatórios/Admin.
+2. **Próxima SPA drawer:** Relatórios (`produtividade` / `efetivo diário` / `medição`) **ou** cadastros P6a (Empresa/Colaborador/Equipamento ainda EmMigracao).
+3. Lucio confirma polish **1.5a** cadastro etapa (Voltar/SALVAR) quando puder.
+4. Gaps já no Git: Obra contratante/logo · Efetivo Copiar/Novo colab · LISTA/Efetivo smoke se deploy pendente.
+5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** (Paralizações).
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).

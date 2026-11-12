@@ -94,16 +94,16 @@ Só **dois** menus no prod:
 
 Ordem na tela:
 
-| Título | URL (prod) | Homolog EQ-R (06/11 · tip `1bb526c`) |
+| Título | URL (prod) | Homolog EQ-R (12/11 · tip `b90cc54`) |
 |--------|------------|--------------------------------------|
-| Equipamentos | `/equipamentos/index` | SPA `EquipamentoIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
-| Colaboradores | `/colaborador/index` | SPA `ColaboradorIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
+| Equipamentos | `/equipamentos/index` | ✅ SPA `EquipamentoIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
+| Colaboradores | `/colaborador/index` | ✅ SPA `ColaboradorIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
 | Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` (sem Copiar/Novo colab) |
 | Card de Tarefas | `/tarefa/cards` | ✅ SPA `/Tarefa/Cards` |
 | RDOs | `/rdo/index` | ✅ SPA `/Rdo/Index` |
-| Obras | `/obra/index` | stub EmMigracao `/obra/index` |
-| Empresas | `/empresa/index` | SPA `EmpresaIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
-| Etapas | `/etapa/index` | stub EmMigracao `/etapa/index` (+ cadastro SPA `/Etapa/Cadastro`) |
+| Obras | `/obra/index` | ✅ SPA `ObraIndexPage` + BFF · cadastro SPA parcial `/Obra/Cadastro` |
+| Empresas | `/empresa/index` | ✅ SPA `EmpresaIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
+| Etapas | `/etapa/index` | ✅ SPA `EtapaIndexPage` + BFF · cadastro SPA `/Etapa/Cadastro` |
 | Códigos de Paralizações | `/tarefa/paralizacoes/index` | stub EmMigracao · **CAT-PARALIZ-01** antes de CRUD real |
 
 Chart, Dashboard, Grupo, Menu, Página **não** estão neste menu. Chart/Dashboard entram por **header** + `ObterRotasDefault` / `grupo_pagina_acao` (`/chart`, `/dashboard/index`) — ver [`m4-7g-rbac-shell-p1-p3.md`](m4-7g-rbac-shell-p1-p3.md).

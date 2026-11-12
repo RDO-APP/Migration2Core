@@ -1,18 +1,20 @@
 # M4.7 / M5-nav — Menu drawer + botões P3 (B–D)
 
-**Atualizado:** 2026-11-06 — inventário alinhado cms §2.1–2.2 · Efetivo SPA · smoke G5 próximo · **Mapa href:** `RdoApp.Core/Infrastructure/LegacyOperadorRoutes.cs` · **Stubs:** `ModuloLegadoController` + controllers Tarefa/Rdo/Chart/Efetivo/Obra/Etapa
+**Atualizado:** 2026-11-12 — tip **`b90cc54`** · drawer P6a listagens SPA · **Mapa href:** `LegacyOperadorRoutes.cs` · **ServeSpa:** Obra/Etapa/Empresa/Colaborador/Equipamento (+ RDO/Chart/Dashboard/Efetivo/Cards)
 
 ## B — Menu principal
 
 | Origem | Comportamento homolog |
 |--------|------------------------|
 | `GET /api/bff/shell` → `menuPaginas[]` | `href` mapeado; entradas `#` omitidas |
-| Clique drawer | `goOperador(href)` → MVC **200** ou redirect SPA |
-| Admin (grupo, menu, páginas, histórico, relatórios) | `/grupo/*`, `/menu/*`, … → **Em migração** |
+| Clique drawer | `goOperador(href)` → MVC **200** SPA ou EmMigracao |
+| **P6a index** (obra, etapa, empresa, colaborador, equipamento) | `ServeSpaIndex` + BFF lista · cadastros empresa/colaborador/equipamento ainda EmMigracao |
+| Admin (grupo, menu, páginas, histórico) + Relatórios | `/grupo/*`, `/menu/*`, `/relatorio*`… → **Em migração** |
+| Paralizações | `/tarefa/paralizacoes/index` → EmMigracao (**CAT-PARALIZ-01**) |
 | Card de tarefas (`#/pagina/index`) | → `/Tarefa/Cards` |
 | Colaborador alterar senha no menu | → `/Account/ChangePassword` |
 
-**Smoke G5:** abrir cada item do drawer logado + obra selecionada — nenhum 404.
+**Smoke G5:** abrir cada item do drawer logado + obra — nenhum 404; tabela cms §2.1.
 
 ## C — Botões P3
 

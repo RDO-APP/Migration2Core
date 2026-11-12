@@ -30,8 +30,8 @@
 | **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7 7a** ☑ SPA `498ebc4` · **7b–7d** editar/PDF/assinar |
 | **5** | `/Obra/Cadastro` | `#/obra/cadastro` | **M7** |
 | **6** | `/Efetivo/Index` | `#/efetivo/index` | **M7** |
-| **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Cadastro` | toolbar + card | **M7** olho/lápis/relógio **SPA** ☑ (`/Tarefa/Cadastro?id=`) · Index/Etapa ainda stub · **impressora / ⋮** próximo |
-| **8** | Menu gestor (colaborador, equipamento, relatórios…) = **P6a** | drawer | **M7+** |
+| **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Index`, `/Etapa/Cadastro` | toolbar + card | **M7** olho/lápis/relógio **SPA** ☑ · `TarefaIndex`/`EtapaIndex` SPA ☑ · **impressora formatação** próximo |
+| **8** | Menu gestor **P6a** (obra, empresa, colaborador, equipamento, …) | drawer | **Index SPA+BFF** ☑ tip `b90cc54` · cadastros empresa/colaborador/equipamento EmMigracao · Relatórios/Paralizações stub |
 | **9** | Nova medição | modal cards | **P4** ☑ smoke 03/nov (`NovaMedicaoModal`) · polish Foto **depois** |
 | — | **P6b** `#/grupo` `#/menu` `#/pagina` (CMS `col_st_admin`) | **não** esta fila | **M10** — prod EQ-L até cutover |
 

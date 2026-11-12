@@ -475,7 +475,7 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 
 ### 10.8 Classes de tela operador — P5 (M5 web) e além
 
-**Atualizado:** 2026-11-02 · **Fila M5:** [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · Chart **C1–C4** ☑
+**Atualizado:** 2026-11-12 · tip **`b90cc54`** · **Fila M5:** [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · Chart **C1–C4** ☑ · drawer P6a index SPA
 
 Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta tabela para **pacotes de PR/deploy** (não migrar “tela solta”).
 
@@ -483,7 +483,7 @@ Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta
 |:------:|----------------------|------------------------|------------|-------|--------|
 | **P5a** | `#/rdo/index`, `#/chart`, `#/dashboard/index`, `#/efetivo/index`… | `/Rdo/Index`, `/Chart/Index`, … | React + `OperadorShell` | BFF `/api/bff/*` por módulo | **Full page** (`goOperador`) — não é popup de card. **Chart** `/Chart/Index` + `/chart/rdos`: título homolog **GESTÃO DE RDO's**; filtro datas nativo + Filtrar; 5 faixas CSS (não Highcharts); ☰ Print/PNG/JPEG/PDF/SVG (`ChartExportMenu`). Log: [`migracao/homolog-p5a-chart-tentativas.md`](migracao/homolog-p5a-chart-tentativas.md) **C1–C4** ☑ |
 | **P5b** | `#/rdo/cadastro`, `#/obra/cadastro`… | `/Rdo/Cadastro`, … | React ou stub | POST legado / BFF | Formulários pesados → **M7** |
-| **P6a** | `#/colaborador/index`, `#/empresa/index`, `#/obra/index`… | `ModuloLegadoController` | “Em migração” | CRUD **gestor da obra/empresa** | **M7+** (depois P5) |
+| **P6a** | `#/obra/index`, `#/etapa/index`, `#/empresa/index`, `#/colaborador/index`, `#/equipamentos/index`… | `Obra`/`Etapa` + `ModuloLegadoController` | **Index SPA** ☑ (`*IndexPage` + BFF) · cadastros empresa/colaborador/equipamento ainda EmMigracao | lista por obra / GPA | Inventário cms §2.1 · Relatórios + Paralizações ainda stub |
 | **P6b** | `#/grupo/index`, `#/menu/index`, `#/pagina/index` (+ `#/historicoacesso`) | só `col_st_admin` | stub homolog · **prod EQ-L** até cutover | CMS **plataforma** | **M10** (não M5/M7) · [`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · **≠** #29 |
 
 **Molde P5a (copiar de Cards / RDO):**
