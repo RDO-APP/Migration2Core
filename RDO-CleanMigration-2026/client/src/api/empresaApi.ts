@@ -81,6 +81,71 @@ export async function fetchEmpresaIndexLista(filtro: EmpresaIndexFilter): Promis
   return readJson(res, 'lista empresas')
 }
 
+export type EmpresaCadastroForm = {
+  idEmpresa: number
+  razaoSocial: string
+  nomeFantasia: string
+  cnpj: string
+  idRamo: number
+  idSetor: number
+  logradouro: string
+  numeroEndereco: string
+  complemento: string
+  bairro: string
+  idUf: number
+  idMunicipio: number
+  cep: string
+  telefone: string
+  editavel: boolean
+  obraNomeSessao: string
+  ufs: EmpresaIndexLookup[]
+  ramos: EmpresaIndexLookup[]
+  setores: EmpresaIndexLookup[]
+  municipios: EmpresaIndexLookup[]
+}
+
+export type EmpresaCadastroSaveRequest = {
+  idEmpresa: number
+  razaoSocial: string
+  nomeFantasia: string
+  cnpj: string
+  idRamo: number
+  idSetor: number
+  logradouro: string
+  numeroEndereco: string
+  complemento: string
+  bairro: string
+  idMunicipio: number
+  cep: string
+  telefone: string
+}
+
+export type EmpresaCadastroSaveResult = {
+  ok: boolean
+  errorMessage?: string
+  idEmpresa?: number
+}
+
+export async function fetchEmpresaCadastro(id: number): Promise<EmpresaCadastroForm> {
+  const res = await fetch(`/api/bff/empresas/cadastro?id=${id}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'cadastro empresa')
+}
+
+export async function saveEmpresaCadastro(
+  body: EmpresaCadastroSaveRequest,
+): Promise<EmpresaCadastroSaveResult> {
+  const res = await fetch('/api/bff/empresas/cadastro', {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return readJson(res, 'salvar empresa')
+}
+
 /** Máscara telefone BR simples (paridade visual EmpresaController.maskPhone). */
 export function maskPhone(raw: string | null | undefined): string {
   const d = (raw ?? '').replace(/\D/g, '')

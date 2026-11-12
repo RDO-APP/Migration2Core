@@ -13,8 +13,11 @@ import { EfetivoIndexPage } from './pages/EfetivoIndexPage'
 import { ObraCadastroPage } from './pages/ObraCadastroPage'
 import { ObraIndexPage } from './pages/ObraIndexPage'
 import { EmpresaIndexPage } from './pages/EmpresaIndexPage'
+import { EmpresaCadastroPage } from './pages/EmpresaCadastroPage'
 import { ColaboradorIndexPage } from './pages/ColaboradorIndexPage'
+import { ColaboradorCadastroPage } from './pages/ColaboradorCadastroPage'
 import { EquipamentoIndexPage } from './pages/EquipamentoIndexPage'
+import { EquipamentoCadastroPage } from './pages/EquipamentoCadastroPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -61,11 +64,20 @@ function App() {
   if (page === 'empresa-index') {
     return <EmpresaIndexPage />
   }
+  if (page === 'empresa-cadastro') {
+    return <EmpresaCadastroPage />
+  }
   if (page === 'colaborador-index') {
     return <ColaboradorIndexPage />
   }
+  if (page === 'colaborador-cadastro') {
+    return <ColaboradorCadastroPage />
+  }
   if (page === 'equipamento-index') {
     return <EquipamentoIndexPage />
+  }
+  if (page === 'equipamento-cadastro') {
+    return <EquipamentoCadastroPage />
   }
   return <CardsPage />
 }

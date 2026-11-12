@@ -21,7 +21,7 @@ public class ModuloLegadoController : Controller
 
     [HttpGet("/colaborador/cadastro")]
     public IActionResult ColaboradorCadastro() =>
-        Stub("Cadastro colaborador", "#/colaborador/cadastro", "Formulário colaborador (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Cadastro colaborador");
 
     [HttpGet("/equipamento/index")]
     [HttpGet("/equipamentos/index")]
@@ -31,7 +31,7 @@ public class ModuloLegadoController : Controller
     [HttpGet("/equipamentos/cadastro")]
     [HttpGet("/equipamento/cadastro")]
     public IActionResult EquipamentosCadastro() =>
-        Stub("Cadastro equipamento", "#/equipamentos/cadastro", "CRUD equipamento (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Cadastro equipamento");
 
     [HttpGet("/empresa/index")]
     public IActionResult Empresa() =>
@@ -39,7 +39,7 @@ public class ModuloLegadoController : Controller
 
     [HttpGet("/empresa/cadastro")]
     public IActionResult EmpresaCadastro() =>
-        Stub("Cadastro empresa", "#/empresa/cadastro", "Formulário empresa (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Cadastro empresa");
 
     [HttpGet("/pagina/cadastro")]
     public IActionResult PaginaCadastro() =>

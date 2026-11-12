@@ -13,10 +13,12 @@ namespace RdoApp.Core.Controllers;
 public class BffColaboradoresController : ControllerBase
 {
     private readonly ColaboradorIndexService _colaboradores;
+    private readonly ColaboradorCadastroService _cadastro;
 
-    public BffColaboradoresController(ColaboradorIndexService colaboradores)
+    public BffColaboradoresController(ColaboradorIndexService colaboradores, ColaboradorCadastroService cadastro)
     {
         _colaboradores = colaboradores;
+        _cadastro = cadastro;
     }
 
     [HttpGet("index/bootstrap")]
@@ -89,6 +91,50 @@ public class BffColaboradoresController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+    }
+
+    [HttpGet("cadastro")]
+    public async Task<IActionResult> Cadastro([FromQuery] int id = 0, CancellationToken cancellationToken = default)
+    {
+        if (!TryColaboradorId(out _))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
+        var (form, error) = await _cadastro.GetFormAsync(HttpContext, id, obraId, obraNome, cancellationToken);
+        if (form == null)
+        {
+            return BadRequest(new { message = error ?? "Falha ao carregar colaborador." });
+        }
+
+        return Ok(form);
+    }
+
+    [HttpPut("cadastro")]
+    public async Task<IActionResult> SalvarCadastro(
+        [FromBody] ColaboradorCadastroSaveRequestDto body,
+        CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out _))
+        {
+            return Unauthorized(new ColaboradorCadastroSaveResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
+        }
+
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new ColaboradorCadastroSaveResultDto { Ok = false, ErrorMessage = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _cadastro.SaveAsync(HttpContext, obraId, body, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
     }
 
     [HttpDelete("{idColaborador:int}")]

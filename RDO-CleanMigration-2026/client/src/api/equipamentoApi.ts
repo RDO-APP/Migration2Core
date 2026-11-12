@@ -79,6 +79,61 @@ export async function fetchEquipamentoIndexLista(
   return readJson(res, 'lista equipamentos')
 }
 
+export type EquipamentoCadastroForm = {
+  idEquipamento: number
+  idObraEquipamento: number
+  tipoEquipamento: string
+  descricao: string
+  marca: string
+  modelo: string
+  tipoAquisicao: string
+  dataAquisicao: string
+  fabricanteFornecedor: string
+  contato: string
+  telefone: string
+  podeSalvar: boolean
+  obraNomeSessao: string
+}
+
+export type EquipamentoCadastroSaveRequest = {
+  idEquipamento: number
+  tipoEquipamento: string
+  descricao: string
+  marca: string
+  modelo: string
+  tipoAquisicao: string
+  dataAquisicao: string
+  fabricanteFornecedor: string
+  contato: string
+  telefone: string
+}
+
+export type EquipamentoCadastroSaveResult = {
+  ok: boolean
+  errorMessage?: string
+  idEquipamento?: number
+}
+
+export async function fetchEquipamentoCadastro(id: number): Promise<EquipamentoCadastroForm> {
+  const res = await fetch(`/api/bff/equipamentos/cadastro?id=${id}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'cadastro equipamento')
+}
+
+export async function saveEquipamentoCadastro(
+  body: EquipamentoCadastroSaveRequest,
+): Promise<EquipamentoCadastroSaveResult> {
+  const res = await fetch('/api/bff/equipamentos/cadastro', {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return readJson(res, 'salvar equipamento')
+}
+
 export async function deleteEquipamentoIndex(idEquipamento: number): Promise<EquipamentoIndexActionResult> {
   const res = await fetch(`/api/bff/equipamentos/${idEquipamento}`, {
     method: 'DELETE',

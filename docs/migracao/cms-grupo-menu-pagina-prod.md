@@ -96,13 +96,13 @@ Ordem na tela:
 
 | Título | URL (prod) | Homolog EQ-R (12/11 · tip `b90cc54`) |
 |--------|------------|--------------------------------------|
-| Equipamentos | `/equipamentos/index` | ✅ SPA `EquipamentoIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
-| Colaboradores | `/colaborador/index` | ✅ SPA `ColaboradorIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
+| Equipamentos | `/equipamentos/index` | ✅ SPA index+cadastro (`EquipamentoIndexPage` / `EquipamentoCadastroPage`) |
+| Colaboradores | `/colaborador/index` | ✅ SPA index+cadastro (`ColaboradorIndexPage` / `ColaboradorCadastroPage`) |
 | Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` (sem Copiar/Novo colab) |
 | Card de Tarefas | `/tarefa/cards` | ✅ SPA `/Tarefa/Cards` |
 | RDOs | `/rdo/index` | ✅ SPA `/Rdo/Index` |
 | Obras | `/obra/index` | ✅ SPA `ObraIndexPage` + BFF · cadastro SPA parcial `/Obra/Cadastro` |
-| Empresas | `/empresa/index` | ✅ SPA `EmpresaIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
+| Empresas | `/empresa/index` | ✅ SPA index+cadastro (`EmpresaIndexPage` / `EmpresaCadastroPage` · editar obra) |
 | Etapas | `/etapa/index` | ✅ SPA `EtapaIndexPage` + BFF · cadastro SPA `/Etapa/Cadastro` |
 | Códigos de Paralizações | `/tarefa/paralizacoes/index` | stub EmMigracao · **CAT-PARALIZ-01** antes de CRUD real |
 

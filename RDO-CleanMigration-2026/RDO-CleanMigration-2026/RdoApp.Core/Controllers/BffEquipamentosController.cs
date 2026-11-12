@@ -13,10 +13,12 @@ namespace RdoApp.Core.Controllers;
 public class BffEquipamentosController : ControllerBase
 {
     private readonly EquipamentoIndexService _equipamentos;
+    private readonly EquipamentoCadastroService _cadastro;
 
-    public BffEquipamentosController(EquipamentoIndexService equipamentos)
+    public BffEquipamentosController(EquipamentoIndexService equipamentos, EquipamentoCadastroService cadastro)
     {
         _equipamentos = equipamentos;
+        _cadastro = cadastro;
     }
 
     [HttpGet("index/bootstrap")]
@@ -85,6 +87,50 @@ public class BffEquipamentosController : ControllerBase
 
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
         var result = await _equipamentos.DeleteAsync(idEquipamento, obraId, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpGet("cadastro")]
+    public async Task<IActionResult> Cadastro([FromQuery] int id = 0, CancellationToken cancellationToken = default)
+    {
+        if (!TryColaboradorId(out _))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
+        var (form, error) = await _cadastro.GetFormAsync(HttpContext, id, obraId, obraNome, cancellationToken);
+        if (form == null)
+        {
+            return BadRequest(new { message = error ?? "Falha ao carregar equipamento." });
+        }
+
+        return Ok(form);
+    }
+
+    [HttpPut("cadastro")]
+    public async Task<IActionResult> SalvarCadastro(
+        [FromBody] EquipamentoCadastroSaveRequestDto body,
+        CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out _))
+        {
+            return Unauthorized(new EquipamentoCadastroSaveResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
+        }
+
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new EquipamentoCadastroSaveResultDto { Ok = false, ErrorMessage = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _cadastro.SaveAsync(HttpContext, obraId, body, cancellationToken);
         return result.Ok ? Ok(result) : BadRequest(result);
     }
 

@@ -14,8 +14,11 @@ export type OperadorPage =
   | 'obra-cadastro'
   | 'obra-index'
   | 'empresa-index'
+  | 'empresa-cadastro'
   | 'colaborador-index'
+  | 'colaborador-cadastro'
   | 'equipamento-index'
+  | 'equipamento-cadastro'
 
 /** SPA servida pelo host MVC (Login, Escolher, Cards, P5a módulos). */
 export function detectOperadorPage(pathname = window.location.pathname): OperadorPage {
@@ -59,11 +62,20 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   if (p.includes('/obra/index')) {
     return 'obra-index'
   }
+  if (p.includes('/empresa/cadastro')) {
+    return 'empresa-cadastro'
+  }
   if (p.includes('/empresa/index')) {
     return 'empresa-index'
   }
+  if (p.includes('/colaborador/cadastro')) {
+    return 'colaborador-cadastro'
+  }
   if (p.includes('/colaborador/index')) {
     return 'colaborador-index'
+  }
+  if (p.includes('/equipamento/cadastro') || p.includes('/equipamentos/cadastro')) {
+    return 'equipamento-cadastro'
   }
   if (p.includes('/equipamento/index') || p.includes('/equipamentos/index')) {
     return 'equipamento-index'

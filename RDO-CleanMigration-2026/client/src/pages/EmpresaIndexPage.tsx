@@ -103,7 +103,6 @@ export function EmpresaIndexPage() {
     const q = new URLSearchParams()
     q.set('id', String(item.idEmpresa))
     if (modo === 'visualizar') q.set('modo', 'visualizar')
-    // Cadastro ainda EmMigracao — mesma URL prod; formulário SPA depois.
     goOperador(`/empresa/cadastro?${q.toString()}`)
   }
 

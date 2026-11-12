@@ -1,6 +1,7 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-12 ~09:00 — tip código **`b90cc54`** · drawer **P6a** listagens SPA (Obra/Etapa/Empresa/Colaborador/Equipamento) · próximo = smoke G5 + Relatórios/cadastros stubs · polish etapa **1.5a**  
+**Atualizado:** 2026-11-12 ~09:35 — tip código **P6a cadastros** Empresa/Colaborador/Equipamento SPA+BFF · index já `b90cc54` · próximo = smoke G5 + Relatórios/Paralizações · polish **1.5a**  
+
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
 
@@ -143,7 +144,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **85** | **7a–7d** · olho/lápis/relógio/+/⋮ · impressora **gera** · Gerar RDO ☑ · FILTRO/+tarefa/+etapa ☑ · SELECIONAR TUDO/massa ☑ · LISTA+Efetivo+Editar obra **código** · **P6a index** Obra/Etapa/Empresa/Colaborador/Equipamento SPA+BFF **`b90cc54`** (cadastros ainda EmMigracao) | smoke G5 drawer · Relatórios/Paralizações stubs · cadastros P6a · formatação PDF+Excel impressora · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** · gaps Efetivo Copiar/Novo · Obra contratante/logo · **não** P6b |
+| **M7+** | **88** | **7a–7d** · LISTA/Efetivo/Obra · **P6a index** `b90cc54` · **P6a cadastros** Empresa/Colaborador/Equipamento SPA+BFF | smoke G5 · Relatórios/Paralizações stubs · formatação impressora · **3.1** · **CAT-PARALIZ-01** · gaps Efetivo Copiar/Novo · Obra contratante/logo · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |

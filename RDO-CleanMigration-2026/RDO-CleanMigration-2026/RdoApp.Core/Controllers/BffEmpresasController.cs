@@ -13,10 +13,12 @@ namespace RdoApp.Core.Controllers;
 public class BffEmpresasController : ControllerBase
 {
     private readonly EmpresaIndexService _empresas;
+    private readonly EmpresaCadastroService _cadastro;
 
-    public BffEmpresasController(EmpresaIndexService empresas)
+    public BffEmpresasController(EmpresaIndexService empresas, EmpresaCadastroService cadastro)
     {
         _empresas = empresas;
+        _cadastro = cadastro;
     }
 
     [HttpGet("index/bootstrap")]
@@ -74,6 +76,50 @@ public class BffEmpresasController : ControllerBase
         };
         var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
         return Ok(await _empresas.ListAsync(colaboradorId, obraId, filter, obraNome, cancellationToken));
+    }
+
+    [HttpGet("cadastro")]
+    public async Task<IActionResult> Cadastro([FromQuery] int id = 0, CancellationToken cancellationToken = default)
+    {
+        if (!TryColaboradorId(out var colaboradorId))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var obraNome = ObraSessionHelper.GetObraNome(HttpContext);
+        var (form, error) = await _cadastro.GetFormAsync(id, colaboradorId, obraId, obraNome, cancellationToken);
+        if (form == null)
+        {
+            return BadRequest(new { message = error ?? "Falha ao carregar empresa." });
+        }
+
+        return Ok(form);
+    }
+
+    [HttpPut("cadastro")]
+    public async Task<IActionResult> SalvarCadastro(
+        [FromBody] EmpresaCadastroSaveRequestDto body,
+        CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out var colaboradorId))
+        {
+            return Unauthorized(new EmpresaCadastroSaveResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
+        }
+
+        if (!ObraSessionHelper.HasObraSelected(HttpContext))
+        {
+            return Unauthorized(new EmpresaCadastroSaveResultDto { Ok = false, ErrorMessage = "Nenhuma obra selecionada." });
+        }
+
+        var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+        var result = await _cadastro.SaveAsync(colaboradorId, obraId, body, cancellationToken);
+        return result.Ok ? Ok(result) : BadRequest(result);
     }
 
     private bool TryColaboradorId(out int colaboradorId)

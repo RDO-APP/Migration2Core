@@ -101,6 +101,84 @@ export async function fetchColaboradorIndexLista(
   return readJson(res, 'lista colaboradores')
 }
 
+export type ColaboradorCadastroForm = {
+  idColaborador: number
+  cpf: string
+  idGrupo: number
+  nome: string
+  idCargo: number
+  sexo: string
+  dataNascimento: string
+  telefonePrincipal: string
+  telefoneSecundario: string
+  email: string
+  crea: string
+  dataContratacao: string
+  logradouro: string
+  numeroEndereco: string
+  complemento: string
+  bairro: string
+  idUf: number
+  idMunicipio: number
+  cep: string
+  podeSalvar: boolean
+  exigeSenha: boolean
+  obraNomeSessao: string
+  ufs: ColaboradorIndexLookup[]
+  cargos: ColaboradorIndexLookup[]
+  grupos: ColaboradorIndexLookup[]
+  municipios: ColaboradorIndexLookup[]
+}
+
+export type ColaboradorCadastroSaveRequest = {
+  idColaborador: number
+  cpf: string
+  idGrupo: number
+  nome: string
+  idCargo: number
+  sexo: string
+  dataNascimento: string
+  telefonePrincipal: string
+  telefoneSecundario: string
+  email: string
+  crea: string
+  dataContratacao: string
+  logradouro: string
+  numeroEndereco: string
+  complemento: string
+  bairro: string
+  idMunicipio: number
+  cep: string
+  senha: string
+  confirmacaoSenha: string
+}
+
+export type ColaboradorCadastroSaveResult = {
+  ok: boolean
+  errorMessage?: string
+  idColaborador?: number
+}
+
+export async function fetchColaboradorCadastro(id: number): Promise<ColaboradorCadastroForm> {
+  const res = await fetch(`/api/bff/colaboradores/cadastro?id=${id}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'cadastro colaborador')
+}
+
+export async function saveColaboradorCadastro(
+  body: ColaboradorCadastroSaveRequest,
+): Promise<ColaboradorCadastroSaveResult> {
+  const res = await fetch('/api/bff/colaboradores/cadastro', {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return readJson(res, 'salvar colaborador')
+}
+
 export async function deleteColaboradorIndex(idColaborador: number): Promise<ColaboradorIndexActionResult> {
   const res = await fetch(`/api/bff/colaboradores/${idColaborador}`, {
     method: 'DELETE',
