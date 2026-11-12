@@ -168,7 +168,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - Prod web: **EQ-L** até cutover Onda 6.
 - **PQ-L** web Piscinas prod: repo **`EquipoToPiscina`** · RDS **`piscinas_rdoapp`** — manual M0′ § referência rápida.
 - **M5 EQ-M (Apontador) adiado (2026-10-26):** prioridade = **sintonizar telas web homolog ↔ prod** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)). Prod mobile **continua EQ-L** (cenário A). **Reabrir** EQ-M: revisão ao **G-M5** web **ou** ao iniciar **M6** — **obrigatório** antes **M9 D4** e cutover Onda 6.
-- **CMS Grupo / Menu / Página (2026-11-01):** catálogo **plataforma** (`col_st_admin`). **Não** portar 1:1 ao dono nem à SPA da **área da obra**. **P6a** = colaborador/empresa/obra → **M7+**. **P6b** = `#/grupo` `#/menu` `#/pagina` (+ Histórico) → **marco M10**. **≠** **#29**. Inventário + **DNA:** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0. Fichas de tela: manual **§13**.
+- **CMS Grupo / Menu / Página (2026-11-01):** catálogo **plataforma** (`col_st_admin`). **Não** portar 1:1 ao dono nem à SPA da **área da obra**. **P6a** = obra/etapa/empresa/colaborador/equipamento — **index SPA+BFF** ☑ `b90cc54` · cadastros empresa/colaborador/equipamento e Relatórios ainda EmMigracao. **P6b** = `#/grupo` `#/menu` `#/pagina` (+ Histórico) → **marco M10**. **≠** **#29**. Inventário + **DNA:** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0. Fichas: manual **§13** (DOC-FICHAS — não sprint agora).
 - **Fichas manuais (2026-11-02):** um §13 no manual (não 35 arquivos). Molde **Chegada · Botões · Saída**. 1ª ficha = **P5a RDOs**. Restante = **DOC-FICHAS** (pendências UI) — **não** gate.
 
 ---
