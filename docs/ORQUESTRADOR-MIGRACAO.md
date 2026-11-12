@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-12 ~09:35 — tip código **P6a cadastros** Empresa/Colaborador/Equipamento SPA+BFF · index já `b90cc54` · próximo = smoke G5 + Relatórios/Paralizações · polish **1.5a**  
+**Atualizado:** 2026-11-12 ~09:56 — fix lista Colaboradores HTTP 500 (left-join Pomelo) · tip P6a cadastros `adfaf8a` · próximo = smoke G5 + Relatórios/Paralizações · polish **1.5a**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -412,11 +412,11 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Smoke G5** — drawer + header pós-deploy `b90cc54` ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2): 7 listagens SPA · stubs = Paralizações + Relatórios/Admin.
-2. **Próxima SPA drawer:** Relatórios (`produtividade` / `efetivo diário` / `medição`) **ou** cadastros P6a (Empresa/Colaborador/Equipamento ainda EmMigracao).
+1. **Smoke G5** — drawer + cadastros P6a pós-deploy do fix lista Colaboradores ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2): stubs = Paralizações + Relatórios/Admin.
+2. **Próxima SPA drawer:** Relatórios (`produtividade` / `efetivo diário` / `medição`) **ou** **CAT-PARALIZ-01**.
 3. Lucio confirma polish **1.5a** cadastro etapa (Voltar/SALVAR) quando puder.
 4. Gaps já no Git: Obra contratante/logo · Efetivo Copiar/Novo colab · LISTA/Efetivo smoke se deploy pendente.
-5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** (Paralizações).
+5. Impressora formatação · **3.1**.
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).

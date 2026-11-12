@@ -86,11 +86,8 @@ public class ColaboradorIndexService
             return new ColaboradorIndexListResponseDto { ObraNomeSessao = obraNomeSessao ?? "" };
         }
 
-        var meuLado = LoginSessionHelper.GetContratanteContratadaUsuario(httpContext);
-        if (string.IsNullOrWhiteSpace(meuLado))
-        {
-            throw new InvalidOperationException("Não é possivel listar colaboradores, Contratante ou contratada está indefinido.");
-        }
+        // Paridade legado: lista mesmo sem lado na sessão; editável/excluível fica restrito.
+        var meuLado = LoginSessionHelper.GetContratanteContratadaUsuario(httpContext) ?? "";
 
         var obra = await _context.Obras.AsNoTracking()
             .Where(o => o.ObrIdObra == obraId)
@@ -102,13 +99,11 @@ public class ColaboradorIndexService
             return new ColaboradorIndexListResponseDto { ObraNomeSessao = obraNomeSessao ?? "" };
         }
 
+        // Evita left-join triplo Cargo/Grupo/Município (Pomelo/EF 500 em homolog).
+        // Mesmo padrão do cadastro: join OC+Colaborador + left Municipio; nomes via lookup.
         var q =
             from oc in _context.ObraColaboradores.AsNoTracking()
             join c in _context.Colaboradores.AsNoTracking() on oc.OcoIdColaborador equals c.ColIdColaborador
-            join car in _context.Cargos.AsNoTracking() on oc.OcoIdCargo equals car.CarIdCargo into carj
-            from car in carj.DefaultIfEmpty()
-            join g in _context.Grupos.AsNoTracking() on oc.OcoIdGrupo equals g.GruIdGrupo into gj
-            from g in gj.DefaultIfEmpty()
             join m in _context.Municipios.AsNoTracking() on c.ColIdMunicipio equals m.MunIdMunicipio into mj
             from m in mj.DefaultIfEmpty()
             where oc.OcoIdObra == obraId
@@ -125,10 +120,8 @@ public class ColaboradorIndexService
                 MunIdUf = m != null ? m.MunIdUf : 0,
                 CargoId = oc.OcoIdCargo,
                 GrupoId = oc.OcoIdGrupo,
-                DescricaoCargo = car != null ? car.CarDsCargo ?? "" : "",
-                DescricaoGrupo = g != null ? g.GruNmNome ?? "" : "",
                 oc.OcoDtContratacao,
-                Lado = oc.OcoStContratanteContratada,
+                Lado = oc.OcoStContratanteContratada ?? "",
             };
 
         var nome = (filter.Nome ?? "").Trim();
@@ -190,6 +183,22 @@ public class ColaboradorIndexService
         }
 
         var rows = await q.OrderBy(x => x.Nome).ToListAsync(cancellationToken);
+
+        var cargoIds = rows.Select(r => r.CargoId).Where(id => id > 0).Distinct().ToList();
+        var grupoIds = rows.Select(r => r.GrupoId).Where(id => id > 0).Distinct().ToList();
+
+        var cargoNomes = cargoIds.Count == 0
+            ? new Dictionary<int, string>()
+            : await _context.Cargos.AsNoTracking()
+                .Where(c => cargoIds.Contains(c.CarIdCargo))
+                .ToDictionaryAsync(c => c.CarIdCargo, c => c.CarDsCargo ?? "", cancellationToken);
+
+        var grupoNomes = grupoIds.Count == 0
+            ? new Dictionary<int, string>()
+            : await _context.Grupos.AsNoTracking()
+                .Where(g => grupoIds.Contains(g.GruIdGrupo))
+                .ToDictionaryAsync(g => g.GruIdGrupo, g => g.GruNmNome ?? "", cancellationToken);
+
         var criadorObra = obra.ObrIdColaborador;
         var items = rows.Select(r =>
         {
@@ -198,10 +207,10 @@ public class ColaboradorIndexService
             {
                 IdColaborador = r.ColIdColaborador,
                 Nome = r.Nome,
-                DescricaoCargo = r.DescricaoCargo,
+                DescricaoCargo = cargoNomes.TryGetValue(r.CargoId, out var cargoNome) ? cargoNome : "",
                 TelefonePrincipal = FormatPhone(r.Telefone),
                 Email = r.Email,
-                DescricaoGrupo = r.DescricaoGrupo,
+                DescricaoGrupo = grupoNomes.TryGetValue(r.GrupoId, out var grupoNome) ? grupoNome : "",
                 Editavel = mesmoLado,
                 Excluivel = mesmoLado && criadorObra != r.ColIdColaborador,
             };
