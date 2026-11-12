@@ -13,6 +13,9 @@ export type OperadorPage =
   | 'efetivo'
   | 'obra-cadastro'
   | 'obra-index'
+  | 'empresa-index'
+  | 'colaborador-index'
+  | 'equipamento-index'
 
 /** SPA servida pelo host MVC (Login, Escolher, Cards, P5a módulos). */
 export function detectOperadorPage(pathname = window.location.pathname): OperadorPage {
@@ -55,6 +58,15 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   }
   if (p.includes('/obra/index')) {
     return 'obra-index'
+  }
+  if (p.includes('/empresa/index')) {
+    return 'empresa-index'
+  }
+  if (p.includes('/colaborador/index')) {
+    return 'colaborador-index'
+  }
+  if (p.includes('/equipamento/index') || p.includes('/equipamentos/index')) {
+    return 'equipamento-index'
   }
   if (p.includes('/tarefa/cards')) {
     return 'cards'

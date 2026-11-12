@@ -96,13 +96,13 @@ Ordem na tela:
 
 | Título | URL (prod) | Homolog EQ-R (06/11 · tip `1bb526c`) |
 |--------|------------|--------------------------------------|
-| Equipamentos | `/equipamentos/index` | stub EmMigracao `/equipamentos/index` |
-| Colaboradores | `/colaborador/index` | stub **P6a** `/colaborador/index` |
+| Equipamentos | `/equipamentos/index` | SPA `EquipamentoIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
+| Colaboradores | `/colaborador/index` | SPA `ColaboradorIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
 | Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` (sem Copiar/Novo colab) |
 | Card de Tarefas | `/tarefa/cards` | ✅ SPA `/Tarefa/Cards` |
 | RDOs | `/rdo/index` | ✅ SPA `/Rdo/Index` |
 | Obras | `/obra/index` | stub EmMigracao `/obra/index` |
-| Empresas | `/empresa/index` | stub EmMigracao `/empresa/index` |
+| Empresas | `/empresa/index` | SPA `EmpresaIndexPage` + BFF (lista obra) · cadastro ainda EmMigracao |
 | Etapas | `/etapa/index` | stub EmMigracao `/etapa/index` (+ cadastro SPA `/Etapa/Cadastro`) |
 | Códigos de Paralizações | `/tarefa/paralizacoes/index` | stub EmMigracao · **CAT-PARALIZ-01** antes de CRUD real |
 

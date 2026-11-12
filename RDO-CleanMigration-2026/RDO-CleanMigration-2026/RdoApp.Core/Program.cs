@@ -43,6 +43,9 @@ builder.Services.AddScoped<GraficoQueryService>();
 builder.Services.AddScoped<DashboardQueryService>();
 builder.Services.AddScoped<ObrasQueryService>();
 builder.Services.AddScoped<ObraIndexService>();
+builder.Services.AddScoped<EmpresaIndexService>();
+builder.Services.AddScoped<ColaboradorIndexService>();
+builder.Services.AddScoped<EquipamentoIndexService>();
 builder.Services.AddScoped<ShellContextService>();
 builder.Services.AddScoped<RecuperarSenhaService>();
 

@@ -17,7 +17,7 @@ public class ModuloLegadoController : Controller
 
     [HttpGet("/colaborador/index")]
     public IActionResult Colaborador() =>
-        Stub("Colaboradores", "#/colaborador/index", "Listagem e cadastro de colaboradores (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Colaboradores");
 
     [HttpGet("/colaborador/cadastro")]
     public IActionResult ColaboradorCadastro() =>
@@ -26,7 +26,7 @@ public class ModuloLegadoController : Controller
     [HttpGet("/equipamento/index")]
     [HttpGet("/equipamentos/index")]
     public IActionResult Equipamentos() =>
-        Stub("Equipamentos", "#/equipamento/index", "Marcas, modelos e equipamentos (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Equipamentos");
 
     [HttpGet("/equipamentos/cadastro")]
     [HttpGet("/equipamento/cadastro")]
@@ -35,7 +35,7 @@ public class ModuloLegadoController : Controller
 
     [HttpGet("/empresa/index")]
     public IActionResult Empresa() =>
-        Stub("Empresas", "#/empresa/index", "Cadastro de empresas (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Empresas");
 
     [HttpGet("/empresa/cadastro")]
     public IActionResult EmpresaCadastro() =>

@@ -12,6 +12,9 @@ import { EtapaIndexPage } from './pages/EtapaIndexPage'
 import { EfetivoIndexPage } from './pages/EfetivoIndexPage'
 import { ObraCadastroPage } from './pages/ObraCadastroPage'
 import { ObraIndexPage } from './pages/ObraIndexPage'
+import { EmpresaIndexPage } from './pages/EmpresaIndexPage'
+import { ColaboradorIndexPage } from './pages/ColaboradorIndexPage'
+import { EquipamentoIndexPage } from './pages/EquipamentoIndexPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -54,6 +57,15 @@ function App() {
   }
   if (page === 'obra-index') {
     return <ObraIndexPage />
+  }
+  if (page === 'empresa-index') {
+    return <EmpresaIndexPage />
+  }
+  if (page === 'colaborador-index') {
+    return <ColaboradorIndexPage />
+  }
+  if (page === 'equipamento-index') {
+    return <EquipamentoIndexPage />
   }
   return <CardsPage />
 }
