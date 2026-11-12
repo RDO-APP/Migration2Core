@@ -164,7 +164,7 @@ public class BffObrasController : ControllerBase
             return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
         }
 
-        if (!PermissionHelper.HasPermission(HttpContext, "deletar", "/obra/index"))
+        if (!ObraIndexService.CanObraLista(HttpContext, "deletar"))
         {
             return Forbid();
         }
@@ -181,7 +181,7 @@ public class BffObrasController : ControllerBase
             return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
         }
 
-        if (!PermissionHelper.HasPermission(HttpContext, "enviarConvite", "/obra/index"))
+        if (!ObraIndexService.CanObraLista(HttpContext, "enviarConvite"))
         {
             return Forbid();
         }

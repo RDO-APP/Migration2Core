@@ -55,7 +55,8 @@ public class ObraIndexService
             .Select(u => new ObraIndexLookupDto { Id = u.UfeIdUf, Nome = u.UfeDsSigla ?? "" })
             .ToListAsync(cancellationToken);
 
-        const string route = "/obra/index";
+        // Prod Angular em /obra/index usa $location.path(), mas GPA canônico das ações
+        // (enviarConvite/copiarObra/editar/…) está em /obra/lista (cms §3.1). Checar ambos.
         return new ObraIndexBootstrapDto
         {
             ObraNomeSessao = obraNomeSessao ?? "",
@@ -63,15 +64,21 @@ public class ObraIndexService
             Ufs = ufs,
             Permissions = new ObraIndexPermissionsDto
             {
-                ShowVisualizar = PermissionHelper.HasPermission(httpContext, "visualizarRegistro", route),
-                ShowEnviarConvite = PermissionHelper.HasPermission(httpContext, "enviarConvite", route),
-                ShowCopiar = PermissionHelper.HasPermission(httpContext, "copiarObra", route),
-                ShowEditar = PermissionHelper.HasPermission(httpContext, "editar", route),
-                ShowDeletar = PermissionHelper.HasPermission(httpContext, "deletar", route),
-                ShowCriarNovo = PermissionHelper.HasPermission(httpContext, "criarNovo", route),
+                // Prod: permission="visualizarRegistro" (não o alias genérico "visualizar" de /obra/lista).
+                ShowVisualizar = CanObraLista(httpContext, "visualizarRegistro"),
+                ShowEnviarConvite = CanObraLista(httpContext, "enviarConvite"),
+                ShowCopiar = CanObraLista(httpContext, "copiarObra"),
+                ShowEditar = CanObraLista(httpContext, "editar"),
+                ShowDeletar = CanObraLista(httpContext, "deletar"),
+                ShowCriarNovo = CanObraLista(httpContext, "criarNovo"),
             },
         };
     }
+
+    /// <summary>Paridade Permission.check na tela Obras — path UI `/obra/index` × GPA `/obra/lista`.</summary>
+    public static bool CanObraLista(HttpContext httpContext, string permission) =>
+        PermissionHelper.HasPermission(httpContext, permission, "/obra/index")
+        || PermissionHelper.HasPermission(httpContext, permission, "/obra/lista");
 
     public async Task<IReadOnlyList<ObraIndexLookupDto>> MunicipiosByUfAsync(
         int idUf,

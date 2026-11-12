@@ -389,6 +389,24 @@
   content: '\f014';
 }
 
+.lista-tarefas .fa-edit::before {
+  content: '\f044';
+}
+
+.lista-tarefas .fa-send::before,
+.lista-tarefas .fa-paper-plane::before {
+  content: '\f1d8';
+}
+
+.lista-tarefas .fa-copy::before,
+.lista-tarefas .fa-files-o::before {
+  content: '\f0c5';
+}
+
+.lista-tarefas .fa-search::before {
+  content: '\f002';
+}
+
 .lista-tarefas .fa-pencil::before {
   content: '\f040';
 }

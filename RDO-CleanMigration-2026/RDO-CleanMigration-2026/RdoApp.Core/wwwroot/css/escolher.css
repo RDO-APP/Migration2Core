@@ -123,6 +123,12 @@
 .fa-clipboard:before { content: "\f0ea"; }
 .fa-file-o:before { content: "\f016"; }
 .fa-columns:before { content: "\f0db"; }
+/* Obras index — convite/copiar (prod fonts.css); sem estes :before o botão existe (title) mas some visualmente */
+.fa-send:before,
+.fa-paper-plane:before { content: "\f1d8"; }
+.fa-copy:before,
+.fa-files-o:before { content: "\f0c5"; }
+.fa-search:before { content: "\f002"; }
 
 /* ==================== BASE STYLES ==================== */
 
