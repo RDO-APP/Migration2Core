@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-13 ~13:10 — SPA+BFF Códigos de Paralizações (espelho prod) · tip stub `e73def8` · CAT-PARALIZ-01 depois · próximo = smoke G5 + Relatórios · polish **1.5a**  
+**Atualizado:** 2026-11-13 ~13:25 — tip código **`a4159be`** SPA+BFF Paralizações (espelho prod) · CAT-PARALIZ-01 depois · próximo = smoke G5 + Relatórios · polish **1.5a**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -122,7 +122,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — smoke **G5** drawer pós-`b90cc54` · Relatórios/Paralizações stubs · cadastros P6a EmMigracao · impressora · **CAT-PARALIZ-01** · 3.1.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — smoke **G5** drawer pós-`a4159be` · Relatórios stubs · impressora · **CAT-PARALIZ-01** · 3.1.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -144,7 +144,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **88** | **7a–7d** · LISTA/Efetivo/Obra · **P6a index** `b90cc54` · **P6a cadastros** Empresa/Colaborador/Equipamento SPA+BFF | smoke G5 · Relatórios/Paralizações stubs · formatação impressora · **3.1** · **CAT-PARALIZ-01** · gaps Efetivo Copiar/Novo · Obra contratante/logo · **não** P6b |
+| **M7+** | **90** | **7a–7d** · LISTA/Efetivo/Obra · **P6a** index+cadastros · **Paralizações** SPA+BFF `a4159be` | smoke G5 · Relatórios stubs · formatação impressora · **3.1** · **CAT-PARALIZ-01** · gaps Efetivo Copiar/Novo · Obra contratante/logo · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
 | **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
@@ -169,7 +169,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - Prod web: **EQ-L** até cutover Onda 6.
 - **PQ-L** web Piscinas prod: repo **`EquipoToPiscina`** · RDS **`piscinas_rdoapp`** — manual M0′ § referência rápida.
 - **M5 EQ-M (Apontador) adiado (2026-10-26):** prioridade = **sintonizar telas web homolog ↔ prod** ([`m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md)). Prod mobile **continua EQ-L** (cenário A). **Reabrir** EQ-M: revisão ao **G-M5** web **ou** ao iniciar **M6** — **obrigatório** antes **M9 D4** e cutover Onda 6.
-- **CMS Grupo / Menu / Página (2026-11-01):** catálogo **plataforma** (`col_st_admin`). **Não** portar 1:1 ao dono nem à SPA da **área da obra**. **P6a** = obra/etapa/empresa/colaborador/equipamento — **index SPA+BFF** ☑ `b90cc54` · cadastros empresa/colaborador/equipamento e Relatórios ainda EmMigracao. **P6b** = `#/grupo` `#/menu` `#/pagina` (+ Histórico) → **marco M10**. **≠** **#29**. Inventário + **DNA:** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0. Fichas: manual **§13** (DOC-FICHAS — não sprint agora).
+- **CMS Grupo / Menu / Página (2026-11-01):** catálogo **plataforma** (`col_st_admin`). **Não** portar 1:1 ao dono nem à SPA da **área da obra**. **P6a** = obra/etapa/empresa/colaborador/equipamento/paralizações — **SPA+BFF** ☑ tip **`a4159be`** · Relatórios ainda EmMigracao · **CAT-PARALIZ-01** depois. **P6b** = `#/grupo` `#/menu` `#/pagina` (+ Histórico) → **marco M10**. **≠** **#29**. Inventário + **DNA:** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0. Fichas: manual **§13** (DOC-FICHAS — não sprint agora).
 - **Fichas manuais (2026-11-02):** um §13 no manual (não 35 arquivos). Molde **Chegada · Botões · Saída**. 1ª ficha = **P5a RDOs**. Restante = **DOC-FICHAS** (pendências UI) — **não** gate.
 
 ---
@@ -412,11 +412,11 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Smoke G5** — drawer + cadastros P6a pós-deploy do fix lista Colaboradores ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2): stubs = Paralizações + Relatórios/Admin.
-2. **Próxima SPA drawer:** Relatórios (`produtividade` / `efetivo diário` / `medição`) **ou** **CAT-PARALIZ-01**.
+1. **Smoke G5** — drawer 9 itens pós-deploy `a4159be` ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2): Paralizações = SPA; stubs restantes = Relatórios/Admin.
+2. **Próxima SPA:** Relatórios (`produtividade` / `efetivo diário` / `medição`).
 3. Lucio confirma polish **1.5a** cadastro etapa (Voltar/SALVAR) quando puder.
 4. Gaps já no Git: Obra contratante/logo · Efetivo Copiar/Novo colab · LISTA/Efetivo smoke se deploy pendente.
-5. Impressora formatação · **3.1**.
+5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** (tenant, depois do espelho prod).
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).

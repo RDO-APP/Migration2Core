@@ -1,6 +1,6 @@
 # M4.7 / M5-nav — Menu drawer + botões P3 (B–D)
 
-**Atualizado:** 2026-11-13 — auditoria drawer+subpáginas · Paralizações stub · aliases `/chart/atrasado` · `/relatoriomedicao/index` · `/obra/lista`
+**Atualizado:** 2026-11-13 — tip **`a4159be`** Paralizações SPA+BFF · aliases `/chart/atrasado` · `/relatoriomedicao/index` · `/obra/lista`
 
 ## B — Menu principal
 
@@ -8,9 +8,9 @@
 |--------|------------------------|
 | `GET /api/bff/shell` → `menuPaginas[]` | `href` mapeado; entradas `#` omitidas |
 | Clique drawer | `goOperador(href)` → MVC **200** SPA ou EmMigracao |
-| **P6a index** (obra, etapa, empresa, colaborador, equipamento) | `ServeSpaIndex` + BFF · cadastros SPA |
+| **P6a** (obra, etapa, empresa, colaborador, equipamento, paralizações) | `ServeSpaIndex` + BFF · cadastros SPA |
 | Admin + Relatórios | EmMigracao |
-| Paralizações | EmMigracao (**CAT-PARALIZ-01**) |
+| Paralizações | SPA+BFF tip **`a4159be`** · tenant = **CAT-PARALIZ-01** depois |
 | Card (`#/pagina/index`) | → `/Tarefa/Cards` |
 | Alterar senha | → `/Account/ChangePassword` |
 
