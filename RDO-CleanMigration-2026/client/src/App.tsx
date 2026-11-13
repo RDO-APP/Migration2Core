@@ -20,6 +20,11 @@ import { EquipamentoIndexPage } from './pages/EquipamentoIndexPage'
 import { EquipamentoCadastroPage } from './pages/EquipamentoCadastroPage'
 import { ParalizacaoIndexPage } from './pages/ParalizacaoIndexPage'
 import { ParalizacaoCadastroPage } from './pages/ParalizacaoCadastroPage'
+import {
+  RelatorioEfetivoDiarioPage,
+  RelatorioMedicaoPage,
+  RelatorioProdutividadePage,
+} from './pages/RelatorioPages'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -86,6 +91,15 @@ function App() {
   }
   if (page === 'paralizacao-cadastro') {
     return <ParalizacaoCadastroPage />
+  }
+  if (page === 'relatorio-medicao') {
+    return <RelatorioMedicaoPage />
+  }
+  if (page === 'relatorio-produtividade') {
+    return <RelatorioProdutividadePage />
+  }
+  if (page === 'relatorio-efetivo') {
+    return <RelatorioEfetivoDiarioPage />
   }
   return <CardsPage />
 }

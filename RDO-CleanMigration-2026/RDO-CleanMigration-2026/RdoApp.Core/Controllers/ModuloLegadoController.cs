@@ -75,16 +75,16 @@ public class ModuloLegadoController : Controller
 
     [HttpGet("/relatorioprodutividade/index")]
     public IActionResult RelatorioProdutividade() =>
-        Stub("Relatório produtividade", "#/relatorioprodutividade/index", "Relatórios (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Relatório de Produtividade");
 
     [HttpGet("/relatorioefetivodiario/index")]
     public IActionResult RelatorioEfetivoDiario() =>
-        Stub("Relatório efetivo diário", "#/relatorioefetivodiario/index", "Relatórios (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Relatório de Efetivo Diário");
 
     [HttpGet("/relatoriomedicao")]
     [HttpGet("/relatoriomedicao/index")]
     public IActionResult RelatorioMedicao() =>
-        Stub("Relatório medição", "#/relatoriomedicao/index", "Relatórios (M7+).");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Relatório de Medição");
 
     [HttpGet("/obra/lista")]
     public IActionResult ObraLista() =>

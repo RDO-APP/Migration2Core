@@ -104,6 +104,62 @@ export function buildSimpleBarSvg(title: string, items: SimpleBar[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="100%" height="100%" fill="#fff"/><text x="${pad}" y="26" font-size="16" font-weight="600" fill="#333">${esc(title)}</text>${rows}</svg>`
 }
 
+export type PieSlice = { name: string; y: number; color: string }
+
+function polar(cx: number, cy: number, r: number, angleDeg: number): [number, number] {
+  const a = ((angleDeg - 90) * Math.PI) / 180
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)]
+}
+
+export function pieSlicePath(
+  cx: number,
+  cy: number,
+  r: number,
+  startAngle: number,
+  endAngle: number,
+): string {
+  if (endAngle - startAngle >= 359.999) {
+    return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx} ${cy + r} A ${r} ${r} 0 1 1 ${cx} ${cy - r} Z`
+  }
+  const [x0, y0] = polar(cx, cy, r, startAngle)
+  const [x1, y1] = polar(cx, cy, r, endAngle)
+  const large = endAngle - startAngle > 180 ? 1 : 0
+  return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`
+}
+
+/** SVG pizza + legenda (export Highcharts-like). */
+export function buildPieChartSvg(title: string, slices: PieSlice[]): string {
+  const pad = 16
+  const headerH = 40
+  const pieR = 140
+  const pieCx = pad + pieR + 20
+  const pieCy = headerH + pieR + 10
+  const legendX = pieCx + pieR + 36
+  const legendRow = 22
+  const total = Math.max(0, slices.reduce((s, x) => s + Math.max(0, x.y), 0))
+  let angle = 0
+  const paths =
+    total <= 0
+      ? `<circle cx="${pieCx}" cy="${pieCy}" r="${pieR}" fill="#e0e0e0"/>`
+      : slices
+          .map((s) => {
+            const sweep = (Math.max(0, s.y) / total) * 360
+            const start = angle
+            angle += sweep
+            return `<path d="${pieSlicePath(pieCx, pieCy, pieR, start, angle)}" fill="${s.color}"/>`
+          })
+          .join('')
+  const legend = slices
+    .map((s, i) => {
+      const y = headerH + 8 + i * legendRow
+      return `<rect x="${legendX}" y="${y}" width="12" height="12" fill="${s.color}"/><text x="${legendX + 18}" y="${y + 11}" font-size="12" fill="#333">${esc(s.name)}: ${s.y}</text>`
+    })
+    .join('')
+  const w = Math.max(legendX + 280, pieCx + pieR + pad)
+  const h = Math.max(headerH + pieR * 2 + pad * 2, headerH + slices.length * legendRow + pad)
+  return `<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="100%" height="100%" fill="#fff"/><text x="${pad}" y="26" font-size="16" font-weight="600" fill="#333">${esc(title)}</text>${paths}${legend}</svg>`
+}
+
 function svgToCanvas(svg: string): Promise<HTMLCanvasElement> {
   const { w, h } = svgSize(svg)
   const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' })

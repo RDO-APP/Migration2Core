@@ -21,6 +21,9 @@ export type OperadorPage =
   | 'equipamento-cadastro'
   | 'paralizacao-index'
   | 'paralizacao-cadastro'
+  | 'relatorio-medicao'
+  | 'relatorio-produtividade'
+  | 'relatorio-efetivo'
 
 /** SPA servida pelo host MVC (Login, Escolher, Cards, P5a módulos). */
 export function detectOperadorPage(pathname = window.location.pathname): OperadorPage {
@@ -30,6 +33,15 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   }
   if (p.includes('/obra/escolher')) {
     return 'escolher'
+  }
+  if (p.includes('/relatoriomedicao')) {
+    return 'relatorio-medicao'
+  }
+  if (p.includes('/relatorioprodutividade')) {
+    return 'relatorio-produtividade'
+  }
+  if (p.includes('/relatorioefetivodiario')) {
+    return 'relatorio-efetivo'
   }
   if (p.includes('/tarefa/paralizacoes/cadastro')) {
     return 'paralizacao-cadastro'

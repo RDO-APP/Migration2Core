@@ -1,16 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import { fetchDashboardObra } from '../api/graficoApi'
 import type { DashboardObra, DashboardSlice } from '../api/equipamentos-api.types'
+import {
+  buildPieChartSvg,
+  buildSimpleBarSvg,
+  pieSlicePath,
+  type PieSlice,
+} from '../chart/chartExport'
+import { ChartExportMenu } from '../components/ChartExportMenu'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
-import { goOperador } from '../nav/p3-operador-routes'
 import { showToast } from '../toast'
 import '../cards-page.css'
 import '../chart-page.css'
 
 type DashTab = 'pie' | 'column' | 'efetivo'
 
-const PIE_COLORS = ['#254B59', '#2E7D32', '#F57C00', '#1565C0', '#8E24AA', '#C2185B', '#00838F', '#6D4C41']
+const PIE_COLORS = ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f']
 
 const STATUS_COLORS: Record<string, string> = {
   'Em Execução': '#51BCDC',
@@ -20,9 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
   Finalizada: '#57B257',
 }
 
-function maxVal(nums: number[]): number {
-  return Math.max(1, ...nums)
-}
+type Tip = { x: number; y: number; lines: string[] }
 
 function readTab(): DashTab {
   const h = (window.location.hash || '').replace('#', '').toLowerCase()
@@ -31,46 +35,178 @@ function readTab(): DashTab {
 }
 
 function setTabHash(tab: DashTab) {
-  const url = `${window.location.pathname}${window.location.search}#${tab}`
-  window.history.replaceState({}, '', url)
+  window.history.replaceState({}, '', `${window.location.pathname}${window.location.search}#${tab}`)
 }
 
-function pieConic(slices: DashboardSlice[], colors: string[]): string {
-  const total = slices.reduce((s, x) => s + (x.y || 0), 0)
-  if (total <= 0) return 'conic-gradient(#e0e0e0 0 100%)'
-  let acc = 0
-  const parts: string[] = []
-  slices.forEach((s, i) => {
-    const start = (acc / total) * 100
-    acc += s.y || 0
-    const end = (acc / total) * 100
-    const color = colors[i % colors.length]
-    parts.push(`${color} ${start}% ${end}%`)
-  })
-  return `conic-gradient(${parts.join(', ')})`
+function toPieSlices(slices: DashboardSlice[]): PieSlice[] {
+  return slices.map((s, i) => ({
+    name: s.name,
+    y: s.y || 0,
+    color: PIE_COLORS[i % PIE_COLORS.length],
+  }))
 }
 
-function PiePanel({ title, slices }: { title: string; slices: DashboardSlice[] }) {
-  const style = useMemo(() => ({ background: pieConic(slices, PIE_COLORS) }), [slices])
+function pct(value: number, total: number): string {
+  if (total <= 0) return '0.0'
+  return ((value / total) * 100).toFixed(1)
+}
+
+function PieChart({
+  title,
+  slices,
+  exportName,
+}: {
+  title: string
+  slices: DashboardSlice[]
+  exportName: string
+}) {
+  const data = useMemo(() => toPieSlices(slices), [slices])
+  const total = useMemo(() => data.reduce((s, x) => s + x.y, 0), [data])
+  const [tip, setTip] = useState<Tip | null>(null)
+  const size = 320
+  const cx = size / 2
+  const cy = size / 2
+  const r = 130
+
+  let angle = 0
+  const arcs =
+    total <= 0
+      ? null
+      : data.map((s) => {
+          const start = angle
+          const sweep = (s.y / total) * 360
+          angle += sweep
+          const end = angle
+          const path = pieSlicePath(cx, cy, r, start, end)
+          return { ...s, path, start, end }
+        })
+
   return (
-    <div className="dashboard-chart-wrap">
-      <h4 className="dashboard-chart-title">{title}</h4>
-      {slices.length === 0 ? (
+    <div className="dashboard-chart-card">
+      <div className="chart-panel-head">
+        <h4>{title}</h4>
+        <ChartExportMenu filename={exportName} getSvg={() => buildPieChartSvg(title, data)} />
+      </div>
+      {data.length === 0 || total <= 0 ? (
         <p className="dashboard-empty">Sem dados para exibir.</p>
       ) : (
-        <>
-          <div className="dashboard-pie" style={style} aria-hidden />
+        <div className="dashboard-chart-body">
+          <div
+            className="dashboard-pie-host"
+            onMouseLeave={() => setTip(null)}
+          >
+            <svg viewBox={`0 0 ${size} ${size}`} className="dashboard-pie-svg" role="img" aria-label={title}>
+              {arcs?.map((a) => (
+                <path
+                  key={a.name}
+                  d={a.path}
+                  fill={a.color}
+                  stroke="#fff"
+                  strokeWidth={1}
+                  style={{ cursor: 'pointer' }}
+                  onMouseMove={(e) => {
+                    const host = e.currentTarget.ownerSVGElement?.parentElement
+                    if (!host) return
+                    const rect = host.getBoundingClientRect()
+                    setTip({
+                      x: e.clientX - rect.left + 12,
+                      y: e.clientY - rect.top + 12,
+                      lines: [`${a.name}: ${a.y}`, `Percentual: ${pct(a.y, total)}%`],
+                    })
+                  }}
+                />
+              ))}
+            </svg>
+            {tip ? (
+              <div className="dashboard-tooltip" style={{ left: tip.x, top: tip.y }}>
+                {tip.lines.map((line) => (
+                  <div key={line}>{line}</div>
+                ))}
+              </div>
+            ) : null}
+          </div>
           <ul className="dashboard-legend">
-            {slices.map((s, i) => (
+            {data.map((s) => (
               <li key={s.name}>
-                <span className="dashboard-swatch" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                <span className="dashboard-legend-name">{s.name}</span>
-                <strong>{s.y}</strong>
+                <span className="dashboard-swatch" style={{ background: s.color }} />
+                <span className="dashboard-legend-name">
+                  {s.name}: {s.y}
+                </span>
               </li>
             ))}
           </ul>
-        </>
+        </div>
       )}
+    </div>
+  )
+}
+
+function StatusBarChart({
+  title,
+  categorias,
+  valores,
+}: {
+  title: string
+  categorias: string[]
+  valores: number[]
+}) {
+  const items = useMemo(
+    () =>
+      categorias.map((label, i) => ({
+        label,
+        value: valores[i] ?? 0,
+        color: STATUS_COLORS[label] ?? '#28496f',
+      })),
+    [categorias, valores],
+  )
+  const max = Math.max(1, ...items.map((i) => i.value))
+  const [tip, setTip] = useState<Tip | null>(null)
+
+  return (
+    <div className="dashboard-chart-card">
+      <div className="chart-panel-head">
+        <h4>{title}</h4>
+        <ChartExportMenu filename="tarefas-por-status" getSvg={() => buildSimpleBarSvg(title, items)} />
+      </div>
+      <div className="dashboard-chart-body dashboard-bar-host" onMouseLeave={() => setTip(null)}>
+        <div className="chart-bars dashboard-status-bars">
+          {items.map((item) => (
+            <div
+              key={item.label}
+              className="chart-bar-row"
+              onMouseMove={(e) => {
+                const host = e.currentTarget.closest('.dashboard-bar-host') as HTMLElement | null
+                if (!host) return
+                const rect = host.getBoundingClientRect()
+                setTip({
+                  x: e.clientX - rect.left + 12,
+                  y: e.clientY - rect.top + 12,
+                  lines: [`${item.label}: ${item.value}`, 'Tarefas'],
+                })
+              }}
+            >
+              <span>{item.label}</span>
+              <div className="chart-bar-track">
+                <div
+                  className="chart-bar-fill"
+                  style={{
+                    width: `${(item.value / max) * 100}%`,
+                    background: item.color,
+                  }}
+                />
+              </div>
+              <span>{item.value}</span>
+            </div>
+          ))}
+        </div>
+        {tip ? (
+          <div className="dashboard-tooltip" style={{ left: tip.x, top: tip.y }}>
+            {tip.lines.map((line) => (
+              <div key={line}>{line}</div>
+            ))}
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
@@ -103,8 +239,6 @@ export function DashboardPage() {
     setTab(next)
     setTabHash(next)
   }
-
-  const barraMax = data ? maxVal(data.barraValores) : 1
 
   return (
     <OperadorShell variant="dashboard" shell={shell}>
@@ -149,65 +283,42 @@ export function DashboardPage() {
 
               <div className="dashboard-tab-panel chart-panel">
                 {tab === 'pie' ? (
-                  <PiePanel title="Colaboradores por cargo" slices={data.pizzaColaboradores} />
+                  <PieChart
+                    title="Colaboradores por cargo"
+                    slices={data.pizzaColaboradores}
+                    exportName="colaboradores-por-cargo"
+                  />
                 ) : null}
                 {tab === 'column' ? (
-                  <div className="dashboard-chart-wrap">
-                    <h4 className="dashboard-chart-title">Tarefas por status</h4>
-                    <div className="chart-bars dashboard-status-bars">
-                      {data.barraCategorias.map((cat, i) => {
-                        const val = data.barraValores[i] ?? 0
-                        const color = STATUS_COLORS[cat] ?? '#28496f'
-                        return (
-                          <div key={cat} className="chart-bar-row">
-                            <span>{cat}</span>
-                            <div className="chart-bar-track">
-                              <div
-                                className="chart-bar-fill"
-                                style={{
-                                  width: `${(val / barraMax) * 100}%`,
-                                  background: color,
-                                }}
-                              />
-                            </div>
-                            <span>{val}</span>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
+                  <StatusBarChart
+                    title="Tarefas por status"
+                    categorias={data.barraCategorias}
+                    valores={data.barraValores}
+                  />
                 ) : null}
                 {tab === 'efetivo' ? (
-                  <PiePanel title="Efetivo (30 dias)" slices={data.pizzaEfetivo} />
+                  <PieChart
+                    title="Efetivo diário nos ultimos 30 dias"
+                    slices={data.pizzaEfetivo}
+                    exportName="efetivo-30-dias"
+                  />
                 ) : null}
               </div>
             </div>
 
             <div className="dashboard-report-actions">
-              <button
-                type="button"
-                className="dashboard-report-btn"
-                onClick={() => goOperador('/relatoriomedicao/index')}
-              >
+              <a className="dashboard-report-btn" href="/relatoriomedicao/index">
                 <span className="dashboard-report-ico" aria-hidden />
                 Relatório de medição
-              </button>
-              <button
-                type="button"
-                className="dashboard-report-btn"
-                onClick={() => goOperador('/relatorioprodutividade/index')}
-              >
+              </a>
+              <a className="dashboard-report-btn" href="/relatorioprodutividade/index">
                 <span className="dashboard-report-ico" aria-hidden />
                 Relatório de produtividade
-              </button>
-              <button
-                type="button"
-                className="dashboard-report-btn"
-                onClick={() => goOperador('/relatorioefetivodiario/index')}
-              >
+              </a>
+              <a className="dashboard-report-btn" href="/relatorioefetivodiario/index">
                 <span className="dashboard-report-ico" aria-hidden />
                 Relatório de efetivo diário
-              </button>
+              </a>
             </div>
           </>
         ) : null}
