@@ -1,7 +1,7 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-08  
-**P3 backlog Lucio:** impressora formatação · menu ☰ · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** · **DOC-DNA-01** (#29 dono / admin CPF) · polish 1.5a smoke · gaps Efetivo/Obra — orquestrador § Pendências P3. LISTA/Efetivo/Editar obra = **código** `1bb526c` · Etapas index SPA `5233d32` (smoke pós-deploy).  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-13  
+**P3 backlog Lucio:** impressora formatação · menu ☰ · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** · **DOC-DNA-01** (#29 dono / admin CPF) · **I18N-ES-01** (ES UI · ≠ CPF/país) · polish 1.5a smoke · gaps Efetivo/Obra — orquestrador § Pendências P3. LISTA/Efetivo/Editar obra = **código** `1bb526c` · Etapas index SPA `5233d32` (smoke pós-deploy).  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).
@@ -98,6 +98,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod main.js + modal) | M | **M7** · não UI-M3 | ✅ smoke 05/11 |
 | **CAT-PARALIZ-01** | **Códigos de paralisação por empresa** — hoje `tarefa_codigo_paralizacao` é **global** (PK = código 3 chars). Melhor: `tarcp_id_empresa` + PK composta `(empresa, código)`; telas/APIs filtram pela empresa da sessão/obra; migrar clonando os ~22 códigos por empresa; join descrição = código+empresa. **Evitar** prefixo no código e escopo por obra. Até o ALTER: **não** liberar CRUD de paralização a cliente (só admin RDO). Relacionado **3.1** (⋮ Pausada). **Proibido** `ALTER novo_rdoapp` sem Lucio. | G | **M7+** (dados/tenant) | ⬜ backlog 06/11 |
 | **DOC-DNA-01** | **DNA perfis / #29 dono** — fechar ficha antes de UI do dono da assinatura. Já sabido: 15 templates (5×3), 2 menus, CMS P6b só `col_st_admin`, dono **atribui** (não edita GPA). Falta: snapshot CPF admin `380.181.694-03` (`col_id`, `col_st_admin`, prod×homol); ids reais dos 15 `gru_id`; export GPA completo; dono = empresa Loja × `obr_id_dono` × quem atribui; fluxo UI #29 + troca de plano; § único **admin CPF ≠ dono ≠ Operador obra**. Canônico: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md) §0/§6 · orquestrador **#29**. **Não** é análise agora — backlog doc. | M | **#29** pós-M7 · ≠ P6b M10 | ⬜ backlog 08/11 |
+| **I18N-ES-01** | **Espanhol nas páginas (UI)** — catálogo `pt-BR`/`es` só no React homolog (EQ-R); **sem** CPF/doc estrangeiro, máscaras, schema ou login identity. Plano fechado § abaixo. | M | **M7+** / pós-paridade tela · **antes** de DOC-ID-PAIS | ⬜ backlog 13/11 |
 
 **Adiado de propósito (não fazer no meio do M4):**
 
@@ -171,6 +172,43 @@ flowchart LR
 | 6 | § único: admin CPF ≠ dono ≠ Operador obra |
 
 **ID backlog:** **DOC-DNA-01** · issue **#29** · **≠** P6b (M10) · ver [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md).
+
+---
+
+## I18N — espanhol nas páginas (I18N-ES-01) · plano fechado 13/11
+
+**Problema:** cliente/obra em espanhol precisa **ler a UI** em ES; o produto ainda não tem i18n. Misturar isso com “CPF de outro país” atrasa as duas frentes.
+
+**Decisão:** **idioma (UI) ≠ identidade (documento)**. Traduzir páginas **antes** de alterar acesso via CPF/doc estrangeiro.
+
+### Escopo (fazer)
+
+| # | Ação |
+|---|------|
+| 1 | Só **texto de UI** — labels, botões, toasts, títulos, empty states, tooltips de chrome |
+| 2 | Só **React homolog (EQ-R)** `Migration2Core/client` — **não** traduzir Angular EQ-L (descartável no cutover) |
+| 3 | Lib leve (`i18next` ou equivalente) + pastas `locales/pt-BR.json` · `locales/es.json` · chaves estáveis (`dashboard.title`, …) |
+| 4 | Locale por **empresa/usuário** (cookie / `localStorage` / flag sessão) — **não** inferir pelo CPF |
+| 5 | Default **`pt-BR`**; `es` opt-in |
+| 6 | Ordem de telas: Login → Escolher → Cards → RDO → Dashboard → cadastros P6a (1 tela piloto antes de espalhar) |
+| 7 | Dados de negócio (status no RDS, cargos, códigos paralização): **não** ALTER; só rótulo UI se necessário |
+
+### Fora de escopo (outra frente — depois)
+
+| ID sugerido | Tema |
+|-------------|------|
+| **DOC-ID-PAIS** (futuro) | CPF vs CI/DNI/RUT, máscaras, unicidade, validação de login por país |
+| — | PDF/RDLC, e-mails, formatos data/número/moeda por país (2ª onda locale) |
+| — | EQ-M Apontador (coordenar depois se compartilharmos pacote de strings) |
+
+### Critério de pronto (I18N-ES-01)
+
+- [ ] Infra i18n no client + seletor/locale persistido  
+- [ ] Piloto 1 tela (ex. Dashboard) `pt-BR`/`es` sem regressão  
+- [ ] Jornada P1–P3 + P5a RDO + Dashboard com strings externas (sem hardcode ES no JSX)  
+- [ ] Doc curto no runbook / manual §10: como adicionar chave  
+
+**ID backlog:** **I18N-ES-01** · trilha **EQ-R** · **≠** DOC-DNA-01 · **≠** DOC-ID-PAIS · **não** bloqueia M5/M7 smoke atual.
 
 ## Links
 

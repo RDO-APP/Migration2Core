@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-13 ~13:25 — tip código **`a4159be`** SPA+BFF Paralizações (espelho prod) · CAT-PARALIZ-01 depois · próximo = smoke G5 + Relatórios · polish **1.5a**  
+**Atualizado:** 2026-11-13 ~15:10 — tip código **`b3a4a19`** Dashboard tooltip/export + SPA relatórios · backlog **I18N-ES-01** (ES UI ≠ CPF/país) · CAT-PARALIZ-01 depois · polish **1.5a**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -407,6 +407,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 |---|------|---|------------|
 | **29** | **Dono da assinatura configura perfil de acesso** — atribui um dos **15 templates** (5 papéis × plano Loja). **Não** copiar CMS. DNA: cms §0. | 5% | Spec [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · Core React **depois** do ciclo M7 (Chart já no ar) |
 | **DOC-FICHAS** | Fichas de tela (manual §13). 1 feita (RDOs). Restante no fim / quando a tela for sprint | 3% | [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · **não** Melhorias 1.0 Loja |
+| **I18N-ES-01** | **Espanhol nas páginas (UI)** — catálogo `pt-BR`/`es` só EQ-R; **antes** de CPF/doc estrangeiro | 0% | Plano fechado [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § I18N · **≠** DOC-ID-PAIS |
 
 ---
 
