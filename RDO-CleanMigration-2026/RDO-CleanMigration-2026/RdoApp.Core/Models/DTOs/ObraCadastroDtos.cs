@@ -3,6 +3,7 @@
 public sealed class ObraCadastroDto
 {
     public int Id { get; init; }
+    public bool Nova { get; init; }
     public string Descricao { get; init; } = "";
     public string DataInicio { get; init; } = "";
     public string DataPrevisaoFim { get; init; } = "";
@@ -18,6 +19,7 @@ public sealed class ObraCadastroDto
 
 public sealed class ObraCadastroSaveRequestDto
 {
+    public bool Nova { get; init; }
     public string? Descricao { get; init; }
     public string? DataInicio { get; init; }
     public string? DataPrevisaoFim { get; init; }
@@ -34,4 +36,5 @@ public sealed class ObraCadastroSaveResultDto
     public bool Ok { get; init; }
     public string? ErrorMessage { get; init; }
     public string? ObraNome { get; init; }
+    public int? ObraId { get; init; }
 }

@@ -44,24 +44,30 @@ function parseOptInt(v: string): number | null {
   return Number.isFinite(n) ? Math.trunc(n) : null
 }
 
-function modoFromUrl(): 'editar' | 'visualizar' {
-  const m = new URLSearchParams(window.location.search).get('modo')?.toLowerCase()
+function modoFromUrl(): 'nova' | 'editar' | 'visualizar' {
+  const q = new URLSearchParams(window.location.search)
+  if (q.get('nova') === '1' || q.get('nova')?.toLowerCase() === 'true') return 'nova'
+  const m = q.get('modo')?.toLowerCase()
   return m === 'visualizar' ? 'visualizar' : 'editar'
 }
 
 export function ObraCadastroPage() {
   const { shell } = useShellContext()
   const modo = modoFromUrl()
+  const isNova = modo === 'nova'
   const [form, setForm] = useState<FormState | null>(null)
+  const [cidadeEstado, setCidadeEstado] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    fetchObraCadastro()
+    fetchObraCadastro(isNova)
       .then((d) => {
-        if (!cancelled) setForm(toForm(d))
+        if (cancelled) return
+        setCidadeEstado(d.cidadeEstado ?? '')
+        setForm(toForm(d))
       })
       .catch((e: unknown) => {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Falha ao carregar obra.')
@@ -72,7 +78,7 @@ export function ObraCadastroPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [isNova])
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev))
@@ -80,7 +86,7 @@ export function ObraCadastroPage() {
 
   async function onSave() {
     if (!form) return
-    if (form.finalizada) {
+    if (!isNova && form.finalizada) {
       showToast('error', 'Obra finalizada — edição bloqueada.')
       return
     }
@@ -96,6 +102,7 @@ export function ObraCadastroPage() {
     setSaving(true)
     try {
       const result = await saveObraCadastro({
+        nova: isNova,
         descricao,
         dataInicio: form.dataInicio.trim(),
         dataPrevisaoFim: form.dataPrevisaoFim.trim(),
@@ -110,7 +117,7 @@ export function ObraCadastroPage() {
         showToast('error', result.errorMessage || 'Não foi possível salvar.')
         return
       }
-      flashToast('success', 'Registro salvo com sucesso.')
+      flashToast('success', isNova ? 'Obra criada com sucesso.' : 'Registro salvo com sucesso.')
       goOperador(P3_NAV.header.tarefaCards)
     } catch (e: unknown) {
       showToast('error', e instanceof Error ? e.message : 'Não foi possível salvar.')
@@ -119,13 +126,13 @@ export function ObraCadastroPage() {
     }
   }
 
-  const disabled = !!form?.finalizada || modo === 'visualizar'
+  const disabled = (!isNova && !!form?.finalizada) || modo === 'visualizar'
 
   return (
     <OperadorShell variant="cards" obraNome={form?.descricao || shell?.obraNome} shell={shell}>
       <section className="rdo-cadastro-page tarefa-cadastro-page">
         <div className="panel-heading">
-          <h3>Obra</h3>
+          <h3>{isNova ? 'Nova obra' : 'Obra'}</h3>
         </div>
         {loading ? (
           <p className="muted">Carregando…</p>
@@ -246,7 +253,13 @@ export function ObraCadastroPage() {
                 <div className="col-md-6">
                   <div className="form-group">
                     <label className="control-label">Cidade/UF</label>
-                    <input type="text" className="form-control" disabled value={form.cidadeEstado} readOnly />
+                    <input
+                      type="text"
+                      className="form-control"
+                      disabled
+                      value={form.cidadeEstado || cidadeEstado}
+                      readOnly
+                    />
                   </div>
                 </div>
                 <div className="col-md-3">

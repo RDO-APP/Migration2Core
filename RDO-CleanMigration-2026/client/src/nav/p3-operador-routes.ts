@@ -21,7 +21,8 @@ export const P3_NAV = {
     rdoListagem: '/Rdo/Index',
     tarefaCards: '/Tarefa/Cards',
     chartGeral: '/Chart/Index',
-    novaObraCadastro: '/Obra/Cadastro',
+    /** Header + — formulário vazio (não a obra da sessão). */
+    novaObraCadastro: '/Obra/Cadastro?nova=1',
   },
   /** 2) Toolbar — CardsToolbar + selecionar tudo */
   toolbar: {

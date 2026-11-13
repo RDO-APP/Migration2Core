@@ -1,5 +1,6 @@
 export type ObraCadastro = {
   id: number
+  nova?: boolean
   descricao: string
   dataInicio: string
   dataPrevisaoFim: string
@@ -17,6 +18,7 @@ export type ObraCadastroSaveResult = {
   ok: boolean
   errorMessage?: string | null
   obraNome?: string | null
+  obraId?: number | null
 }
 
 async function readJson<T>(res: Response, fallback: string): Promise<T> {
@@ -37,8 +39,9 @@ async function readJson<T>(res: Response, fallback: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export async function fetchObraCadastro(): Promise<ObraCadastro> {
-  const res = await fetch('/api/bff/obras/cadastro', {
+export async function fetchObraCadastro(nova = false): Promise<ObraCadastro> {
+  const q = nova ? '?nova=1' : ''
+  const res = await fetch(`/api/bff/obras/cadastro${q}`, {
     credentials: 'include',
     headers: { Accept: 'application/json' },
   })
@@ -46,6 +49,7 @@ export async function fetchObraCadastro(): Promise<ObraCadastro> {
 }
 
 export async function saveObraCadastro(body: {
+  nova?: boolean
   descricao: string
   dataInicio: string
   dataPrevisaoFim: string
