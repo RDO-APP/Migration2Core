@@ -20,7 +20,7 @@
 |--------|-------|-------------------|-------------|
 | Card de Tarefas | SPA `/Tarefa/Cards` | LISTA · Cadastro · status/excluir/rel.horas | ✅ SPA / EmMigracao |
 | Colaboradores | SPA | `/colaborador/cadastro` SPA | ✅ |
-| Códigos de Paralizações | EmMigracao | cadastro → stub | ✅ (CRUD = CAT-PARALIZ-01) |
+| Códigos de Paralizações | SPA | `/tarefa/paralizacoes/cadastro` SPA | ✅ espelho prod · CAT-PARALIZ-01 depois |
 | Efetivo Diário | SPA | sem sub-rota drawer (gaps Copiar/Novo = feature) | ✅ |
 | Empresas | SPA | `/empresa/cadastro` SPA | ✅ |
 | Equipamentos | SPA | `/equipamentos/cadastro` SPA | ✅ |

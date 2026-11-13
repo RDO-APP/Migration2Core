@@ -18,6 +18,8 @@ import { ColaboradorIndexPage } from './pages/ColaboradorIndexPage'
 import { ColaboradorCadastroPage } from './pages/ColaboradorCadastroPage'
 import { EquipamentoIndexPage } from './pages/EquipamentoIndexPage'
 import { EquipamentoCadastroPage } from './pages/EquipamentoCadastroPage'
+import { ParalizacaoIndexPage } from './pages/ParalizacaoIndexPage'
+import { ParalizacaoCadastroPage } from './pages/ParalizacaoCadastroPage'
 import { detectOperadorPage } from './route'
 
 function App() {
@@ -78,6 +80,12 @@ function App() {
   }
   if (page === 'equipamento-cadastro') {
     return <EquipamentoCadastroPage />
+  }
+  if (page === 'paralizacao-index') {
+    return <ParalizacaoIndexPage />
+  }
+  if (page === 'paralizacao-cadastro') {
+    return <ParalizacaoCadastroPage />
   }
   return <CardsPage />
 }

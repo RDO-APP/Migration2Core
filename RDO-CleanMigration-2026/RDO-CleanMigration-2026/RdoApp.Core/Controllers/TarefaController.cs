@@ -93,14 +93,8 @@ public class TarefaController : Controller
     }
 
     [HttpGet("/Tarefa/Paralizacoes/Index")]
-    public IActionResult Paralizacoes()
-    {
-        return RequireObraOrRedirect() ?? EmMigracaoPage.Render(
-            this,
-            "Códigos de paralizações",
-            "Listagem `#/tarefa/paralizacoes/index` · **M7+**.",
-            prodRef: "#/tarefa/paralizacoes/index");
-    }
+    public IActionResult Paralizacoes() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Códigos de Paralizações");
 
     private IActionResult? RequireObraOrRedirect()
     {

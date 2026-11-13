@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-12 ~09:56 — fix lista Colaboradores HTTP 500 (left-join Pomelo) · tip P6a cadastros `adfaf8a` · próximo = smoke G5 + Relatórios/Paralizações · polish **1.5a**  
+**Atualizado:** 2026-11-13 ~13:10 — SPA+BFF Códigos de Paralizações (espelho prod) · tip stub `e73def8` · CAT-PARALIZ-01 depois · próximo = smoke G5 + Relatórios · polish **1.5a**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).

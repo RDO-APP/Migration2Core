@@ -66,12 +66,12 @@ public class ModuloLegadoController : Controller
         Stub("Histórico de acesso", "#/historicoacesso/index", "Auditoria de logins (M7+).", voltarUrl: "/Obra/Escolher");
 
     [HttpGet("/tarefa/paralizacoes/index")]
-    [HttpGet("/tarefa/paralizacoes/cadastro")]
     public IActionResult TarefaParalizacoes() =>
-        Stub(
-            "Códigos de Paralizações",
-            "#/tarefa/paralizacoes/index",
-            "Catálogo de códigos de paralização. CRUD por empresa (CAT-PARALIZ-01) ainda não liberado — placeholder até M7+.");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Códigos de Paralizações");
+
+    [HttpGet("/tarefa/paralizacoes/cadastro")]
+    public IActionResult TarefaParalizacoesCadastro() =>
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Cadastro código de paralização");
 
     [HttpGet("/relatorioprodutividade/index")]
     public IActionResult RelatorioProdutividade() =>

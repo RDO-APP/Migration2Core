@@ -49,6 +49,7 @@ builder.Services.AddScoped<ColaboradorIndexService>();
 builder.Services.AddScoped<ColaboradorCadastroService>();
 builder.Services.AddScoped<EquipamentoIndexService>();
 builder.Services.AddScoped<EquipamentoCadastroService>();
+builder.Services.AddScoped<ParalizacaoService>();
 builder.Services.AddScoped<ShellContextService>();
 builder.Services.AddScoped<RecuperarSenhaService>();
 
