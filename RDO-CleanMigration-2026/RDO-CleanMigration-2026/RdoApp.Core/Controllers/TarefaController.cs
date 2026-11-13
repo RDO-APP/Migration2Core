@@ -92,9 +92,8 @@ public class TarefaController : Controller
             prodRef: "cards.html · SELECIONAR TUDO");
     }
 
-    [HttpGet("/Tarefa/Paralizacoes/Index")]
-    public IActionResult Paralizacoes() =>
-        OperadorSpaEntry.ServeSpaIndex(this, _env, "Códigos de Paralizações");
+    // Paralizações: só ModuloLegadoController (`/tarefa/paralizacoes/index|cadastro`).
+    // Rota absoluta aqui colidia (case-insensitive) → AmbiguousMatchException → Error.cshtml.
 
     private IActionResult? RequireObraOrRedirect()
     {
