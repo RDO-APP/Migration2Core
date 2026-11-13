@@ -21,8 +21,8 @@ export const P3_NAV = {
     rdoListagem: '/Rdo/Index',
     tarefaCards: '/Tarefa/Cards',
     chartGeral: '/Chart/Index',
-    /** Header + — formulário vazio (não a obra da sessão). */
-    novaObraCadastro: '/Obra/Cadastro?nova=1',
+    /** Header + — formulário vazio (não a obra da sessão). ASP.NET bool query exige true/false, não 1. */
+    novaObraCadastro: '/Obra/Cadastro?nova=true',
   },
   /** 2) Toolbar — CardsToolbar + selecionar tudo */
   toolbar: {

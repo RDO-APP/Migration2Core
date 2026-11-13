@@ -196,20 +196,39 @@ public class BffObrasController : ControllerBase
         return result.Ok ? Ok(result) : BadRequest(result);
     }
 
+    /// <summary>Aceita nova=true|1 (ASP.NET [FromQuery] bool rejeita "1").</summary>
+    private static bool IsNovaQuery(string? nova) =>
+        string.Equals(nova, "1", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(nova, "true", StringComparison.OrdinalIgnoreCase);
+
     [HttpGet("cadastro")]
-    public async Task<IActionResult> GetCadastro([FromQuery] bool nova = false, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCadastro([FromQuery] string? nova = null, CancellationToken cancellationToken = default)
     {
-        if (nova)
+        if (IsNovaQuery(nova))
         {
-            if (!TryColaboradorId(out _))
+            if (!TryColaboradorId(out var colaboradorId))
             {
                 return Unauthorized(new { message = "Sessão inválida." });
             }
 
-            // Formulário vazio; cidade só informativa a partir da obra da sessão (template).
-            var cidade = ObraSessionHelper.HasObraSelected(HttpContext)
-                ? ObraSessionHelper.GetObraCidadeEstado(HttpContext)
-                : null;
+            // Cidade/UF read-only: P3 = sessão; P2 = mesma obra-modelo do Create (vínculo).
+            string? cidade = null;
+            if (ObraSessionHelper.HasObraSelected(HttpContext))
+            {
+                cidade = ObraSessionHelper.GetObraCidadeEstado(HttpContext);
+            }
+
+            if (string.IsNullOrWhiteSpace(cidade))
+            {
+                int? templateId = ObraSessionHelper.HasObraSelected(HttpContext)
+                    ? ObraSessionHelper.GetObraId(HttpContext)
+                    : null;
+                cidade = await _cadastro.ResolveCidadeEstadoTemplateAsync(
+                    colaboradorId,
+                    templateId,
+                    cancellationToken);
+            }
+
             return Ok(_cadastro.EmptyNova(cidade));
         }
 
@@ -222,27 +241,26 @@ public class BffObrasController : ControllerBase
     }
 
     [HttpPut("cadastro")]
-    public async Task<IActionResult> PutCadastro([FromBody] ObraCadastroSaveRequestDto? body, CancellationToken cancellationToken)
+    public async Task<IActionResult> PutCadastro(
+        [FromBody] ObraCadastroSaveRequestDto? body,
+        [FromQuery] string? nova = null,
+        CancellationToken cancellationToken = default)
     {
         if (body == null) return BadRequest(new ObraCadastroSaveResultDto { Ok = false, ErrorMessage = "Corpo invalido." });
 
-        if (body.Nova)
+        // Query ?nova=true|1 (preferido) ou body.Nova (legado).
+        var isNova = IsNovaQuery(nova) || body.Nova;
+        if (isNova)
         {
             if (!TryColaboradorId(out var colaboradorId))
             {
                 return Unauthorized(new ObraCadastroSaveResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
             }
 
-            if (!ObraSessionHelper.HasObraSelected(HttpContext))
-            {
-                return BadRequest(new ObraCadastroSaveResultDto
-                {
-                    Ok = false,
-                    ErrorMessage = "Selecione uma obra antes (empresa/município modelo) ou use o + a partir de uma obra.",
-                });
-            }
-
-            var templateId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+            // P3: obra da sessão. P2 (+ sem obra): qualquer vínculo do colaborador como modelo.
+            int? templateId = ObraSessionHelper.HasObraSelected(HttpContext)
+                ? ObraSessionHelper.GetObraId(HttpContext)
+                : null;
             var created = await _cadastro.CreateAsync(colaboradorId, templateId, body, cancellationToken);
             if (!created.Ok || created.ObraId is not > 0)
             {

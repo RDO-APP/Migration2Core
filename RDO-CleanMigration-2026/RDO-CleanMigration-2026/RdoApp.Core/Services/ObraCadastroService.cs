@@ -20,6 +20,43 @@ public class ObraCadastroService
         CidadeEstado = cidadeEstado ?? "",
     };
 
+    /// <summary>
+    /// Cidade/UF do template (P3 = obra sessão; P2 = qualquer vínculo do colaborador) — campo read-only na SPA.
+    /// </summary>
+    public async Task<string?> ResolveCidadeEstadoTemplateAsync(
+        int colaboradorId,
+        int? templateObraId,
+        CancellationToken cancellationToken)
+    {
+        int? obraId = templateObraId is > 0 ? templateObraId : null;
+        if (obraId is null or <= 0)
+        {
+            obraId = await _context.ObraColaboradores.AsNoTracking()
+                .Where(oc => oc.OcoIdColaborador == colaboradorId)
+                .OrderByDescending(oc => oc.OcoIdObra)
+                .Select(oc => (int?)oc.OcoIdObra)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        if (obraId is null or <= 0) return null;
+
+        var row = await (
+            from o in _context.Obras.AsNoTracking()
+            join m in _context.Municipios.AsNoTracking() on o.ObrIdMunicipio equals m.MunIdMunicipio into ms
+            from m in ms.DefaultIfEmpty()
+            join uf in _context.UFs.AsNoTracking() on (m != null ? m.MunIdUf : 0) equals uf.UfeIdUf into ufs
+            from uf in ufs.DefaultIfEmpty()
+            where o.ObrIdObra == obraId.Value
+            select new
+            {
+                Mun = m != null ? m.MunDsMunicipio : null,
+                Uf = uf != null ? uf.UfeDsSigla : null
+            }).FirstOrDefaultAsync(cancellationToken);
+
+        if (row == null || string.IsNullOrWhiteSpace(row.Mun)) return null;
+        return string.IsNullOrWhiteSpace(row.Uf) ? row.Mun! : row.Mun + "/" + row.Uf;
+    }
+
     public async Task<ObraCadastroDto?> GetAsync(int obraId, CancellationToken cancellationToken)
     {
         var row = await (
@@ -94,12 +131,12 @@ public class ObraCadastroService
     }
 
     /// <summary>
-    /// Nova obra: clona empresa/município/vínculo do colaborador a partir da obra da sessão (template).
+    /// Nova obra: clona empresa/município/vínculo a partir da obra da sessão (P3) ou de qualquer vínculo (P2).
     /// Paridade mínima com prod `novaObra` — sem tela completa de contratante/logo ainda.
     /// </summary>
     public async Task<ObraCadastroSaveResultDto> CreateAsync(
         int colaboradorId,
-        int templateObraId,
+        int? templateObraId,
         ObraCadastroSaveRequestDto request,
         CancellationToken cancellationToken)
     {
@@ -108,11 +145,43 @@ public class ObraCadastroService
             return fail!;
         }
 
-        var template = await _context.Obras.AsNoTracking()
-            .FirstOrDefaultAsync(o => o.ObrIdObra == templateObraId, cancellationToken);
-        if (template == null)
+        Obra? template = null;
+        ObraColaborador? vinculo = null;
+
+        if (templateObraId is > 0)
         {
-            return Fail("Obra modelo da sessão não encontrada.");
+            template = await _context.Obras.AsNoTracking()
+                .FirstOrDefaultAsync(o => o.ObrIdObra == templateObraId.Value, cancellationToken);
+            if (template == null)
+            {
+                return Fail("Obra modelo da sessão não encontrada.");
+            }
+
+            vinculo = await _context.ObraColaboradores.AsNoTracking()
+                .FirstOrDefaultAsync(
+                    o => o.OcoIdObra == templateObraId.Value && o.OcoIdColaborador == colaboradorId,
+                    cancellationToken);
+            if (vinculo == null)
+            {
+                return Fail("Você não está vinculado à obra da sessão — não é possível criar nova obra.");
+            }
+        }
+        else
+        {
+            // P2: sem obra na sessão — usa qualquer obra do colaborador como modelo (empresa/grupo/cargo).
+            var row = await (
+                from oc in _context.ObraColaboradores.AsNoTracking()
+                join o in _context.Obras.AsNoTracking() on oc.OcoIdObra equals o.ObrIdObra
+                where oc.OcoIdColaborador == colaboradorId
+                orderby o.ObrIdObra descending
+                select new { Obra = o, Vinculo = oc }).FirstOrDefaultAsync(cancellationToken);
+            if (row == null)
+            {
+                return Fail("Não há obra modelo: vincule-se a uma obra existente ou cadastre empresa antes de criar a primeira.");
+            }
+
+            template = row.Obra;
+            vinculo = row.Vinculo;
         }
 
         if (template.ObrIdDono is null or <= 0
@@ -120,15 +189,6 @@ public class ObraCadastroService
             && template.ObrIdEmpresaContratada is null or <= 0)
         {
             return Fail("A obra modelo precisa ter empresa (dono/contratante/contratada) para criar nova.");
-        }
-
-        var vinculo = await _context.ObraColaboradores.AsNoTracking()
-            .FirstOrDefaultAsync(
-                o => o.OcoIdObra == templateObraId && o.OcoIdColaborador == colaboradorId,
-                cancellationToken);
-        if (vinculo == null)
-        {
-            return Fail("Você não está vinculado à obra da sessão — não é possível criar nova obra.");
         }
 
         var entity = new Obra

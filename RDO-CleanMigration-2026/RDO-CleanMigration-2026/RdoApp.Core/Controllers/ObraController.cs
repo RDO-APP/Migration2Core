@@ -158,10 +158,15 @@ namespace RdoApp.Core.Controllers
         public IActionResult Index() =>
             OperadorSpaEntry.ServeSpaIndex(this, _env, "Obras");
 
-        /// <summary>GET: /Obra/Cadastro — SPA editar obra selecionada.</summary>
+        /// <summary>GET: /Obra/Cadastro — SPA editar obra selecionada; ?nova=true sem obra na sessão (P2 +).</summary>
         [HttpGet]
-        public IActionResult Cadastro() =>
-            OperadorSpaEntry.ServeSpaIndex(this, _env, "Obra");
+        public IActionResult Cadastro()
+        {
+            var novaRaw = Request.Query["nova"].ToString();
+            var isNova = string.Equals(novaRaw, "1", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(novaRaw, "true", StringComparison.OrdinalIgnoreCase);
+            return OperadorSpaEntry.ServeSpaIndex(this, _env, "Obra", requireObra: !isNova);
+        }
     }
 }
 

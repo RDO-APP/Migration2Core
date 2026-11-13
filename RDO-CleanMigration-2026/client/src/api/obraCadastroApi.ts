@@ -40,7 +40,7 @@ async function readJson<T>(res: Response, fallback: string): Promise<T> {
 }
 
 export async function fetchObraCadastro(nova = false): Promise<ObraCadastro> {
-  const q = nova ? '?nova=1' : ''
+  const q = nova ? '?nova=true' : ''
   const res = await fetch(`/api/bff/obras/cadastro${q}`, {
     credentials: 'include',
     headers: { Accept: 'application/json' },
@@ -60,11 +60,14 @@ export async function saveObraCadastro(body: {
   areaTotal?: number | null
   areaConstruida?: number | null
 }): Promise<ObraCadastroSaveResult> {
-  const res = await fetch('/api/bff/obras/cadastro', {
+  // Flag de criação só na query (string) — evita 400 do model binder/JSON em bool `nova`.
+  const { nova, ...fields } = body
+  const q = nova ? '?nova=true' : ''
+  const res = await fetch(`/api/bff/obras/cadastro${q}`, {
     method: 'PUT',
     credentials: 'include',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(fields),
   })
   return readJson(res, 'salvar obra')
 }
