@@ -104,7 +104,7 @@ Ordem na tela:
 | Obras | `/obra/index` | ✅ SPA `ObraIndexPage` + BFF · cadastro SPA parcial `/Obra/Cadastro` |
 | Empresas | `/empresa/index` | ✅ SPA index+cadastro (`EmpresaIndexPage` / `EmpresaCadastroPage` · editar obra) |
 | Etapas | `/etapa/index` | ✅ SPA `EtapaIndexPage` + BFF · cadastro SPA `/Etapa/Cadastro` |
-| Códigos de Paralizações | `/tarefa/paralizacoes/index` | stub EmMigracao · **CAT-PARALIZ-01** antes de CRUD real |
+| Códigos de Paralizações | `/tarefa/paralizacoes/index` | ✅ EmMigracao (`ModuloLegado`) · CRUD real = **CAT-PARALIZ-01** |
 
 Chart, Dashboard, Grupo, Menu, Página **não** estão neste menu. Chart/Dashboard entram por **header** + `ObterRotasDefault` / `grupo_pagina_acao` (`/chart`, `/dashboard/index`) — ver [`m4-7g-rbac-shell-p1-p3.md`](m4-7g-rbac-shell-p1-p3.md).
 

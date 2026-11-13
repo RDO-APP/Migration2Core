@@ -65,6 +65,14 @@ public class ModuloLegadoController : Controller
     public IActionResult HistoricoAcesso() =>
         Stub("Histórico de acesso", "#/historicoacesso/index", "Auditoria de logins (M7+).", voltarUrl: "/Obra/Escolher");
 
+    [HttpGet("/tarefa/paralizacoes/index")]
+    [HttpGet("/tarefa/paralizacoes/cadastro")]
+    public IActionResult TarefaParalizacoes() =>
+        Stub(
+            "Códigos de Paralizações",
+            "#/tarefa/paralizacoes/index",
+            "Catálogo de códigos de paralização. CRUD por empresa (CAT-PARALIZ-01) ainda não liberado — placeholder até M7+.");
+
     [HttpGet("/relatorioprodutividade/index")]
     public IActionResult RelatorioProdutividade() =>
         Stub("Relatório produtividade", "#/relatorioprodutividade/index", "Relatórios (M7+).");
@@ -74,14 +82,20 @@ public class ModuloLegadoController : Controller
         Stub("Relatório efetivo diário", "#/relatorioefetivodiario/index", "Relatórios (M7+).");
 
     [HttpGet("/relatoriomedicao")]
+    [HttpGet("/relatoriomedicao/index")]
     public IActionResult RelatorioMedicao() =>
-        Stub("Relatório medição", "#/relatoriomedicao", "Relatórios (M7+).");
+        Stub("Relatório medição", "#/relatoriomedicao/index", "Relatórios (M7+).");
+
+    [HttpGet("/obra/lista")]
+    public IActionResult ObraLista() =>
+        Stub("Obra lista (legado)", "#/obra/lista", "Listagem legada `/obra/lista` — use Obras no drawer (`/Obra/Index`).", voltarUrl: "/Obra/Index");
 
     [HttpGet("/convidada")]
     public IActionResult Convidada() =>
         Stub("Convidada", "#/convidada", "Fluxo convidada (M7+).", voltarUrl: "/Account/Login");
 
     [HttpGet("/chart/rdos")]
+    [HttpGet("/chart/atrasado")]
     [HttpGet("/chart/diaimprodutivo")]
     [HttpGet("/chart/tarefa")]
     [HttpGet("/chart/comentario")]

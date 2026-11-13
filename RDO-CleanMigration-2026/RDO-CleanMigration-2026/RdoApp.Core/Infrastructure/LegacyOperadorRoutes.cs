@@ -20,7 +20,7 @@ public static class LegacyOperadorRoutes
         return path switch
         {
             "/chart" or "/chart/index" => "/Chart/Index",
-            "/chart/rdos" or "/chart/diaimprodutivo" or "/chart/tarefa" or "/chart/comentario" => path,
+            "/chart/rdos" or "/chart/atrasado" or "/chart/diaimprodutivo" or "/chart/tarefa" or "/chart/comentario" => path,
             "/obra/cadastro" or "/obra/cadastro/index" => "/Obra/Cadastro",
             "/obra/escolher" => "/Obra/Escolher",
             "/obra/index" => "/Obra/Index",
@@ -31,7 +31,7 @@ public static class LegacyOperadorRoutes
             "/rdo/index" or "/rdo/listagem" => "/Rdo/Index",
             "/rdo/cadastro" => "/Rdo/Cadastro",
             "/efetivo/index" or "/efetivo" => "/Efetivo/Index",
-            "/tarefa/paralizacoes/index" or "/tarefa/paralizacoes/cadastro" => "/Tarefa/Paralizacoes/Index",
+            "/tarefa/paralizacoes/index" or "/tarefa/paralizacoes/cadastro" => "/tarefa/paralizacoes/index",
             "/colaborador/index" => "/colaborador/index",
             "/colaborador/cadastro" => "/colaborador/cadastro",
             "/colaborador/alterarsenha" => "/Account/ChangePassword",
@@ -50,7 +50,8 @@ public static class LegacyOperadorRoutes
             "/historicoacesso/index" => "/historicoacesso/index",
             "/relatorioprodutividade/index" => "/relatorioprodutividade/index",
             "/relatorioefetivodiario/index" => "/relatorioefetivodiario/index",
-            "/relatoriomedicao" => "/relatoriomedicao",
+            "/relatoriomedicao" or "/relatoriomedicao/index" => "/relatoriomedicao/index",
+            "/obra/lista" => "/obra/lista",
             "/convidada" => "/convidada",
             _ when path.StartsWith('/') => path,
             _ => "#",
