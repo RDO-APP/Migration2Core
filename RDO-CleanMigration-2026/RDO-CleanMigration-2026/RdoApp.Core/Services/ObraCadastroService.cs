@@ -255,26 +255,46 @@ public class ObraCadastroService
             return Fail("A licença desta empresa não permite que novas obras sejam adicionadas.");
         }
 
-        Obra? template = null;
-        ObraColaborador? vinculo = null;
+        // Só ints do modelo — evita InvalidCast DBNull→String em colunas NULL da obra template.
+        int templateMun;
+        int? hSemana;
+        int? hSab;
+        int? hDom;
+        int ocoCargo;
+        int ocoGrupo;
 
         if (templateObraId is > 0)
         {
-            template = await _context.Obras.AsNoTracking()
-                .FirstOrDefaultAsync(o => o.ObrIdObra == templateObraId.Value, cancellationToken);
-            if (template == null)
+            var tpl = await _context.Obras.AsNoTracking()
+                .Where(o => o.ObrIdObra == templateObraId.Value)
+                .Select(o => new
+                {
+                    o.ObrIdMunicipio,
+                    o.ObrNrHorasSemana,
+                    o.ObrNrHorasSabado,
+                    o.ObrNrHorasDomingo,
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (tpl == null)
             {
                 return Fail("Obra modelo da sessão não encontrada.");
             }
 
-            vinculo = await _context.ObraColaboradores.AsNoTracking()
-                .FirstOrDefaultAsync(
-                    o => o.OcoIdObra == templateObraId.Value && o.OcoIdColaborador == colaboradorId,
-                    cancellationToken);
-            if (vinculo == null)
+            var vin = await _context.ObraColaboradores.AsNoTracking()
+                .Where(o => o.OcoIdObra == templateObraId.Value && o.OcoIdColaborador == colaboradorId)
+                .Select(o => new { o.OcoIdCargo, o.OcoIdGrupo })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (vin == null)
             {
                 return Fail("Você não está vinculado à obra da sessão — não é possível criar nova obra.");
             }
+
+            templateMun = tpl.ObrIdMunicipio;
+            hSemana = tpl.ObrNrHorasSemana;
+            hSab = tpl.ObrNrHorasSabado;
+            hDom = tpl.ObrNrHorasDomingo;
+            ocoCargo = vin.OcoIdCargo;
+            ocoGrupo = vin.OcoIdGrupo;
         }
         else
         {
@@ -283,17 +303,29 @@ public class ObraCadastroService
                 join o in _context.Obras.AsNoTracking() on oc.OcoIdObra equals o.ObrIdObra
                 where oc.OcoIdColaborador == colaboradorId
                 orderby o.ObrIdObra descending
-                select new { Obra = o, Vinculo = oc }).FirstOrDefaultAsync(cancellationToken);
+                select new
+                {
+                    o.ObrIdMunicipio,
+                    o.ObrNrHorasSemana,
+                    o.ObrNrHorasSabado,
+                    o.ObrNrHorasDomingo,
+                    oc.OcoIdCargo,
+                    oc.OcoIdGrupo,
+                }).FirstOrDefaultAsync(cancellationToken);
             if (row == null)
             {
                 return Fail("Não há obra modelo: vincule-se a uma obra existente ou cadastre empresa antes de criar a primeira.");
             }
 
-            template = row.Obra;
-            vinculo = row.Vinculo;
+            templateMun = row.ObrIdMunicipio;
+            hSemana = row.ObrNrHorasSemana;
+            hSab = row.ObrNrHorasSabado;
+            hDom = row.ObrNrHorasDomingo;
+            ocoCargo = row.OcoIdCargo;
+            ocoGrupo = row.OcoIdGrupo;
         }
 
-        var municipioId = request.IdMunicipio > 0 ? request.IdMunicipio : template.ObrIdMunicipio;
+        var municipioId = request.IdMunicipio > 0 ? request.IdMunicipio : templateMun;
         if (municipioId <= 0)
         {
             municipioId = await _context.Colaboradores.AsNoTracking()
@@ -329,9 +361,9 @@ public class ObraCadastroService
             ObrIdEmpresaContratada = idContratada > 0 ? idContratada : null,
             ObrIdDono = donoId,
             ObrIdColaborador = colaboradorId,
-            ObrNrHorasSemana = template.ObrNrHorasSemana ?? 8,
-            ObrNrHorasSabado = template.ObrNrHorasSabado ?? 4,
-            ObrNrHorasDomingo = template.ObrNrHorasDomingo ?? 0,
+            ObrNrHorasSemana = hSemana ?? 8,
+            ObrNrHorasSabado = hSab ?? 4,
+            ObrNrHorasDomingo = hDom ?? 0,
             ObrDsFoto = "",
             ObrDsArt = "",
             ObrCdConvite = Guid.NewGuid().ToString(),
@@ -346,8 +378,8 @@ public class ObraCadastroService
             {
                 OcoIdObra = entity.ObrIdObra,
                 OcoIdColaborador = colaboradorId,
-                OcoIdCargo = vinculo!.OcoIdCargo,
-                OcoIdGrupo = vinculo.OcoIdGrupo,
+                OcoIdCargo = ocoCargo,
+                OcoIdGrupo = ocoGrupo,
                 OcoStContratanteContratada = stCc,
                 OcoDtContratacao = DateTime.Now.Date,
             });

@@ -56,7 +56,7 @@ public class ObraColaborador
     /// Contractor/Contracted status
     /// Maps to: oco_st_contratante_contratada
     /// </summary>
-    public string OcoStContratanteContratada { get; set; } = null!;
+    public string? OcoStContratanteContratada { get; set; }
 
     // Navigation properties (will be added when related entities are implemented)
     // public virtual Cargo Cargo { get; set; }

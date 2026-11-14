@@ -51,7 +51,7 @@ public class Obra
     /// Project name/description
     /// Maps to: obr_ds_obra
     /// </summary>
-    public string ObrDsObra { get; set; } = null!;
+    public string? ObrDsObra { get; set; }
 
     /// <summary>
     /// Total area (m²)
@@ -69,31 +69,31 @@ public class Obra
     /// Street address
     /// Maps to: obr_ds_logradouro
     /// </summary>
-    public string ObrDsLogradouro { get; set; } = null!;
+    public string? ObrDsLogradouro { get; set; }
 
     /// <summary>
     /// Address number
     /// Maps to: obr_ds_numero
     /// </summary>
-    public string ObrDsNumero { get; set; } = null!;
+    public string? ObrDsNumero { get; set; }
 
     /// <summary>
     /// Neighborhood
     /// Maps to: obr_ds_bairro
     /// </summary>
-    public string ObrDsBairro { get; set; } = null!;
+    public string? ObrDsBairro { get; set; }
 
     /// <summary>
     /// Postal code (CEP)
     /// Maps to: obr_ds_cep
     /// </summary>
-    public string ObrDsCep { get; set; } = null!;
+    public string? ObrDsCep { get; set; }
 
     /// <summary>
     /// Photo filename/path
     /// Maps to: obr_ds_foto
     /// </summary>
-    public string ObrDsFoto { get; set; } = null!;
+    public string? ObrDsFoto { get; set; }
 
     /// <summary>
     /// Start date
@@ -141,13 +141,13 @@ public class Obra
     /// Address complement
     /// Maps to: obr_ds_complemento
     /// </summary>
-    public string ObrDsComplemento { get; set; } = null!;
+    public string? ObrDsComplemento { get; set; }
 
     /// <summary>
     /// ART (Technical Responsibility Annotation)
     /// Maps to: obr_ds_art
     /// </summary>
-    public string ObrDsArt { get; set; } = null!;
+    public string? ObrDsArt { get; set; }
 
     /// <summary>
     /// Foreign key - Responsible worker ID
@@ -159,7 +159,7 @@ public class Obra
     /// Invitation code for worker access
     /// Maps to: obr_cd_convite
     /// </summary>
-    public string ObrCdConvite { get; set; } = null!;
+    public string? ObrCdConvite { get; set; }
 
     // Navigation properties (will be added when related entities are implemented)
     // public virtual Colaborador Colaborador { get; set; }
