@@ -143,13 +143,16 @@
 
 
 /* 1.5a — Voltar / SALVAR inline (paridade prod) */
-.cadastro-form-actions {
+.cadastro-form-actions,
+.rdo-cadastro-page .obra-cadastro-actions {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
   clear: both;
+  position: relative;
+  z-index: 5;
 }
 .cadastro-form-actions .btn {
   display: inline-flex !important;

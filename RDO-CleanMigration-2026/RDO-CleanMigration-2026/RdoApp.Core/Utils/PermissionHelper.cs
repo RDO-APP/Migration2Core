@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using RdoApp.Core.Infrastructure;
-using RdoApp.Core.Models.ViewModels;
-using System.Text.Json;
 
 namespace RdoApp.Core.Utils
 {
@@ -22,40 +20,20 @@ namespace RdoApp.Core.Utils
         /// <returns>True if user has permission for route, false otherwise</returns>
         public static bool HasPermission(HttpContext context, string permission, string route)
         {
-            var loginDataJson = context.Session.GetString(SessionKeys.LoginData);
-            
-            if (string.IsNullOrEmpty(loginDataJson))
+            var loginData = LoginSessionJson.TryDeserialize(context.Session.GetString(SessionKeys.LoginData));
+            if (loginData?.Routes == null)
             {
                 return false;
             }
 
-            try
-            {
-                var loginData = JsonSerializer.Deserialize<LoginViewModel>(loginDataJson);
-                
-                if (loginData?.Routes == null)
-                {
-                    return false;
-                }
-
-                var foundRoute = loginData.Routes.FirstOrDefault(r =>
-                    string.Equals(r.Path, route, StringComparison.OrdinalIgnoreCase));
-                if (foundRoute == null)
-                {
-                    return false;
-                }
-
-                if (foundRoute.Permissions == null)
-                {
-                    return false;
-                }
-
-                return foundRoute.Permissions.Contains(permission);
-            }
-            catch (JsonException)
+            var foundRoute = loginData.Routes.FirstOrDefault(r =>
+                string.Equals(r.Path, route, StringComparison.OrdinalIgnoreCase));
+            if (foundRoute?.Permissions == null)
             {
                 return false;
             }
+
+            return foundRoute.Permissions.Contains(permission);
         }
 
         /// <summary>

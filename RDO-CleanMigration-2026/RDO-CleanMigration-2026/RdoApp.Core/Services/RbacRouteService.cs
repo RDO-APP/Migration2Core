@@ -148,6 +148,8 @@ public class RbacRouteService
 
         AddIfMissing("/convidada", "Convidada", "visualizar");
         AddIfMissing("/obra/escolher", "Escolher Obra", "visualizar");
+        // Paridade ObterRotasDefault + prod nav.html — senão showNovaObra some após Selecionar (GPA sem /obra/cadastro).
+        AddIfMissing("/obra/cadastro", "Adicionar Obra", "visualizar");
         AddIfMissing("/tarefa/paralizacoes/index", "Códigos de Paralizações", "visualizar", "criarNovo", "editar", "deletar");
         AddIfMissing("/tarefa/paralizacoes/cadastro", "Cadastro Códigos de Paralizações");
     }

@@ -868,11 +868,21 @@ export function ObraCadastroPage() {
               </div>
             </div>
 
-            <div className="col-xs-12 no-padding cadastro-form-actions">
+            <div className="col-xs-12 no-padding cadastro-form-actions obra-cadastro-actions">
               <button
                 type="button"
                 className="btn btn-blue"
-                onClick={() => goOperador(isNova ? '/Obra/Escolher' : '/Obra/Index')}
+                onClick={() => {
+                  if (isNova) {
+                    goOperador('/Obra/Escolher')
+                    return
+                  }
+                  if (window.history.length > 1) {
+                    window.history.back()
+                    return
+                  }
+                  goOperador('/Obra/Index')
+                }}
               >
                 <i className="fa fa-arrow-left" aria-hidden />
                 <span>Voltar</span>
