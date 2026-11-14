@@ -41,8 +41,10 @@ public class ShellContextService
             ObraNome = ObraSessionHelper.GetObraNome(context),
             ObraCidadeEstado = ObraSessionHelper.GetObraCidadeEstado(context),
             ShowChart = PermissionHelper.HasPermission(context, "visualizar", "/chart"),
-            // Espelho do + em Obra/Index (P2): GPA criarNovo em /obra/index|/obra/lista — não "visualizar" /obra/cadastro.
-            ShowNovaObra = ObraIndexService.CanObraLista(context, "criarNovo"),
+            // Paridade prod nav.html: permission="visualizar" permission-route="/obra/cadastro"
+            // (ObterRotasDefault já inclui isso no 1º login; criarNovo /obra/lista só após Selecionar).
+            // O botão NOVO em Obra/Index continua CanObraLista("criarNovo").
+            ShowNovaObra = PermissionHelper.HasPermission(context, "visualizar", "/obra/cadastro"),
             ShowDashboardObra = PermissionHelper.HasPermission(context, "acessarDashboard", "/dashboard/index"),
             ShowGerarRdo = PermissionHelper.HasPermission(context, "gerarRdo", "/tarefa/cards"),
             ShowEditarObra = PermissionHelper.HasPermission(context, "editarObra", "/tarefa/cards"),

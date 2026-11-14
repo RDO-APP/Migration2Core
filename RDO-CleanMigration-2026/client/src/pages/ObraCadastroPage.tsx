@@ -869,7 +869,11 @@ export function ObraCadastroPage() {
             </div>
 
             <div className="col-xs-12 no-padding cadastro-form-actions">
-              <button type="button" className="btn btn-blue" onClick={() => goOperador('/Obra/Index')}>
+              <button
+                type="button"
+                className="btn btn-blue"
+                onClick={() => goOperador(isNova ? '/Obra/Escolher' : '/Obra/Index')}
+              >
                 <i className="fa fa-arrow-left" aria-hidden />
                 <span>Voltar</span>
               </button>
