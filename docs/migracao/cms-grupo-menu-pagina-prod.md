@@ -101,7 +101,7 @@ Ordem na tela:
 | Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` (sem Copiar/Novo colab) |
 | Card de Tarefas | `/tarefa/cards` | ✅ SPA `/Tarefa/Cards` |
 | RDOs | `/rdo/index` | ✅ SPA `/Rdo/Index` |
-| Obras | `/obra/index` | ✅ SPA `ObraIndexPage` + BFF · cadastro SPA parcial `/Obra/Cadastro` |
+| Obras | `/obra/index` | ✅ SPA `ObraIndexPage` + BFF · cadastro SPA `/Obra/Cadastro` (editar + `?nova=true`) |
 | Empresas | `/empresa/index` | ✅ SPA index+cadastro (`EmpresaIndexPage` / `EmpresaCadastroPage` · editar obra) |
 | Etapas | `/etapa/index` | ✅ SPA `EtapaIndexPage` + BFF · cadastro SPA `/Etapa/Cadastro` |
 | Códigos de Paralizações | `/tarefa/paralizacoes/index` | ✅ SPA index+cadastro (espelho prod · catálogo global) · tenant = **CAT-PARALIZ-01** depois |
@@ -117,7 +117,7 @@ Chart, Dashboard, Grupo, Menu, Página **não** estão neste menu. Chart/Dashboa
 |----------|----------|---------|-----------------|
 | Gráfico geral (chart) | `/chart` | ✅ SPA `/Chart/Index` | `showChart` ← `visualizar` `/chart` |
 | Dashboard da obra | `/dashboard/index` | ✅ SPA `/Dashboard/Index` | `showDashboardObra` ← `acessarDashboard` |
-| Nova obra (se perfil) | `/obra/cadastro` | 🟡 SPA editar obra selecionada `/Obra/Cadastro` (não “nova” full) | `showNovaObra` ← `visualizar` `/obra/cadastro` |
+| Nova obra (+) | `/obra/cadastro` | ✅ SPA `/Obra/Cadastro?nova=true` (Opção A · tip `97b817a`) | `showNovaObra` ← `visualizar` `/obra/cadastro` (prod `nav.html`; **≠** `criarNovo` do NOVO em Index) |
 | Trocar senha (user menu) | `/colaborador/alterarsenha` | `/Account/ChangePassword` | sempre no menu usuário |
 | Logo | — | `/Obra/Escolher` | — |
 

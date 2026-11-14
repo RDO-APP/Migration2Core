@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-13 ~15:10 — tip código **`b3a4a19`** Dashboard tooltip/export + SPA relatórios · backlog **I18N-ES-01** (ES UI ≠ CPF/país) · CAT-PARALIZ-01 depois · polish **1.5a**  
+**Atualizado:** 2026-11-14 ~16:20 — tip **`97b817a`** `+` 1º login + Voltar Escolher · **`c3cede9`** Nova obra Opção A (CEP/logo/colab) · smoke dono METRO · backlog **I18N-ES-01** · CAT-PARALIZ-01 · polish **1.5a**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -413,11 +413,11 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Smoke G5** — drawer 9 itens pós-deploy `a4159be` ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2): Paralizações = SPA; stubs restantes = Relatórios/Admin.
-2. **Próxima SPA:** Relatórios (`produtividade` / `efetivo diário` / `medição`).
-3. Lucio confirma polish **1.5a** cadastro etapa (Voltar/SALVAR) quando puder.
-4. Gaps já no Git: Obra contratante/logo · Efetivo Copiar/Novo colab · LISTA/Efetivo smoke se deploy pendente.
-5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** (tenant, depois do espelho prod).
+1. **Publish/deploy** tip **`97b817a`** (Lucio) → smoke **Nova obra**: `+` no 1º login · combo = empresas **dono** · Opção A um lado · Voltar → Escolher · Salvar (CEP real + UF/Mun + licença) · colab/equip **após** salvar. Teste dono: Georges `82435103549` (METRO). Lucio `53821963549` sem `emp_id_colaborador` → combo vazio (esperado).
+2. **Smoke G5** — drawer 9 itens ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2).
+3. **Próxima SPA:** Relatórios (`produtividade` / `efetivo diário` / `medição`).
+4. Lucio confirma polish **1.5a** cadastro etapa quando puder.
+5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** · Efetivo Copiar/Novo colab.
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
@@ -429,7 +429,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | # | Controle | Status homolog | Nota |
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
-| **1.1** | Editar obra | 🟡 **código** | SPA+BFF nome/datas/endereço/áreas — **aguardando publish/deploy** (contratante/logo depois) |
+| **1.1** | Editar obra / **Nova obra (+)** | 🟡 **smoke** | SPA Opção A · CEP/ViaCEP · logo · colab/equip pós-save · `showNovaObra`=`visualizar` `/obra/cadastro` · tip **`c3cede9`/`97b817a`** — validar pós-deploy Lucio |
 | **1.2** | Efetivo diário | 🟡 **código** | SPA+BFF filtro/lista/status — **aguardando publish/deploy** (sem Copiar/Novo colaborador ainda) |
 | **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |

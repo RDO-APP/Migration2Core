@@ -50,7 +50,7 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 | RDO's | `#/rdo/index` | `/Rdo` | ⏳ **M5** |
 | Tarefas (grade) | `#/tarefa/cards` | `/Tarefa/Cards` | ✅ SPA P3 |
 | Dashboard geral | `#/chart` | `/Chart` | ⏳ **M5** · se `showChart` |
-| Nova obra (+) | `#/obra/cadastro` | `/Obra/Cadastro` | ⏳ **M5** · se `showNovaObra` |
+| Nova obra (+) | `#/obra/cadastro` | `/Obra/Cadastro?nova=true` | ✅ SPA Opção A · `showNovaObra`=`visualizar` `/obra/cadastro` · tip `97b817a` |
 
 ### 2) Toolbar (`CardsToolbar`) — duas faixas (como o print prod)
 
@@ -66,7 +66,7 @@ Fonte TS (não duplicar manualmente): `RDO-CleanMigration-2026/client/src/nav/p3
 | Botão | Prod | Rota homolog | Status (Lucio 05/11) |
 |-------|------|--------------|---------------------|
 | Gerar RDO | `cadastroRdo()` · **`permission="gerarRdo"`** | `/Rdo/Cadastro` | ✅ OK |
-| Editar obra **1.1** | `#/obra/cadastro` | `/Obra/Cadastro` | 🟡 SPA+BFF campos principais (contratante/logo depois) |
+| Editar obra **1.1** | `#/obra/cadastro` | `/Obra/Cadastro` | 🟡 SPA Opção A + CEP/logo/colab · smoke pós-`97b817a` |
 | Efetivo diário **1.2** | `#/efetivo/index` | `/Efetivo/Index` | 🟡 SPA+BFF (filtro/lista/status; copiar/novo colab depois) |
 | FILTRO **1.3** | collapse `.filtro` | `/Tarefa/Cards?filtro=1` | ✅ smoke |
 | Adicionar tarefa **1.4** | `#/tarefa/cadastro` | `/Tarefa/Cadastro` · `?etapaId=` | ✅ smoke |
