@@ -462,14 +462,58 @@
   width: 100%;
   border: 2px solid #28496f;
   margin-bottom: 20px;
+  clear: both;
+  float: left;
+  background: #fff;
 }
 
 .rdo-cadastro-page .tabela table {
   margin: 0;
 }
 
+.rdo-cadastro-page .tabela thead th {
+  background: #28496f;
+  color: #fff;
+  font-weight: 600;
+  border-color: #1c334d;
+  vertical-align: middle;
+}
+
 .rdo-cadastro-page .tabela .checkbox {
   margin: 0;
+}
+
+/* Header COLABORADORES / EQUIPAMENTOS — mesma faixa do lápis (tarefa) */
+.rdo-cadastro-page .lista-tarefas > .header-table {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  float: none;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.rdo-cadastro-page .lista-tarefas > .header-table h4 {
+  float: none;
+  margin: 8px 0;
+}
+
+.rdo-cadastro-page .lista-tarefas > .header-table .pull-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+  float: none;
+}
+
+.rdo-cadastro-page .lista-tarefas .btn-just-icon {
+  padding: 4px 8px;
+  background: transparent;
+  border: 0;
+  color: #28496f;
+  cursor: pointer;
 }
 
 .rdo-tag-prev {
@@ -609,3 +653,60 @@
   margin-top: 0;
   color: #28496f;
 }
+
+/* Bloco 2 — Logo da Contratada (paridade cadastro obra) */
+.rdo-cadastro-page .obra-logo-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+}
+
+.rdo-cadastro-page .obra-logo-hint {
+  font-size: 12px;
+  color: #c0392b;
+  line-height: 1.3;
+}
+
+.rdo-cadastro-page .obra-logo-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 220px;
+  border: 1px solid #c5d0dc;
+  border-radius: 8px;
+  background: #eef2f6;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rdo-cadastro-page .obra-logo-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.rdo-cadastro-page .obra-logo-placeholder {
+  font-size: 42px;
+  color: #8aa0b5;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.rdo-cadastro-page .obra-logo-file {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rdo-cadastro-page .obra-logo-remove {
+  align-self: flex-start;
+  padding: 0;
+  color: #28496f;
+  text-decoration: underline;
+  font-size: 13px;
+}
+

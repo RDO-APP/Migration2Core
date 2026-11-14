@@ -41,7 +41,8 @@ public class ShellContextService
             ObraNome = ObraSessionHelper.GetObraNome(context),
             ObraCidadeEstado = ObraSessionHelper.GetObraCidadeEstado(context),
             ShowChart = PermissionHelper.HasPermission(context, "visualizar", "/chart"),
-            ShowNovaObra = PermissionHelper.HasPermission(context, "visualizar", "/obra/cadastro"),
+            // Espelho do + em Obra/Index (P2): GPA criarNovo em /obra/index|/obra/lista — não "visualizar" /obra/cadastro.
+            ShowNovaObra = ObraIndexService.CanObraLista(context, "criarNovo"),
             ShowDashboardObra = PermissionHelper.HasPermission(context, "acessarDashboard", "/dashboard/index"),
             ShowGerarRdo = PermissionHelper.HasPermission(context, "gerarRdo", "/tarefa/cards"),
             ShowEditarObra = PermissionHelper.HasPermission(context, "editarObra", "/tarefa/cards"),

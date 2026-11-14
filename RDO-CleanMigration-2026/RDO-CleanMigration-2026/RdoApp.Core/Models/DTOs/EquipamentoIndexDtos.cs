@@ -32,6 +32,8 @@ public sealed class EquipamentoIndexItemDto
     public int IdObraEquipamento { get; init; }
     public string TipoEquipamento { get; init; } = "";
     public string Descricao { get; init; } = "";
+    /// <summary>C = Compra; A = Aluguel; outros = —</summary>
+    public string TipoAquisicao { get; init; } = "";
     public string FabricanteFornecedor { get; init; } = "";
     public string Contato { get; init; } = "";
     public string Telefone { get; init; } = "";

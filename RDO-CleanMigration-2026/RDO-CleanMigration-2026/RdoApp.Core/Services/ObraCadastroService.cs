@@ -8,22 +8,23 @@ namespace RdoApp.Core.Services;
 
 public class ObraCadastroService
 {
+    private const int MaxLogoBytes = 2 * 1024 * 1024;
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
     private readonly RdoDbContext _context;
+    private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _env;
 
-    public ObraCadastroService(RdoDbContext context) => _context = context;
-
-    public ObraCadastroDto EmptyNova(string? cidadeEstado = null) => new()
+    public ObraCadastroService(RdoDbContext context, IConfiguration configuration, IWebHostEnvironment env)
     {
-        Id = 0,
-        Nova = true,
-        CidadeEstado = cidadeEstado ?? "",
-    };
+        _context = context;
+        _configuration = configuration;
+        _env = env;
+    }
 
     /// <summary>
-    /// Cidade/UF do template (P3 = obra sessão; P2 = qualquer vínculo do colaborador) — campo read-only na SPA.
+    /// Local do template (P3 = obra sessão; P2 = qualquer vínculo) — pré-preenche UF/Município/empresas.
     /// </summary>
-    public async Task<string?> ResolveCidadeEstadoTemplateAsync(
+    public async Task<(string? CidadeEstado, int IdUf, int IdMunicipio, int IdContratante, int IdContratada)> ResolveTemplateLocalAsync(
         int colaboradorId,
         int? templateObraId,
         CancellationToken cancellationToken)
@@ -38,7 +39,7 @@ public class ObraCadastroService
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        if (obraId is null or <= 0) return null;
+        if (obraId is null or <= 0) return (null, 0, 0, 0, 0);
 
         var row = await (
             from o in _context.Obras.AsNoTracking()
@@ -49,15 +50,61 @@ public class ObraCadastroService
             where o.ObrIdObra == obraId.Value
             select new
             {
+                IdMunicipio = o.ObrIdMunicipio,
                 Mun = m != null ? m.MunDsMunicipio : null,
-                Uf = uf != null ? uf.UfeDsSigla : null
+                IdUf = uf != null ? uf.UfeIdUf : 0,
+                Uf = uf != null ? uf.UfeDsSigla : null,
+                IdContratante = o.ObrIdEmpresaContratante ?? 0,
+                IdContratada = o.ObrIdEmpresaContratada ?? 0,
             }).FirstOrDefaultAsync(cancellationToken);
 
-        if (row == null || string.IsNullOrWhiteSpace(row.Mun)) return null;
-        return string.IsNullOrWhiteSpace(row.Uf) ? row.Mun! : row.Mun + "/" + row.Uf;
+        if (row == null) return (null, 0, 0, 0, 0);
+        string? cidade = null;
+        if (!string.IsNullOrWhiteSpace(row.Mun))
+            cidade = string.IsNullOrWhiteSpace(row.Uf) ? row.Mun! : row.Mun + "/" + row.Uf;
+        return (cidade, row.IdUf, row.IdMunicipio, row.IdContratante, row.IdContratada);
     }
 
-    public async Task<ObraCadastroDto?> GetAsync(int obraId, CancellationToken cancellationToken)
+    public async Task<string?> ResolveCidadeEstadoTemplateAsync(
+        int colaboradorId,
+        int? templateObraId,
+        CancellationToken cancellationToken)
+    {
+        var (cidade, _, _, _, _) = await ResolveTemplateLocalAsync(colaboradorId, templateObraId, cancellationToken);
+        return cidade;
+    }
+
+    public async Task<ObraCadastroDto> BuildNovaAsync(
+        int colaboradorId,
+        int? templateObraId,
+        CancellationToken cancellationToken)
+    {
+        // Nova obra: NÃO herda UF/Município nem empresa do template.
+        // Opção A: ambos dropdowns começam em Selecione... (0); lista = empresas do usuário.
+        var (empresas, idsMinhas) = await LoadEmpresasCadastroAsync(
+            colaboradorId,
+            0,
+            0,
+            cancellationToken);
+
+        return new ObraCadastroDto
+        {
+            Id = 0,
+            Nova = true,
+            CidadeEstado = "",
+            IdUf = 0,
+            IdMunicipio = 0,
+            IdContratante = 0,
+            IdContratada = 0,
+            Empresas = empresas,
+            IdsEmpresasDoUsuario = idsMinhas,
+        };
+    }
+
+    public async Task<ObraCadastroDto?> GetAsync(
+        int obraId,
+        int colaboradorId,
+        CancellationToken cancellationToken)
     {
         var row = await (
             from o in _context.Obras.AsNoTracking()
@@ -75,11 +122,17 @@ public class ObraCadastroService
                 o.ObrDtFim,
                 o.ObrDsLogradouro,
                 o.ObrDsNumero,
+                o.ObrDsComplemento,
                 o.ObrDsBairro,
                 o.ObrDsCep,
+                o.ObrIdMunicipio,
                 o.ObrNrAreaTotal,
                 o.ObrNrAreaTotalConstruida,
+                o.ObrDsFoto,
+                IdContratante = o.ObrIdEmpresaContratante ?? 0,
+                IdContratada = o.ObrIdEmpresaContratada ?? 0,
                 Mun = m != null ? m.MunDsMunicipio : null,
+                IdUf = uf != null ? uf.UfeIdUf : 0,
                 Uf = uf != null ? uf.UfeDsSigla : null
             }).FirstOrDefaultAsync(cancellationToken);
 
@@ -87,6 +140,12 @@ public class ObraCadastroService
         var cidade = string.IsNullOrWhiteSpace(row.Mun)
             ? ""
             : string.IsNullOrWhiteSpace(row.Uf) ? row.Mun! : row.Mun + "/" + row.Uf;
+
+        var (empresas, idsMinhas) = await LoadEmpresasCadastroAsync(
+            colaboradorId,
+            row.IdContratante,
+            row.IdContratada,
+            cancellationToken);
 
         return new ObraCadastroDto
         {
@@ -97,16 +156,28 @@ public class ObraCadastroService
             DataPrevisaoFim = FormatDate(row.ObrDtPrevisaoFim),
             Logradouro = row.ObrDsLogradouro ?? "",
             Numero = row.ObrDsNumero ?? "",
+            Complemento = row.ObrDsComplemento ?? "",
             Bairro = row.ObrDsBairro ?? "",
             Cep = row.ObrDsCep ?? "",
+            IdUf = row.IdUf,
+            IdMunicipio = row.ObrIdMunicipio,
+            IdContratante = row.IdContratante,
+            IdContratada = row.IdContratada,
             AreaTotal = row.ObrNrAreaTotal,
             AreaConstruida = row.ObrNrAreaTotalConstruida,
             CidadeEstado = cidade,
-            Finalizada = row.ObrDtFim != null
+            Finalizada = row.ObrDtFim != null,
+            DescricaoFoto = NormalizeFotoUrl(row.ObrDsFoto),
+            Empresas = empresas,
+            IdsEmpresasDoUsuario = idsMinhas,
         };
     }
 
-    public async Task<ObraCadastroSaveResultDto> SaveAsync(int obraId, ObraCadastroSaveRequestDto request, CancellationToken cancellationToken)
+    public async Task<ObraCadastroSaveResultDto> SaveAsync(
+        int obraId,
+        int colaboradorId,
+        ObraCadastroSaveRequestDto request,
+        CancellationToken cancellationToken)
     {
         var entity = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == obraId, cancellationToken);
         if (entity == null) return Fail("Obra nao encontrada.");
@@ -117,22 +188,45 @@ public class ObraCadastroService
             return fail!;
         }
 
+        if (!TryResolveEmpresas(request, out var idContratante, out var idContratada, out var donoId, out var empFail))
+        {
+            return empFail!;
+        }
+
+        var minhas = await IdsEmpresasDoUsuarioAsync(colaboradorId, cancellationToken);
+        if (!TryDerivePapel(idContratante, idContratada, minhas, out _, out var papelFail))
+        {
+            return papelFail!;
+        }
+
         entity.ObrDsObra = desc;
         entity.ObrDtInicio = ini.Date;
         entity.ObrDtPrevisaoFim = fim;
         entity.ObrDsLogradouro = (request.Logradouro ?? "").Trim();
-        entity.ObrDsNumero = (request.Numero ?? "").Trim();
+        var numeroEdit = (request.Numero ?? "").Trim();
+        entity.ObrDsNumero = string.IsNullOrEmpty(numeroEdit) ? "0" : numeroEdit;
+        entity.ObrDsComplemento = (request.Complemento ?? "").Trim();
         entity.ObrDsBairro = (request.Bairro ?? "").Trim();
-        entity.ObrDsCep = (request.Cep ?? "").Trim();
+        var cepEdit = new string((request.Cep ?? "").Where(char.IsDigit).ToArray());
+        if (cepEdit.Length > 10) cepEdit = cepEdit[..10];
+        entity.ObrDsCep = cepEdit;
+        if (request.IdMunicipio > 0) entity.ObrIdMunicipio = request.IdMunicipio;
+        entity.ObrIdEmpresaContratante = idContratante > 0 ? idContratante : null;
+        entity.ObrIdEmpresaContratada = idContratada > 0 ? idContratada : null;
+        entity.ObrIdDono = donoId;
         entity.ObrNrAreaTotal = request.AreaTotal;
         entity.ObrNrAreaTotalConstruida = request.AreaConstruida;
+        if (!TryApplyLogo(entity, request, out var logoFail))
+        {
+            return logoFail!;
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
         return new ObraCadastroSaveResultDto { Ok = true, ObraNome = entity.ObrDsObra, ObraId = entity.ObrIdObra };
     }
 
     /// <summary>
-    /// Nova obra: clona empresa/município/vínculo a partir da obra da sessão (P3) ou de qualquer vínculo (P2).
-    /// Paridade mínima com prod `novaObra` — sem tela completa de contratante/logo ainda.
+    /// Nova obra — Opção A: dois dropdowns (sem radio); papel t/d derivado das empresas do usuário.
     /// </summary>
     public async Task<ObraCadastroSaveResultDto> CreateAsync(
         int colaboradorId,
@@ -143,6 +237,22 @@ public class ObraCadastroService
         if (!TryValidate(request, out var desc, out var ini, out var fim, out var fail))
         {
             return fail!;
+        }
+
+        if (!TryResolveEmpresas(request, out var idContratante, out var idContratada, out var donoId, out var empFail))
+        {
+            return empFail!;
+        }
+
+        var minhas = await IdsEmpresasDoUsuarioAsync(colaboradorId, cancellationToken);
+        if (!TryDerivePapel(idContratante, idContratada, minhas, out var stCc, out var papelFail))
+        {
+            return papelFail!;
+        }
+
+        if (!await LicencaPermiteNovaObraAsync(donoId, cancellationToken))
+        {
+            return Fail("A licença desta empresa não permite que novas obras sejam adicionadas.");
         }
 
         Obra? template = null;
@@ -168,7 +278,6 @@ public class ObraCadastroService
         }
         else
         {
-            // P2: sem obra na sessão — usa qualquer obra do colaborador como modelo (empresa/grupo/cargo).
             var row = await (
                 from oc in _context.ObraColaboradores.AsNoTracking()
                 join o in _context.Obras.AsNoTracking() on oc.OcoIdObra equals o.ObrIdObra
@@ -184,12 +293,24 @@ public class ObraCadastroService
             vinculo = row.Vinculo;
         }
 
-        if (template.ObrIdDono is null or <= 0
-            && template.ObrIdEmpresaContratante is null or <= 0
-            && template.ObrIdEmpresaContratada is null or <= 0)
+        var municipioId = request.IdMunicipio > 0 ? request.IdMunicipio : template.ObrIdMunicipio;
+        if (municipioId <= 0)
         {
-            return Fail("A obra modelo precisa ter empresa (dono/contratante/contratada) para criar nova.");
+            municipioId = await _context.Colaboradores.AsNoTracking()
+                .Where(c => c.ColIdColaborador == colaboradorId)
+                .Select(c => c.ColIdMunicipio ?? 0)
+                .FirstOrDefaultAsync(cancellationToken);
         }
+
+        if (municipioId <= 0)
+        {
+            return Fail("Informe UF e Município (obrigatórios).");
+        }
+
+        var cep = new string((request.Cep ?? "").Where(char.IsDigit).ToArray());
+        if (cep.Length > 10) cep = cep[..10];
+        var numero = (request.Numero ?? "").Trim();
+        if (string.IsNullOrEmpty(numero)) numero = "0";
 
         var entity = new Obra
         {
@@ -197,40 +318,57 @@ public class ObraCadastroService
             ObrDtInicio = ini.Date,
             ObrDtPrevisaoFim = fim,
             ObrDsLogradouro = (request.Logradouro ?? "").Trim(),
-            ObrDsNumero = (request.Numero ?? "").Trim(),
+            ObrDsNumero = numero,
+            ObrDsComplemento = (request.Complemento ?? "").Trim(),
             ObrDsBairro = (request.Bairro ?? "").Trim(),
-            ObrDsCep = (request.Cep ?? "").Trim(),
+            ObrDsCep = cep,
             ObrNrAreaTotal = request.AreaTotal,
             ObrNrAreaTotalConstruida = request.AreaConstruida,
-            ObrIdMunicipio = template.ObrIdMunicipio,
-            ObrIdEmpresaContratante = template.ObrIdEmpresaContratante,
-            ObrIdEmpresaContratada = template.ObrIdEmpresaContratada,
-            ObrIdDono = template.ObrIdDono
-                ?? template.ObrIdEmpresaContratante
-                ?? template.ObrIdEmpresaContratada,
+            ObrIdMunicipio = municipioId,
+            ObrIdEmpresaContratante = idContratante > 0 ? idContratante : null,
+            ObrIdEmpresaContratada = idContratada > 0 ? idContratada : null,
+            ObrIdDono = donoId,
             ObrIdColaborador = colaboradorId,
             ObrNrHorasSemana = template.ObrNrHorasSemana ?? 8,
             ObrNrHorasSabado = template.ObrNrHorasSabado ?? 4,
             ObrNrHorasDomingo = template.ObrNrHorasDomingo ?? 0,
             ObrDsFoto = "",
-            ObrDsComplemento = "",
             ObrDsArt = "",
-            ObrCdConvite = Guid.NewGuid().ToString("N")[..12],
+            ObrCdConvite = Guid.NewGuid().ToString(),
         };
 
-        _context.Obras.Add(entity);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        _context.ObraColaboradores.Add(new ObraColaborador
+        try
         {
-            OcoIdObra = entity.ObrIdObra,
-            OcoIdColaborador = colaboradorId,
-            OcoIdCargo = vinculo.OcoIdCargo,
-            OcoIdGrupo = vinculo.OcoIdGrupo,
-            OcoStContratanteContratada = vinculo.OcoStContratanteContratada ?? "d",
-            OcoDtContratacao = DateTime.Now.Date,
-        });
-        await _context.SaveChangesAsync(cancellationToken);
+            _context.Obras.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            _context.ObraColaboradores.Add(new ObraColaborador
+            {
+                OcoIdObra = entity.ObrIdObra,
+                OcoIdColaborador = colaboradorId,
+                OcoIdCargo = vinculo!.OcoIdCargo,
+                OcoIdGrupo = vinculo.OcoIdGrupo,
+                OcoStContratanteContratada = stCc,
+                OcoDtContratacao = DateTime.Now.Date,
+            });
+            await _context.SaveChangesAsync(cancellationToken);
+
+            // Logo depois do insert (paridade prod — precisa do obr_id).
+            if (!TryApplyLogo(entity, request, out var logoFail))
+            {
+                return logoFail!;
+            }
+
+            if (!string.IsNullOrEmpty(entity.ObrDsFoto))
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+        catch (DbUpdateException ex)
+        {
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            return Fail("Falha ao gravar obra no banco: " + detail);
+        }
 
         return new ObraCadastroSaveResultDto
         {
@@ -238,6 +376,239 @@ public class ObraCadastroService
             ObraNome = entity.ObrDsObra,
             ObraId = entity.ObrIdObra,
         };
+    }
+
+    /// <summary>
+    /// Persiste logo em Uploads/{obraId}/logocontratada/ (paridade UtilsModel.UploadImage).
+    /// </summary>
+    private bool TryApplyLogo(Obra entity, ObraCadastroSaveRequestDto request, out ObraCadastroSaveResultDto? fail)
+    {
+        fail = null;
+        if (request.RemoverFoto)
+        {
+            entity.ObrDsFoto = "";
+            return true;
+        }
+
+        var foto = (request.Foto ?? "").Trim();
+        if (string.IsNullOrEmpty(foto))
+        {
+            return true; // mantém existente
+        }
+
+        if (foto.StartsWith("/Uploads/", StringComparison.OrdinalIgnoreCase)
+            || foto.StartsWith("Uploads/", StringComparison.OrdinalIgnoreCase))
+        {
+            entity.ObrDsFoto = NormalizeFotoUrl(foto);
+            return true;
+        }
+
+        if (!foto.StartsWith("data:image", StringComparison.OrdinalIgnoreCase))
+        {
+            fail = Fail("Formato de imagem inválido. Use jpeg, jpg, bmp ou png (máx. 2MB).");
+            return false;
+        }
+
+        try
+        {
+            entity.ObrDsFoto = SaveLogoContratada(entity.ObrIdObra, foto);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            fail = Fail("Falha ao salvar logo: " + ex.Message);
+            return false;
+        }
+    }
+
+    private string SaveLogoContratada(int obraId, string dataUrl)
+    {
+        var comma = dataUrl.IndexOf(',');
+        if (comma < 0) throw new InvalidOperationException("Base64 inválido.");
+        var header = dataUrl[..comma].ToLowerInvariant();
+        if (!header.Contains("jpeg") && !header.Contains("jpg") && !header.Contains("png") && !header.Contains("bmp"))
+        {
+            throw new InvalidOperationException("Formato inválido (jpeg/jpg/bmp/png).");
+        }
+
+        var raw = dataUrl[(comma + 1)..];
+        var bytes = Convert.FromBase64String(raw);
+        if (bytes.Length == 0) throw new InvalidOperationException("Imagem vazia.");
+        if (bytes.Length > MaxLogoBytes) throw new InvalidOperationException("Tamanho máximo: 2MB.");
+
+        var uploadsRoot = _configuration["FileStorage:UploadsRoot"];
+        if (string.IsNullOrWhiteSpace(uploadsRoot))
+        {
+            uploadsRoot = Path.Combine(_env.ContentRootPath, "Uploads");
+        }
+
+        var folderRel = Path.Combine(obraId.ToString(), "logocontratada");
+        var folderAbs = Path.Combine(uploadsRoot, folderRel);
+        Directory.CreateDirectory(folderAbs);
+
+        // Paridade prod: recria pasta da obra/logo.
+        foreach (var old in Directory.EnumerateFiles(folderAbs))
+        {
+            try { File.Delete(old); } catch { /* ignore */ }
+        }
+
+        var fileName = Guid.NewGuid().ToString("N").ToUpperInvariant() + ".jpeg";
+        var abs = Path.Combine(folderAbs, fileName);
+        File.WriteAllBytes(abs, bytes);
+        return "/Uploads/" + obraId + "/logocontratada/" + fileName;
+    }
+
+    private static string NormalizeFotoUrl(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return "";
+        var p = path.Trim().Replace('\\', '/');
+        if (p.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        {
+            var idx = p.IndexOf("/Uploads/", StringComparison.OrdinalIgnoreCase);
+            return idx >= 0 ? p[idx..] : p;
+        }
+
+        if (!p.StartsWith('/')) p = "/" + p;
+        return p;
+    }
+
+    /// <summary>Empresas do colaborador (dono) + FKs da obra para aparecerem nos selects.</summary>
+    private async Task<(IReadOnlyList<ObraCadastroLookupDto> Empresas, IReadOnlyList<int> IdsMinhas)> LoadEmpresasCadastroAsync(
+        int colaboradorId,
+        int idContratante,
+        int idContratada,
+        CancellationToken cancellationToken)
+    {
+        var minhas = await _context.Empresas.AsNoTracking()
+            .Where(e => e.EmpIdColaborador == colaboradorId)
+            .OrderBy(e => e.EmpNmFantasia)
+            .Select(e => new ObraCadastroLookupDto { Id = e.EmpIdEmpresa, Nome = e.EmpNmFantasia ?? "" })
+            .ToListAsync(cancellationToken);
+
+        var idsMinhas = minhas.Select(e => e.Id).ToList();
+        var extraIds = new[] { idContratante, idContratada }
+            .Where(id => id > 0 && !idsMinhas.Contains(id))
+            .Distinct()
+            .ToList();
+
+        if (extraIds.Count > 0)
+        {
+            var extras = await _context.Empresas.AsNoTracking()
+                .Where(e => extraIds.Contains(e.EmpIdEmpresa))
+                .Select(e => new ObraCadastroLookupDto { Id = e.EmpIdEmpresa, Nome = e.EmpNmFantasia ?? "" })
+                .ToListAsync(cancellationToken);
+            minhas = minhas.Concat(extras).OrderBy(e => e.Nome).ToList();
+        }
+
+        return (minhas, idsMinhas);
+    }
+
+    private async Task<HashSet<int>> IdsEmpresasDoUsuarioAsync(int colaboradorId, CancellationToken cancellationToken)
+    {
+        var ids = await _context.Empresas.AsNoTracking()
+            .Where(e => e.EmpIdColaborador == colaboradorId)
+            .Select(e => e.EmpIdEmpresa)
+            .ToListAsync(cancellationToken);
+        return ids.ToHashSet();
+    }
+
+    /// <summary>Paridade prod VerificarPermissaoLicencaEmpresa — conta obras onde empresa é dono.</summary>
+    private async Task<bool> LicencaPermiteNovaObraAsync(int idEmpresaDono, CancellationToken cancellationToken)
+    {
+        var emp = await _context.Empresas.AsNoTracking()
+            .Where(e => e.EmpIdEmpresa == idEmpresaDono)
+            .Select(e => new { e.EmpIdEmpresa, e.EmpIdLicenca })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (emp == null) return false;
+
+        var qtdObras = await _context.Obras.AsNoTracking()
+            .CountAsync(o => o.ObrIdDono == idEmpresaDono, cancellationToken);
+
+        int limite = 0;
+        if (emp.EmpIdLicenca is > 0)
+        {
+            limite = await _context.Licencas.AsNoTracking()
+                .Where(l => l.LicIdLicenca == emp.EmpIdLicenca.Value)
+                .Select(l => l.LicNrQtdObras ?? 0)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        return qtdObras < limite;
+    }
+
+    private static bool TryResolveEmpresas(
+        ObraCadastroSaveRequestDto request,
+        out int idContratante,
+        out int idContratada,
+        out int donoId,
+        out ObraCadastroSaveResultDto? fail)
+    {
+        idContratante = request.IdContratante;
+        idContratada = request.IdContratada;
+        donoId = 0;
+        fail = null;
+
+        if (idContratante <= 0 && idContratada <= 0)
+        {
+            fail = Fail("Informe Contratante e/ou Contratada (pelo menos um).");
+            return false;
+        }
+
+        if (idContratante > 0 && idContratante == idContratada)
+        {
+            fail = Fail("Contratante e Contratada não podem ser a mesma empresa.");
+            return false;
+        }
+
+        // Dono = contratante se houver; senão contratada (paridade prod).
+        donoId = idContratante > 0 ? idContratante : idContratada;
+        return true;
+    }
+
+    /// <summary>
+    /// Opção A: deriva oco_st_contratante_contratada sem radio.
+    /// Match empresa do usuário → t/d; se só um lado → esse lado; se ambos e nenhum match → erro.
+    /// </summary>
+    private static bool TryDerivePapel(
+        int idContratante,
+        int idContratada,
+        HashSet<int> minhas,
+        out string stCc,
+        out ObraCadastroSaveResultDto? fail)
+    {
+        stCc = "d";
+        fail = null;
+
+        var matchT = idContratante > 0 && minhas.Contains(idContratante);
+        var matchD = idContratada > 0 && minhas.Contains(idContratada);
+
+        if (matchT)
+        {
+            stCc = "t";
+            return true;
+        }
+
+        if (matchD)
+        {
+            stCc = "d";
+            return true;
+        }
+
+        if (idContratante > 0 && idContratada <= 0)
+        {
+            stCc = "t";
+            return true;
+        }
+
+        if (idContratada > 0 && idContratante <= 0)
+        {
+            stCc = "d";
+            return true;
+        }
+
+        fail = Fail(
+            "Selecione sua empresa em Contratante ou Contratada (pelo menos um dos dois deve ser uma empresa sua).");
+        return false;
     }
 
     private static bool TryValidate(

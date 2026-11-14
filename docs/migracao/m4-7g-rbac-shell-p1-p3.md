@@ -18,7 +18,7 @@ Paths usados no BFF (minúsculas, como no BD):
 | Campo JSON `shell` | Permissão | Rota (`path`) | Onde aparece |
 |--------------------|-----------|---------------|--------------|
 | `showChart` | `visualizar` | `/chart` | Header — Dashboard geral |
-| `showNovaObra` | `visualizar` | `/obra/cadastro` | Header — Nova obra (+) |
+| `showNovaObra` | `criarNovo` | `/obra/index` **ou** `/obra/lista` | Header — Nova obra (+) · **mesmo gate** do + em Obra/Index (P2) |
 | `showDashboardObra` | `acessarDashboard` | `/dashboard/index` | Header P3 — Dashboard da obra |
 | `showGerarRdo` | `gerarRdo` | `/tarefa/cards` | Toolbar linha título — ícone RDO |
 | `showEditarObra` | `editarObra` | `/tarefa/cards` | Toolbar linha título — lápis |

@@ -126,6 +126,39 @@ public class BffObrasController : ControllerBase
         return Ok(await _obraIndex.MunicipiosByUfAsync(idUf, cancellationToken));
     }
 
+    /// <summary>Proxy ViaCEP (same-origin) — evita bloqueio do browser a viacep.com.br.</summary>
+    [HttpGet("cep/{cep}")]
+    public async Task<IActionResult> LookupCep(string cep, CancellationToken cancellationToken)
+    {
+        if (!TryColaboradorId(out _))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        var digits = new string((cep ?? "").Where(char.IsDigit).ToArray());
+        if (digits.Length != 8)
+        {
+            return BadRequest(new { message = "CEP deve ter 8 dígitos." });
+        }
+
+        try
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(12) };
+            using var res = await http.GetAsync($"https://viacep.com.br/ws/{digits}/json/", cancellationToken);
+            if (!res.IsSuccessStatusCode)
+            {
+                return BadRequest(new { message = "Falha ao consultar CEP." });
+            }
+
+            var json = await res.Content.ReadAsStringAsync(cancellationToken);
+            return Content(json, "application/json");
+        }
+        catch (Exception)
+        {
+            return BadRequest(new { message = "Falha ao consultar CEP." });
+        }
+    }
+
     [HttpGet("lista")]
     public async Task<IActionResult> Lista(
         [FromQuery] string? descricao,
@@ -211,31 +244,20 @@ public class BffObrasController : ControllerBase
                 return Unauthorized(new { message = "Sessão inválida." });
             }
 
-            // Cidade/UF read-only: P3 = sessão; P2 = mesma obra-modelo do Create (vínculo).
-            string? cidade = null;
-            if (ObraSessionHelper.HasObraSelected(HttpContext))
-            {
-                cidade = ObraSessionHelper.GetObraCidadeEstado(HttpContext);
-            }
-
-            if (string.IsNullOrWhiteSpace(cidade))
-            {
-                int? templateId = ObraSessionHelper.HasObraSelected(HttpContext)
-                    ? ObraSessionHelper.GetObraId(HttpContext)
-                    : null;
-                cidade = await _cadastro.ResolveCidadeEstadoTemplateAsync(
-                    colaboradorId,
-                    templateId,
-                    cancellationToken);
-            }
-
-            return Ok(_cadastro.EmptyNova(cidade));
+            int? templateId = ObraSessionHelper.HasObraSelected(HttpContext)
+                ? ObraSessionHelper.GetObraId(HttpContext)
+                : null;
+            // Sem herdar Cidade/UF da sessão — usuário preenche via CEP ou selects.
+            var dtoNova = await _cadastro.BuildNovaAsync(colaboradorId, templateId, cancellationToken);
+            return Ok(dtoNova);
         }
 
+        if (!TryColaboradorId(out var colabEdit))
+            return Unauthorized(new { message = "Sessão inválida." });
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
             return Unauthorized(new { message = "Nenhuma obra selecionada." });
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
-        var dto = await _cadastro.GetAsync(obraId, cancellationToken);
+        var dto = await _cadastro.GetAsync(obraId, colabEdit, cancellationToken);
         if (dto == null) return NotFound(new { message = "Obra nao encontrada." });
         return Ok(dto);
     }
@@ -261,38 +283,61 @@ public class BffObrasController : ControllerBase
             int? templateId = ObraSessionHelper.HasObraSelected(HttpContext)
                 ? ObraSessionHelper.GetObraId(HttpContext)
                 : null;
-            var created = await _cadastro.CreateAsync(colaboradorId, templateId, body, cancellationToken);
+
+            ObraCadastroSaveResultDto created;
+            try
+            {
+                created = await _cadastro.CreateAsync(colaboradorId, templateId, body, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ObraCadastroSaveResultDto
+                {
+                    Ok = false,
+                    ErrorMessage = "Erro ao criar obra: " + (ex.InnerException?.Message ?? ex.Message),
+                });
+            }
+
             if (!created.Ok || created.ObraId is not > 0)
             {
                 return BadRequest(created);
             }
 
-            var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
-            var existingLogin = LoginSessionJson.TryDeserialize(loginDataJson);
-            var selected = await _loginObra.SelectObraAsync(
-                colaboradorId,
-                created.ObraId.Value,
-                existingLogin,
-                cancellationToken);
-            if (selected.Success && selected.LoginData != null)
+            try
             {
-                HttpContext.Session.SetInt32(SessionKeys.ObraId, selected.ObraId);
-                HttpContext.Session.SetString(SessionKeys.ObraNome, selected.ObraNome ?? string.Empty);
-                HttpContext.Session.SetString(SessionKeys.ObraCidadeEstado, selected.ObraCidadeEstado ?? string.Empty);
-                HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, selected.ObraColaboradorId);
-                if (LoginSessionJson.TrySerialize(selected.LoginData, out var loginJson))
+                var loginDataJson = HttpContext.Session.GetString(SessionKeys.LoginData);
+                var existingLogin = LoginSessionJson.TryDeserialize(loginDataJson);
+                var selected = await _loginObra.SelectObraAsync(
+                    colaboradorId,
+                    created.ObraId.Value,
+                    existingLogin,
+                    cancellationToken);
+                if (selected.Success && selected.LoginData != null)
                 {
-                    HttpContext.Session.SetString(SessionKeys.LoginData, loginJson);
+                    HttpContext.Session.SetInt32(SessionKeys.ObraId, selected.ObraId);
+                    HttpContext.Session.SetString(SessionKeys.ObraNome, selected.ObraNome ?? string.Empty);
+                    HttpContext.Session.SetString(SessionKeys.ObraCidadeEstado, selected.ObraCidadeEstado ?? string.Empty);
+                    HttpContext.Session.SetInt32(SessionKeys.ObraColaboradorId, selected.ObraColaboradorId);
+                    if (LoginSessionJson.TrySerialize(selected.LoginData, out var loginJson))
+                    {
+                        HttpContext.Session.SetString(SessionKeys.LoginData, loginJson);
+                    }
                 }
+            }
+            catch
+            {
+                // Obra já gravada — não falhar o save se a troca de sessão/histórico falhar.
             }
 
             return Ok(created);
         }
 
+        if (!TryColaboradorId(out var colabSave))
+            return Unauthorized(new { message = "Sessão inválida." });
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
             return Unauthorized(new { message = "Nenhuma obra selecionada." });
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
-        var result = await _cadastro.SaveAsync(obraId, body, cancellationToken);
+        var result = await _cadastro.SaveAsync(obraId, colabSave, body, cancellationToken);
         if (!result.Ok) return BadRequest(result);
         if (!string.IsNullOrWhiteSpace(result.ObraNome))
             HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome);

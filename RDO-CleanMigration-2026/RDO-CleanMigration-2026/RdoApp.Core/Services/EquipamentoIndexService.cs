@@ -111,6 +111,7 @@ public class EquipamentoIndexService
             IdObraEquipamento = r.OeqIdObraEquipamento,
             TipoEquipamento = r.TipoEquipamento,
             Descricao = r.Descricao,
+            TipoAquisicao = r.TipoAquisicao,
             FabricanteFornecedor = r.FabricanteFornecedor,
             Contato = r.Contato,
             Telefone = FormatPhone(r.Telefone),

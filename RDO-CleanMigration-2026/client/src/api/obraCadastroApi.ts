@@ -1,3 +1,5 @@
+export type ObraCadastroLookup = { id: number; nome: string }
+
 export type ObraCadastro = {
   id: number
   nova?: boolean
@@ -6,12 +8,20 @@ export type ObraCadastro = {
   dataPrevisaoFim: string
   logradouro: string
   numero: string
+  complemento?: string
   bairro: string
   cep: string
+  idUf?: number
+  idMunicipio?: number
+  idContratante?: number
+  idContratada?: number
   areaTotal?: number | null
   areaConstruida?: number | null
   cidadeEstado: string
   finalizada: boolean
+  descricaoFoto?: string
+  empresas?: ObraCadastroLookup[]
+  idsEmpresasDoUsuario?: number[]
 }
 
 export type ObraCadastroSaveResult = {
@@ -19,6 +29,15 @@ export type ObraCadastroSaveResult = {
   errorMessage?: string | null
   obraNome?: string | null
   obraId?: number | null
+}
+
+export type ViaCepResult = {
+  cep?: string
+  logradouro?: string
+  bairro?: string
+  localidade?: string
+  uf?: string
+  erro?: boolean
 }
 
 async function readJson<T>(res: Response, fallback: string): Promise<T> {
@@ -29,8 +48,15 @@ async function readJson<T>(res: Response, fallback: string): Promise<T> {
     const text = await res.text()
     let fromJson: string | undefined
     try {
-      const j = JSON.parse(text) as { message?: string; errorMessage?: string }
-      fromJson = j.message || j.errorMessage
+      const j = JSON.parse(text) as {
+        message?: string
+        errorMessage?: string
+        title?: string
+        detail?: string
+        errors?: Record<string, string[]>
+      }
+      const firstErr = j.errors ? Object.values(j.errors).flat()[0] : undefined
+      fromJson = j.errorMessage || j.message || j.detail || firstErr || j.title
     } catch {
       /* */
     }
@@ -55,12 +81,17 @@ export async function saveObraCadastro(body: {
   dataPrevisaoFim: string
   logradouro: string
   numero: string
+  complemento?: string
   bairro: string
   cep: string
+  idMunicipio: number
+  idContratante: number
+  idContratada: number
   areaTotal?: number | null
   areaConstruida?: number | null
+  foto?: string | null
+  removerFoto?: boolean
 }): Promise<ObraCadastroSaveResult> {
-  // Flag de criação só na query (string) — evita 400 do model binder/JSON em bool `nova`.
   const { nova, ...fields } = body
   const q = nova ? '?nova=true' : ''
   const res = await fetch(`/api/bff/obras/cadastro${q}`, {
@@ -70,4 +101,18 @@ export async function saveObraCadastro(body: {
     body: JSON.stringify(fields),
   })
   return readJson(res, 'salvar obra')
+}
+
+/** Busca CEP via BFF (proxy ViaCEP same-origin). */
+export async function fetchViaCep(cepDigits: string): Promise<ViaCepResult | null> {
+  const cep = cepDigits.replace(/\D/g, '')
+  if (cep.length !== 8) return null
+  const res = await fetch(`/api/bff/obras/cep/${cep}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) return null
+  const data = (await res.json()) as ViaCepResult
+  if (data.erro) return null
+  return data
 }

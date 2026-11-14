@@ -24,6 +24,7 @@ export type EquipamentoIndexItem = {
   idObraEquipamento: number
   tipoEquipamento: string
   descricao: string
+  tipoAquisicao?: string
   fabricanteFornecedor: string
   contato: string
   telefone: string
