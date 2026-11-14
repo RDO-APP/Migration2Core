@@ -48,7 +48,7 @@ Legenda coluna **Dimas:** **◐** parcial vs backlog · **☐** alvo Dimas ainda
 | **M5 web** (Onda B) | RDO + Chart + Dashboard; **C1–C4** ☑ (**80%**) | Outras rotas `/chart/*` | **◐ RDO·laudo** TSK-31…36 · **◐** gráficos U-56/U-57 (Chart CSS + ☰, não Highcharts) |
 | **M5 EQ-M** (plano v1) | — | **⏸ adiado** | **⏸ Mobile** TSK-46…56 · PDF = greenfield RN · **M\*** vence: integrar **EquipamentosMobile**, não rebuild |
 | **M6** | — | JWT/OpenAPI spike; mobile homolog API | **☐ Fundação auth** TSK-07 · **☐ OpenAPI** TSK-40…41 · ponto natural **entrada Dimas** (Application/API v1) |
-| **M7+** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar (código) | smoke 7c/7d · **P4** medição · CRUD | **◐** TSK-31…36 · **☐** TSK-14…16 gestor · **☐** TSK-24…30 · **◐** RBAC 11…13 |
+| **M7+** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar · **Obra** Nova/editar Opção A (`c3cede9`/`97b817a`) | smoke Nova obra pós-deploy · **P4** medição · CRUD gestor fino | **◐** TSK-31…36 · **◐** TSK-17…23 escrita obra · **☐** TSK-14…16 · **☐** TSK-24…30 · **◐** RBAC 11…13 |
 | **M8** | Branch CI, roteiro D→E | Runway &lt;2 min; gate workflow | **◐ Infra deploy** (parte TSK-01…05) · **☐** pipeline “produto Dimas” · **☐** ETL TSK-43 (**Onda 6 only**, adiado ✓) |
 | **M9** | — | D1–D7 pacote homolog v1 | **◐** “release homolog v1” · cobre **fatia** operador web+doc · **☐** D4 mobile homolog · **☐** D7 pacote M1 pleno |
 | **M10** | — | Onda 2 / prep Linux L1 | **☐** expansão telas + **☐** cutover Onda 6 TSK-43…45 · prep pós-v1, não Sprint linear |
