@@ -446,6 +446,8 @@ export interface TarefaCadastroSaveRequest {
   codigoParalizacao?: string
   listaIdsObraColaborador?: number[]
   listaIdsObraEquipamento?: number[]
+  listaAcidentes?: TarefaCadastroAcidente[]
+  listaIdsAcidentesRemovidos?: number[]
 }
 
 export interface TarefaCadastroSaveResult {

@@ -95,16 +95,28 @@ export function tarefaPassaFiltro(t: TarefaCard, f: CardsFiltroState): boolean {
   return true
 }
 
+/** Filtros que agem em tarefas — sem isso, etapa vazia deve aparecer (paridade ObterEtapaTarefa). */
+function hasTaskLevelFilter(f: CardsFiltroState): boolean {
+  return (
+    f.descricao.trim().length > 0 ||
+    f.statusTarefa > 0 ||
+    f.dataInicial.trim().length > 0 ||
+    f.dataFinalPlanejada.trim().length > 0 ||
+    f.dataInicialExecutada.trim().length > 0 ||
+    f.dataFinalExecutada.trim().length > 0
+  )
+}
+
 export function aplicarFiltroEtapas(
   etapas: EtapaComTarefas[],
   f: CardsFiltroState,
 ): EtapaComTarefas[] {
-  const filtradas = etapas
+  const dropEmpty = hasTaskLevelFilter(f)
+  return etapas
     .filter((e) => (f.idEtapa > 0 ? e.id === f.idEtapa : true))
     .map((e) => ({
       ...e,
       tarefas: e.tarefas.filter((t) => tarefaPassaFiltro(t, f)),
     }))
-    .filter((e) => e.tarefas.length > 0)
-  return filtradas
+    .filter((e) => !dropEmpty || e.tarefas.length > 0)
 }

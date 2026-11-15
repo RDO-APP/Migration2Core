@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-15 ~14:15 — tip EQ-R colab/equip/P3/medição (perfis lado · validação Engenheiro · etapa vazia P3 · novo equip na tarefa · tipos select · medição mesmo dia) · backlog **I18N-ES-01** · CAT-PARALIZ-01 · polish **1.5a**  
+**Atualizado:** 2026-11-15 ~14:55 — tip EQ-R P3 etapa vazia (cardsFiltro) · marcar todos colab/equip · novo colab/acidente na tarefa · backlog **I18N-ES-01** · CAT-PARALIZ-01 · polish **1.5a**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -413,7 +413,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Publish/deploy** tip EQ-R colab/equip/P3/medição → smoke Georges: perfis só Contratada+Colaborador · Engenheiro exige campos completos · etapa vazia no P3 · **NOVO EQUIPAMENTO** na tarefa · select tipos no menu Equipamentos · Nova medição **mesmo dia** OK.
+1. **Publish/deploy** tip EQ-R (inclui cardsFiltro etapa vazia + marcar todos + novo colab/acidente na tarefa) → smoke Georges: etapa sem tarefa no P3 · marcar todos nos modais · NOVO COLABORADOR / NOVO ACIDENTE · NOVO EQUIPAMENTO · medição mesmo dia.
 2. **Smoke G5** — drawer 9 itens ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2).
 3. **Próxima SPA:** Relatórios (`produtividade` / `efetivo diário` / `medição`).
 4. Lucio confirma polish **1.5a** cadastro etapa quando puder.

@@ -201,6 +201,7 @@ public class TarefaCadastroSaveService
             _context.Tarefas.Add(created);
             await _context.SaveChangesAsync(cancellationToken);
             await SyncVinculosAsync(created.TarIdTarefa, obraId, request, cancellationToken);
+            await SyncAcidentesAsync(created.TarIdTarefa, request, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return new TarefaCadastroSaveResultDto { Ok = true, Id = created.TarIdTarefa };
         }
@@ -305,6 +306,7 @@ public class TarefaCadastroSaveService
                 });
             }
 
+            await SyncAcidentesAsync(clone.TarIdTarefa, request, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return new TarefaCadastroSaveResultDto { Ok = true, Id = clone.TarIdTarefa };
         }
@@ -335,8 +337,90 @@ public class TarefaCadastroSaveService
         }
 
         await SyncVinculosAsync(entity.TarIdTarefa, obraId, request, cancellationToken);
+        await SyncAcidentesAsync(entity.TarIdTarefa, request, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return new TarefaCadastroSaveResultDto { Ok = true, Id = entity.TarIdTarefa };
+    }
+
+    private async Task SyncAcidentesAsync(
+        int tarefaId,
+        TarefaCadastroSaveRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        if (request.ListaAcidentes == null && request.ListaIdsAcidentesRemovidos == null)
+        {
+            return;
+        }
+
+        var removidos = (request.ListaIdsAcidentesRemovidos ?? [])
+            .Where(id => id > 0)
+            .Distinct()
+            .ToHashSet();
+        if (removidos.Count > 0)
+        {
+            var rows = await _context.Acidentes
+                .Where(a => a.AciIdTarefa == tarefaId && removidos.Contains(a.AciIdAcidente))
+                .ToListAsync(cancellationToken);
+            var ids = rows.Select(r => r.AciIdAcidente).ToList();
+            if (ids.Count > 0)
+            {
+                var links = await _context.AcidenteColaboradores
+                    .Where(x => ids.Contains(x.AccIdAcidente))
+                    .ToListAsync(cancellationToken);
+                _context.AcidenteColaboradores.RemoveRange(links);
+                _context.Acidentes.RemoveRange(rows);
+            }
+        }
+
+        foreach (var item in request.ListaAcidentes ?? [])
+        {
+            var desc = (item.Descricao ?? "").Trim();
+            if (desc.Length < 3)
+            {
+                continue;
+            }
+
+            DateTime? when = null;
+            var raw = (item.DataHora ?? "").Trim();
+            if (raw.Length > 0)
+            {
+                if (DateTime.TryParseExact(
+                        raw,
+                        new[] { "dd/MM/yyyy HH:mm", "dd/MM/yyyy", "yyyy-MM-dd HH:mm", "yyyy-MM-dd" },
+                        PtBr,
+                        DateTimeStyles.None,
+                        out var parsed))
+                {
+                    when = parsed;
+                }
+            }
+
+            if (item.Id > 0)
+            {
+                var existing = await _context.Acidentes
+                    .FirstOrDefaultAsync(
+                        a => a.AciIdAcidente == item.Id && a.AciIdTarefa == tarefaId,
+                        cancellationToken);
+                if (existing == null)
+                {
+                    continue;
+                }
+
+                existing.AciDsAcidente = desc;
+                existing.AciDtDataHora = when;
+                existing.AciStAfastamento = item.HouveAfastamento ? "s" : "n";
+            }
+            else
+            {
+                _context.Acidentes.Add(new Acidente
+                {
+                    AciIdTarefa = tarefaId,
+                    AciDsAcidente = desc,
+                    AciDtDataHora = when,
+                    AciStAfastamento = item.HouveAfastamento ? "s" : "n",
+                });
+            }
+        }
     }
 
     private async Task SyncVinculosAsync(

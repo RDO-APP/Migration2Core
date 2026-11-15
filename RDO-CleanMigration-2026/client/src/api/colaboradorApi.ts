@@ -157,6 +157,7 @@ export type ColaboradorCadastroSaveResult = {
   ok: boolean
   errorMessage?: string
   idColaborador?: number
+  idObraColaborador?: number
 }
 
 export async function fetchColaboradorCadastro(id: number): Promise<ColaboradorCadastroForm> {

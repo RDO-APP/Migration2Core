@@ -59,4 +59,5 @@ public sealed class ColaboradorCadastroSaveResultDto
     public bool Ok { get; init; }
     public string? ErrorMessage { get; init; }
     public int IdColaborador { get; init; }
+    public int IdObraColaborador { get; init; }
 }

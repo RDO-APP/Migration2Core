@@ -60,6 +60,8 @@ export function buildSaveRequest(
     codigoParalizacao: string
     listaIdsObraColaborador?: number[]
     listaIdsObraEquipamento?: number[]
+    listaAcidentes?: TarefaCadastro['listaAcidentes']
+    listaIdsAcidentesRemovidos?: number[]
   },
   novaMedicao: boolean,
 ): TarefaCadastroSaveRequest {
@@ -86,6 +88,8 @@ export function buildSaveRequest(
     codigoParalizacao: form.codigoParalizacao,
     listaIdsObraColaborador: form.listaIdsObraColaborador,
     listaIdsObraEquipamento: form.listaIdsObraEquipamento,
+    listaAcidentes: form.listaAcidentes,
+    listaIdsAcidentesRemovidos: form.listaIdsAcidentesRemovidos,
   }
 }
 

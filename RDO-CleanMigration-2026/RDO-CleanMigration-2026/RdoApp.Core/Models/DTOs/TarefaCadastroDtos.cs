@@ -132,6 +132,16 @@ public sealed class TarefaCadastroSaveRequestDto
     public string? CodigoParalizacao { get; set; }
     public List<int>? ListaIdsObraColaborador { get; set; }
     public List<int>? ListaIdsObraEquipamento { get; set; }
+    public List<TarefaCadastroAcidenteSaveDto>? ListaAcidentes { get; set; }
+    public List<int>? ListaIdsAcidentesRemovidos { get; set; }
+}
+
+public sealed class TarefaCadastroAcidenteSaveDto
+{
+    public int Id { get; set; }
+    public string Descricao { get; set; } = "";
+    public string DataHora { get; set; } = "";
+    public bool HouveAfastamento { get; set; }
 }
 
 public sealed class TarefaCadastroSaveResultDto

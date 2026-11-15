@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchTarefaCadastro, fetchTarefaCadastroNovo, saveTarefaCadastro } from '../api/tarefaApi'
 import type {
   TarefaCadastro,
+  TarefaCadastroAcidente,
   TarefaCadastroColaborador,
   TarefaCadastroEquipamento,
   TarefaCadastroImagem,
@@ -11,6 +12,12 @@ import {
   saveEquipamentoCadastro,
   type EquipamentoCadastroLookup,
 } from '../api/equipamentoApi'
+import {
+  fetchColaboradorCadastro,
+  fetchColaboradorIndexMunicipios,
+  saveColaboradorCadastro,
+  type ColaboradorIndexLookup,
+} from '../api/colaboradorApi'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
@@ -85,7 +92,7 @@ export function TarefaCadastroPage() {
   const [fotos, setFotos] = useState<TarefaCadastroImagem[]>([])
   const [fotoNome, setFotoNome] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
-  const [modal, setModal] = useState<null | 'historico' | 'colab' | 'equip' | 'equipNovo'>(null)
+  const [modal, setModal] = useState<null | 'historico' | 'colab' | 'equip' | 'equipNovo' | 'colabNovo' | 'acidente'>(null)
   const [pickedColab, setPickedColab] = useState<Set<number>>(new Set())
   const [pickedEquip, setPickedEquip] = useState<Set<number>>(new Set())
   const [tiposEquip, setTiposEquip] = useState<EquipamentoCadastroLookup[]>([])
@@ -101,6 +108,33 @@ export function TarefaCadastroPage() {
     telefone: '',
   })
   const [savingEquip, setSavingEquip] = useState(false)
+  const [acidentes, setAcidentes] = useState<TarefaCadastroAcidente[]>([])
+  const [acidentesRemovidos, setAcidentesRemovidos] = useState<number[]>([])
+  const [novoAcidente, setNovoAcidente] = useState({ descricao: '', dataHora: '', houveAfastamento: false })
+  const [colabLookups, setColabLookups] = useState<{
+    grupos: ColaboradorIndexLookup[]
+    cargos: ColaboradorIndexLookup[]
+    ufs: ColaboradorIndexLookup[]
+  }>({ grupos: [], cargos: [], ufs: [] })
+  const [municipiosColab, setMunicipiosColab] = useState<ColaboradorIndexLookup[]>([])
+  const [savingColab, setSavingColab] = useState(false)
+  const [novoColab, setNovoColab] = useState({
+    idGrupo: 0,
+    nome: '',
+    idCargo: 0,
+    cpf: '',
+    sexo: 'S',
+    dataNascimento: '',
+    telefonePrincipal: '',
+    email: '',
+    logradouro: '',
+    numeroEndereco: '',
+    cep: '',
+    idUf: 0,
+    idMunicipio: 0,
+    senha: '',
+    confirmacaoSenha: '',
+  })
 
   const visualizar = flags.visualizar
   const novaMedicao = flags.novaMedicao && !visualizar
@@ -134,6 +168,8 @@ export function TarefaCadastroPage() {
         setColabs(dto.listaColaboradores ?? [])
         setEquips(dto.listaEquipamentos ?? [])
         setFotos(dto.listaImagens ?? [])
+        setAcidentes(dto.listaAcidentes ?? [])
+        setAcidentesRemovidos([])
       })
       .catch((e: unknown) => {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Falha ao carregar tarefa.')
@@ -253,6 +289,205 @@ export function TarefaCadastroPage() {
     setModal(null)
   }
 
+  function togglePickAllColab() {
+    const pool = data?.colaboradoresObra ?? []
+    if (pool.length === 0) return
+    if (pickedColab.size === pool.length) setPickedColab(new Set())
+    else setPickedColab(new Set(pool.map((c) => c.idObraColaborador)))
+  }
+
+  function togglePickAllEquip() {
+    const pool = data?.equipamentosObra ?? []
+    if (pool.length === 0) return
+    if (pickedEquip.size === pool.length) setPickedEquip(new Set())
+    else setPickedEquip(new Set(pool.map((e) => e.idObraEquipamento)))
+  }
+
+  function isPerfilLeve(idGrupo: number) {
+    const n = (colabLookups.grupos.find((g) => g.id === idGrupo)?.nome ?? '').trim().toLowerCase()
+    return n === 'colaborador' || n === 'terceirizado'
+  }
+
+  async function openNovoColabModal() {
+    try {
+      const blank = await fetchColaboradorCadastro(0)
+      setColabLookups({ grupos: blank.grupos ?? [], cargos: blank.cargos ?? [], ufs: blank.ufs ?? [] })
+      setMunicipiosColab([])
+      setNovoColab({
+        idGrupo: 0,
+        nome: '',
+        idCargo: 0,
+        cpf: '',
+        sexo: 'S',
+        dataNascimento: '',
+        telefonePrincipal: '',
+        email: '',
+        logradouro: '',
+        numeroEndereco: '',
+        cep: '',
+        idUf: 0,
+        idMunicipio: 0,
+        senha: '',
+        confirmacaoSenha: '',
+      })
+      setModal('colabNovo')
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Falha ao abrir cadastro de colaborador.')
+    }
+  }
+
+  async function onNovoColabUf(idUf: number) {
+    setNovoColab((prev) => ({ ...prev, idUf, idMunicipio: 0 }))
+    if (idUf <= 0) {
+      setMunicipiosColab([])
+      return
+    }
+    try {
+      setMunicipiosColab(await fetchColaboradorIndexMunicipios(idUf))
+    } catch {
+      setMunicipiosColab([])
+    }
+  }
+
+  async function saveNovoColaborador() {
+    const leve = isPerfilLeve(novoColab.idGrupo)
+    if (novoColab.idGrupo <= 0) {
+      showToast('error', 'O Perfil deve ser preenchido.')
+      return
+    }
+    if (novoColab.nome.trim().length < 3) {
+      showToast('error', 'Por favor, introduza pelo menos três caracteres no Nome.')
+      return
+    }
+    if (novoColab.idCargo <= 0) {
+      showToast('error', 'O Cargo deve ser preenchido.')
+      return
+    }
+    if (!novoColab.numeroEndereco.trim()) {
+      showToast('error', 'O Número deve ser preenchido.')
+      return
+    }
+    if (novoColab.cep.replace(/\D/g, '').length !== 8) {
+      showToast('error', 'O CEP deve ser preenchido.')
+      return
+    }
+    if (!leve) {
+      if (novoColab.cpf.replace(/\D/g, '').length !== 11) {
+        showToast('error', 'O CPF deve ser preenchido.')
+        return
+      }
+      if (novoColab.sexo !== 'M' && novoColab.sexo !== 'F') {
+        showToast('error', 'O Sexo deve ser preenchido.')
+        return
+      }
+      if (novoColab.dataNascimento.replace(/\D/g, '').length !== 8) {
+        showToast('error', 'A Data de Nascimento deve ser preenchida.')
+        return
+      }
+      if (novoColab.telefonePrincipal.replace(/\D/g, '').length < 10) {
+        showToast('error', 'O Telefone Principal deve ser preenchido.')
+        return
+      }
+      if (!novoColab.email.trim()) {
+        showToast('error', 'O E-mail precisa ser preenchido.')
+        return
+      }
+      if (!novoColab.logradouro.trim()) {
+        showToast('error', 'O Logradouro deve ser preenchido.')
+        return
+      }
+      if (novoColab.idMunicipio <= 0) {
+        showToast('error', 'O Município deve ser preenchido.')
+        return
+      }
+      if (novoColab.senha.length < 4 || novoColab.senha !== novoColab.confirmacaoSenha) {
+        showToast('error', 'Senha / confirmação inválidas.')
+        return
+      }
+    }
+    setSavingColab(true)
+    try {
+      const result = await saveColaboradorCadastro({
+        idColaborador: 0,
+        cpf: novoColab.cpf,
+        idGrupo: novoColab.idGrupo,
+        nome: novoColab.nome,
+        idCargo: novoColab.idCargo,
+        sexo: novoColab.sexo,
+        dataNascimento: novoColab.dataNascimento,
+        telefonePrincipal: novoColab.telefonePrincipal,
+        telefoneSecundario: '',
+        email: novoColab.email,
+        crea: '',
+        dataContratacao: '',
+        logradouro: novoColab.logradouro,
+        numeroEndereco: novoColab.numeroEndereco,
+        complemento: '',
+        bairro: '',
+        idMunicipio: novoColab.idMunicipio,
+        cep: novoColab.cep,
+        senha: novoColab.senha,
+        confirmacaoSenha: novoColab.confirmacaoSenha,
+      })
+      if (!result.ok) {
+        showToast('error', result.errorMessage || 'Não foi possível salvar o colaborador.')
+        return
+      }
+      const grupoNome = colabLookups.grupos.find((g) => g.id === novoColab.idGrupo)?.nome ?? ''
+      const cargoNome = colabLookups.cargos.find((c) => c.id === novoColab.idCargo)?.nome ?? ''
+      const row: TarefaCadastroColaborador = {
+        id: result.idColaborador ?? 0,
+        idObraColaborador: result.idObraColaborador ?? 0,
+        nome: novoColab.nome.trim(),
+        descricaoCargo: cargoNome,
+        telefonePrincipal: novoColab.telefonePrincipal,
+        email: novoColab.email,
+        descricaoGrupo: grupoNome,
+      }
+      setColabs((prev) => [...prev, row])
+      setData((prev) =>
+        prev ? { ...prev, colaboradoresObra: [...(prev.colaboradoresObra ?? []), row] } : prev,
+      )
+      showToast('success', 'Colaborador criado e adicionado à tarefa.')
+      setModal(null)
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Não foi possível salvar o colaborador.')
+    } finally {
+      setSavingColab(false)
+    }
+  }
+
+  function openNovoAcidenteModal() {
+    setNovoAcidente({ descricao: '', dataHora: '', houveAfastamento: false })
+    setModal('acidente')
+  }
+
+  function saveNovoAcidenteLocal() {
+    if (novoAcidente.descricao.trim().length < 3) {
+      showToast('error', 'A Descrição do Acidente deve ser preenchida')
+      return
+    }
+    if (novoAcidente.dataHora.replace(/\D/g, '').length < 8) {
+      showToast('error', 'A Data/Hora do Acidente deve ser preenchida.')
+      return
+    }
+    setAcidentes((prev) => [
+      ...prev,
+      {
+        id: -Date.now(),
+        descricao: novoAcidente.descricao.trim(),
+        dataHora: novoAcidente.dataHora.trim(),
+        houveAfastamento: novoAcidente.houveAfastamento,
+      },
+    ])
+    setModal(null)
+  }
+
+  function removeAcidente(id: number) {
+    setAcidentes((prev) => prev.filter((a) => a.id !== id))
+    if (id > 0) setAcidentesRemovidos((prev) => [...prev, id])
+  }
+
   function onEscolherFoto(file: File | undefined) {
     if (!file) {
       setFotoNome('')
@@ -321,6 +556,8 @@ export function TarefaCadastroPage() {
             codigoParalizacao,
             listaIdsObraColaborador: colabs.map((c) => c.idObraColaborador).filter((id) => id > 0),
             listaIdsObraEquipamento: equips.map((e) => e.idObraEquipamento).filter((id) => id > 0),
+            listaAcidentes: acidentes,
+            listaIdsAcidentesRemovidos: acidentesRemovidos,
           },
           novaMedicao,
         ),
@@ -696,11 +933,7 @@ export function TarefaCadastroPage() {
                     <button type="button" className="btn btn-blue btn-block-xs" onClick={openColabModal}>
                       <i className="fa fa-users" aria-hidden="true" /> ADICIONAR COLABORADOR
                     </button>
-                    <button
-                      type="button"
-                      className="btn btn-blue btn-block-xs"
-                      onClick={() => showToast('error', 'Cadastro de novo colaborador da obra ainda não está nesta tela. Use Adicionar colaborador para quem já está na obra.')}
-                    >
+                    <button type="button" className="btn btn-blue btn-block-xs" onClick={() => void openNovoColabModal()}>
                       <i className="fa fa-user-plus" aria-hidden="true" /> NOVO COLABORADOR
                     </button>
                   </div>
@@ -836,11 +1069,7 @@ export function TarefaCadastroPage() {
                     <h4>ACIDENTES</h4>
                     {!visualizar ? (
                       <div className="pull-right">
-                        <button
-                          type="button"
-                          className="btn btn-blue btn-block-xs"
-                          onClick={() => showToast('error', 'Cadastro de acidente nesta tela entra no próximo recorte. A lista já lê o que existe no banco.')}
-                        >
+                        <button type="button" className="btn btn-blue btn-block-xs" onClick={openNovoAcidenteModal}>
                           <i className="fa fa-plus" aria-hidden="true" /> NOVO ACIDENTE
                         </button>
                       </div>
@@ -857,12 +1086,12 @@ export function TarefaCadastroPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {(data.listaAcidentes ?? []).length === 0 ? (
+                        {acidentes.length === 0 ? (
                           <tr>
                             <td colSpan={5}>Nenhum registro encontrado.</td>
                           </tr>
                         ) : (
-                          (data.listaAcidentes ?? []).map((a) => (
+                          acidentes.map((a) => (
                             <tr key={a.id}>
                               <td>{dash(a.descricao)}</td>
                               <td>{dash(a.dataHora)}</td>
@@ -872,7 +1101,18 @@ export function TarefaCadastroPage() {
                                   <i className="fa fa-eye" aria-hidden="true" />
                                 </button>
                               </td>
-                              <td />
+                              <td>
+                                {!visualizar ? (
+                                  <button
+                                    type="button"
+                                    className="btn btn-simple btn-just-icon"
+                                    title="Remover"
+                                    onClick={() => removeAcidente(a.id)}
+                                  >
+                                    <i className="fa fa-trash-o" aria-hidden="true" />
+                                  </button>
+                                ) : null}
+                              </td>
                             </tr>
                           ))
                         )}
@@ -995,7 +1235,17 @@ export function TarefaCadastroPage() {
                         <table className="table table-striped">
                           <thead>
                             <tr>
-                              <th />
+                              <th>
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    (data.colaboradoresObra ?? []).length > 0 &&
+                                    pickedColab.size === (data.colaboradoresObra ?? []).length
+                                  }
+                                  onChange={togglePickAllColab}
+                                  title="Marcar todos"
+                                />
+                              </th>
                               <th>Nome</th>
                               <th>Cargo</th>
                               <th>Perfil</th>
@@ -1055,7 +1305,17 @@ export function TarefaCadastroPage() {
                         <table className="table table-striped">
                           <thead>
                             <tr>
-                              <th />
+                              <th>
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    (data.equipamentosObra ?? []).length > 0 &&
+                                    pickedEquip.size === (data.equipamentosObra ?? []).length
+                                  }
+                                  onChange={togglePickAllEquip}
+                                  title="Marcar todos"
+                                />
+                              </th>
                               <th>Tipo</th>
                               <th>Descrição</th>
                             </tr>
@@ -1216,6 +1476,155 @@ export function TarefaCadastroPage() {
                     >
                       SALVAR
                     </button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+
+            {modal === 'colabNovo' ? (
+              <div className="tarefa-modal-backdrop" role="presentation" onClick={() => setModal(null)}>
+                <div className="tarefa-modal" role="dialog" onClick={(e) => e.stopPropagation()}>
+                  <div className="tarefa-modal-header">
+                    <h4>Colaborador</h4>
+                    <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>
+                      <i className="icon-close" aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="tarefa-modal-body">
+                    <div className="form-group">
+                      <label className="control-label">Perfil do Colaborador<span style={{ color: 'red' }}>*</span></label>
+                      <select
+                        className="form-control"
+                        value={novoColab.idGrupo}
+                        onChange={(e) => setNovoColab({ ...novoColab, idGrupo: Number(e.target.value) || 0 })}
+                      >
+                        <option value={0}>Selecione...</option>
+                        {colabLookups.grupos.map((g) => (
+                          <option key={g.id} value={g.id}>{g.nome}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Nome<span style={{ color: 'red' }}>*</span></label>
+                      <input className="form-control" maxLength={50} value={novoColab.nome} onChange={(e) => setNovoColab({ ...novoColab, nome: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Cargo<span style={{ color: 'red' }}>*</span></label>
+                      <select className="form-control" value={novoColab.idCargo} onChange={(e) => setNovoColab({ ...novoColab, idCargo: Number(e.target.value) || 0 })}>
+                        <option value={0}>Selecione...</option>
+                        {colabLookups.cargos.map((c) => (
+                          <option key={c.id} value={c.id}>{c.nome}</option>
+                        ))}
+                      </select>
+                    </div>
+                    {!isPerfilLeve(novoColab.idGrupo) ? (
+                      <>
+                        <div className="form-group">
+                          <label className="control-label">CPF<span style={{ color: 'red' }}>*</span></label>
+                          <input className="form-control" value={novoColab.cpf} onChange={(e) => setNovoColab({ ...novoColab, cpf: e.target.value })} />
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Sexo<span style={{ color: 'red' }}>*</span></label>
+                          <select className="form-control" value={novoColab.sexo} onChange={(e) => setNovoColab({ ...novoColab, sexo: e.target.value })}>
+                            <option value="S">Selecione...</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Data de Nascimento<span style={{ color: 'red' }}>*</span></label>
+                          <input className="form-control" placeholder="dd/mm/aaaa" value={novoColab.dataNascimento} onChange={(e) => setNovoColab({ ...novoColab, dataNascimento: e.target.value })} />
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Telefone Principal<span style={{ color: 'red' }}>*</span></label>
+                          <input className="form-control" value={novoColab.telefonePrincipal} onChange={(e) => setNovoColab({ ...novoColab, telefonePrincipal: e.target.value })} />
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">E-mail<span style={{ color: 'red' }}>*</span></label>
+                          <input className="form-control" value={novoColab.email} onChange={(e) => setNovoColab({ ...novoColab, email: e.target.value })} />
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Logradouro<span style={{ color: 'red' }}>*</span></label>
+                          <input className="form-control" value={novoColab.logradouro} onChange={(e) => setNovoColab({ ...novoColab, logradouro: e.target.value })} />
+                        </div>
+                      </>
+                    ) : null}
+                    <div className="form-group">
+                      <label className="control-label">CEP<span style={{ color: 'red' }}>*</span></label>
+                      <input className="form-control" value={novoColab.cep} onChange={(e) => setNovoColab({ ...novoColab, cep: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Número<span style={{ color: 'red' }}>*</span></label>
+                      <input className="form-control" value={novoColab.numeroEndereco} onChange={(e) => setNovoColab({ ...novoColab, numeroEndereco: e.target.value })} />
+                    </div>
+                    {!isPerfilLeve(novoColab.idGrupo) ? (
+                      <>
+                        <div className="form-group">
+                          <label className="control-label">UF<span style={{ color: 'red' }}>*</span></label>
+                          <select className="form-control" value={novoColab.idUf} onChange={(e) => void onNovoColabUf(Number(e.target.value) || 0)}>
+                            <option value={0}>Selecione...</option>
+                            {colabLookups.ufs.map((u) => (
+                              <option key={u.id} value={u.id}>{u.nome}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Município<span style={{ color: 'red' }}>*</span></label>
+                          <select className="form-control" value={novoColab.idMunicipio} onChange={(e) => setNovoColab({ ...novoColab, idMunicipio: Number(e.target.value) || 0 })}>
+                            <option value={0}>Selecione...</option>
+                            {municipiosColab.map((m) => (
+                              <option key={m.id} value={m.id}>{m.nome}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Senha<span style={{ color: 'red' }}>*</span></label>
+                          <input type="password" className="form-control" value={novoColab.senha} onChange={(e) => setNovoColab({ ...novoColab, senha: e.target.value })} />
+                        </div>
+                        <div className="form-group">
+                          <label className="control-label">Confirmação Senha<span style={{ color: 'red' }}>*</span></label>
+                          <input type="password" className="form-control" value={novoColab.confirmacaoSenha} onChange={(e) => setNovoColab({ ...novoColab, confirmacaoSenha: e.target.value })} />
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                  <div className="tarefa-modal-footer">
+                    <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>CANCELAR</button>
+                    <button type="button" className="btn btn-blue" disabled={savingColab} onClick={() => void saveNovoColaborador()}>SALVAR</button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {modal === 'acidente' ? (
+              <div className="tarefa-modal-backdrop" role="presentation" onClick={() => setModal(null)}>
+                <div className="tarefa-modal" role="dialog" onClick={(e) => e.stopPropagation()}>
+                  <div className="tarefa-modal-header">
+                    <h4>Acidente</h4>
+                    <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>
+                      <i className="icon-close" aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="tarefa-modal-body">
+                    <div className="form-group">
+                      <label className="control-label">Descrição<span style={{ color: 'red' }}>*</span></label>
+                      <textarea className="form-control" rows={3} value={novoAcidente.descricao} onChange={(e) => setNovoAcidente({ ...novoAcidente, descricao: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Data/Hora<span style={{ color: 'red' }}>*</span></label>
+                      <input className="form-control" placeholder="dd/mm/aaaa HH:mm" value={novoAcidente.dataHora} onChange={(e) => setNovoAcidente({ ...novoAcidente, dataHora: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>
+                        <input type="checkbox" checked={novoAcidente.houveAfastamento} onChange={(e) => setNovoAcidente({ ...novoAcidente, houveAfastamento: e.target.checked })} />{' '}
+                        Houve afastamento
+                      </label>
+                    </div>
+                  </div>
+                  <div className="tarefa-modal-footer">
+                    <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>CANCELAR</button>
+                    <button type="button" className="btn btn-blue" onClick={saveNovoAcidenteLocal}>ADICIONAR</button>
                   </div>
                 </div>
               </div>

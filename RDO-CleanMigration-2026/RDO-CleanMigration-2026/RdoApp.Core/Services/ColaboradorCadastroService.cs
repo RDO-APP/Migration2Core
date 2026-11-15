@@ -414,7 +414,12 @@ public class ColaboradorCadastroService
         }
 
         await _context.SaveChangesAsync(cancellationToken);
-        return new ColaboradorCadastroSaveResultDto { Ok = true, IdColaborador = colaborador.ColIdColaborador };
+        return new ColaboradorCadastroSaveResultDto
+        {
+            Ok = true,
+            IdColaborador = colaborador.ColIdColaborador,
+            IdObraColaborador = obraColab.OcoIdObraColaborador,
+        };
     }
 
     private void ApplyPersonFields(
