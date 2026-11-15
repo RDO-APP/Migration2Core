@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-15 ~14:55 — tip EQ-R P3 etapa vazia (cardsFiltro) · marcar todos colab/equip · novo colab/acidente na tarefa · backlog **I18N-ES-01** · CAT-PARALIZ-01 · polish **1.5a**  
+**Atualizado:** 2026-11-15 ~15:05 — tip **`5f747b5`** (cardsFiltro etapa vazia · marcar todos · novo colab/acidente · tipos equip · medição mesmo dia) · % marcos recalibrados · Dimas clusters iniciados **~75–80%** (≠ ~40% stale) · árvore páginas = manual **§13**  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -122,7 +122,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — smoke **G5** drawer pós-`a4159be` · Relatórios stubs · impressora · **CAT-PARALIZ-01** · 3.1.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish/deploy** tip **`5f747b5`** + smoke Georges · depois smoke **G5** · Relatórios stubs · impressora · **CAT-PARALIZ-01** · 3.1.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -130,7 +130,9 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 ### Pendências por marco (snapshot)
 
-**%** = fatia **deste** marco (não peso no projeto inteiro). Homolog operador web (M0–M5 web + fatia M7) ≈ **~55–60%** do caminho até **M9 D1**. Valor Dimas visível na web ≈ **~40%** (P1–P3 + RDO + Chart no ar).
+**%** = fatia **deste** marco (não peso no projeto inteiro).
+
+**Leitura rápida (2026-11-15):** caminho homolog operador até **M9 D1** ≈ **~65–70%**. **Clusters Dimas já iniciados** (obra/etapa/tarefa, RDO/Chart, gestor P6a, P4 medição) ≈ **~75–80%** — o **~40%** antigo era snapshot out/26 (só P1–P3+RDO+Chart) e **não** acompanha M7/P6a. **PDF Dimas total** (fundação limpa + mobile⏸ + ETL Onda 6) ≈ **~45–50%** — por isso o “valor Dimas global” sobe mais devagar que os marcos M* web. Detalhe: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
@@ -140,13 +142,13 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **W0.5 / E2E** | **95** | Selecionar + Cards React; **M3 PASS** | — (toolbar já M4) |
 | **M2** | **100** | **FECHADO** | — |
 | **M3** | **95** | **FECHADO** | E2E passos 6–7 opcional |
-| **M4** | **88** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ | Smoke **G5/G6** · **UI-M1/M2c** · UI-M5 senha · congela EQ-W formal |
-| **M5 web** | **93** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** |
+| **M4** | **90** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ · P3 etapa vazia + marcar todos + stubs novo (`5f747b5`) | Smoke **G5/G6** · **UI-M1/M2c** · UI-M5 senha · congela EQ-W formal |
+| **M5 web** | **94** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** · polish Chart tiles |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **90** | **7a–7d** · LISTA/Efetivo/Obra · **P6a** index+cadastros · **Paralizações** SPA+BFF `a4159be` | smoke G5 · Relatórios stubs · formatação impressora · **3.1** · **CAT-PARALIZ-01** · gaps Efetivo Copiar/Novo · Obra contratante/logo · **não** P6b |
+| **M7+** | **92** | **7a–7d** · LISTA/Efetivo/Obra · **P6a** index+cadastros · **Paralizações** `a4159be` · **P4** medição (mesmo dia OK) · colab validação/ViaCEP · tipos equip · novo colab/acidente/equip na tarefa | smoke G5 · Relatórios stubs · formatação impressora · **3.1** · **CAT-PARALIZ-01** · Efetivo Copiar/Novo · polish **1.5a** · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
-| **M9** | **8** | Fatia operador no ar | D1–D7 pacote homolog v1 |
+| **M9** | **12** | Fatia operador web ampla no Git | D1–D7 pacote homolog v1 · smoke pós-`5f747b5` · D4 mobile |
 | **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
 
 ---
@@ -413,7 +415,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Publish/deploy** tip EQ-R (inclui cardsFiltro etapa vazia + marcar todos + novo colab/acidente na tarefa) → smoke Georges: etapa sem tarefa no P3 · marcar todos nos modais · NOVO COLABORADOR / NOVO ACIDENTE · NOVO EQUIPAMENTO · medição mesmo dia.
+1. **Commit/push docs** (orquestrador + manual §13 + dimas %) se ainda locais → **publish/deploy** tip **`5f747b5`** → smoke Georges: etapa vazia P3 · marcar todos · NOVO COLAB/ACIDENTE/EQUIP · medição mesmo dia · tipos equip · colab Engenheiro/ViaCEP.
 2. **Smoke G5** — drawer 9 itens ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2).
 3. **Próxima SPA:** Relatórios (`produtividade` / `efetivo diário` / `medição`).
 4. Lucio confirma polish **1.5a** cadastro etapa quando puder.

@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-03 · **Status:** **M4.7** + **P5a RDO** (7a–7d) · schema RDS ①×② **Q1–Q4 ☑** · **P3** olho/lápis/relógio + **P4** modal smoke ☑ · **DNA** Loja×grupos [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · §**5** / §**12** · **§13 índice de fichas** (esqueleto, sem conteúdo) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-15 · **Status:** tip **`5f747b5`** · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** medição (mesmo dia OK) · P3 etapa vazia / marcar todos / novo colab·acidente·equip · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore de páginas** (abaixo) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
@@ -475,7 +475,7 @@ Ordem visual: **header → toolbar → accordion por etapa → cards de tarefa (
 
 ### 10.8 Classes de tela operador — P5 (M5 web) e além
 
-**Atualizado:** 2026-11-13 · tip **`a4159be`** · **Fila M5:** [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · Chart **C1–C4** ☑ · drawer P6a + Paralizações SPA
+**Atualizado:** 2026-11-15 · tip **`5f747b5`** · **Fila M5:** [`migracao/m5-web-paridade-prod-ordem.md`](migracao/m5-web-paridade-prod-ordem.md) · Chart **C1–C8** ☑ · drawer P6a + Paralizações · P3/P4/P5b/P6a polish sessão 15/nov
 
 Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta tabela para **pacotes de PR/deploy** (não migrar “tela solta”).
 
@@ -559,9 +559,11 @@ Acesso = **plano Loja** × **Contratante/Contratada** × **subperfil** (Diretor 
 
 ---
 
-## 13. Índice de fichas (esqueleto)
+## 13. Árvore de páginas + índice de fichas
 
-**Decisão (2026-11-02):** um § neste manual — **não** 35 arquivos. Primeira ficha preenchida = **P5a RDOs**. O resto fica só árvore até a próxima ficha.
+**Sim — a árvore de páginas está aqui (§13.0–13.9).** É o mapa canônico P1→P6b (URL / jornada). Ficha completa (Chegada/Botões/Saída) só **P5a RDOs**; demais = esqueleto até DOC-FICHAS.
+
+**Decisão (2026-11-02):** um § neste manual — **não** 35 arquivos.
 
 **Sub-trilha:** I (docs) · **não** é código. **P** = jornada; URL = ficha. Card de tarefa **não** é P4 — é bloco de **P3**. **P4** = Nova medição.
 
@@ -595,17 +597,20 @@ Chegada = de onde se entra (tela P + URL). Botões = cada controle da página (r
 ### 13.3 P3 — Etapas / Cards (`/tarefa/cards`)
 
 - Toolbar
-- Accordion de etapa
+- Accordion de etapa (**etapa sem tarefa** permanece no filtro — `cardsFiltro` / tip **`5f747b5`**)
 - **Card de tarefa**
   - Ações do card (Gerar RDO, editar, status, …)
   - GPA (o que fica azul / cinza)
+  - Marcar todos colab/equip nos modais
+  - NOVO COLABORADOR / NOVO ACIDENTE / NOVO EQUIPAMENTO (modais na tarefa)
 - Placeholder nova tarefa
 
 ### 13.4 P4 — Nova medição
 
 - Modal no card de P3
 - Campos do formulário
-- Histórico de medições (se for o mesmo fluxo)
+- Histórico de medições
+- **Mesmo dia** permitido (paridade prod — tip **`5f747b5`**)
 
 ### 13.5 P5a — Área da obra · listagens
 
@@ -694,19 +699,21 @@ Cinza = sem GPA (A) ou lock (B). Ícone continua visível (W3).
 ### 13.6 P5b — Área da obra · cadastros
 
 - RDO cadastro (`/rdo/cadastro`) — 7a–7d, PDF
-- Tarefa cadastro (`/tarefa/cadastro`)
+- Tarefa cadastro (`/tarefa/cadastro`) — marcar todos · novo colab/acidente/equip
 - Tarefa lista (`/tarefa/index`)
-- Etapa cadastro (`/etapa/cadastro`)
+- Etapa cadastro (`/etapa/cadastro`) — polish **1.5a** pendente
+- Obra cadastro (`/obra/cadastro`) — Nova/editar Opção A (`f389736`)
 - Alterar senha (`/colaborador/alterarsenha`)
 
 ### 13.7 P6a — Gestor do tenant
 
-- Equipamentos · cadastro — SPA+BFF
-- Colaboradores · cadastro — SPA+BFF
+- Equipamentos · cadastro — SPA+BFF · **tipos** select (não texto livre)
+- Colaboradores · cadastro — SPA+BFF · validação Engenheiro completa · ViaCEP
 - Obras lista (`/obra/index`) · Obra lista excluir (`/obra/lista`) · Obra cadastro — SPA (+ stub `/obra/lista`)
 - Empresas · cadastro — SPA+BFF
 - Etapas (`/etapa/index`) · cadastro — SPA+BFF
 - Códigos de paralisações (`/tarefa/paralizacoes/index` · cadastro) — SPA+BFF tip **`a4159be`** (espelho prod global · **CAT-PARALIZ-01** depois)
+- Relatórios (produtividade / efetivo diário / medição) — ainda EmMigracao
 
 ### 13.8 P6b — Admin plataforma (`col_st_admin` · M10)
 

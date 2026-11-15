@@ -1,6 +1,6 @@
 # Rastreio Dimas (TSK) × marcos M* — execução homolog
 
-**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-02  
+**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-15  
 **Dono da execução:** plano **M\*** ([`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) + [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md))  
 **Referência Dimas:** PDF **Backlog_RDO v20260818** → [`../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md) (TSK-01…56 × Ondas U)
 
@@ -28,75 +28,81 @@
 
 ---
 
-## Snapshot — etapas M* × Dimas (2026-10-27)
+## Por que “~40% Dimas” parecia parado (esclarecimento 2026-11-15)
 
-Espelha [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § *Pendências por marco* + leitura vs PDF **Backlog_RDO v20260818**. Git app homolog: **`fd8a144`** · docs orquestrador **`9f68a4f`**.
+Havia **três números misturados** no orquestrador antigo:
 
-**Posição vs PDF Dimas:** execução **M\*** + strangler (não Sprint 1→8 linear). **À frente** do PDF no operador web homolog (P1–P3, RDO listagem). **Atrás / diferente:** fundação “completa” TSK-01…10, gestor TSK-14…16, apontamento TSK-24…30, relatórios TSK-37…39, OpenAPI/ETL TSK-40…45, mobile greenfield TSK-46…56 (**⏸** — evoluir RN). **Encaixe Dimas:** paralelo **M5/M6** — [`dimas-entrada-paralela-pos-m4.md`](dimas-entrada-paralela-pos-m4.md).
+| Número | O que media | out/26 | **agora (15/nov)** |
+|--------|-------------|--------|---------------------|
+| **% por marco M\*** | Fatia **daquele** marco (M4, M7…) | M4 ~88 · M7 ~90 | M4 **90** · M7 **92** · M5 web **94** |
+| **Clusters Dimas já iniciados** | Obra/etapa/tarefa · RDO/Chart · gestor P6a · P4 | ~40% “visível” (só P1–P3+RDO+Chart) | **~75–80%** |
+| **PDF Dimas total** | TSK-01…56 incl. fundação limpa + mobile⏸ + ETL Onda 6 | ~40% | **~45–50%** |
 
-Legenda coluna **Dimas:** **◐** parcial vs backlog · **☐** alvo Dimas ainda não coberto pelo M\* · **⏸** adiado de propósito · **—** fora escopo homolog Equipamentos / trilha **F**
-
-| Marco | Feito | Ainda pendente | **Dimas** (cluster / TSK · relação ao PDF) |
-|-------|--------|----------------|---------------------------------------------|
-| **M0** | A1–A5, Vite, v0 API, E2E login→Escolher, docs E0–E6 | Branding homolog; E2 localhost | **◐ Fundação** TSK-01…10 · Sprint 1 “arranque” — só **fatia** (host + SPA + build); falta stack “completa” Dimas |
-| **M0′** | Matriz, manual ①–⑥, Fase A PASS | HAR API prod (opcional) | **◐ Onda 0 / doc** U-01…08 · alinha prod×Core×mobile; **não** substitui TSK de implementação |
-| **M1** | Cenário **A**, v1 endpoints, tipos TS, mapa Core×legado | Pacote npm; EQ-M não consome | **◐ Contrato** · antecipa OpenAPI/U-05 (**TSK-40…41** cedo no espírito, **☐** pacote npm formal) |
-| **W0.5 / E2E** | Selecionar + Cards React; **M3 PASS** | Itens históricos toolbar (já avançaram em M4) | **◐ TSK-17…23 leitura** · operador vê obra/tarefas; **☐** cadastro/lista/filtro escrita |
-| **M2** | **FECHADO** | — | **◐ Obra·etapa·tarefa** TSK-17…23 · **leitura Cards** ≈ early Sprint operador; **☐** use cases escrita |
-| **M3** | **FECHADO** | E2E passos 6–7 opcional | **—** gate produto Lucio · **não** é marco nomeado no PDF; equivalente a homolog aceito antes de cortar Razor |
-| **M4** | M4.1–M4.7g ☑, **M4.8** Login SPA ☑ | G5/G6; **UI-M1/M2c**; congela EQ-W formal | **◐ Front** (fontello/BS3) + **◐ Identity/RBAC** TSK-11…13 (shell/menu/stubs) · **☐** `usePermission`/CRUD · strangler **≠** app React gestor Sprint 2–3 |
-| **M5 web** (Onda B) | RDO + Chart + Dashboard; **C1–C4** ☑ (**80%**) | Outras rotas `/chart/*` | **◐ RDO·laudo** TSK-31…36 · **◐** gráficos U-56/U-57 (Chart CSS + ☰, não Highcharts) |
-| **M5 EQ-M** (plano v1) | — | **⏸ adiado** | **⏸ Mobile** TSK-46…56 · PDF = greenfield RN · **M\*** vence: integrar **EquipamentosMobile**, não rebuild |
-| **M6** | — | JWT/OpenAPI spike; mobile homolog API | **☐ Fundação auth** TSK-07 · **☐ OpenAPI** TSK-40…41 · ponto natural **entrada Dimas** (Application/API v1) |
-| **M7+** | **7a** cadastro · **7b** PDF · **7c** editar · **7d** assinar · **Obra** Nova/editar Opção A (`c3cede9`/`0268e73`/`f389736`) | smoke Salvar Nova obra pós-deploy · **P4** medição · CRUD gestor fino | **◐** TSK-31…36 · **◐** TSK-17…23 escrita obra · **☐** TSK-14…16 · **☐** TSK-24…30 · **◐** RBAC 11…13 |
-| **M8** | Branch CI, roteiro D→E | Runway &lt;2 min; gate workflow | **◐ Infra deploy** (parte TSK-01…05) · **☐** pipeline “produto Dimas” · **☐** ETL TSK-43 (**Onda 6 only**, adiado ✓) |
-| **M9** | — | D1–D7 pacote homolog v1 | **◐** “release homolog v1” · cobre **fatia** operador web+doc · **☐** D4 mobile homolog · **☐** D7 pacote M1 pleno |
-| **M10** | — | Onda 2 / prep Linux L1 | **☐** expansão telas + **☐** cutover Onda 6 TSK-43…45 · prep pós-v1, não Sprint linear |
-
-**Paralelo (gate Dimas-adjacente):** **I0** B1/B2 OK — **◐** TSK-01 deploy/runway; B3 pendente.
-
-**Fora comparativo homolog Equipamentos:** **TSK-32** imutabilidade → trilha **F** / FAPESC (**—**).
-
-**Síntese:** strangler homolog operador (**M4 + M5 web**) alinhado ao plano unificado; **~40%** do “valor Dimas” visível na web (P1–P3 + RDO + Chart/Dashboard); **~60%+** fundação/gestor/mobile/ETL no backlog TSK, **de forma intencional** até **M6/M7** (mobile **⏸** vs TSK-46…56).
+**Conclusão:** você tinha razão — o que **já começamos** (web operador) subiu para a faixa **80%**. O “~40%” ficou **stale**: media só a fatia antiga **ou** diluía com mobile/ETL/Clean Arch que **ainda não abrimos**. Caminho homolog até **M9 D1** ≈ **~65–70%**.
 
 ---
 
-## Snapshot — clusters TSK × M* (homolog out/2026)
+## Snapshot — etapas M* × Dimas (2026-11-15)
 
-Legenda: **☑** coberto pelo M* em curso/fechado · **◐** parcial · **☐** no plano M*, não feito · **⏸** adiado de propósito (≠ esquecido) · **—** Dimas only / Onda 6 / FAPESC
+Espelha [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § *Pendências por marco*. Tip app: **`5f747b5`**.
 
-| Cluster Dimas (Sprint ref.) | TSK (ex.) | Marco M* | Status homolog | Gap TSK (o que Dimas prevê e M* ainda não entregou) |
-|----------------------------|-----------|----------|----------------|-----------------------------------------------------|
-| Fundação Core | 01…10 | M0, M1, I0 | ◐ | MediatR/Clean Arch completa, Serilog, S3, Argon2, JWT (TSK-07) — **M6** |
-| Identity + RBAC web | 11…13, 12 | M6, M7 | ◐ | `usePermission` / CRUD protegido — shell BFF hoje · **M7+** |
-| Cadastros gestor cedo | 14…16 | Onda 5 / M7+ | ☐ | Empresa/Colaborador/Equip CRUD React — **fora M4** |
-| Obra · etapa · tarefa | 17…23 | M2, M7 | ◐ | **Leitura** Cards (M2☑); **escrita** cadastro/lista/filtro — **M7+** |
-| Apontamento · medição | 24…30 | M7+, P4 | ☐ | Domínio + API; U-05 Framework antes — **Onda 0/4** |
-| RDO · laudo web | 31…36 | M5 web, M7+ | ◐ | **P5a** listagem + **7a–7d** + Chart **C1–C4** ☑ + Dashboard; polish `/chart/*` tiles |
-| Relatórios · S3 worker | 37…39 | Onda 5 / M7+ | ☐ | Dapper/Excel/PDF gestor |
-| OpenAPI · ETL · cutover | 40…45 | M6, M8, M10, Onda 6 | ☐ | ETL **adiado** vs PDF mês 4 — **correto** no plano M* |
-| Mobile greenfield | 46…56 | M5, M6 | ⏸ | **Não rebuild** — integrar RN existente |
-| Onda 0 (só Lucio) | U-01…08 | M5, M1 | ◐ | Apontamento Framework, `@rdoapp/shared`, OpenAPI cedo |
-| Imutabilidade | TSK-32 | **F** | — | Chat **FAPESC Execução** · `rdo-blockchain` |
-| Front legado BS3/CSS/fontello | — | M4.7 (**UI-M2c**), UI-M3 | ◐ | Fase A copiar glifos: [`fontello-fa-legado-marcos-ui.md`](fontello-fa-legado-marcos-ui.md) · Fase B **UI-M3** pós-M7 |
+**Posição vs PDF Dimas:** execução **M\*** + strangler. **À frente** no operador web (P1–P7 fatia). **Atrás / diferente:** fundação “completa” TSK-01…10, OpenAPI/ETL 40…45, mobile greenfield 46…56 (**⏸**). **Encaixe Dimas:** paralelo **M6** — [`dimas-entrada-paralela-pos-m4.md`](dimas-entrada-paralela-pos-m4.md).
 
-**Marco ativo:** **M4** fechamento (G5/G6 · UI-M1) **+ M5 web Onda B** (P5a RDO → Chart → Dashboard) · **M5 EQ-M ⏸** · **M6/M7** backlog.
+Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adiado · **—** fora escopo / trilha **F**
+
+| Marco | Feito | Ainda pendente | **Dimas** (cluster / TSK) |
+|-------|--------|----------------|---------------------------|
+| **M0** | A1–A5, Vite, v0 API, E2E, docs | Branding; E2 localhost | **◐** Fundação TSK-01…10 — fatia host/SPA |
+| **M0′** | Matriz, manual ①–⑥, Fase A PASS | HAR opcional | **◐** Onda 0 doc |
+| **M1** | Cenário A, v1 endpoints, tipos TS | Pacote npm; EQ-M | **◐** Contrato · **☐** npm formal |
+| **W0.5 / E2E** | Cards React; **M3 PASS** | — | **◐** TSK-17…23 leitura |
+| **M2** | **FECHADO** | — | leitura Cards ☑ |
+| **M3** | **FECHADO** | E2E 6–7 opcional | **—** gate Lucio |
+| **M4** | M4.1–M4.8 ☑ · P3 filtros/stubs `5f747b5` | G5/G6; UI-M1/M2c | **◐** Front + RBAC shell |
+| **M5 web** | RDO + Chart C1–C8 + Dashboard | DOC-FICHAS | **◐** TSK-31…36 · U-56/57 **~88%** |
+| **M5 EQ-M** | — | **⏸** | **⏸** TSK-46…56 |
+| **M6** | — | JWT/OpenAPI | **☐** TSK-07 · 40…41 |
+| **M7+** | 7a–7d · Obra · P6a · Paralizações · P4 · colab/equip/tarefa | Relatórios · CAT-PARALIZ · G5 smoke · 3.1 | **◐** escrita 17…23 · gestor 14…16 · medição 24…30 **~45%** · RBAC |
+| **M8** | Branch CI, roteiro | Runway &lt;2 min | **◐** deploy · **☐** ETL 43 |
+| **M9** | Fatia operador no Git | D1–D7 · smoke `5f747b5` | **◐** release fatia |
+| **M10** | — | L1 · P6b | **☐** cutover |
+
+**Paralelo:** **I0** B1/B2 OK · B3 pendente. **TSK-32** → trilha **F**.
+
+**Síntese:** clusters **web iniciados** ≈ **75–80%**; PDF **total** ≈ **45–50%** (mobile/ETL/fundação limpa puxam a média para baixo).
+
+---
+
+## Snapshot — clusters TSK × M* (homolog 15/nov/2026)
+
+| Cluster Dimas | TSK | Marco | Status | **~% cluster** | Gap TSK restante |
+|---------------|-----|-------|--------|:--------------:|------------------|
+| Fundação Core | 01…10 | M0, M1, I0 | ◐ | **35** | MediatR/Clean Arch, Serilog, S3, Argon2, JWT — **M6** |
+| Identity + RBAC web | 11…13 | M6, M7 | ◐ | **55** | `usePermission` formal · CRUD fino |
+| Cadastros gestor | 14…16 | M7+ | ◐ | **80** | Relatórios EmMigracao · polish · **CAT-PARALIZ-01** |
+| Obra · etapa · tarefa | 17…23 | M2, M7 | ◐ | **85** | gaps lista/filtro fino · polish 1.5a |
+| Apontamento · medição | 24…30 | M7+, P4 | ◐ | **45** | U-05 Framework pleno · foto persist |
+| RDO · laudo web | 31…36 | M5, M7 | ◐ | **88** | polish Chart tiles · DOC-FICHAS |
+| Relatórios · S3 | 37…39 | M7+ | ☐ | **8** | produtividade / efetivo / medição SPA |
+| OpenAPI · ETL · cutover | 40…45 | M6, M8, M10 | ☐ | **5** | ETL Onda 6 only |
+| Mobile greenfield | 46…56 | M5, M6 | ⏸ | **0** | Integrar RN — **não** rebuild |
+| Onda 0 (Lucio) | U-01…08 | M1, M5 | ◐ | **40** | shared / OpenAPI cedo |
+| Imutabilidade | TSK-32 | **F** | — | — | FAPESC |
+| Front BS3/fontello | — | M4.7, UI-M3 | ◐ | **60** | UI-M1/M2c · UI-M3 pós-M7 |
+
+**Marco ativo:** **M4** fechamento (G5/G6) **+ M5 web** **+ M7+** polish · tip **`5f747b5`** · **M5 EQ-M ⏸**.
 
 ---
 
 ## Lacunas U / TSK sem marco M* explícito (vigilância)
 
-Fonte detalhada: comparativo Dimas §5 (**U sem TSK**). Ao planejar **M5+**, checar se algum item precisa **novo sub-marco** ou linha no [`m4-execucao-checklist.md`](m4-execucao-checklist.md) / checklist M5 quando existir.
-
 | ID | Tema | Sugestão M* / Onda |
 |----|------|-------------------|
 | U-26 | Licença Operador vs Diretor | M7 ou Onda 2 comercial |
 | U-33 | Lista Apontamentos web | M7+ / Onda 3 |
-| U-56, U-57 | Gráficos, efetivo diário | M5/M7 (efetivo já rota stub P3) |
+| U-56, U-57 | Gráficos, efetivo diário | M5/M7 (efetivo já rota) |
 | TSK-01…09 “completo” | Infra fundação | Backlog pós-M4 ou com Dimas |
-| TSK-43 | ETL apontamentos | **Onda 6 only** — não antecipar |
-
-**Ação do agente:** se a sessão implementar algo que **fecha** uma linha acima, atualizar §2/§3 e registrar commit/marco no orquestrador **Próxima ação**.
+| TSK-43 | ETL apontamentos | **Onda 6 only** |
 
 ---
 
