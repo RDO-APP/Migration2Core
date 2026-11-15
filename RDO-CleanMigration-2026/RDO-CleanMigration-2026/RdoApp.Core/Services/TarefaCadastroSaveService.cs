@@ -17,12 +17,20 @@ public class TarefaCadastroSaveService
     private const int StatusPausada = 4;
     private const int StatusRdoAssinado = 2;
     private const int StatusRdoAssinado2 = 3;
+    private const int MaxFotoBytes = 2 * 1024 * 1024;
 
     private readonly RdoDbContext _context;
+    private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _env;
 
-    public TarefaCadastroSaveService(RdoDbContext context)
+    public TarefaCadastroSaveService(
+        RdoDbContext context,
+        IConfiguration configuration,
+        IWebHostEnvironment env)
     {
         _context = context;
+        _configuration = configuration;
+        _env = env;
     }
 
     public async Task<TarefaCadastroSaveResultDto> SaveAsync(
@@ -307,6 +315,7 @@ public class TarefaCadastroSaveService
             }
 
             await SyncAcidentesAsync(clone.TarIdTarefa, request, cancellationToken);
+            await SyncNovasImagensAsync(obraId, clone.TarIdTarefa, request.ListaImagens, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return new TarefaCadastroSaveResultDto { Ok = true, Id = clone.TarIdTarefa };
         }
@@ -338,8 +347,101 @@ public class TarefaCadastroSaveService
 
         await SyncVinculosAsync(entity.TarIdTarefa, obraId, request, cancellationToken);
         await SyncAcidentesAsync(entity.TarIdTarefa, request, cancellationToken);
+        await SyncNovasImagensAsync(obraId, entity.TarIdTarefa, request.ListaImagens, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return new TarefaCadastroSaveResultDto { Ok = true, Id = entity.TarIdTarefa };
+    }
+
+    /// <summary>
+    /// Persiste fotos novas (base64) em <c>Uploads/Imagens/{obra}/{tarefa}/{yyyyMM}/</c>
+    /// e grava <c>imagem</c>. Paridade prod <c>SaveImages</c> + pasta por mês (melhoria Lucio).
+    /// </summary>
+    private async Task SyncNovasImagensAsync(
+        int obraId,
+        int tarefaId,
+        List<TarefaCadastroImagemSaveDto>? lista,
+        CancellationToken cancellationToken)
+    {
+        if (lista is null || lista.Count == 0 || tarefaId <= 0)
+        {
+            return;
+        }
+
+        var uploadsRoot = _configuration["FileStorage:UploadsRoot"];
+        if (string.IsNullOrWhiteSpace(uploadsRoot))
+        {
+            uploadsRoot = Path.Combine(_env.ContentRootPath, "Uploads");
+        }
+
+        Directory.CreateDirectory(uploadsRoot);
+        var ym = DateTime.Today.ToString("yyyyMM", CultureInfo.InvariantCulture);
+
+        foreach (var item in lista)
+        {
+            var raw = (item.Base64 ?? "").Trim();
+            if (raw.Length == 0)
+            {
+                continue;
+            }
+
+            var comma = raw.IndexOf(',');
+            if (comma >= 0)
+            {
+                raw = raw[(comma + 1)..];
+            }
+
+            byte[] bytes;
+            try
+            {
+                bytes = Convert.FromBase64String(raw);
+            }
+            catch (FormatException)
+            {
+                continue;
+            }
+
+            if (bytes.Length == 0 || bytes.Length > MaxFotoBytes)
+            {
+                continue;
+            }
+
+            var ext = ExtFromFiletype(item.Filetype);
+            var fileName = Guid.NewGuid().ToString("N") + ext;
+            var folderAbs = Path.Combine(
+                uploadsRoot,
+                "Imagens",
+                obraId.ToString(CultureInfo.InvariantCulture),
+                tarefaId.ToString(CultureInfo.InvariantCulture),
+                ym);
+            Directory.CreateDirectory(folderAbs);
+            var abs = Path.Combine(folderAbs, fileName);
+            await File.WriteAllBytesAsync(abs, bytes, cancellationToken);
+
+            var caminhoDb =
+                $"{obraId}/{tarefaId}/{ym}/{fileName}".Replace('\\', '/', StringComparison.Ordinal);
+            _context.Imagens.Add(new Imagem
+            {
+                ImaDsCaminho = caminhoDb,
+                ImaDtImagem = DateTime.Now,
+                ImaIdTarefa = tarefaId
+            });
+        }
+    }
+
+    private static string ExtFromFiletype(string? filetype)
+    {
+        var t = (filetype ?? "").Trim().ToLowerInvariant();
+        if (t.Contains("png", StringComparison.Ordinal))
+        {
+            return ".png";
+        }
+
+        if (t.Contains("bmp", StringComparison.Ordinal))
+        {
+            return ".bmp";
+        }
+
+        return ".jpg";
     }
 
     private async Task SyncAcidentesAsync(

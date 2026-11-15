@@ -5,6 +5,7 @@ import { showToast } from '../toast'
 import {
   STATUS_PAUSADA,
   buildSaveRequest,
+  fileToTarefaImagem,
   horimetroTotal,
   maskDateInput,
   maskTimeInput,
@@ -100,6 +101,7 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
             horimetroFinal,
             comentario,
             codigoParalizacao,
+            listaImagens: fotos,
           },
           true,
         ),
@@ -309,18 +311,25 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
                       type="button"
                       className="btn btn-blue"
                       onClick={() => {
-                        const file = fileRef.current?.files?.[0]
-                        if (!file) {
-                          showToast('error', 'Selecione um arquivo.')
-                          return
-                        }
-                        if (file.size > 2 * 1024 * 1024) {
-                          showToast('error', 'O tamanho máximo da imagem é de 2MB.')
-                          return
-                        }
-                        setFotos((prev) => [...prev, { id: -Date.now(), href: URL.createObjectURL(file) }])
-                        setFotoNome('')
-                        if (fileRef.current) fileRef.current.value = ''
+                        void (async () => {
+                          const file = fileRef.current?.files?.[0]
+                          if (!file) {
+                            showToast('error', 'Selecione um arquivo.')
+                            return
+                          }
+                          if (file.size > 2 * 1024 * 1024) {
+                            showToast('error', 'O tamanho máximo da imagem é de 2MB.')
+                            return
+                          }
+                          try {
+                            const img = await fileToTarefaImagem(file)
+                            setFotos((prev) => [...prev, img])
+                            setFotoNome('')
+                            if (fileRef.current) fileRef.current.value = ''
+                          } catch {
+                            showToast('error', 'Falha ao ler a foto.')
+                          }
+                        })()
                       }}
                     >
                       <i className="fa fa-picture-o" aria-hidden="true" /> ADICIONAR FOTO

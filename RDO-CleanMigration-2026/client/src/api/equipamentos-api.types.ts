@@ -387,6 +387,9 @@ export interface TarefaCadastroHistorico {
 export interface TarefaCadastroImagem {
   id: number
   href: string
+  /** Base64 puro ou data-URL — só em fotos novas no save. */
+  base64?: string
+  filetype?: string
 }
 
 export interface TarefaCadastro {
@@ -448,6 +451,7 @@ export interface TarefaCadastroSaveRequest {
   listaIdsObraEquipamento?: number[]
   listaAcidentes?: TarefaCadastroAcidente[]
   listaIdsAcidentesRemovidos?: number[]
+  listaImagens?: TarefaCadastroImagem[]
 }
 
 export interface TarefaCadastroSaveResult {

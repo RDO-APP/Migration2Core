@@ -1,4 +1,9 @@
-import type { TarefaCadastro, TarefaCadastroSaveRequest, TarefaLookup } from './api/equipamentos-api.types'
+import type {
+  TarefaCadastro,
+  TarefaCadastroImagem,
+  TarefaCadastroSaveRequest,
+  TarefaLookup,
+} from './api/equipamentos-api.types'
 
 export const STATUS_PLANEJADA = 1
 export const STATUS_PAUSADA = 4
@@ -62,6 +67,7 @@ export function buildSaveRequest(
     listaIdsObraEquipamento?: number[]
     listaAcidentes?: TarefaCadastro['listaAcidentes']
     listaIdsAcidentesRemovidos?: number[]
+    listaImagens?: TarefaCadastroImagem[]
   },
   novaMedicao: boolean,
 ): TarefaCadastroSaveRequest {
@@ -90,6 +96,30 @@ export function buildSaveRequest(
     listaIdsObraEquipamento: form.listaIdsObraEquipamento,
     listaAcidentes: form.listaAcidentes,
     listaIdsAcidentesRemovidos: form.listaIdsAcidentesRemovidos,
+    listaImagens: form.listaImagens?.filter((img) => !!img.base64),
+  }
+}
+
+export function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const raw = String(reader.result ?? '')
+      const i = raw.indexOf(',')
+      resolve(i >= 0 ? raw.slice(i + 1) : raw)
+    }
+    reader.onerror = () => reject(reader.error ?? new Error('Falha ao ler arquivo.'))
+    reader.readAsDataURL(file)
+  })
+}
+
+export async function fileToTarefaImagem(file: File): Promise<TarefaCadastroImagem> {
+  const base64 = await readFileAsBase64(file)
+  return {
+    id: -Date.now(),
+    href: URL.createObjectURL(file),
+    base64,
+    filetype: file.type || 'image/jpeg',
   }
 }
 

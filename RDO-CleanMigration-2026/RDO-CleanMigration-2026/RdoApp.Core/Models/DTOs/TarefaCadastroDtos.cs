@@ -45,6 +45,15 @@ public sealed class TarefaCadastroImagemDto
     public string Href { get; init; } = "";
 }
 
+/// <summary>Item de save — <c>base64</c> = foto nova (paridade prod <c>ListaImagens</c>).</summary>
+public sealed class TarefaCadastroImagemSaveDto
+{
+    public int Id { get; set; }
+    public string? Href { get; set; }
+    public string? Base64 { get; set; }
+    public string? Filetype { get; set; }
+}
+
 public sealed class TarefaCadastroEquipamentoDto
 {
     public int Id { get; init; }
@@ -134,6 +143,7 @@ public sealed class TarefaCadastroSaveRequestDto
     public List<int>? ListaIdsObraEquipamento { get; set; }
     public List<TarefaCadastroAcidenteSaveDto>? ListaAcidentes { get; set; }
     public List<int>? ListaIdsAcidentesRemovidos { get; set; }
+    public List<TarefaCadastroImagemSaveDto>? ListaImagens { get; set; }
 }
 
 public sealed class TarefaCadastroAcidenteSaveDto

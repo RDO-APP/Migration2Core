@@ -79,6 +79,7 @@ Referência prod: `rdoappProject/Client/Views/Rdo/cadastro.html` · `RdoControll
 |----|--------|--------|
 | **M7-FOTOS-01** | Miniaturas e lupa: validar `dsCaminho` BFF, HTTP **200** em `/Uploads/Imagens/…`, `FileStorage:UploadsRoot` na EC2; slots cinza = `ima_ds_caminho` vazio ou arquivo ausente no disco | ☐ |
 | **M7-FOTOS-02** | Save com fotos marcadas: POST `listaImagems`, linhas em **`rdo_imagem`**, RDO “Gerado” com QTD tarefas/colab coerente | ☐ parcial (E2E OK · QTD 0/0/0 em T7g conferir) |
+| **M7-FOTO-PERSIST** | Origem das fotos: Nova Medição / cadastro tarefa grava `imagem` + disco (`…/{yyyyMM}/`) — código 15/11 · smoke pós-deploy | 🟡 |
 
 Detalhe: [`homolog-p5-rdo-tentativas.md`](homolog-p5-rdo-tentativas.md).
 

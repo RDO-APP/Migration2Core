@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-15 ~15:05 — tip **`5f747b5`** (cardsFiltro etapa vazia · marcar todos · novo colab/acidente · tipos equip · medição mesmo dia) · % marcos recalibrados · Dimas clusters iniciados **~75–80%** (≠ ~40% stale) · árvore páginas = manual **§13**  
+**Atualizado:** 2026-11-15 ~16:40 — **M7-FOTO-PERSIST** (base64→Uploads+imagem · pasta `yyyyMM`) · modal colab leve (campos+*) · backlog Efetivo/Excel/BI · tip código pendente deploy  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -410,6 +410,12 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | **29** | **Dono da assinatura configura perfil de acesso** — atribui um dos **15 templates** (5 papéis × plano Loja). **Não** copiar CMS. DNA: cms §0. | 5% | Spec [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · Core React **depois** do ciclo M7 (Chart já no ar) |
 | **DOC-FICHAS** | Fichas de tela (manual §13). 1 feita (RDOs). Restante no fim / quando a tela for sprint | 3% | [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · **não** Melhorias 1.0 Loja |
 | **I18N-ES-01** | **Espanhol nas páginas (UI)** — catálogo `pt-BR`/`es` só EQ-R; **antes** de CPF/doc estrangeiro | 0% | Plano fechado [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § I18N · **≠** DOC-ID-PAIS |
+| **M7-FOTO-PERSIST** | Persistir foto Nova Medição / cadastro tarefa (base64 → Uploads + `imagem`) | 80% | código 15/11 · smoke pós-deploy |
+| **M7-FOTO-PASTA-MES** | Fotos RDO/tarefa em pastas por **mês** (`…/{yyyyMM}/`) | 50% | path novo save já usa `yyyyMM`; migrar legado + PDF opcional |
+| **M7-EFETIVO-CARD** | Ligar Efetivo Diário ↔ colaboradores do card de tarefa | 5% | estudar/propor — ver pendencias |
+| **M7-CRONO-EXCEL** | Upload Excel → cronograma Etapa/Tarefa da obra | 5% | estudar/propor — ver pendencias |
+| **M7-API-BI** | Quais APIs/BIs integrar (Power BI / export) | 5% | estudar — ver pendencias |
+| **M7-FOTO-GEO** | Lat/long na foto (browser/Apontador) **ou** API tipo PhotoStamp | 5% | estudar/propor — ver pendencias · **não** `ALTER novo_rdoapp` sem Lucio |
 
 ---
 

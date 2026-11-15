@@ -26,6 +26,7 @@ import {
   STATUS_PAUSADA,
   STATUS_PLANEJADA,
   buildSaveRequest,
+  fileToTarefaImagem,
   horimetroTotal,
   maskDateInput,
   statusOptionsFor,
@@ -303,9 +304,14 @@ export function TarefaCadastroPage() {
     else setPickedEquip(new Set(pool.map((e) => e.idObraEquipamento)))
   }
 
+  /** Paridade prod `verificaPerfilColaborador`: nome exato Colaborador | Terceirizado. */
   function isPerfilLeve(idGrupo: number) {
     const n = (colabLookups.grupos.find((g) => g.id === idGrupo)?.nome ?? '').trim().toLowerCase()
     return n === 'colaborador' || n === 'terceirizado'
+  }
+
+  function ReqAsterisk({ show }: { show: boolean }) {
+    return show ? <span style={{ color: 'red' }}>*</span> : null
   }
 
   async function openNovoColabModal() {
@@ -350,6 +356,7 @@ export function TarefaCadastroPage() {
   }
 
   async function saveNovoColaborador() {
+    // Validação = prod TarefaController.adicionarColaborador (CEP/Número opcionais no modal).
     const leve = isPerfilLeve(novoColab.idGrupo)
     if (novoColab.idGrupo <= 0) {
       showToast('error', 'O Perfil deve ser preenchido.')
@@ -361,14 +368,6 @@ export function TarefaCadastroPage() {
     }
     if (novoColab.idCargo <= 0) {
       showToast('error', 'O Cargo deve ser preenchido.')
-      return
-    }
-    if (!novoColab.numeroEndereco.trim()) {
-      showToast('error', 'O Número deve ser preenchido.')
-      return
-    }
-    if (novoColab.cep.replace(/\D/g, '').length !== 8) {
-      showToast('error', 'O CEP deve ser preenchido.')
       return
     }
     if (!leve) {
@@ -389,19 +388,31 @@ export function TarefaCadastroPage() {
         return
       }
       if (!novoColab.email.trim()) {
-        showToast('error', 'O E-mail precisa ser preenchido.')
+        showToast('error', 'O E-mail deve ser preenchido.')
         return
       }
       if (!novoColab.logradouro.trim()) {
         showToast('error', 'O Logradouro deve ser preenchido.')
         return
       }
+      if (novoColab.idUf <= 0) {
+        showToast('error', 'A UF deve ser preenchida.')
+        return
+      }
       if (novoColab.idMunicipio <= 0) {
         showToast('error', 'O Município deve ser preenchido.')
         return
       }
-      if (novoColab.senha.length < 4 || novoColab.senha !== novoColab.confirmacaoSenha) {
-        showToast('error', 'Senha / confirmação inválidas.')
+      if (novoColab.senha.length < 4) {
+        showToast('error', 'Por favor, introduza pelo menos quatro caracteres na Senha.')
+        return
+      }
+      if (!novoColab.confirmacaoSenha) {
+        showToast('error', 'A Confirmação Senha deve ser preenchida.')
+        return
+      }
+      if (novoColab.senha !== novoColab.confirmacaoSenha) {
+        showToast('error', 'As senhas digitadas devem ser idênticas.')
         return
       }
     }
@@ -500,7 +511,7 @@ export function TarefaCadastroPage() {
     setFotoNome(file.name)
   }
 
-  function onAdicionarFoto() {
+  async function onAdicionarFoto() {
     const file = fileRef.current?.files?.[0]
     if (!file) {
       showToast('error', 'Selecione um arquivo.')
@@ -510,10 +521,14 @@ export function TarefaCadastroPage() {
       showToast('error', 'O tamanho máximo da imagem é de 2MB.')
       return
     }
-    const href = URL.createObjectURL(file)
-    setFotos((prev) => [...prev, { id: -Date.now(), href }])
-    setFotoNome('')
-    if (fileRef.current) fileRef.current.value = ''
+    try {
+      const img = await fileToTarefaImagem(file)
+      setFotos((prev) => [...prev, img])
+      setFotoNome('')
+      if (fileRef.current) fileRef.current.value = ''
+    } catch {
+      showToast('error', 'Falha ao ler a foto.')
+    }
   }
 
   async function onSave() {
@@ -558,6 +573,7 @@ export function TarefaCadastroPage() {
             listaIdsObraEquipamento: equips.map((e) => e.idObraEquipamento).filter((id) => id > 0),
             listaAcidentes: acidentes,
             listaIdsAcidentesRemovidos: acidentesRemovidos,
+            listaImagens: fotos,
           },
           novaMedicao,
         ),
@@ -1486,108 +1502,112 @@ export function TarefaCadastroPage() {
               <div className="tarefa-modal-backdrop" role="presentation" onClick={() => setModal(null)}>
                 <div className="tarefa-modal" role="dialog" onClick={(e) => e.stopPropagation()}>
                   <div className="tarefa-modal-header">
-                    <h4>Colaborador</h4>
+                    <h4>COLABORADOR</h4>
                     <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>
                       <i className="icon-close" aria-hidden="true" />
                     </button>
                   </div>
                   <div className="tarefa-modal-body">
-                    <div className="form-group">
-                      <label className="control-label">Perfil do Colaborador<span style={{ color: 'red' }}>*</span></label>
-                      <select
-                        className="form-control"
-                        value={novoColab.idGrupo}
-                        onChange={(e) => setNovoColab({ ...novoColab, idGrupo: Number(e.target.value) || 0 })}
-                      >
-                        <option value={0}>Selecione...</option>
-                        {colabLookups.grupos.map((g) => (
-                          <option key={g.id} value={g.id}>{g.nome}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label className="control-label">Nome<span style={{ color: 'red' }}>*</span></label>
-                      <input className="form-control" maxLength={50} value={novoColab.nome} onChange={(e) => setNovoColab({ ...novoColab, nome: e.target.value })} />
-                    </div>
-                    <div className="form-group">
-                      <label className="control-label">Cargo<span style={{ color: 'red' }}>*</span></label>
-                      <select className="form-control" value={novoColab.idCargo} onChange={(e) => setNovoColab({ ...novoColab, idCargo: Number(e.target.value) || 0 })}>
-                        <option value={0}>Selecione...</option>
-                        {colabLookups.cargos.map((c) => (
-                          <option key={c.id} value={c.id}>{c.nome}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {!isPerfilLeve(novoColab.idGrupo) ? (
-                      <>
-                        <div className="form-group">
-                          <label className="control-label">CPF<span style={{ color: 'red' }}>*</span></label>
-                          <input className="form-control" value={novoColab.cpf} onChange={(e) => setNovoColab({ ...novoColab, cpf: e.target.value })} />
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Sexo<span style={{ color: 'red' }}>*</span></label>
-                          <select className="form-control" value={novoColab.sexo} onChange={(e) => setNovoColab({ ...novoColab, sexo: e.target.value })}>
-                            <option value="S">Selecione...</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Feminino</option>
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Data de Nascimento<span style={{ color: 'red' }}>*</span></label>
-                          <input className="form-control" placeholder="dd/mm/aaaa" value={novoColab.dataNascimento} onChange={(e) => setNovoColab({ ...novoColab, dataNascimento: e.target.value })} />
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Telefone Principal<span style={{ color: 'red' }}>*</span></label>
-                          <input className="form-control" value={novoColab.telefonePrincipal} onChange={(e) => setNovoColab({ ...novoColab, telefonePrincipal: e.target.value })} />
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">E-mail<span style={{ color: 'red' }}>*</span></label>
-                          <input className="form-control" value={novoColab.email} onChange={(e) => setNovoColab({ ...novoColab, email: e.target.value })} />
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Logradouro<span style={{ color: 'red' }}>*</span></label>
-                          <input className="form-control" value={novoColab.logradouro} onChange={(e) => setNovoColab({ ...novoColab, logradouro: e.target.value })} />
-                        </div>
-                      </>
-                    ) : null}
-                    <div className="form-group">
-                      <label className="control-label">CEP<span style={{ color: 'red' }}>*</span></label>
-                      <input className="form-control" value={novoColab.cep} onChange={(e) => setNovoColab({ ...novoColab, cep: e.target.value })} />
-                    </div>
-                    <div className="form-group">
-                      <label className="control-label">Número<span style={{ color: 'red' }}>*</span></label>
-                      <input className="form-control" value={novoColab.numeroEndereco} onChange={(e) => setNovoColab({ ...novoColab, numeroEndereco: e.target.value })} />
-                    </div>
-                    {!isPerfilLeve(novoColab.idGrupo) ? (
-                      <>
-                        <div className="form-group">
-                          <label className="control-label">UF<span style={{ color: 'red' }}>*</span></label>
-                          <select className="form-control" value={novoColab.idUf} onChange={(e) => void onNovoColabUf(Number(e.target.value) || 0)}>
-                            <option value={0}>Selecione...</option>
-                            {colabLookups.ufs.map((u) => (
-                              <option key={u.id} value={u.id}>{u.nome}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Município<span style={{ color: 'red' }}>*</span></label>
-                          <select className="form-control" value={novoColab.idMunicipio} onChange={(e) => setNovoColab({ ...novoColab, idMunicipio: Number(e.target.value) || 0 })}>
-                            <option value={0}>Selecione...</option>
-                            {municipiosColab.map((m) => (
-                              <option key={m.id} value={m.id}>{m.nome}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Senha<span style={{ color: 'red' }}>*</span></label>
-                          <input type="password" className="form-control" value={novoColab.senha} onChange={(e) => setNovoColab({ ...novoColab, senha: e.target.value })} />
-                        </div>
-                        <div className="form-group">
-                          <label className="control-label">Confirmação Senha<span style={{ color: 'red' }}>*</span></label>
-                          <input type="password" className="form-control" value={novoColab.confirmacaoSenha} onChange={(e) => setNovoColab({ ...novoColab, confirmacaoSenha: e.target.value })} />
-                        </div>
-                      </>
-                    ) : null}
+                    {(() => {
+                      const leve = isPerfilLeve(novoColab.idGrupo)
+                      const reqFull = !leve
+                      return (
+                        <>
+                          <div className="form-group">
+                            <label className="control-label">Perfil do Colaborador<ReqAsterisk show /></label>
+                            <select
+                              className="form-control"
+                              value={novoColab.idGrupo}
+                              onChange={(e) => setNovoColab({ ...novoColab, idGrupo: Number(e.target.value) || 0 })}
+                            >
+                              <option value={0}>Selecione...</option>
+                              {colabLookups.grupos.map((g) => (
+                                <option key={g.id} value={g.id}>{g.nome}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">CPF<ReqAsterisk show={reqFull} /></label>
+                            <input className="form-control" value={novoColab.cpf} onChange={(e) => setNovoColab({ ...novoColab, cpf: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Nome<ReqAsterisk show /></label>
+                            <input className="form-control" maxLength={50} value={novoColab.nome} onChange={(e) => setNovoColab({ ...novoColab, nome: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Cargo<ReqAsterisk show /></label>
+                            <select className="form-control" value={novoColab.idCargo} onChange={(e) => setNovoColab({ ...novoColab, idCargo: Number(e.target.value) || 0 })}>
+                              <option value={0}>Selecione...</option>
+                              {colabLookups.cargos.map((c) => (
+                                <option key={c.id} value={c.id}>{c.nome}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Sexo<ReqAsterisk show={reqFull} /></label>
+                            <select className="form-control" value={novoColab.sexo} onChange={(e) => setNovoColab({ ...novoColab, sexo: e.target.value })}>
+                              <option value="S">Selecione...</option>
+                              <option value="M">Masculino</option>
+                              <option value="F">Feminino</option>
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Data de Nascimento<ReqAsterisk show={reqFull} /></label>
+                            <input className="form-control" placeholder="dd/mm/aaaa" value={novoColab.dataNascimento} onChange={(e) => setNovoColab({ ...novoColab, dataNascimento: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Telefone Principal<ReqAsterisk show={reqFull} /></label>
+                            <input className="form-control" value={novoColab.telefonePrincipal} onChange={(e) => setNovoColab({ ...novoColab, telefonePrincipal: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">E-mail<ReqAsterisk show={reqFull} /></label>
+                            <input className="form-control" value={novoColab.email} onChange={(e) => setNovoColab({ ...novoColab, email: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Logradouro<ReqAsterisk show={reqFull} /></label>
+                            <input className="form-control" value={novoColab.logradouro} onChange={(e) => setNovoColab({ ...novoColab, logradouro: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Número</label>
+                            <input className="form-control" maxLength={5} value={novoColab.numeroEndereco} onChange={(e) => setNovoColab({ ...novoColab, numeroEndereco: e.target.value })} />
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">UF<ReqAsterisk show={reqFull} /></label>
+                            <select className="form-control" value={novoColab.idUf} onChange={(e) => void onNovoColabUf(Number(e.target.value) || 0)}>
+                              <option value={0}>Selecione...</option>
+                              {colabLookups.ufs.map((u) => (
+                                <option key={u.id} value={u.id}>{u.nome}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">Município<ReqAsterisk show={reqFull} /></label>
+                            <select className="form-control" value={novoColab.idMunicipio} onChange={(e) => setNovoColab({ ...novoColab, idMunicipio: Number(e.target.value) || 0 })}>
+                              <option value={0}>Selecione...</option>
+                              {municipiosColab.map((m) => (
+                                <option key={m.id} value={m.id}>{m.nome}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label className="control-label">CEP</label>
+                            <input className="form-control" value={novoColab.cep} onChange={(e) => setNovoColab({ ...novoColab, cep: e.target.value })} />
+                          </div>
+                          {!leve ? (
+                            <>
+                              <div className="form-group">
+                                <label className="control-label">Senha<ReqAsterisk show /></label>
+                                <input type="password" className="form-control" maxLength={20} value={novoColab.senha} onChange={(e) => setNovoColab({ ...novoColab, senha: e.target.value })} />
+                              </div>
+                              <div className="form-group">
+                                <label className="control-label">Confirmação Senha<ReqAsterisk show /></label>
+                                <input type="password" className="form-control" maxLength={20} value={novoColab.confirmacaoSenha} onChange={(e) => setNovoColab({ ...novoColab, confirmacaoSenha: e.target.value })} />
+                              </div>
+                            </>
+                          ) : null}
+                        </>
+                      )
+                    })()}
                   </div>
                   <div className="tarefa-modal-footer">
                     <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>CANCELAR</button>

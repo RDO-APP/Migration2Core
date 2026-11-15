@@ -99,6 +99,12 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **CAT-PARALIZ-01** | **Códigos de paralisação por empresa** — hoje `tarefa_codigo_paralizacao` é **global** (PK = código 3 chars). Melhor: `tarcp_id_empresa` + PK composta `(empresa, código)`; telas/APIs filtram pela empresa da sessão/obra; migrar clonando os ~22 códigos por empresa; join descrição = código+empresa. **Evitar** prefixo no código e escopo por obra. Até o ALTER: **não** liberar CRUD de paralização a cliente (só admin RDO). Relacionado **3.1** (⋮ Pausada). **Proibido** `ALTER novo_rdoapp` sem Lucio. | G | **M7+** (dados/tenant) | ⬜ backlog 06/11 |
 | **DOC-DNA-01** | **DNA perfis / #29 dono** — fechar ficha antes de UI do dono da assinatura. Já sabido: 15 templates (5×3), 2 menus, CMS P6b só `col_st_admin`, dono **atribui** (não edita GPA). Falta: snapshot CPF admin `380.181.694-03` (`col_id`, `col_st_admin`, prod×homol); ids reais dos 15 `gru_id`; export GPA completo; dono = empresa Loja × `obr_id_dono` × quem atribui; fluxo UI #29 + troca de plano; § único **admin CPF ≠ dono ≠ Operador obra**. Canônico: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md) §0/§6 · orquestrador **#29**. **Não** é análise agora — backlog doc. | M | **#29** pós-M7 · ≠ P6b M10 | ⬜ backlog 08/11 |
 | **I18N-ES-01** | **Espanhol nas páginas (UI)** — catálogo `pt-BR`/`es` só no React homolog (EQ-R); **sem** CPF/doc estrangeiro, máscaras, schema ou login identity. Plano fechado § abaixo. | M | **M7+** / pós-paridade tela · **antes** de DOC-ID-PAIS | ⬜ backlog 13/11 |
+| **M7-FOTO-PERSIST** | **Gravar foto** em Nova Medição / cadastro tarefa: Escolher+Adicionar enviava só blob local; agora `listaImagens[].base64` → BFF → `Uploads/Imagens/{obra}/{tarefa}/{yyyyMM}/` + row `imagem`. | M | **M7+** P4 | 🟡 código 15/11 · smoke pós-deploy |
+| **M7-FOTO-PASTA-MES** | Separar fotos (RDO fotográfico / Uploads) em **pastas por mês**. Save novo já grava `{yyyyMM}`; restante: consolidar paths legados + opcional agrupar no PDF. | M | **M7+** | 🟡 parcial (path novo) |
+| **M7-EFETIVO-CARD** | **Efetivo Diário ↔ colabs do card:** estudar vínculos `obra_tarefa_colaborador` × efetivo do dia; propor UX (espelhar / sugerir / sync 1 clique); executar após aceite Lucio. | G | **M7+** | ⬜ estudar 15/11 |
+| **M7-CRONO-EXCEL** | **Upload Excel → Etapa/Tarefa:** template colunas (etapa, tarefa, datas, qtd, unidade); BFF validar + preview + commit; dry-run obrigatório. | G | **M7+** / M9 | ⬜ estudar 15/11 |
+| **M7-API-BI** | **APIs × BI:** inventariar BFF Chart/Dashboard/RDO/Efetivo já existentes; propor Power BI / export CSV-JSON read-only (sem write); LGPD/tenant. | M | **M7+** / pós-M6 OpenAPI | ⬜ estudar 15/11 |
+| **M7-FOTO-GEO** | **Geo na foto:** lat/long (celular/PC) no capture **ou** API especialista (ex. PhotoStamp). Schema + LGPD + caminho Apontador. | G | **M7+** / EQ-M | ⬜ estudar 15/11 · § abaixo |
 
 **Adiado de propósito (não fazer no meio do M4):**
 
@@ -210,6 +216,70 @@ flowchart LR
 
 **ID backlog:** **I18N-ES-01** · trilha **EQ-R** · **≠** DOC-DNA-01 · **≠** DOC-ID-PAIS · **não** bloqueia M5/M7 smoke atual.
 
+## Propostas Lucio 15/11 (estudar → executar)
+
+### M7-EFETIVO-CARD — Efetivo Diário × colabs do card
+
+**Problema:** efetivo e `obra_tarefa_colaborador` não conversam na SPA.  
+**Proposta:** (A) no Efetivo, botão “Trazer do dia / das tarefas Em Execução”; (B) no card, atalho “Ver no efetivo”; (C) sync 1-way no save da medição (opcional). Começar por **A** (read-only suggest) sem alterar prod.  
+**Aceite:** smoke Georges — marcar colabs no card → sugeridos no efetivo do mesmo dia.
+
+### M7-CRONO-EXCEL — Upload Excel Etapa/Tarefa
+
+**Problema:** cronograma nasce tela a tela.  
+**Proposta:** template `.xlsx` (etapa, ordem, tarefa, status inicial Planejada, datas, qtd, unidade); BFF `POST /api/bff/obras/{id}/cronograma/preview` + `/commit`; dry-run lista erros de linha; commit em transação.  
+**Aceite:** obra vazia → upload → N etapas/tarefas no P3.
+
+### M7-API-BI — APIs para BI
+
+**Já existe (homolog BFF):** Chart, Dashboard, RDO lista, Efetivo, etapas/cards — cookie/session hoje.  
+**Proposta:** (1) inventário OpenAPI dos GETs agregados; (2) export CSV diário por obra (read-only); (3) Power BI via gateway só após **M6** JWT/client-credentials + escopo tenant. **Não** expor write.  
+**Aceite:** doc de endpoints + 1 dataset Chart/Dashboard consumível em Power BI Desktop (homolog).
+
+### M7-FOTO-GEO — Latitude / longitude na foto (ou PhotoStamp)
+
+**Problema:** evidência fotográfica sem localização → disputa em medição/fiscalização B2G.  
+**LGPD:** coordenada = dado pessoal potencial (localização). Base legal + aviso no App/web; retenção alinhada à foto; não logar GPS em texto livre.
+
+#### Opções
+
+| Via | Como | Prós | Contras |
+|-----|------|------|---------|
+| **A — Browser / Apontador** | `navigator.geolocation` (web) ou Expo Location (EQ-M) no momento **Adicionar foto**; enviar `lat`/`lng`/`accuracy`/`capturedAt` no mesmo POST da foto | Controle nosso; sem vendor | PC desktop muitas vezes sem GPS; usuário pode negar permissão; spoof possível |
+| **B — EXIF da imagem** | Ler GPS IFD do JPEG no BFF ao salvar | Zero UX extra se a câmera já gravou | Muitos celulares **strip** EXIF; web `input file` nem sempre traz EXIF |
+| **C — Especialista (PhotoStamp-like)** | API/SDK carimba foto (geo + tempo + hash); guardar `provider`, `stampId`, `payload` | Carimbo + antifraude de mercado | Custo, contrato, subprocessador LGPD, lock-in; PoC antes de prod |
+
+**Recomendação (strangler):**  
+1. **Fase 1 (homol):** schema + Via **A** no upload já feito (**M7-FOTO-PERSIST**); Via **B** best-effort se EXIF existir.  
+2. **Fase 2:** Apontador (EQ-M) — GPS nativo + mesma API.  
+3. **Fase 3 (opcional):** PoC **PhotoStamp** (ou similar BR) só se fiscal exigir carimbo externo — espelhar resultado nas colunas `provider_*`, sem substituir o arquivo nosso.
+
+#### Schema proposto (só `homol_rdoapp` primeiro)
+
+Tabela **`imagem`** (aditivo — **proibido** `ALTER novo_rdoapp` sem Lucio):
+
+| Coluna | Tipo | Nota |
+|--------|------|------|
+| `ima_nr_latitude` | `decimal(10,7) NULL` | WGS84 |
+| `ima_nr_longitude` | `decimal(10,7) NULL` | WGS84 |
+| `ima_nr_accuracy_m` | `float NULL` | precisão GPS (m) |
+| `ima_dt_geo` | `datetime NULL` | instante da leitura GPS |
+| `ima_ds_geo_source` | `varchar(32) NULL` | `browser` · `apontador` · `exif` · `photostamp` |
+| `ima_ds_geo_provider_id` | `varchar(100) NULL` | id externo (PhotoStamp etc.) |
+
+Índice opcional `(ima_id_tarefa, ima_dt_geo)` para listagens.
+
+#### Execução (ordem)
+
+1. Doc + aceite Lucio deste § (feito como proposta).  
+2. Script SQL **só** `homol_rdoapp` + EF entity `Imagem`.  
+3. Client: pedir geo no **Adicionar foto** (fail-open se negar).  
+4. BFF: gravar colunas no `SyncNovasImagensAsync`.  
+5. RDO PDF / galeria: badge “com GPS” (opcional).  
+6. Avaliar PhotoStamp em PoC separada (custo + DPA).
+
+**Aceite Fase 1:** foto nova no homolog com lat/long no RDS quando o dispositivo autorizar; foto sem permissão continua salvando (geo NULL).
+
 ## Links
 
 - Paridade blocos: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §10  
@@ -217,4 +287,5 @@ flowchart LR
 - Decisão React vs Razor: [`migracao-frontend-razor-react-decisao.md`](../migracao-frontend-razor-react-decisao.md)  
 - Orquestrador: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § Pendências melhorias UI · § DNA / **#29**  
 - CMS DNA: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md) §0 / §6  
+
 
