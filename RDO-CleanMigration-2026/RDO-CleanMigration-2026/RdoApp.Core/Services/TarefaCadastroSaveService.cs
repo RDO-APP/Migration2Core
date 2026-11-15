@@ -417,8 +417,7 @@ public class TarefaCadastroSaveService
             var abs = Path.Combine(folderAbs, fileName);
             await File.WriteAllBytesAsync(abs, bytes, cancellationToken);
 
-            var caminhoDb =
-                $"{obraId}/{tarefaId}/{ym}/{fileName}".Replace('\\', '/', StringComparison.Ordinal);
+            var caminhoDb = $"{obraId}/{tarefaId}/{ym}/{fileName}".Replace('\\', '/');
             _context.Imagens.Add(new Imagem
             {
                 ImaDsCaminho = caminhoDb,
