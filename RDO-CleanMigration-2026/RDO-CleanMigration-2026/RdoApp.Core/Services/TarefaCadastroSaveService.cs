@@ -243,19 +243,9 @@ public class TarefaCadastroSaveService
         var horimetroFim = request.HorimetroFinal ?? 0;
         var horimetroTotal = request.HorimetroTotal ?? Math.Max(0, horimetroFim - horimetroIni);
 
+        // Prod: ExisteInterseccaoHorario está comentado — permite nova medição mesmo no mesmo dia.
         if (request.NovaMedicao)
         {
-            var existeDia = await _context.Tarefas.AsNoTracking()
-                .AnyAsync(
-                    x => x.TarNrAgrupador == entity.TarNrAgrupador &&
-                         x.TarIdEtapa == entity.TarIdEtapa &&
-                         x.TarDtMedicao.Date == dataMedicao.Date,
-                    cancellationToken);
-            if (existeDia)
-            {
-                return Fail("Já existe uma medição para a data informada.");
-            }
-
             var clone = new Tarefa
             {
                 TarNrAgrupador = entity.TarNrAgrupador,

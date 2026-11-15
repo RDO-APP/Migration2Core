@@ -3,6 +3,7 @@ import {
   fetchEquipamentoCadastro,
   saveEquipamentoCadastro,
   type EquipamentoCadastroForm,
+  type EquipamentoCadastroLookup,
 } from '../api/equipamentoApi'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
@@ -25,6 +26,7 @@ function isVisualizar(): boolean {
 const EMPTY: EquipamentoCadastroForm = {
   idEquipamento: 0,
   idObraEquipamento: 0,
+  idTipoEquipamento: 0,
   tipoEquipamento: '',
   descricao: '',
   marca: '',
@@ -36,6 +38,7 @@ const EMPTY: EquipamentoCadastroForm = {
   telefone: '',
   podeSalvar: true,
   obraNomeSessao: '',
+  tipos: [],
 }
 
 export function EquipamentoCadastroPage() {
@@ -43,6 +46,7 @@ export function EquipamentoCadastroPage() {
   const id = idFromUrl()
   const visualizar = isVisualizar()
   const [form, setForm] = useState<EquipamentoCadastroForm>(EMPTY)
+  const [tipos, setTipos] = useState<EquipamentoCadastroLookup[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,7 +57,12 @@ export function EquipamentoCadastroPage() {
       try {
         const data = await fetchEquipamentoCadastro(id)
         if (cancelled) return
-        setForm(data)
+        setForm({
+          ...data,
+          idTipoEquipamento: data.idTipoEquipamento ?? 0,
+          tipos: data.tipos ?? [],
+        })
+        setTipos(data.tipos ?? [])
       } catch (e: unknown) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Falha ao carregar equipamento.')
       } finally {
@@ -69,11 +78,17 @@ export function EquipamentoCadastroPage() {
 
   async function onSave() {
     if (readOnly) return
+    if (form.idTipoEquipamento <= 0) {
+      showToast('error', 'O Tipo de equipamento deve ser preenchido.')
+      return
+    }
     setSaving(true)
     try {
+      const tipoNome = tipos.find((t) => t.id === form.idTipoEquipamento)?.nome ?? form.tipoEquipamento
       const result = await saveEquipamentoCadastro({
         idEquipamento: form.idEquipamento,
-        tipoEquipamento: form.tipoEquipamento,
+        idTipoEquipamento: form.idTipoEquipamento,
+        tipoEquipamento: tipoNome,
         descricao: form.descricao,
         marca: form.marca,
         modelo: form.modelo,
@@ -117,14 +132,25 @@ export function EquipamentoCadastroPage() {
               <label className="control-label">
                 Tipo de Equipamento<span style={{ color: 'red' }}>*</span>
               </label>
-              <input
-                type="text"
+              <select
                 className="form-control"
-                maxLength={50}
                 disabled={readOnly}
-                value={form.tipoEquipamento}
-                onChange={(e) => setForm({ ...form, tipoEquipamento: e.target.value })}
-              />
+                value={form.idTipoEquipamento}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    idTipoEquipamento: Number(e.target.value) || 0,
+                    tipoEquipamento: tipos.find((t) => t.id === Number(e.target.value))?.nome ?? '',
+                  })
+                }
+              >
+                <option value={0}>Selecione...</option>
+                {tipos.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.nome}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="form-group" style={{ gridColumn: 'span 9' }}>
               <label className="control-label">

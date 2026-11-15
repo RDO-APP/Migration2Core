@@ -80,9 +80,12 @@ export async function fetchEquipamentoIndexLista(
   return readJson(res, 'lista equipamentos')
 }
 
+export type EquipamentoCadastroLookup = { id: number; nome: string }
+
 export type EquipamentoCadastroForm = {
   idEquipamento: number
   idObraEquipamento: number
+  idTipoEquipamento: number
   tipoEquipamento: string
   descricao: string
   marca: string
@@ -94,10 +97,12 @@ export type EquipamentoCadastroForm = {
   telefone: string
   podeSalvar: boolean
   obraNomeSessao: string
+  tipos: EquipamentoCadastroLookup[]
 }
 
 export type EquipamentoCadastroSaveRequest = {
   idEquipamento: number
+  idTipoEquipamento: number
   tipoEquipamento: string
   descricao: string
   marca: string
@@ -113,6 +118,7 @@ export type EquipamentoCadastroSaveResult = {
   ok: boolean
   errorMessage?: string
   idEquipamento?: number
+  idObraEquipamento?: number
 }
 
 export async function fetchEquipamentoCadastro(id: number): Promise<EquipamentoCadastroForm> {

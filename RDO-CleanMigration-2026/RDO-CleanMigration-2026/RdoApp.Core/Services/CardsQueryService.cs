@@ -108,19 +108,25 @@ public class CardsQueryService
 
         var dtoEtapas = new List<EtapaComTarefasDto>();
 
+        // Prod ObterEtapaTarefa: etapa sem tarefa ainda entra na lista (accordion vazio).
         foreach (var e in etapaRows)
         {
+            var statusPairs = allStatus.Select(s => (s.SttIdStatus, s.Nome)).ToList();
             if (!tarefasByEtapa.TryGetValue(e.EtaIdEtapa, out var list) || list.Count == 0)
             {
+                dtoEtapas.Add(new EtapaComTarefasDto
+                {
+                    Id = e.EtaIdEtapa,
+                    Titulo = e.Titulo,
+                    Ordem = e.EtaNrOrderm,
+                    IdObra = e.EtaIdObra,
+                    TituloObra = obraNome,
+                    Tarefas = []
+                });
                 continue;
             }
 
             var cards = SelectCurrentTarefaPerAgrupador(list);
-            if (cards.Count == 0)
-            {
-                continue;
-            }
-
             dtoEtapas.Add(new EtapaComTarefasDto
             {
                 Id = e.EtaIdEtapa,
@@ -128,7 +134,9 @@ public class CardsQueryService
                 Ordem = e.EtaNrOrderm,
                 IdObra = e.EtaIdObra,
                 TituloObra = obraNome,
-                Tarefas = cards.Select(t => MapTarefaCard(t, statusMap, periodosPorAgrupador, colabCounts, equipCounts, allStatus.Select(s => (s.SttIdStatus, s.Nome)).ToList())).ToList()
+                Tarefas = cards.Count == 0
+                    ? []
+                    : cards.Select(t => MapTarefaCard(t, statusMap, periodosPorAgrupador, colabCounts, equipCounts, statusPairs)).ToList()
             });
         }
 

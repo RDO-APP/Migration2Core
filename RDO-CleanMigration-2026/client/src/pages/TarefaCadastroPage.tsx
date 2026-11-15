@@ -6,6 +6,11 @@ import type {
   TarefaCadastroEquipamento,
   TarefaCadastroImagem,
 } from '../api/equipamentos-api.types'
+import {
+  fetchEquipamentoCadastro,
+  saveEquipamentoCadastro,
+  type EquipamentoCadastroLookup,
+} from '../api/equipamentoApi'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador, P3_NAV } from '../nav/p3-operador-routes'
@@ -80,9 +85,22 @@ export function TarefaCadastroPage() {
   const [fotos, setFotos] = useState<TarefaCadastroImagem[]>([])
   const [fotoNome, setFotoNome] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
-  const [modal, setModal] = useState<null | 'historico' | 'colab' | 'equip'>(null)
+  const [modal, setModal] = useState<null | 'historico' | 'colab' | 'equip' | 'equipNovo'>(null)
   const [pickedColab, setPickedColab] = useState<Set<number>>(new Set())
   const [pickedEquip, setPickedEquip] = useState<Set<number>>(new Set())
+  const [tiposEquip, setTiposEquip] = useState<EquipamentoCadastroLookup[]>([])
+  const [novoEquip, setNovoEquip] = useState({
+    idTipoEquipamento: 0,
+    descricao: '',
+    marca: '',
+    modelo: '',
+    tipoAquisicao: 'S',
+    dataAquisicao: '',
+    fabricanteFornecedor: '',
+    contato: '',
+    telefone: '',
+  })
+  const [savingEquip, setSavingEquip] = useState(false)
 
   const visualizar = flags.visualizar
   const novaMedicao = flags.novaMedicao && !visualizar
@@ -143,6 +161,84 @@ export function TarefaCadastroPage() {
   function openEquipModal() {
     setPickedEquip(new Set(equips.map((e) => e.idObraEquipamento)))
     setModal('equip')
+  }
+
+  async function openNovoEquipModal() {
+    try {
+      const blank = await fetchEquipamentoCadastro(0)
+      setTiposEquip(blank.tipos ?? [])
+      setNovoEquip({
+        idTipoEquipamento: 0,
+        descricao: '',
+        marca: '',
+        modelo: '',
+        tipoAquisicao: 'S',
+        dataAquisicao: '',
+        fabricanteFornecedor: '',
+        contato: '',
+        telefone: '',
+      })
+      setModal('equipNovo')
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Falha ao abrir cadastro de equipamento.')
+    }
+  }
+
+  async function saveNovoEquipamento() {
+    if (novoEquip.idTipoEquipamento <= 0) {
+      showToast('error', 'O Tipo de equipamento deve ser preenchido.')
+      return
+    }
+    if (novoEquip.descricao.trim().length < 2) {
+      showToast('error', 'A Descrição deve ser preenchida.')
+      return
+    }
+    setSavingEquip(true)
+    try {
+      const tipoNome = tiposEquip.find((t) => t.id === novoEquip.idTipoEquipamento)?.nome ?? ''
+      const result = await saveEquipamentoCadastro({
+        idEquipamento: 0,
+        idTipoEquipamento: novoEquip.idTipoEquipamento,
+        tipoEquipamento: tipoNome,
+        descricao: novoEquip.descricao,
+        marca: novoEquip.marca,
+        modelo: novoEquip.modelo,
+        tipoAquisicao: novoEquip.tipoAquisicao,
+        dataAquisicao: novoEquip.dataAquisicao,
+        fabricanteFornecedor: novoEquip.fabricanteFornecedor,
+        contato: novoEquip.contato,
+        telefone: novoEquip.telefone,
+      })
+      if (!result.ok) {
+        showToast('error', result.errorMessage || 'Não foi possível salvar o equipamento.')
+        return
+      }
+      const row: TarefaCadastroEquipamento = {
+        id: result.idEquipamento ?? 0,
+        idObraEquipamento: result.idObraEquipamento ?? 0,
+        tipoEquipamento: tipoNome,
+        descricao: novoEquip.descricao.trim(),
+        tipoAquisicao: novoEquip.tipoAquisicao,
+        fabricanteFornecedor: novoEquip.fabricanteFornecedor,
+        contato: novoEquip.contato,
+        telefone: novoEquip.telefone,
+      }
+      setEquips((prev) => [...prev, row])
+      setData((prev) =>
+        prev
+          ? {
+              ...prev,
+              equipamentosObra: [...(prev.equipamentosObra ?? []), row],
+            }
+          : prev,
+      )
+      showToast('success', 'Equipamento criado e adicionado à tarefa.')
+      setModal(null)
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Não foi possível salvar o equipamento.')
+    } finally {
+      setSavingEquip(false)
+    }
   }
 
   function confirmColab() {
@@ -673,11 +769,7 @@ export function TarefaCadastroPage() {
                     <button type="button" className="btn btn-blue btn-block-xs" onClick={openEquipModal}>
                       <i className="fa fa-cogs" aria-hidden="true" /> ADICIONAR EQUIPAMENTOS
                     </button>
-                    <button
-                      type="button"
-                      className="btn btn-blue btn-block-xs"
-                      onClick={() => showToast('error', 'Cadastro de novo equipamento da obra ainda não está nesta tela. Use Adicionar equipamentos para o que já está na obra.')}
-                    >
+                    <button type="button" className="btn btn-blue btn-block-xs" onClick={() => void openNovoEquipModal()}>
                       <i className="fa fa-plus" aria-hidden="true" /> NOVO EQUIPAMENTO
                     </button>
                   </div>
@@ -998,6 +1090,131 @@ export function TarefaCadastroPage() {
                     </button>
                     <button type="button" className="btn btn-blue" onClick={confirmEquip}>
                       ADICIONAR
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {modal === 'equipNovo' ? (
+              <div className="tarefa-modal-backdrop" role="presentation" onClick={() => setModal(null)}>
+                <div className="tarefa-modal" role="dialog" onClick={(e) => e.stopPropagation()}>
+                  <div className="tarefa-modal-header">
+                    <h4>Equipamento</h4>
+                    <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>
+                      <i className="icon-close" aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="tarefa-modal-body">
+                    <div className="form-group">
+                      <label className="control-label">
+                        Tipo de Equipamento<span style={{ color: 'red' }}>*</span>
+                      </label>
+                      <select
+                        className="form-control"
+                        value={novoEquip.idTipoEquipamento}
+                        onChange={(e) =>
+                          setNovoEquip({ ...novoEquip, idTipoEquipamento: Number(e.target.value) || 0 })
+                        }
+                      >
+                        <option value={0}>Selecione...</option>
+                        {tiposEquip.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.nome}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">
+                        Descrição<span style={{ color: 'red' }}>*</span>
+                      </label>
+                      <input
+                        className="form-control"
+                        maxLength={50}
+                        value={novoEquip.descricao}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, descricao: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Marca</label>
+                      <input
+                        className="form-control"
+                        maxLength={50}
+                        value={novoEquip.marca}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, marca: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Modelo</label>
+                      <input
+                        className="form-control"
+                        maxLength={50}
+                        value={novoEquip.modelo}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, modelo: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Tipo de Aquisição</label>
+                      <select
+                        className="form-control"
+                        value={novoEquip.tipoAquisicao}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, tipoAquisicao: e.target.value })}
+                      >
+                        <option value="S">Selecione...</option>
+                        <option value="A">Aluguel</option>
+                        <option value="C">Compra</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Data da Aquisição</label>
+                      <input
+                        className="form-control"
+                        maxLength={10}
+                        placeholder="dd/mm/aaaa"
+                        value={novoEquip.dataAquisicao}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, dataAquisicao: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Fornecedor/Fabricante</label>
+                      <input
+                        className="form-control"
+                        maxLength={50}
+                        value={novoEquip.fabricanteFornecedor}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, fabricanteFornecedor: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Contato</label>
+                      <input
+                        className="form-control"
+                        maxLength={50}
+                        value={novoEquip.contato}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, contato: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="control-label">Telefone</label>
+                      <input
+                        className="form-control"
+                        maxLength={15}
+                        value={novoEquip.telefone}
+                        onChange={(e) => setNovoEquip({ ...novoEquip, telefone: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="tarefa-modal-footer">
+                    <button type="button" className="btn btn-simple" onClick={() => setModal(null)}>
+                      CANCELAR
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-blue"
+                      disabled={savingEquip}
+                      onClick={() => void saveNovoEquipamento()}
+                    >
+                      SALVAR
                     </button>
                   </div>
                 </div>

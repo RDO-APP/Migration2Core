@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Data.Entities;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Utils;
@@ -36,10 +37,7 @@ public class ColaboradorIndexService
             .Select(c => new ColaboradorIndexLookupDto { Id = c.CarIdCargo, Nome = c.CarDsCargo ?? "" })
             .ToListAsync(cancellationToken);
 
-        var grupos = await _context.Grupos.AsNoTracking()
-            .OrderBy(g => g.GruNmNome)
-            .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
-            .ToListAsync(cancellationToken);
+        var grupos = await ListaGruposPeloLadoAsync(httpContext, cancellationToken);
 
         var canEditar = CanColaboradorIndex(httpContext, "editar");
         return new ColaboradorIndexBootstrapDto
@@ -269,6 +267,38 @@ public class ColaboradorIndexService
         _context.ObraColaboradores.RemoveRange(links);
         await _context.SaveChangesAsync(cancellationToken);
         return new ColaboradorIndexActionResultDto { Ok = true };
+    }
+
+    /// <summary>Paridade GrupoModel.ListaPeloGrupo — lado t/d + licença (inclui gru_st_contratante null = Colaborador).</summary>
+    public async Task<List<ColaboradorIndexLookupDto>> ListaGruposPeloLadoAsync(
+        HttpContext httpContext,
+        CancellationToken cancellationToken)
+    {
+        var lado = LoginSessionHelper.GetContratanteContratadaUsuario(httpContext) ?? "";
+        var idLicenca = LoginSessionHelper.GetIdLicenca(httpContext);
+
+        IQueryable<Grupo> query = _context.Grupos.AsNoTracking();
+        if (idLicenca > 0)
+        {
+            query = query.Where(g => g.GruIdLicenca == idLicenca || g.GruIdLicenca == null);
+        }
+
+        if (!string.IsNullOrEmpty(lado))
+        {
+            if (lado == "t")
+            {
+                query = query.Where(g => g.GruStContratante == 1 || g.GruStContratante == null);
+            }
+            else if (lado == "d")
+            {
+                query = query.Where(g => g.GruStContratante == 2 || g.GruStContratante == null);
+            }
+        }
+
+        return await query
+            .OrderBy(g => g.GruNmNome)
+            .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
+            .ToListAsync(cancellationToken);
     }
 
     private static string DigitsOnly(string? value) =>

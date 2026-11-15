@@ -13,10 +13,19 @@ public class ColaboradorCadastroService
 {
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
     private readonly RdoDbContext _context;
+    private readonly ColaboradorIndexService _index;
 
-    public ColaboradorCadastroService(RdoDbContext context)
+    public ColaboradorCadastroService(RdoDbContext context, ColaboradorIndexService index)
     {
         _context = context;
+        _index = index;
+    }
+
+    private static bool IsPerfilColaboradorLeve(string? nomeGrupo)
+    {
+        var n = (nomeGrupo ?? "").Trim();
+        return n.Equals("Colaborador", StringComparison.OrdinalIgnoreCase)
+            || n.Equals("Terceirizado", StringComparison.OrdinalIgnoreCase);
     }
 
     public async Task<(ColaboradorCadastroFormDto? Form, string? Error)> GetFormAsync(
@@ -31,7 +40,7 @@ public class ColaboradorCadastroService
             return (null, "Nenhuma obra selecionada.");
         }
 
-        var lookups = await LoadLookupsAsync(cancellationToken);
+        var lookups = await LoadLookupsAsync(httpContext, cancellationToken);
         var isNew = colaboradorId <= 0;
         var canNovo = ColaboradorIndexService.CanColaboradorIndex(httpContext, "editar");
         var canEditar = canNovo;
@@ -46,6 +55,7 @@ public class ColaboradorCadastroService
             return (new ColaboradorCadastroFormDto
             {
                 Sexo = "S",
+                Cep = "",
                 PodeSalvar = true,
                 ExigeSenha = true,
                 ObraNomeSessao = obraNomeSessao ?? "",
@@ -164,23 +174,126 @@ public class ColaboradorCadastroService
             return Fail("O perfil do colaborador deve ser preenchido");
         }
 
+        var grupoSel = await _context.Grupos.AsNoTracking()
+            .FirstOrDefaultAsync(g => g.GruIdGrupo == request.IdGrupo, cancellationToken);
+        if (grupoSel == null)
+        {
+            return Fail("Perfil (grupo) inválido.");
+        }
+
+        var perfilLeve = IsPerfilColaboradorLeve(grupoSel.GruNmNome);
         var isNew = request.IdColaborador <= 0;
+        var cpf = DigitsOnly(request.Cpf);
+        var cep = DigitsOnly(request.Cep);
+        var telPri = DigitsOnly(request.TelefonePrincipal);
+        var telSec = DigitsOnly(request.TelefoneSecundario);
+
+        // Paridade ColaboradorController.salvar — perfil Engenheiro/Diretor exige campos completos.
+        if (!perfilLeve)
+        {
+            if (cpf.Length == 0)
+            {
+                return Fail("O CPF deve ser preenchido.");
+            }
+
+            if (cpf.Length != 11)
+            {
+                return Fail("O CPF é inválido.");
+            }
+
+            var sexo = (request.Sexo ?? "S").Trim();
+            if (sexo is not ("M" or "F"))
+            {
+                return Fail("O Sexo deve ser preenchido.");
+            }
+
+            var rawNasc = (request.DataNascimento ?? "").Trim();
+            if (rawNasc.Length == 0 || rawNasc == "__/__/____")
+            {
+                return Fail("A Data de Nascimento deve ser preenchida.");
+            }
+
+            if (!DateTime.TryParseExact(rawNasc, "dd/MM/yyyy", PtBr, DateTimeStyles.None, out _))
+            {
+                return Fail("A Data de Nascimento é inválida.");
+            }
+
+            if (telPri.Length == 0)
+            {
+                return Fail("O Telefone Principal deve ser preenchido.");
+            }
+
+            if (telPri.Length < 10)
+            {
+                return Fail("Telefone Principal inválido");
+            }
+
+            var email = (request.Email ?? "").Trim();
+            if (email.Length == 0)
+            {
+                return Fail("O E-mail precisa ser preenchido.");
+            }
+
+            if (!email.Contains('@') || !email.Contains('.'))
+            {
+                return Fail("O E-mail é inválido.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Logradouro))
+            {
+                return Fail("O Logradouro deve ser preenchido.");
+            }
+
+            // UF vem via município no payload atual
+            if (request.IdMunicipio <= 0)
+            {
+                return Fail("O Município deve ser preenchido.");
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(request.NumeroEndereco))
+        {
+            return Fail("O Número deve ser preenchido.");
+        }
+
+        if (cep.Length == 0)
+        {
+            return Fail("O CEP deve ser preenchido.");
+        }
+
+        if (telSec.Length is > 0 and < 10)
+        {
+            return Fail("Telefone Secundário inválido");
+        }
+
         var senha = request.Senha ?? "";
         var conf = request.ConfirmacaoSenha ?? "";
-        if (isNew || !string.IsNullOrWhiteSpace(senha) || !string.IsNullOrWhiteSpace(conf))
+        if (!perfilLeve && (isNew || !string.IsNullOrWhiteSpace(senha) || !string.IsNullOrWhiteSpace(conf)))
         {
             if (string.IsNullOrWhiteSpace(senha))
             {
-                return Fail("A Senha deve ser preenchida");
+                return Fail("A Senha deve ser preenchida.");
+            }
+
+            if (senha.Length < 4)
+            {
+                return Fail("Por favor, introduza pelo menos 4 caracteres na Senha do Colaborador.");
+            }
+
+            if (string.IsNullOrWhiteSpace(conf))
+            {
+                return Fail("A Confirmação Senha deve ser preenchida.");
             }
 
             if (senha != conf)
             {
-                return Fail("A confirmação de senha não confere");
+                return Fail("As senhas digitadas devem ser idênticas.");
             }
         }
-
-        var cpf = DigitsOnly(request.Cpf);
+        else if (!perfilLeve && !string.IsNullOrWhiteSpace(senha) && senha != conf)
+        {
+            return Fail("As senhas digitadas devem ser idênticas.");
+        }
         Colaborador colaborador;
         if (isNew)
         {
@@ -199,7 +312,9 @@ public class ColaboradorCadastroService
                     {
                         ColNrCpf = cpf,
                         ColNmColaborador = nome,
-                        ColDsSenha = Seguranca.EncryptTripleDES(senha),
+                        ColDsSenha = string.IsNullOrWhiteSpace(senha)
+                            ? ""
+                            : Seguranca.EncryptTripleDES(senha),
                     };
                     ApplyPersonFields(colaborador, request, cpf, updatePassword: false);
                     _context.Colaboradores.Add(colaborador);
@@ -211,7 +326,9 @@ public class ColaboradorCadastroService
                 {
                     ColNrCpf = "",
                     ColNmColaborador = nome,
-                    ColDsSenha = Seguranca.EncryptTripleDES(senha),
+                    ColDsSenha = string.IsNullOrWhiteSpace(senha)
+                        ? ""
+                        : Seguranca.EncryptTripleDES(senha),
                 };
                 ApplyPersonFields(colaborador, request, "", updatePassword: false);
                 _context.Colaboradores.Add(colaborador);
@@ -253,13 +370,7 @@ public class ColaboradorCadastroService
             }
         }
 
-        var grupo = await _context.Grupos.AsNoTracking()
-            .FirstOrDefaultAsync(g => g.GruIdGrupo == request.IdGrupo, cancellationToken);
-        if (grupo == null)
-        {
-            return Fail("Perfil (grupo) inválido.");
-        }
-
+        var grupo = grupoSel;
         var lado = grupo.GruStContratante == 1 ? "t" : grupo.GruStContratante == 2 ? "d" : "";
         var obraColab = await _context.ObraColaboradores
             .FirstOrDefaultAsync(
@@ -348,7 +459,9 @@ public class ColaboradorCadastroService
     private async Task<(
         List<ColaboradorIndexLookupDto> Ufs,
         List<ColaboradorIndexLookupDto> Cargos,
-        List<ColaboradorIndexLookupDto> Grupos)> LoadLookupsAsync(CancellationToken cancellationToken)
+        List<ColaboradorIndexLookupDto> Grupos)> LoadLookupsAsync(
+        HttpContext httpContext,
+        CancellationToken cancellationToken)
     {
         var ufs = await _context.UFs.AsNoTracking()
             .OrderBy(u => u.UfeDsSigla)
@@ -358,10 +471,7 @@ public class ColaboradorCadastroService
             .OrderBy(c => c.CarDsCargo)
             .Select(c => new ColaboradorIndexLookupDto { Id = c.CarIdCargo, Nome = c.CarDsCargo ?? "" })
             .ToListAsync(cancellationToken);
-        var grupos = await _context.Grupos.AsNoTracking()
-            .OrderBy(g => g.GruNmNome)
-            .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
-            .ToListAsync(cancellationToken);
+        var grupos = await _index.ListaGruposPeloLadoAsync(httpContext, cancellationToken);
         return (ufs, cargos, grupos);
     }
 

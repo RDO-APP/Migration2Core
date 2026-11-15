@@ -35,6 +35,8 @@ public class EquipamentoCadastroService
             return (null, "Nenhuma obra selecionada.");
         }
 
+        var tipos = await LoadTiposAsync(cancellationToken);
+
         if (equipamentoId <= 0)
         {
             if (!CanCriarNovo(httpContext))
@@ -42,7 +44,7 @@ public class EquipamentoCadastroService
                 return (null, "Sem permissão para criar equipamento.");
             }
 
-            return (Blank(obraNomeSessao, podeSalvar: true), null);
+            return (Blank(obraNomeSessao, podeSalvar: true, tipos), null);
         }
 
         var row = await (
@@ -55,6 +57,7 @@ public class EquipamentoCadastroService
             {
                 eq.EquIdEquipamento,
                 oe.OeqIdObraEquipamento,
+                eq.EquIdTipoEquipamento,
                 Descricao = eq.EquDsEquipamento ?? "",
                 Marca = eq.EquDsMarca ?? "",
                 Modelo = eq.EquDsModelo ?? "",
@@ -75,6 +78,7 @@ public class EquipamentoCadastroService
         {
             IdEquipamento = row.EquIdEquipamento,
             IdObraEquipamento = row.OeqIdObraEquipamento,
+            IdTipoEquipamento = row.EquIdTipoEquipamento,
             TipoEquipamento = row.Tipo,
             Descricao = row.Descricao,
             Marca = row.Marca,
@@ -88,6 +92,7 @@ public class EquipamentoCadastroService
             Telefone = FormatPhone(row.Telefone),
             PodeSalvar = CanEditar(httpContext),
             ObraNomeSessao = obraNomeSessao ?? "",
+            Tipos = tipos,
         }, null);
     }
 
@@ -113,10 +118,25 @@ public class EquipamentoCadastroService
             return Fail("Sem permissão para editar equipamento.");
         }
 
+        var tipoId = request.IdTipoEquipamento;
         var tipoNome = (request.TipoEquipamento ?? "").Trim();
-        if (tipoNome.Length == 0)
+        if (tipoId <= 0 && tipoNome.Length == 0)
         {
             return Fail("O Tipo de equipamento deve ser preenchido.");
+        }
+
+        if (tipoId > 0)
+        {
+            var tipoOk = await _context.TipoEquipamentos.AsNoTracking()
+                .AnyAsync(t => t.TeqIdTipoEquipamento == tipoId, cancellationToken);
+            if (!tipoOk)
+            {
+                return Fail("O Tipo de equipamento deve ser preenchido.");
+            }
+        }
+        else
+        {
+            tipoId = await ResolveTipoIdAsync(tipoNome, cancellationToken);
         }
 
         var descricao = (request.Descricao ?? "").Trim();
@@ -143,7 +163,6 @@ public class EquipamentoCadastroService
             return Fail("O Telefone é inválido.");
         }
 
-        var tipoId = await ResolveTipoIdAsync(tipoNome, cancellationToken);
         Equipamento equipamento;
         if (isNew)
         {
@@ -197,15 +216,30 @@ public class EquipamentoCadastroService
         obraEquip.OeqDsTelefone = telefone;
 
         await _context.SaveChangesAsync(cancellationToken);
-        return new EquipamentoCadastroSaveResultDto { Ok = true, IdEquipamento = equipamento.EquIdEquipamento };
+        return new EquipamentoCadastroSaveResultDto
+        {
+            Ok = true,
+            IdEquipamento = equipamento.EquIdEquipamento,
+            IdObraEquipamento = obraEquip.OeqIdObraEquipamento,
+        };
     }
+
+    private async Task<List<EquipamentoCadastroLookupDto>> LoadTiposAsync(CancellationToken cancellationToken) =>
+        await _context.TipoEquipamentos.AsNoTracking()
+            .OrderBy(t => t.TeqNmTipoEquipamento)
+            .Select(t => new EquipamentoCadastroLookupDto
+            {
+                Id = t.TeqIdTipoEquipamento,
+                Nome = t.TeqNmTipoEquipamento ?? "",
+            })
+            .ToListAsync(cancellationToken);
 
     private async Task<int> ResolveTipoIdAsync(string nome, CancellationToken cancellationToken)
     {
         var lower = nome.ToLowerInvariant();
         var existing = await _context.TipoEquipamentos
             .FirstOrDefaultAsync(
-                t => t.TeqNmTipoEquipamento != null && t.TeqNmTipoEquipamento.ToLower().Contains(lower),
+                t => t.TeqNmTipoEquipamento != null && t.TeqNmTipoEquipamento.ToLower() == lower,
                 cancellationToken);
         if (existing != null)
         {
@@ -222,12 +256,16 @@ public class EquipamentoCadastroService
         return created.TeqIdTipoEquipamento;
     }
 
-    private static EquipamentoCadastroFormDto Blank(string? obraNome, bool podeSalvar) =>
+    private static EquipamentoCadastroFormDto Blank(
+        string? obraNome,
+        bool podeSalvar,
+        IReadOnlyList<EquipamentoCadastroLookupDto> tipos) =>
         new()
         {
             TipoAquisicao = "S",
             PodeSalvar = podeSalvar,
             ObraNomeSessao = obraNome ?? "",
+            Tipos = tipos,
         };
 
     private static EquipamentoCadastroSaveResultDto Fail(string msg) =>

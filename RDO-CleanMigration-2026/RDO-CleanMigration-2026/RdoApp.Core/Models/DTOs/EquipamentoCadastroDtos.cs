@@ -1,9 +1,16 @@
 namespace RdoApp.Core.Models.Dtos;
 
+public sealed class EquipamentoCadastroLookupDto
+{
+    public int Id { get; init; }
+    public string Nome { get; init; } = "";
+}
+
 public sealed class EquipamentoCadastroFormDto
 {
     public int IdEquipamento { get; init; }
     public int IdObraEquipamento { get; init; }
+    public int IdTipoEquipamento { get; init; }
     public string TipoEquipamento { get; init; } = "";
     public string Descricao { get; init; } = "";
     public string Marca { get; init; } = "";
@@ -15,11 +22,13 @@ public sealed class EquipamentoCadastroFormDto
     public string Telefone { get; init; } = "";
     public bool PodeSalvar { get; init; }
     public string ObraNomeSessao { get; init; } = "";
+    public IReadOnlyList<EquipamentoCadastroLookupDto> Tipos { get; init; } = [];
 }
 
 public sealed class EquipamentoCadastroSaveRequestDto
 {
     public int IdEquipamento { get; set; }
+    public int IdTipoEquipamento { get; set; }
     public string? TipoEquipamento { get; set; }
     public string? Descricao { get; set; }
     public string? Marca { get; set; }
@@ -36,4 +45,5 @@ public sealed class EquipamentoCadastroSaveResultDto
     public bool Ok { get; init; }
     public string? ErrorMessage { get; init; }
     public int IdEquipamento { get; init; }
+    public int IdObraEquipamento { get; init; }
 }

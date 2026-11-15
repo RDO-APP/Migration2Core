@@ -13,6 +13,10 @@ public static class LoginSessionHelper
     public static string GetContratanteContratadaUsuario(HttpContext context) =>
         TryReadLogin(context)?.ObraColaborador?.ContratanteContratada ?? "";
 
+    /// <summary>Licença do grupo na obra (paridade ListaPeloGrupo · idLicenca).</summary>
+    public static int GetIdLicenca(HttpContext context) =>
+        TryReadLogin(context)?.ObraColaborador?.IdLicenca ?? 0;
+
     public static int GetIdObraColaborador(HttpContext context)
     {
         var id = TryReadLogin(context)?.ObraColaborador?.IdObraColaborador ?? 0;
