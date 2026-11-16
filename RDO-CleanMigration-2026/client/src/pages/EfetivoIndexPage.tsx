@@ -175,7 +175,7 @@ export function EfetivoIndexPage() {
               title="Adicionar Colaborador"
               onClick={onAdicionarColaborador}
             >
-              <i className="icon-obras" aria-hidden />
+              <i className="fa fa-users" aria-hidden />
             </button>
           </div>
         </div>

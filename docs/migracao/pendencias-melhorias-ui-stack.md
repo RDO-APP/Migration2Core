@@ -108,6 +108,8 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **M7-PDF-FOTOS-LINHA** | **PDF fotográfico — qtd. fotos/linha:** no Novo RDO (antes de GERAR), usuário escolhe 1–4 (default **4** = prod `Rdo.rdlc` 4 cm). Hoje fixo paridade prod. | M | **M7+** · após smoke layout F7 | ⬜ backlog 16/11 |
 | **M7-PDF-FOTO-GEO-LEG** | **Legenda com coordenadas** no PDF (lat/long sob cada foto). Depende **M7-FOTO-GEO** (schema + capture). | M | **M7+** pós GEO | ⬜ backlog 16/11 |
 | **M7-PDF-FOTO-LEGENDA** | **Legenda manual** antes de imprimir: campo texto por foto na galeria do Novo RDO → persiste → imprime sob a miniatura no PDF. | M | **M7+** | ⬜ backlog 16/11 |
+| **M7-REL-MEDICAO-LAYOUT** | Relatório Medição PDF/Excel ≈ RDLC (PLANILHA DE MEDIÇÃO, logo, grupos PLANEJADO/QM/VM, TOTAL GERAL). Excel HTML-.xls. Pixel-perfect/BFI SERVIÇOS = ClosedXML futuro. | M | **M7+** | 🟡 16/11 QuestPDF+HTML |
+| **M7-REL-EFETIVO-LAYOUT** | Relatório Efetivo PDF/Excel: aproximar RDLC prod (logo, header EFETIVO DIÁRIO, totais coloridos, colunas DATA/CARGO/NOME/STATUS). Excel = HTML-.xls (não RDLC). Merge de células DATA e pixel-perfect = ClosedXML/futuro. | M | **M7+** | 🟡 16/11 QuestPDF+HTML |
 | **M7-REL-EFETIVO-HIST** | **Histórico de relatórios de Efetivo Diário** (como listagem de RDOs): tabela com período gerado, quem gerou, data/hora da geração, botões Excel/PDF (re-download), filtros. Exige persistir metadados a cada GERAR (schema + LGPD). | G | **M7+** | ⬜ backlog 16/11 |
 | **M7-EFETIVO-NOVO-MODAL** | **Adicionar Colaborador** no Efetivo: hoje botão → `/Colaborador/Cadastro`; paridade prod = modal `#novo-colaborador` na própria página. | M | **M7+** | ⬜ parcial (botão+rota) 16/11 |
 

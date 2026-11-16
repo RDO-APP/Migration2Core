@@ -118,3 +118,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.efetivo-page .panel-heading .action .btn-simple i {
+  display: inline-block;
+  min-width: 1.1em;
+  text-align: center;
+}
