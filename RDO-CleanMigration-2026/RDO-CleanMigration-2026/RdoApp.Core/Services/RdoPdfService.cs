@@ -309,6 +309,8 @@ public class RdoPdfService
 
                         if (gerarRelatorioFotografico && HasFotoBytes(dtImagem))
                         {
+                            // Paridade RDLC: relatório fotográfico em página própria.
+                            col.Item().PageBreak();
                             GrayTitle(col, "RELATÓRIO FOTOGRÁFICO");
                             Fotos(col, dtImagem);
                         }
@@ -1106,6 +1108,11 @@ public class RdoPdfService
     private static string FormatHorimetro(float? value) =>
         value.HasValue ? value.Value.ToString("N", HorimetroFormat) : "";
 
+    /// <summary>
+    /// Resolve bytes no disco. DB grava relativo <c>{obra}/{tarefa}/{yyyyMM}/file</c>
+    /// (UI prefixa <c>/Uploads/Imagens/</c>); sem o <c>Imagens/</c> o PDF lia path errado e
+    /// <see cref="HasFotoBytes"/> pulava a 2ª página.
+    /// </summary>
     private static byte[] LoadImageBytes(string? caminho, string? uploadsRoot, string? webRoot, string? contentRoot)
     {
         if (string.IsNullOrWhiteSpace(caminho))
@@ -1114,19 +1121,41 @@ public class RdoPdfService
         }
 
         var rel = caminho.Replace('\\', '/').Trim();
-        if (!rel.StartsWith('/'))
+        if (rel.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || rel.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
         {
-            rel = "/" + rel;
+            return Array.Empty<byte>();
         }
 
-        var underUploads = rel.StartsWith("/Uploads/", StringComparison.OrdinalIgnoreCase)
-            ? rel["/Uploads/".Length..]
-            : rel.TrimStart('/');
+        // Alinha a NormalizeImagemCaminho (RDO UI): sob /Uploads → físico em UploadsRoot.
+        string underUploads;
+        if (rel.StartsWith("/Uploads/", StringComparison.OrdinalIgnoreCase))
+        {
+            underUploads = rel["/Uploads/".Length..];
+        }
+        else if (rel.StartsWith("Uploads/", StringComparison.OrdinalIgnoreCase))
+        {
+            underUploads = rel["Uploads/".Length..];
+        }
+        else if (rel.StartsWith("/Imagens/", StringComparison.OrdinalIgnoreCase)
+                 || rel.StartsWith("Imagens/", StringComparison.OrdinalIgnoreCase))
+        {
+            underUploads = rel.TrimStart('/');
+        }
+        else
+        {
+            // ima_ds_caminho típico: "123/456/202611/guid.jpg"
+            underUploads = "Imagens/" + rel.TrimStart('/');
+        }
+
+        var effectiveUploadsRoot = string.IsNullOrWhiteSpace(uploadsRoot)
+            ? Path.Combine(contentRoot ?? "", "Uploads")
+            : uploadsRoot;
 
         var candidates = new List<string>();
         void Add(string? root, string tail)
         {
-            if (string.IsNullOrWhiteSpace(root))
+            if (string.IsNullOrWhiteSpace(root) || string.IsNullOrWhiteSpace(tail))
             {
                 return;
             }
@@ -1134,13 +1163,17 @@ public class RdoPdfService
             candidates.Add(Path.Combine(root.TrimEnd('\\', '/'), tail.Replace('/', Path.DirectorySeparatorChar)));
         }
 
-        Add(uploadsRoot, underUploads);
-        Add(uploadsRoot, rel.TrimStart('/'));
-        Add(webRoot, rel.TrimStart('/'));
+        Add(effectiveUploadsRoot, underUploads);
+        // Fallback se UploadsRoot já apontar para .../Uploads/Imagens
+        if (underUploads.StartsWith("Imagens/", StringComparison.OrdinalIgnoreCase))
+        {
+            Add(effectiveUploadsRoot, underUploads["Imagens/".Length..]);
+        }
+
+        Add(webRoot, "Uploads/" + underUploads);
         Add(webRoot, underUploads);
-        Add(contentRoot, rel.TrimStart('/'));
-        Add(contentRoot, Path.Combine("Uploads", underUploads));
-        Add(contentRoot, Path.Combine("wwwroot", rel.TrimStart('/')));
+        Add(contentRoot, "Uploads/" + underUploads);
+        Add(contentRoot, Path.Combine("wwwroot", "Uploads", underUploads));
 
         foreach (var physical in candidates.Distinct(StringComparer.OrdinalIgnoreCase))
         {
