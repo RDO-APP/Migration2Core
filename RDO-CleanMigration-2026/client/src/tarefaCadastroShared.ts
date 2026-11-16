@@ -96,9 +96,20 @@ export function buildSaveRequest(
     listaIdsObraEquipamento: form.listaIdsObraEquipamento,
     listaAcidentes: form.listaAcidentes,
     listaIdsAcidentesRemovidos: form.listaIdsAcidentesRemovidos,
-    listaImagens: form.listaImagens?.filter((img) => !!img.base64),
+    // id 0 = foto nova (nunca -Date.now(): estoura Int32 no BFF).
+    listaImagens: form.listaImagens
+      ?.filter((img) => !!img.base64)
+      .map((img) => ({
+        id: img.id > 0 ? img.id : 0,
+        href: img.href?.startsWith('blob:') ? undefined : img.href,
+        base64: img.base64,
+        filetype: img.filetype,
+      })),
   }
 }
+
+/** Contador negativo pequeno (cabe em Int32) — só UI local. */
+let nextTempImagemId = -1
 
 export function readFileAsBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -115,8 +126,11 @@ export function readFileAsBase64(file: File): Promise<string> {
 
 export async function fileToTarefaImagem(file: File): Promise<TarefaCadastroImagem> {
   const base64 = await readFileAsBase64(file)
+  const id = nextTempImagemId
+  nextTempImagemId -= 1
+  if (nextTempImagemId < -1_000_000) nextTempImagemId = -1
   return {
-    id: -Date.now(),
+    id,
     href: URL.createObjectURL(file),
     base64,
     filetype: file.type || 'image/jpeg',
