@@ -99,12 +99,14 @@ export function buildSaveRequest(
     // id 0 = foto nova (nunca -Date.now(): estoura Int32 no BFF).
     listaImagens: form.listaImagens
       ?.filter((img) => !!img.base64)
-      .map((img) => ({
-        id: img.id > 0 ? img.id : 0,
-        href: img.href?.startsWith('blob:') ? undefined : img.href,
-        base64: img.base64,
-        filetype: img.filetype,
-      })),
+      .map(
+        (img): TarefaCadastroImagem => ({
+          id: img.id > 0 ? img.id : 0,
+          href: img.href?.startsWith('blob:') ? '' : (img.href ?? ''),
+          base64: img.base64,
+          filetype: img.filetype,
+        }),
+      ),
   }
 }
 
