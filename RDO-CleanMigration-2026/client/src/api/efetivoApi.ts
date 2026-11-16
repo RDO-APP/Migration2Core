@@ -90,3 +90,74 @@ export async function updateEfetivoStatus(body: {
   })
   return readJson(res, 'status efetivo')
 }
+
+export type EfetivoCopiarResult = {
+  ok: boolean
+  copiados?: number
+  errorMessage?: string | null
+}
+
+/** Paridade prod POST api/efetivo/CopiarEfetivo */
+export async function copiarEfetivo(body: {
+  dataOrigem: string
+  dataDestino: string
+}): Promise<EfetivoCopiarResult> {
+  const res = await fetch('/api/bff/efetivo/copiar', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return readJson(res, 'copiar efetivo')
+}
+
+function triggerDownload(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = fileName
+  link.rel = 'noopener'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
+/** Paridade prod POST api/efetivo/gerarrelatorio + Download.base64 */
+export async function downloadEfetivoRelatorio(body: {
+  dataInicial: string
+  dataFinal: string
+  tipoRelatorio: 'PDF' | 'Excel'
+}): Promise<void> {
+  const res = await fetch('/api/bff/efetivo/relatorio', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { Accept: '*/*', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (res.status === 401) {
+    throw new Error('Sessão expirada ou obra não selecionada. Volte a Escolher obra.')
+  }
+  if (!res.ok) {
+    const text = await res.text()
+    let message = text
+    try {
+      const j = JSON.parse(text) as { message?: string }
+      message = j.message ?? text
+    } catch {
+      /* keep */
+    }
+    throw new Error(message || `Erro ${res.status} ao gerar relatório.`)
+  }
+  const blob = await res.blob()
+  const cd = res.headers.get('Content-Disposition') ?? ''
+  const match = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(cd)
+  let fileName =
+    body.tipoRelatorio === 'Excel'
+      ? `EfetivoDiario_${body.dataInicial}_${body.dataFinal}.xls`
+      : `EfetivoDiario_${body.dataInicial}_${body.dataFinal}.pdf`
+  if (match?.[1]) {
+    fileName = match[1].replace(/['"]/g, '').trim()
+  }
+  triggerDownload(blob, fileName)
+}

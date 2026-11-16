@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { downloadEfetivoRelatorio } from '../api/efetivoApi'
+import { downloadMedicaoRelatorio } from '../api/medicaoApi'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
 import { goOperador } from '../nav/p3-operador-routes'
@@ -47,12 +49,34 @@ function RelatorioForm({ kind }: { kind: RelatorioKind }) {
   const [dataInicial, setDataInicial] = useState('')
   const [dataFinal, setDataFinal] = useState('')
   const [status, setStatus] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  function gerar(tipo: 'pdf' | 'excel' | 'relatorio') {
+  async function gerar(tipo: 'pdf' | 'excel' | 'relatorio') {
     if (!dataInicial.trim() || !dataFinal.trim()) {
       showToast('error', 'Informe Data Inicial e Data Final.')
       return
     }
+
+    // Prod: efetivo → api/efetivo/gerarrelatorio · medição → api/medicao/gerarrelatorio
+    if ((kind === 'efetivo' || kind === 'medicao') && (tipo === 'pdf' || tipo === 'excel')) {
+      setBusy(true)
+      try {
+        const payload = {
+          dataInicial,
+          dataFinal,
+          tipoRelatorio: (tipo === 'excel' ? 'Excel' : 'PDF') as 'PDF' | 'Excel',
+        }
+        if (kind === 'efetivo') await downloadEfetivoRelatorio(payload)
+        else await downloadMedicaoRelatorio(payload)
+        showToast('success', `${meta.title} baixado.`)
+      } catch (e: unknown) {
+        showToast('error', e instanceof Error ? e.message : 'Falha ao gerar relatório.')
+      } finally {
+        setBusy(false)
+      }
+      return
+    }
+
     showToast(
       'success',
       `${meta.title}: geração ${tipo.toUpperCase()} em migração (BFF M7+). Filtro ${dataInicial} → ${dataFinal}${
@@ -104,15 +128,30 @@ function RelatorioForm({ kind }: { kind: RelatorioKind }) {
             </button>
             {meta.dualExport ? (
               <>
-                <button type="button" className="dashboard-report-btn" onClick={() => gerar('excel')}>
-                  Gerar Excel
+                <button
+                  type="button"
+                  className="dashboard-report-btn"
+                  disabled={busy}
+                  onClick={() => void gerar('excel')}
+                >
+                  {busy ? 'Gerando…' : 'Gerar Excel'}
                 </button>
-                <button type="button" className="dashboard-report-btn" onClick={() => gerar('pdf')}>
-                  Gerar PDF
+                <button
+                  type="button"
+                  className="dashboard-report-btn"
+                  disabled={busy}
+                  onClick={() => void gerar('pdf')}
+                >
+                  {busy ? 'Gerando…' : 'Gerar PDF'}
                 </button>
               </>
             ) : (
-              <button type="button" className="dashboard-report-btn" onClick={() => gerar('relatorio')}>
+              <button
+                type="button"
+                className="dashboard-report-btn"
+                disabled={busy}
+                onClick={() => void gerar('relatorio')}
+              >
                 Gerar Relatório
               </button>
             )}

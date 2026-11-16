@@ -118,11 +118,66 @@ public class EfetivoQueryService
         return new EfetivoStatusUpdateResultDto { Ok = true, IdEfetivo = entity.EfeIdEfetivo };
     }
 
+    /// <summary>Paridade prod <c>EfetivoModel.CopiarEfetivo</c>: copia status do dia origem → destino.</summary>
+    public async Task<EfetivoCopiarResultDto> CopiarAsync(int obraId, EfetivoCopiarRequestDto request, CancellationToken ct)
+    {
+        if (!TryParseDate(request.DataOrigem, out var origem))
+            return new EfetivoCopiarResultDto { Ok = false, ErrorMessage = "Informe a data de origem (filtro)." };
+        if (!TryParseDate(request.DataDestino, out var destino))
+            return new EfetivoCopiarResultDto { Ok = false, ErrorMessage = "Por favor, selecione uma data que deseja copiar o efetivo." };
+
+        var diaOrigem = origem.Date;
+        var diaDestino = destino.Date;
+        if (diaOrigem == diaDestino)
+            return new EfetivoCopiarResultDto { Ok = false, ErrorMessage = "A data de destino deve ser diferente da data de origem." };
+
+        var fonte = await _context.Efetivos.AsNoTracking()
+            .Where(e => e.EfeIdObra == obraId && e.EfeData.Date == diaOrigem && e.EfeIdEfetivoStatus > 0)
+            .ToListAsync(ct);
+        if (fonte.Count == 0)
+            return new EfetivoCopiarResultDto { Ok = false, ErrorMessage = "Não há efetivo lançado na data de origem para copiar." };
+
+        var existentesDestino = await _context.Efetivos
+            .Where(e => e.EfeIdObra == obraId && e.EfeData.Date == diaDestino)
+            .ToListAsync(ct);
+        var byOc = existentesDestino.ToDictionary(e => e.EfeIdObraColaborador);
+
+        var copiados = 0;
+        foreach (var src in fonte)
+        {
+            if (byOc.TryGetValue(src.EfeIdObraColaborador, out var dest))
+            {
+                if (dest.EfeIdEfetivoStatus != src.EfeIdEfetivoStatus)
+                {
+                    dest.EfeIdEfetivoStatus = src.EfeIdEfetivoStatus;
+                    copiados++;
+                }
+            }
+            else
+            {
+                _context.Efetivos.Add(new Efetivo
+                {
+                    EfeIdObra = obraId,
+                    EfeIdObraColaborador = src.EfeIdObraColaborador,
+                    EfeIdEfetivoStatus = src.EfeIdEfetivoStatus,
+                    EfeData = diaDestino,
+                });
+                copiados++;
+            }
+        }
+
+        if (copiados > 0)
+            await _context.SaveChangesAsync(ct);
+
+        return new EfetivoCopiarResultDto { Ok = true, Copiados = copiados };
+    }
+
     private static bool TryParseDate(string? value, out DateTime date)
     {
         date = default;
         if (string.IsNullOrWhiteSpace(value)) return false;
         return DateTime.TryParseExact(value.Trim(), "dd/MM/yyyy", PtBr, DateTimeStyles.None, out date)
+               || DateTime.TryParseExact(value.Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out date)
                || DateTime.TryParse(value, PtBr, DateTimeStyles.None, out date);
     }
 }

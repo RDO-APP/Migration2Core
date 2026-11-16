@@ -98,7 +98,7 @@ Ordem na tela:
 |--------|------------|--------------------------------------|
 | Equipamentos | `/equipamentos/index` | ✅ SPA index+cadastro (`EquipamentoIndexPage` / `EquipamentoCadastroPage`) |
 | Colaboradores | `/colaborador/index` | ✅ SPA index+cadastro (`ColaboradorIndexPage` / `ColaboradorCadastroPage`) |
-| Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` (sem Copiar/Novo colab) |
+| Efetivo Diário | `/efetivo/index` | 🟡 SPA+BFF `/Efetivo/Index` · Copiar · Adicionar→Cadastro · relatório download |
 | Card de Tarefas | `/tarefa/cards` | ✅ SPA `/Tarefa/Cards` |
 | RDOs | `/rdo/index` | ✅ SPA `/Rdo/Index` |
 | Obras | `/obra/index` | ✅ SPA `ObraIndexPage` + BFF · cadastro SPA `/Obra/Cadastro` (editar + `?nova=true`) |

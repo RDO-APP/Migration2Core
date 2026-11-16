@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-16 ~10:15 — **F7** PDF foto 4 cm (paridade RDLC) · backlog **M7-PDF-FOTOS-LINHA** / **GEO-LEG** / **LEGENDA** · F6 path `Imagens/`  
+**Atualizado:** 2026-11-16 ~10:40 — Efetivo **Copiar** + relatório PDF/Excel download · backlog **M7-REL-EFETIVO-HIST** · F7 PDF foto  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -419,16 +419,18 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | **M7-PDF-FOTOS-LINHA** | Usuário escolhe qtd. fotos/linha no PDF (default 4 = prod) | 0% | backlog 16/11 · layout F7 = paridade fixa |
 | **M7-PDF-FOTO-GEO-LEG** | Coordenadas na legenda do PDF | 0% | pós **M7-FOTO-GEO** |
 | **M7-PDF-FOTO-LEGENDA** | Legenda manual por foto antes de GERAR RDO | 0% | backlog 16/11 |
+| **M7-REL-EFETIVO-HIST** | Listar relatórios efetivo gerados (período, quem, data/hora, PDF/Excel) | 0% | backlog 16/11 · ≠ download pontual já OK |
+| **M7-EFETIVO-NOVO-MODAL** | Modal Adicionar Colaborador na página Efetivo (paridade prod) | 10% | botão → Cadastro SPA |
 
 ---
 
 ## Próxima ação (1)
 
-1. **Commit/push** `RdoPdfService` (F6 path + F7 layout 4 cm) + docs → **publish/deploy** → smoke PDF: 2 fotos **não** esticam a linha.
-2. **Smoke G5** — drawer 9 itens ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2).
-3. Backlog foto PDF (não agora): **M7-PDF-FOTOS-LINHA** · **M7-PDF-FOTO-GEO-LEG** · **M7-PDF-FOTO-LEGENDA**.
+1. **Commit/push** Efetivo Copiar + relatório download + F7 PDF foto + docs → **publish/deploy**.
+2. Smoke: Efetivo ícones Copiar/Adicionar · Relatório Efetivo **baixa** PDF/Excel (não só toast).
+3. Backlog (não agora): **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · foto PDF linha/geo/legenda.
 4. Lucio confirma polish **1.5a** cadastro etapa quando puder.
-5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** · Efetivo Copiar/Novo colab.
+5. Impressora formatação · **3.1** · **CAT-PARALIZ-01**.
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
@@ -441,7 +443,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
 | **1.1** | Editar obra / **Nova obra (+)** | 🟡 **smoke** | SPA Opção A · CEP/logo/colab · `+`/Voltar tip **`0268e73`** · create DBNull tip **`f389736`** — publish/deploy + smoke Salvar Lucio |
-| **1.2** | Efetivo diário | 🟡 **código** | SPA+BFF filtro/lista/status — **aguardando publish/deploy** (sem Copiar/Novo colaborador ainda) |
+| **1.2** | Efetivo diário | 🟡 **código** | SPA+BFF filtro/lista/status · **Copiar** modal+BFF · **Adicionar Colaborador** → `/Colaborador/Cadastro` (modal in-page = **M7-EFETIVO-NOVO-MODAL**) · relatório PDF/Excel download real |
 | **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
 | **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |

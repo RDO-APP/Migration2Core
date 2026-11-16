@@ -46,3 +46,26 @@ public sealed class EfetivoStatusUpdateResultDto
     public int? IdEfetivo { get; init; }
     public string? ErrorMessage { get; init; }
 }
+
+public sealed class EfetivoCopiarRequestDto
+{
+    /// <summary>Data origem (filtro atual) — dd/MM/yyyy.</summary>
+    public string? DataOrigem { get; init; }
+    /// <summary>Data destino (modal) — dd/MM/yyyy.</summary>
+    public string? DataDestino { get; init; }
+}
+
+public sealed class EfetivoCopiarResultDto
+{
+    public bool Ok { get; init; }
+    public int Copiados { get; init; }
+    public string? ErrorMessage { get; init; }
+}
+
+public sealed class EfetivoRelatorioRequestDto
+{
+    public string? DataInicial { get; init; }
+    public string? DataFinal { get; init; }
+    /// <summary>PDF | Excel</summary>
+    public string? TipoRelatorio { get; init; }
+}

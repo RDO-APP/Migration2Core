@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type CSSProperties } from 'react'
 import {
+  copiarEfetivo,
   fetchEfetivoBootstrap,
   fetchEfetivoList,
   updateEfetivoStatus,
@@ -9,6 +10,7 @@ import {
 } from '../api/efetivoApi'
 import { OperadorShell } from '../components/OperadorShell'
 import { useShellContext } from '../hooks/useShellContext'
+import { goOperador } from '../nav/p3-operador-routes'
 import { showToast } from '../toast'
 import '../cards-page.css'
 import '../efetivo-page.css'
@@ -29,6 +31,9 @@ export function EfetivoIndexPage() {
   const [searching, setSearching] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [savingId, setSavingId] = useState<number | null>(null)
+  const [modalCopiar, setModalCopiar] = useState(false)
+  const [dataCopia, setDataCopia] = useState('')
+  const [copiando, setCopiando] = useState(false)
 
   const carregarLista = useCallback(async (f: Filtro) => {
     if (!f.data.trim()) {
@@ -112,6 +117,39 @@ export function EfetivoIndexPage() {
     }
   }
 
+  async function onCopiar() {
+    if (!dataCopia.trim()) {
+      showToast('error', 'Por favor, selecione uma data que deseja copiar o efetivo.')
+      return
+    }
+    setCopiando(true)
+    try {
+      const result = await copiarEfetivo({
+        dataOrigem: filtro.data,
+        dataDestino: dataCopia.trim(),
+      })
+      if (!result.ok) {
+        showToast('error', result.errorMessage || 'Falha ao copiar efetivo.')
+        return
+      }
+      showToast('success', 'Efetivo copiado com sucesso')
+      setModalCopiar(false)
+      const next: Filtro = { ...filtro, data: dataCopia.trim() }
+      setFiltro(next)
+      setDataCopia('')
+      await carregarLista(next)
+    } catch (e: unknown) {
+      showToast('error', e instanceof Error ? e.message : 'Falha ao copiar efetivo.')
+    } finally {
+      setCopiando(false)
+    }
+  }
+
+  /** Prod abre modal #novo-colaborador; homolog: cadastro SPA (mesmo BFF) e volta ao efetivo. */
+  function onAdicionarColaborador() {
+    goOperador('/Colaborador/Cadastro')
+  }
+
   const statuses: EfetivoLookup[] = boot?.statuses ?? []
 
   return (
@@ -119,6 +157,27 @@ export function EfetivoIndexPage() {
       <section className="efetivo-page cards-page">
         <div className="panel-heading">
           <h3>Efetivo Diário</h3>
+          <div className="action">
+            <button
+              type="button"
+              className="btn btn-simple"
+              title="Copiar Efetivo"
+              onClick={() => {
+                setDataCopia('')
+                setModalCopiar(true)
+              }}
+            >
+              <i className="fa fa-copy" aria-hidden />
+            </button>
+            <button
+              type="button"
+              className="btn btn-simple"
+              title="Adicionar Colaborador"
+              onClick={onAdicionarColaborador}
+            >
+              <i className="icon-obras" aria-hidden />
+            </button>
+          </div>
         </div>
 
         <div className="panel efetivo-filtros">
@@ -246,6 +305,71 @@ export function EfetivoIndexPage() {
           </div>
         ) : null}
       </section>
+
+      {modalCopiar ? (
+        <div
+          className="efetivo-modal-backdrop"
+          role="presentation"
+          onClick={() => !copiando && setModalCopiar(false)}
+        >
+          <div
+            className="efetivo-modal"
+            role="dialog"
+            aria-labelledby="copiar-efetivo-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="efetivo-modal-header">
+              <h4 id="copiar-efetivo-title">COPIAR EFETIVO</h4>
+              <button
+                type="button"
+                className="btn btn-simple"
+                aria-label="Fechar"
+                disabled={copiando}
+                onClick={() => setModalCopiar(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="efetivo-modal-body">
+              <p className="muted" style={{ marginTop: 0 }}>
+                Origem: <strong>{filtro.data || '—'}</strong>
+              </p>
+              <div className="form-group">
+                <label className="control-label">
+                  Selecione uma data para copiar<span style={{ color: 'red' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="dd/mm/aaaa"
+                  maxLength={10}
+                  value={dataCopia}
+                  onChange={(e) => setDataCopia(e.target.value)}
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="efetivo-modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={copiando}
+                onClick={() => setModalCopiar(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-blue"
+                disabled={copiando}
+                onClick={() => void onCopiar()}
+              >
+                {copiando ? 'Copiando…' : 'Copiar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </OperadorShell>
   )
 }
