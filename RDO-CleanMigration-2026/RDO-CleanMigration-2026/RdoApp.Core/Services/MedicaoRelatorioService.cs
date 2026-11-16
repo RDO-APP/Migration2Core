@@ -6,6 +6,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 
 namespace RdoApp.Core.Services;
@@ -186,13 +187,7 @@ public sealed class MedicaoRelatorioService
 
         sb.Append("<tr>");
         sb.Append("<td rowspan=\"4\" style=\"width:110px;text-align:center;vertical-align:middle;\">");
-        if (logoBytes is { Length: > 0 })
-        {
-            var b64 = Convert.ToBase64String(logoBytes);
-            var mime = logoBytes[0] == 0x89 ? "image/png" : "image/jpeg";
-            sb.Append($"<img src=\"data:{mime};base64,{b64}\" width=\"100\" height=\"55\"/>");
-        }
-        else sb.Append("&nbsp;");
+        sb.Append(ExcelHtmlLogoEmbed.LogoCellHtml(logoBytes, 100, 55));
         sb.Append("</td>");
         sb.Append("<td colspan=\"11\" class=\"title\">PLANILHA DE MEDIÇÃO</td></tr>");
         sb.Append($"<tr><td colspan=\"6\"><b>Contratada:</b> {H(c.Contratada)}</td><td colspan=\"5\"><b>Período:</b> {H(c.Periodo)}</td></tr>");
@@ -233,7 +228,7 @@ public sealed class MedicaoRelatorioService
         sb.Append($"<td class=\"num\">{N(c.TgPeriodo)}</td><td class=\"num\">{N(c.TgAcumulado)}</td><td class=\"num\">{N(c.TgSaldo)}</td>");
         sb.Append("</tr>");
         sb.Append("</table></body></html>");
-        return Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
+        return ExcelHtmlLogoEmbed.Pack(sb.ToString(), logoBytes);
     }
 
     private static byte[] BuildPdf(Cabeca c, IReadOnlyList<LinhaMedicao> rows, byte[]? logoBytes)

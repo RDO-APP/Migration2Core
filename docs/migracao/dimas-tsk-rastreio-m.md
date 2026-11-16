@@ -1,6 +1,6 @@
 # Rastreio Dimas (TSK) × marcos M* — execução homolog
 
-**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-15  
+**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-16  
 **Dono da execução:** plano **M\*** ([`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) + [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md))  
 **Referência Dimas:** PDF **Backlog_RDO v20260818** → [`../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md) (TSK-01…56 × Ondas U)
 
@@ -62,7 +62,7 @@ Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adi
 | **M5 web** | RDO + Chart C1–C8 + Dashboard | DOC-FICHAS | **◐** TSK-31…36 · U-56/57 **~88%** |
 | **M5 EQ-M** | — | **⏸** | **⏸** TSK-46…56 |
 | **M6** | — | JWT/OpenAPI | **☐** TSK-07 · 40…41 |
-| **M7+** | 7a–7d · Obra · P6a · Paralizações · P4 · colab/equip/tarefa | Relatórios · CAT-PARALIZ · G5 smoke · 3.1 | **◐** escrita 17…23 · gestor 14…16 · medição 24…30 **~45%** · RBAC |
+| **M7+** | 7a–7d · Obra · P6a · Paralizações · P4 · colab/equip/tarefa · Efetivo/Medição PDF OK · Excel logo fix | CAT-PARALIZ · G5 · 3.1 · Terceirizado dropdown · ClosedXML Excel | **◐** escrita 17…23 · gestor 14…16 · medição 24…30 **~48%** · RBAC |
 | **M8** | Branch CI, roteiro | Runway &lt;2 min | **◐** deploy · **☐** ETL 43 |
 | **M9** | Fatia operador no Git | D1–D7 · smoke `5f747b5` | **◐** release fatia |
 | **M10** | — | L1 · P6b | **☐** cutover |

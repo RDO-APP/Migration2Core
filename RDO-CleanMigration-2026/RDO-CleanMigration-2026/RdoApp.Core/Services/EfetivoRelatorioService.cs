@@ -6,6 +6,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 
 namespace RdoApp.Core.Services;
@@ -216,16 +217,7 @@ public sealed class EfetivoRelatorioService
         sb.AppendLine("<table>");
         sb.AppendLine("<tr>");
         sb.Append("<td rowspan=\"2\" style=\"width:120px;text-align:center;vertical-align:middle;\">");
-        if (logoBytes is { Length: > 0 })
-        {
-            var b64 = Convert.ToBase64String(logoBytes);
-            var mime = logoBytes[0] == 0x89 ? "image/png" : "image/jpeg";
-            sb.Append($"<img src=\"data:{mime};base64,{b64}\" width=\"100\" height=\"60\"/>");
-        }
-        else
-        {
-            sb.Append("&nbsp;");
-        }
+        sb.Append(ExcelHtmlLogoEmbed.LogoCellHtml(logoBytes, 100, 60));
         sb.AppendLine("</td>");
         sb.AppendLine("<td colspan=\"2\" class=\"title\">EFETIVO DIÁRIO</td>");
         sb.AppendLine($"<td class=\"meta\">PERÍODO: {WebUtility.HtmlEncode(periodo)}</td>");
@@ -253,7 +245,7 @@ public sealed class EfetivoRelatorioService
             sb.AppendLine("</tr>");
         }
         sb.AppendLine("</table></body></html>");
-        return Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
+        return ExcelHtmlLogoEmbed.Pack(sb.ToString(), logoBytes);
     }
 
     private static byte[] BuildPdf(

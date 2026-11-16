@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-16 ~10:40 — Efetivo **Copiar** + relatório PDF/Excel download · backlog **M7-REL-EFETIVO-HIST** · F7 PDF foto  
+**Atualizado:** 2026-11-16 ~19:20 — Excel logo Efetivo/Medição (`ExcelHtmlLogoEmbed`, sem `data:` URI) · ícone Adicionar `fa-users` · PDF Efetivo OK  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -426,11 +426,11 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Commit/push** Efetivo Copiar + relatório download + F7 PDF foto + docs → **publish/deploy**.
-2. Smoke: Efetivo ícones Copiar/Adicionar · Relatório Efetivo **baixa** PDF/Excel (não só toast).
-3. Backlog (não agora): **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · foto PDF linha/geo/legenda.
-4. Lucio confirma polish **1.5a** cadastro etapa quando puder.
-5. Impressora formatação · **3.1** · **CAT-PARALIZ-01**.
+1. **Commit/push** Excel logo fix (`ExcelHtmlLogoEmbed`) + `fa-users` Adicionar + docs → **publish/deploy**.
+2. Smoke Excel Efetivo + Medição: **sem X no logo** (marca navy "rdo"); PDF segue com bitmap.
+3. Colaborador: smoke **Número** (obrigatório também no prod) · investigar **Terceirizado** ausente no dropdown (dados `grupo` × `ListaGruposPeloLado`).
+4. Backlog: **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · ClosedXML logo bitmap Excel · foto PDF linha/geo/legenda.
+5. Lucio: polish **1.5a** · Impressora **4** · **3.1** · **CAT-PARALIZ-01**.
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
@@ -443,7 +443,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
 | **1.1** | Editar obra / **Nova obra (+)** | 🟡 **smoke** | SPA Opção A · CEP/logo/colab · `+`/Voltar tip **`0268e73`** · create DBNull tip **`f389736`** — publish/deploy + smoke Salvar Lucio |
-| **1.2** | Efetivo diário | 🟡 **código** | SPA+BFF filtro/lista/status · **Copiar** modal+BFF · **Adicionar Colaborador** → `/Colaborador/Cadastro` (modal in-page = **M7-EFETIVO-NOVO-MODAL**) · relatório PDF/Excel download real |
+| **1.2** | Efetivo diário | 🟡 **smoke** | SPA+BFF · Copiar · Adicionar `fa-users`→Cadastro · PDF layout OK · Excel logo fix (`ExcelHtmlLogoEmbed`) — publish/deploy |
 | **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
 | **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |
