@@ -632,6 +632,15 @@ public class RdoPdfService
         });
     }
 
+    /// <summary>
+    /// Paridade prod <c>Rdo.rdlc</c> dtImagem: até <see cref="FotosPorLinhaPadrao"/> por linha,
+    /// cada foto ~4 cm × 2,65 cm (<c>FitProportional</c>) — <b>não</b> esticar com RelativeItem
+    /// (homolog antigo ocupava a largura toda quando havia 1–2 fotos).
+    /// </summary>
+    private const int FotosPorLinhaPadrao = 4;
+    private const float FotoLarguraPt = 113.4f; // 4 cm
+    private const float FotoAlturaPt = 75.2f;   // ~2,65 cm
+
     private static void Fotos(ColumnDescriptor col, DataTable dt)
     {
         foreach (DataRow r in dt.Rows)
@@ -649,14 +658,16 @@ public class RdoPdfService
 
             if (!string.IsNullOrWhiteSpace(nome))
             {
-                col.Item().PaddingTop(4).Text(nome).SemiBold();
+                col.Item().PaddingTop(6).Background(Colors.Grey.Lighten2).PaddingVertical(3).PaddingHorizontal(4)
+                    .Text(nome).FontSize(11).SemiBold();
             }
 
             col.Item().Row(row =>
             {
-                foreach (var bytes in imgs)
+                foreach (var bytes in imgs.Take(FotosPorLinhaPadrao))
                 {
-                    row.RelativeItem().Padding(3).MaxHeight(140).Image(bytes).FitArea();
+                    row.ConstantItem(FotoLarguraPt).Padding(4).Height(FotoAlturaPt)
+                        .Image(bytes).FitArea();
                 }
             });
         }
@@ -1083,14 +1094,14 @@ public class RdoPdfService
         {
             var nome = linhas[i].NomeTarefa;
             var batch = new List<(string Nome, byte[] Bytes, string Id)>();
-            while (i < linhas.Count && batch.Count < 4 && linhas[i].NomeTarefa == nome)
+            while (i < linhas.Count && batch.Count < FotosPorLinhaPadrao && linhas[i].NomeTarefa == nome)
             {
                 var bytes = LoadImageBytes(linhas[i].ImaDsCaminho, uploadsRoot, webRoot, contentRoot);
                 batch.Add((linhas[i].NomeTarefa, bytes, linhas[i].RimIdImagem.ToString()));
                 i++;
             }
 
-            while (batch.Count < 4)
+            while (batch.Count < FotosPorLinhaPadrao)
             {
                 batch.Add(("", Array.Empty<byte>(), ""));
             }

@@ -1,6 +1,6 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-13  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-16  
 **P3 backlog Lucio:** impressora formatação · menu ☰ · **3.1** ⋮ Pausada+código · **CAT-PARALIZ-01** · **DOC-DNA-01** (#29 dono / admin CPF) · **I18N-ES-01** (ES UI · ≠ CPF/país) · polish 1.5a smoke · gaps Efetivo/Obra — orquestrador § Pendências P3. LISTA/Efetivo/Editar obra = **código** `1bb526c` · Etapas index SPA `5233d32` (smoke pós-deploy).  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
 
@@ -105,6 +105,9 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **M7-CRONO-EXCEL** | **Upload Excel → Etapa/Tarefa:** template colunas (etapa, tarefa, datas, qtd, unidade); BFF validar + preview + commit; dry-run obrigatório. | G | **M7+** / M9 | ⬜ estudar 15/11 |
 | **M7-API-BI** | **APIs × BI:** inventariar BFF Chart/Dashboard/RDO/Efetivo já existentes; propor Power BI / export CSV-JSON read-only (sem write); LGPD/tenant. | M | **M7+** / pós-M6 OpenAPI | ⬜ estudar 15/11 |
 | **M7-FOTO-GEO** | **Geo na foto:** lat/long (celular/PC) no capture **ou** API especialista (ex. PhotoStamp). Schema + LGPD + caminho Apontador. | G | **M7+** / EQ-M | ⬜ estudar 15/11 · § abaixo |
+| **M7-PDF-FOTOS-LINHA** | **PDF fotográfico — qtd. fotos/linha:** no Novo RDO (antes de GERAR), usuário escolhe 1–4 (default **4** = prod `Rdo.rdlc` 4 cm). Hoje fixo paridade prod. | M | **M7+** · após smoke layout F7 | ⬜ backlog 16/11 |
+| **M7-PDF-FOTO-GEO-LEG** | **Legenda com coordenadas** no PDF (lat/long sob cada foto). Depende **M7-FOTO-GEO** (schema + capture). | M | **M7+** pós GEO | ⬜ backlog 16/11 |
+| **M7-PDF-FOTO-LEGENDA** | **Legenda manual** antes de imprimir: campo texto por foto na galeria do Novo RDO → persiste → imprime sob a miniatura no PDF. | M | **M7+** | ⬜ backlog 16/11 |
 
 **Adiado de propósito (não fazer no meio do M4):**
 

@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-15 ~16:40 — **M7-FOTO-PERSIST** (base64→Uploads+imagem · pasta `yyyyMM`) · modal colab leve (campos+*) · backlog Efetivo/Excel/BI · tip código pendente deploy  
+**Atualizado:** 2026-11-16 ~10:15 — **F7** PDF foto 4 cm (paridade RDLC) · backlog **M7-PDF-FOTOS-LINHA** / **GEO-LEG** / **LEGENDA** · F6 path `Imagens/`  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -410,20 +410,23 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | **29** | **Dono da assinatura configura perfil de acesso** — atribui um dos **15 templates** (5 papéis × plano Loja). **Não** copiar CMS. DNA: cms §0. | 5% | Spec [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) · Core React **depois** do ciclo M7 (Chart já no ar) |
 | **DOC-FICHAS** | Fichas de tela (manual §13). 1 feita (RDOs). Restante no fim / quando a tela for sprint | 3% | [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) · **não** Melhorias 1.0 Loja |
 | **I18N-ES-01** | **Espanhol nas páginas (UI)** — catálogo `pt-BR`/`es` só EQ-R; **antes** de CPF/doc estrangeiro | 0% | Plano fechado [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § I18N · **≠** DOC-ID-PAIS |
-| **M7-FOTO-PERSIST** | Persistir foto Nova Medição / cadastro tarefa (base64 → Uploads + `imagem`) | 80% | código 15/11 · smoke pós-deploy |
+| **M7-FOTO-PERSIST** | Persistir foto Nova Medição / cadastro tarefa (base64 → Uploads + `imagem`) | 85% | log [`migracao/homolog-p4-foto-tentativas.md`](migracao/homolog-p4-foto-tentativas.md) **F3** harden · smoke **F4** |
 | **M7-FOTO-PASTA-MES** | Fotos RDO/tarefa em pastas por **mês** (`…/{yyyyMM}/`) | 50% | path novo save já usa `yyyyMM`; migrar legado + PDF opcional |
 | **M7-EFETIVO-CARD** | Ligar Efetivo Diário ↔ colaboradores do card de tarefa | 5% | estudar/propor — ver pendencias |
 | **M7-CRONO-EXCEL** | Upload Excel → cronograma Etapa/Tarefa da obra | 5% | estudar/propor — ver pendencias |
 | **M7-API-BI** | Quais APIs/BIs integrar (Power BI / export) | 5% | estudar — ver pendencias |
 | **M7-FOTO-GEO** | Lat/long na foto (browser/Apontador) **ou** API tipo PhotoStamp | 5% | estudar/propor — ver pendencias · **não** `ALTER novo_rdoapp` sem Lucio |
+| **M7-PDF-FOTOS-LINHA** | Usuário escolhe qtd. fotos/linha no PDF (default 4 = prod) | 0% | backlog 16/11 · layout F7 = paridade fixa |
+| **M7-PDF-FOTO-GEO-LEG** | Coordenadas na legenda do PDF | 0% | pós **M7-FOTO-GEO** |
+| **M7-PDF-FOTO-LEGENDA** | Legenda manual por foto antes de GERAR RDO | 0% | backlog 16/11 |
 
 ---
 
 ## Próxima ação (1)
 
-1. **Commit/push docs** (orquestrador + manual §13 + dimas %) se ainda locais → **publish/deploy** tip **`5f747b5`** → smoke Georges: etapa vazia P3 · marcar todos · NOVO COLAB/ACIDENTE/EQUIP · medição mesmo dia · tipos equip · colab Engenheiro/ViaCEP.
+1. **Commit/push** `RdoPdfService` (F6 path + F7 layout 4 cm) + docs → **publish/deploy** → smoke PDF: 2 fotos **não** esticam a linha.
 2. **Smoke G5** — drawer 9 itens ([`cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §2.1–2.2).
-3. **Próxima SPA:** Relatórios (`produtividade` / `efetivo diário` / `medição`).
+3. Backlog foto PDF (não agora): **M7-PDF-FOTOS-LINHA** · **M7-PDF-FOTO-GEO-LEG** · **M7-PDF-FOTO-LEGENDA**.
 4. Lucio confirma polish **1.5a** cadastro etapa quando puder.
 5. Impressora formatação · **3.1** · **CAT-PARALIZ-01** · Efetivo Copiar/Novo colab.
 
