@@ -71,17 +71,33 @@ public sealed class MedicaoRelatorioService
         var permiteLogo = false;
         if (obra.ObrIdEmpresaContratante is > 0)
         {
-            var empLic = await (
-                from e in _context.Empresas.AsNoTracking()
-                join l in _context.Licencas.AsNoTracking() on e.EmpIdLicenca equals l.LicIdLicenca into ls
-                from l in ls.DefaultIfEmpty()
-                where e.EmpIdEmpresa == obra.ObrIdEmpresaContratante
-                select l == null ? (bool?)null : l.LicStPermiteLogoRdo
-            ).FirstOrDefaultAsync(ct);
-            permiteLogo = empLic == true;
+            try
+            {
+                var empLic = await (
+                    from e in _context.Empresas.AsNoTracking()
+                    join l in _context.Licencas.AsNoTracking() on e.EmpIdLicenca equals l.LicIdLicenca into ls
+                    from l in ls.DefaultIfEmpty()
+                    where e.EmpIdEmpresa == obra.ObrIdEmpresaContratante
+                    select l == null ? (bool?)null : l.LicStPermiteLogoRdo
+                ).FirstOrDefaultAsync(ct);
+                permiteLogo = empLic == true;
+            }
+            catch
+            {
+                // Homolog: não derrubar relatório se join licença falhar.
+                permiteLogo = false;
+            }
         }
 
-        var logoBytes = TryLoadLogoBytes(permiteLogo ? obra.ObrDsFoto : null);
+        byte[]? logoBytes = null;
+        try
+        {
+            logoBytes = TryLoadLogoBytes(permiteLogo ? obra.ObrDsFoto : null);
+        }
+        catch
+        {
+            logoBytes = null;
+        }
 
         var periodoRows = await (
             from t in _context.Tarefas.AsNoTracking()
@@ -139,7 +155,16 @@ public sealed class MedicaoRelatorioService
         var labelFim = diaFim.ToString("dd_MM_yyyy", PtBr);
         if (tipo.Equals("Excel", StringComparison.OrdinalIgnoreCase) || tipo.Equals("xls", StringComparison.OrdinalIgnoreCase))
             return (BuildExcelHtml(cabeca, linhas, logoBytes), "application/vnd.ms-excel", $"Medicao_{labelIni}_{labelFim}.xls");
-        return (BuildPdf(cabeca, linhas, logoBytes), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
+
+        try
+        {
+            return (BuildPdf(cabeca, linhas, logoBytes), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
+        }
+        catch (Exception)
+        {
+            // Layout QuestPDF (tabela larga) às vezes falha — PDF simplificado.
+            return (BuildPdfSimple(cabeca, linhas), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
+        }
     }
 
     private byte[]? TryLoadLogoBytes(string? obraFoto)
@@ -278,24 +303,19 @@ public sealed class MedicaoRelatorioService
 
                 page.Content().PaddingTop(6).Table(table =>
                 {
+                    // Só RelativeColumn — ConstantColumn estreito + header 2 linhas gerava DocumentLayoutException.
                     table.ColumnsDefinition(cols =>
                     {
-                        cols.RelativeColumn(1.1f); cols.RelativeColumn(1.3f);
-                        cols.ConstantColumn(32); cols.ConstantColumn(42); cols.ConstantColumn(42); cols.ConstantColumn(48);
-                        cols.ConstantColumn(42); cols.ConstantColumn(42); cols.ConstantColumn(42);
-                        cols.ConstantColumn(48); cols.ConstantColumn(48); cols.ConstantColumn(42);
+                        for (var i = 0; i < 12; i++) cols.RelativeColumn();
                     });
 
                     table.Header(h =>
                     {
-                        void G(string t, int span) => h.Cell().ColumnSpan((uint)span).Background(Navy).Border(0.5f).BorderColor(Colors.Black)
-                            .Padding(2).AlignCenter().Text(t).FontColor(Colors.White).SemiBold().FontSize(6);
                         void S(string t) => h.Cell().Background(Colors.Grey.Lighten2).Border(0.5f).BorderColor(Colors.Black)
                             .Padding(2).AlignCenter().Text(t).SemiBold().FontSize(6);
-                        G("ETAPA / TAREFA", 2); G("PLANEJADO", 4); G("QUANTIDADES MEDIDAS", 3); G("VALORES MEDIDOS", 3);
                         S("ETAPA"); S("TAREFA"); S("UNID."); S("QUANT."); S("P. UNIT."); S("VALOR");
-                        S("NO PERÍODO"); S("ACUMUL."); S("SALDO");
-                        S("NO PERÍODO"); S("ACUMUL."); S("SALDO");
+                        S("QM PER."); S("QM AC."); S("QM SAL.");
+                        S("VM PER."); S("VM AC."); S("VM SAL.");
                     });
 
                     void Cell(string t, bool right = false)
@@ -305,16 +325,9 @@ public sealed class MedicaoRelatorioService
                         else cell.Text(t).FontSize(6);
                     }
 
-                    string? etapaAtual = null;
                     foreach (var r in rows)
                     {
-                        if (!string.Equals(etapaAtual, r.Etapa, StringComparison.Ordinal))
-                        {
-                            etapaAtual = r.Etapa;
-                            table.Cell().ColumnSpan(12).Background(Colors.Grey.Lighten3).Border(0.5f).BorderColor(Colors.Black)
-                                .Padding(2).Text(r.Etapa).SemiBold().FontSize(7);
-                        }
-                        Cell(""); Cell(r.Tarefa); Cell(r.Unidade);
+                        Cell(r.Etapa); Cell(r.Tarefa); Cell(r.Unidade);
                         Cell(N(r.QtdPlan), true); Cell(N(r.Preco), true); Cell(N(r.Valor), true);
                         Cell(N(r.QmPeriodo), true); Cell(N(r.QmAcumulado), true); Cell(N(r.QmSaldo), true);
                         Cell(N(r.VmPeriodo), true); Cell(N(r.VmAcumulado), true); Cell(N(r.VmSaldo), true);
@@ -334,6 +347,42 @@ public sealed class MedicaoRelatorioService
                     t.CurrentPageNumber().FontSize(7);
                     t.Span(" / ").FontSize(7);
                     t.TotalPages().FontSize(7);
+                });
+            });
+        }).GeneratePdf();
+    }
+
+    /// <summary>PDF mínimo (sem tabela larga) — fallback se BuildPdf falhar.</summary>
+    private static byte[] BuildPdfSimple(Cabeca c, IReadOnlyList<LinhaMedicao> rows)
+    {
+        return Document.Create(doc =>
+        {
+            doc.Page(page =>
+            {
+                page.Size(PageSizes.A4.Landscape());
+                page.Margin(20);
+                page.DefaultTextStyle(t => t.FontSize(8));
+                page.Header().Text("PLANILHA DE MEDIÇÃO").SemiBold().FontSize(14).FontColor(Navy);
+                page.Content().PaddingTop(8).Column(col =>
+                {
+                    col.Item().Text($"Contratada: {c.Contratada}");
+                    col.Item().Text($"Serviço: {c.Servico}");
+                    col.Item().Text($"Local: {c.Local}");
+                    col.Item().Text($"Período: {c.Periodo} · Prazo: {c.Prazo}");
+                    col.Item().PaddingTop(6).Text(
+                        $"TOTAL — Valor: R$ {N(c.TgValor)} · Período: R$ {N(c.TgPeriodo)} · Acum.: R$ {N(c.TgAcumulado)} · Saldo: R$ {N(c.TgSaldo)}")
+                        .SemiBold();
+                    col.Item().PaddingTop(8);
+                    foreach (var r in rows.Take(80))
+                    {
+                        col.Item().Text(
+                            $"{r.Etapa} / {r.Tarefa} · {r.Unidade} · Qtd {N(r.QtdPlan)} · VU {N(r.Preco)} · " +
+                            $"QM {N(r.QmPeriodo)}/{N(r.QmAcumulado)}/{N(r.QmSaldo)} · " +
+                            $"VM {N(r.VmPeriodo)}/{N(r.VmAcumulado)}/{N(r.VmSaldo)}")
+                            .FontSize(7);
+                    }
+                    if (rows.Count > 80)
+                        col.Item().Text($"… +{rows.Count - 80} linhas (use Excel para lista completa).").FontSize(7);
                 });
             });
         }).GeneratePdf();

@@ -12,8 +12,18 @@ namespace RdoApp.Core.Controllers;
 public class BffMedicaoController : ControllerBase
 {
     private readonly MedicaoRelatorioService _relatorio;
+    private readonly ILogger<BffMedicaoController> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public BffMedicaoController(MedicaoRelatorioService relatorio) => _relatorio = relatorio;
+    public BffMedicaoController(
+        MedicaoRelatorioService relatorio,
+        ILogger<BffMedicaoController> logger,
+        IWebHostEnvironment env)
+    {
+        _relatorio = relatorio;
+        _logger = logger;
+        _env = env;
+    }
 
     /// <summary>Paridade prod POST api/medicao/gerarrelatorio.</summary>
     [HttpPost("relatorio")]
@@ -35,8 +45,20 @@ public class BffMedicaoController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Superfície a causa no toast (homolog) — evita 500 opaco.
-            return StatusCode(500, new { message = "Erro ao gerar relatório de medição: " + ex.Message });
+            _logger.LogError(ex, "Medicao relatorio 500");
+            try
+            {
+                var dir = Path.Combine(_env.ContentRootPath, "logs");
+                Directory.CreateDirectory(dir);
+                var dump = $"{DateTime.UtcNow:o}\n{ex.GetType().FullName}: {ex.Message}\n{ex.StackTrace}\nINNER: {ex.InnerException}";
+                System.IO.File.WriteAllText(Path.Combine(dir, "medicao-last-error.txt"), dump);
+            }
+            catch { /* ignore disk */ }
+
+            var msg = "Erro ao gerar relatório de medição: "
+                      + ex.GetType().Name + " — " + ex.Message
+                      + (ex.InnerException != null ? " | " + ex.InnerException.Message : "");
+            return StatusCode(500, new { message = msg });
         }
     }
 }

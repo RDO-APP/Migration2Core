@@ -27,15 +27,16 @@ export async function downloadMedicaoRelatorio(body: {
     throw new Error('Sessão expirada ou obra não selecionada. Volte a Escolher obra.')
   }
   if (!res.ok) {
-    const text = await res.text()
-    let message = text
+    const text = (await res.text()).trim()
+    let detail = text
     try {
-      const j = JSON.parse(text) as { message?: string }
-      message = j.message ?? text
+      const j = JSON.parse(text) as { message?: string; title?: string; detail?: string }
+      detail = j.message || j.detail || j.title || text
     } catch {
-      /* keep */
+      /* keep raw */
     }
-    throw new Error(message || `Erro ${res.status} ao gerar relatório de medição.`)
+    const snippet = (detail || '(corpo vazio)').slice(0, 400)
+    throw new Error(`Erro ${res.status} ao gerar relatório de medição: ${snippet}`)
   }
   const blob = await res.blob()
   const cd = res.headers.get('Content-Disposition') ?? ''
