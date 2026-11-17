@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-16 ~22:15 — Medição download (restaurar SPA) · Terceirizado extras no dropdown · logo Excel = pendência ClosedXML  
+**Atualizado:** 2026-11-16 ~23:20 — ordem perfil Colab→Terc→Op→Eng→Dir · Efetivo **Novo** SVG · Medição 500 harden · logs tentativas  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -427,9 +427,9 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Commit/push** Terceirizado (`ListaGruposPeloLado` + IdLicenca) + docs → **publish/deploy** (client limpo: Medição download).
-2. Smoke Medição: Excel/PDF **baixam** (não toast “em migração”).
-3. Smoke Colaborador: perfil **Terceirizado** no dropdown; se ainda sumir → DBeaver `grupo` homol vs prod (SQL cms §7).
+1. **Commit/push** (escopo): ordem perfil `PerfilSortKey` · Efetivo botão **Novo** (SVG) · Medição 500 harden · logs `homolog-*-tentativas.md` → **publish/deploy**.
+2. Smoke Efetivo: botão **Novo** visível → Cadastro; dropdown perfil = Colaborador → Terceirizado → Operador → Engenheiro → Diretor.
+3. Smoke Medição: PDF/Excel; se 500, anotar **texto completo** do toast (`ex.Message`) na tabela M2.
 4. Backlog: **logo Excel bitmap (ClosedXML)** · **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · foto PDF linha/geo/legenda.
 5. Lucio: polish **1.5a** · Impressora **4** · **3.1** · **CAT-PARALIZ-01**.
 
@@ -444,7 +444,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
 | **1.1** | Editar obra / **Nova obra (+)** | 🟡 **smoke** | SPA Opção A · CEP/logo/colab · `+`/Voltar tip **`0268e73`** · create DBNull tip **`f389736`** — publish/deploy + smoke Salvar Lucio |
-| **1.2** | Efetivo diário | 🟡 **smoke** | SPA+BFF · Copiar · Adicionar `fa-users`→Cadastro · PDF layout OK · Excel logo fix (`ExcelHtmlLogoEmbed`) — publish/deploy |
+| **1.2** | Efetivo diário | 🟡 **smoke** | SPA+BFF · Copiar · **Novo** SVG→Cadastro · PDF OK · Excel logo · ordem perfil + Medição 500 harden — publish/deploy |
 | **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
 | **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |

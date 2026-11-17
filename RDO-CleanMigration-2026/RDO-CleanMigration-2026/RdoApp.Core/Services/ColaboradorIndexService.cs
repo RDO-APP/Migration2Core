@@ -298,7 +298,6 @@ public class ColaboradorIndexService
         }
 
         var lista = await query
-            .OrderBy(g => g.GruNmNome)
             .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
             .ToListAsync(cancellationToken);
 
@@ -307,11 +306,6 @@ public class ColaboradorIndexService
             .Where(g => g.GruNmNome == "Colaborador" || g.GruNmNome == "Terceirizado")
             .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
             .ToListAsync(cancellationToken);
-
-        if (extras.Count == 0)
-        {
-            return lista;
-        }
 
         var seen = new HashSet<int>(lista.Select(x => x.Id));
         foreach (var e in extras)
@@ -322,7 +316,23 @@ public class ColaboradorIndexService
             }
         }
 
-        return lista.OrderBy(x => x.Nome, StringComparer.OrdinalIgnoreCase).ToList();
+        // Ordem Lucio: Colaborador → Terceirizado → Operador → Engenheiro → Diretor (não alfabética).
+        return lista
+            .OrderBy(x => PerfilSortKey(x.Nome))
+            .ThenBy(x => x.Nome, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    /// <summary>Colaborador, Terceirizado, Operador, Engenheiro, Diretor — Lucio 16/11.</summary>
+    private static int PerfilSortKey(string? nome)
+    {
+        var n = (nome ?? "").Trim().ToLowerInvariant();
+        if (n == "colaborador") return 0;
+        if (n == "terceirizado") return 1;
+        if (n.Contains("operador", StringComparison.Ordinal)) return 2;
+        if (n.Contains("engenheiro", StringComparison.Ordinal)) return 3;
+        if (n.Contains("diretor", StringComparison.Ordinal)) return 4;
+        return 90;
     }
 
     private static string DigitsOnly(string? value) =>

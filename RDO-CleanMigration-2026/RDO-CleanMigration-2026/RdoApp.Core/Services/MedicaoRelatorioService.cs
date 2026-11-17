@@ -239,7 +239,8 @@ public sealed class MedicaoRelatorioService
             {
                 page.Size(PageSizes.A4.Landscape());
                 page.Margin(16);
-                page.DefaultTextStyle(t => t.FontSize(7).FontFamily("Arial"));
+                // Sem FontFamily("Arial"): EC2 Linux sem Arial → QuestPDF 500.
+                page.DefaultTextStyle(t => t.FontSize(7));
 
                 page.Header().Border(1).BorderColor(Colors.Black).Padding(4).Column(col =>
                 {
@@ -247,8 +248,18 @@ public sealed class MedicaoRelatorioService
                     {
                         row.ConstantItem(85).Height(48).AlignMiddle().AlignCenter().Element(e =>
                         {
-                            if (logoBytes is { Length: > 32 }) e.Image(logoBytes).FitArea();
-                            else e.AlignCenter().Text("LOGO").FontSize(7).FontColor(Colors.Grey.Medium);
+                            if (logoBytes is { Length: > 32 } && LooksLikeImage(logoBytes))
+                            {
+                                try
+                                {
+                                    e.Image(logoBytes).FitArea();
+                                }
+                                catch
+                                {
+                                    e.AlignCenter().Text("rdo").SemiBold().FontSize(12).FontColor(Navy);
+                                }
+                            }
+                            else e.AlignCenter().Text("rdo").SemiBold().FontSize(12).FontColor(Navy);
                         });
                         row.RelativeItem().AlignMiddle().AlignCenter()
                             .Text("PLANILHA DE MEDIÇÃO").SemiBold().FontSize(14);
@@ -337,6 +348,12 @@ public sealed class MedicaoRelatorioService
                || DateTime.TryParseExact(v, "dd/MM/yyyy", PtBr, DateTimeStyles.None, out date)
                || DateTime.TryParse(v, PtBr, DateTimeStyles.None, out date);
     }
+
+    private static bool LooksLikeImage(byte[] bytes) =>
+        bytes.Length >= 3
+        && (bytes[0] == 0xFF && bytes[1] == 0xD8
+            || bytes[0] == 0x89 && bytes[1] == 0x50
+            || bytes[0] == 0x47 && bytes[1] == 0x49);
 
     private readonly record struct Cabeca(
         string Contratada, string Periodo, string Servico, string Local, string Prazo,

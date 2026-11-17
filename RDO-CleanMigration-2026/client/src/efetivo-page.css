@@ -27,6 +27,29 @@
   opacity: 0.85;
 }
 
+.efetivo-page .panel-heading .action .efetivo-btn-add-colab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid #28496f;
+  border-radius: 3px;
+}
+
+.efetivo-page .panel-heading .action .efetivo-btn-add-colab svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.efetivo-page .panel-heading .action .efetivo-btn-add-colab-label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: #28496f;
+}
+
 .efetivo-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -117,10 +140,4 @@
   .efetivo-filtros {
     grid-template-columns: 1fr;
   }
-}
-
-.efetivo-page .panel-heading .action .btn-simple i {
-  display: inline-block;
-  min-width: 1.1em;
-  text-align: center;
 }

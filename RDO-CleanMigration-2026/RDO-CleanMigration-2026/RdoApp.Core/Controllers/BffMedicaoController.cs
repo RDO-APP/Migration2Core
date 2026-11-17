@@ -33,5 +33,10 @@ public class BffMedicaoController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+        catch (Exception ex)
+        {
+            // Superfície a causa no toast (homolog) — evita 500 opaco.
+            return StatusCode(500, new { message = "Erro ao gerar relatório de medição: " + ex.Message });
+        }
     }
 }
