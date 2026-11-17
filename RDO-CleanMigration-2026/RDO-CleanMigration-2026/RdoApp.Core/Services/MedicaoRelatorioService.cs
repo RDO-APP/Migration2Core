@@ -52,17 +52,19 @@ public sealed class MedicaoRelatorioService
         var diaFim = fim.Date;
         var diaFimExcl = diaFim.AddDays(1);
 
-        // Projeções (string?) — Pomelo InvalidCast DBNull→String (padrão L13 PDF RDO).
-        var obra = await _context.Obras.AsNoTracking()
-            .Where(o => o.ObrIdObra == obraId)
-            .Select(o => new
-            {
-                ObrDsObra = (string?)o.ObrDsObra,
-                ObrDsLogradouro = (string?)o.ObrDsLogradouro,
-                ObrDsBairro = (string?)o.ObrDsBairro,
-                o.ObrIdEmpresaContratada,
-            })
-            .FirstOrDefaultAsync(ct)
+        // M5: SqlQueryRaw + string? — Pomelo LINQ `(string?)` ainda InvalidCast DBNull→String
+        // em colunas mapeadas como string não-nullable (EtaDsEtapa / TarDsTarefa / EmpDsRazaoSocial).
+        var obra = (await _context.Database.SqlQueryRaw<ObraCabecaSql>(
+                """
+                SELECT obr_ds_obra AS ObrDsObra,
+                       obr_ds_logradouro AS ObrDsLogradouro,
+                       obr_ds_bairro AS ObrDsBairro,
+                       obr_id_empresa_contratada AS ObrIdEmpresaContratada
+                FROM obra
+                WHERE obr_id_obra = {0}
+                LIMIT 1
+                """,
+                obraId).ToListAsync(ct)).FirstOrDefault()
             ?? throw new InvalidOperationException("Obra não encontrada.");
 
         if (obra.ObrIdEmpresaContratada is null or <= 0)
@@ -70,58 +72,68 @@ public sealed class MedicaoRelatorioService
                 "Não foi possível gerar o Relatorio. É necessário existir uma empresa contratada associada à obra: "
                 + (obra.ObrDsObra ?? "") + ".");
 
-        var contratada = await _context.Empresas.AsNoTracking()
-            .Where(e => e.EmpIdEmpresa == obra.ObrIdEmpresaContratada)
-            .Select(e => (string?)e.EmpDsRazaoSocial)
-            .FirstOrDefaultAsync(ct) ?? "";
+        var contratada = (await _context.Database.SqlQueryRaw<NomeSql>(
+                """
+                SELECT emp_ds_razao_social AS Nome
+                FROM empresa
+                WHERE emp_id_empresa = {0}
+                LIMIT 1
+                """,
+                obra.ObrIdEmpresaContratada.Value).ToListAsync(ct)).FirstOrDefault()?.Nome ?? "";
 
-        // Sem logo nesta rodada (M3): Image/QuestPDF + join licença eram suspeitos de 500 corpo vazio.
         byte[]? logoBytes = null;
 
-        var periodoRows = await (
-            from t in _context.Tarefas.AsNoTracking()
-            join e in _context.Etapas.AsNoTracking() on t.TarIdEtapa equals e.EtaIdEtapa
-            where e.EtaIdObra == obraId && t.TarIdStatus == StatusEmExecucao
-                  && t.TarDtMedicao >= diaIni && t.TarDtMedicao < diaFimExcl
-            select new
-            {
-                t.TarNrAgrupador,
-                t.TarIdEtapa,
-                t.TarIdUnidade,
-                Etapa = (string?)e.EtaDsEtapa,
-                Tarefa = (string?)t.TarDsTarefa,
-                t.TarVlValorUnitario,
-                t.TarNrQtdPrevisao,
-                t.TarNrQtdConstruida,
-            }
-        ).ToListAsync(ct);
+        var periodoRows = await _context.Database.SqlQueryRaw<MedicaoLinhaSql>(
+            """
+            SELECT t.tar_nr_agrupador AS TarNrAgrupador,
+                   t.tar_id_etapa AS TarIdEtapa,
+                   t.tar_id_unidade AS TarIdUnidade,
+                   e.eta_ds_etapa AS Etapa,
+                   t.tar_ds_tarefa AS Tarefa,
+                   t.tar_vl_valor_unitario AS TarVlValorUnitario,
+                   t.tar_nr_qtd_previsao AS TarNrQtdPrevisao,
+                   t.tar_nr_qtd_construida AS TarNrQtdConstruida
+            FROM tarefa t
+            INNER JOIN etapa e ON e.eta_id_etapa = t.tar_id_etapa
+            WHERE e.eta_id_obra = {0}
+              AND t.tar_id_status = {1}
+              AND t.tar_dt_medicao >= {2}
+              AND t.tar_dt_medicao < {3}
+            """,
+            obraId, StatusEmExecucao, diaIni, diaFimExcl).ToListAsync(ct);
 
         if (periodoRows.Count == 0)
             throw new InvalidOperationException("Não existem dados para o filtro informado.");
 
         var unidadeIds = periodoRows.Where(x => x.TarIdUnidade != null).Select(x => x.TarIdUnidade!.Value).Distinct().ToList();
-        Dictionary<int, string> unidades;
-        if (unidadeIds.Count == 0)
+        Dictionary<int, string> unidades = new();
+        if (unidadeIds.Count > 0)
         {
-            unidades = new Dictionary<int, string>();
-        }
-        else
-        {
-            var undRows = await _context.UnidadesDeMedida.AsNoTracking()
-                .Where(u => unidadeIds.Contains(u.UnmIdUnidade))
-                .Select(u => new { u.UnmIdUnidade, Simbolo = (string?)u.UnmDsSimbolo, Nome = (string?)u.UnmDsUnidade })
-                .ToListAsync(ct);
+            var idList = string.Join(",", unidadeIds);
+            var undRows = await _context.Database.SqlQueryRaw<UnidadeSql>(
+                $"""
+                SELECT unm_id_unidade AS UnmIdUnidade,
+                       unm_ds_simbolo AS Simbolo,
+                       unm_ds_unidade AS Nome
+                FROM unidade_de_medida
+                WHERE unm_id_unidade IN ({idList})
+                """).ToListAsync(ct);
             unidades = undRows.ToDictionary(
                 x => x.UnmIdUnidade,
                 x => !string.IsNullOrEmpty(x.Simbolo) ? x.Simbolo! : (x.Nome ?? ""));
         }
 
-        var acumuladoRows = await (
-            from t in _context.Tarefas.AsNoTracking()
-            join e in _context.Etapas.AsNoTracking() on t.TarIdEtapa equals e.EtaIdEtapa
-            where e.EtaIdObra == obraId && t.TarDtMedicao < diaFimExcl
-            select new { t.TarNrAgrupador, t.TarIdEtapa, t.TarNrQtdConstruida }
-        ).ToListAsync(ct);
+        var acumuladoRows = await _context.Database.SqlQueryRaw<AcumSql>(
+            """
+            SELECT t.tar_nr_agrupador AS TarNrAgrupador,
+                   t.tar_id_etapa AS TarIdEtapa,
+                   t.tar_nr_qtd_construida AS TarNrQtdConstruida
+            FROM tarefa t
+            INNER JOIN etapa e ON e.eta_id_etapa = t.tar_id_etapa
+            WHERE e.eta_id_obra = {0}
+              AND t.tar_dt_medicao < {1}
+            """,
+            obraId, diaFimExcl).ToListAsync(ct);
 
         var linhas = new List<LinhaMedicao>();
         decimal tgValor = 0, tgPeriodo = 0, tgAcumulado = 0, tgSaldo = 0;
@@ -410,4 +422,43 @@ public sealed class MedicaoRelatorioService
         decimal QtdPlan, decimal Preco, decimal Valor,
         decimal QmPeriodo, decimal QmAcumulado, decimal QmSaldo,
         decimal VmPeriodo, decimal VmAcumulado, decimal VmSaldo);
+
+    private sealed class ObraCabecaSql
+    {
+        public string? ObrDsObra { get; set; }
+        public string? ObrDsLogradouro { get; set; }
+        public string? ObrDsBairro { get; set; }
+        public int? ObrIdEmpresaContratada { get; set; }
+    }
+
+    private sealed class NomeSql
+    {
+        public string? Nome { get; set; }
+    }
+
+    private sealed class MedicaoLinhaSql
+    {
+        public Guid TarNrAgrupador { get; set; }
+        public int TarIdEtapa { get; set; }
+        public int? TarIdUnidade { get; set; }
+        public string? Etapa { get; set; }
+        public string? Tarefa { get; set; }
+        public decimal? TarVlValorUnitario { get; set; }
+        public decimal? TarNrQtdPrevisao { get; set; }
+        public float? TarNrQtdConstruida { get; set; }
+    }
+
+    private sealed class UnidadeSql
+    {
+        public int UnmIdUnidade { get; set; }
+        public string? Simbolo { get; set; }
+        public string? Nome { get; set; }
+    }
+
+    private sealed class AcumSql
+    {
+        public Guid TarNrAgrupador { get; set; }
+        public int TarIdEtapa { get; set; }
+        public float? TarNrQtdConstruida { get; set; }
+    }
 }
