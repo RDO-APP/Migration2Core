@@ -52,9 +52,16 @@ public sealed class MedicaoRelatorioService
         var diaFim = fim.Date;
         var diaFimExcl = diaFim.AddDays(1);
 
+        // Projeções (string?) — Pomelo InvalidCast DBNull→String (padrão L13 PDF RDO).
         var obra = await _context.Obras.AsNoTracking()
             .Where(o => o.ObrIdObra == obraId)
-            .Select(o => new { o.ObrDsObra, o.ObrDsLogradouro, o.ObrDsBairro, o.ObrDsFoto, o.ObrIdEmpresaContratada, o.ObrIdEmpresaContratante })
+            .Select(o => new
+            {
+                ObrDsObra = (string?)o.ObrDsObra,
+                ObrDsLogradouro = (string?)o.ObrDsLogradouro,
+                ObrDsBairro = (string?)o.ObrDsBairro,
+                o.ObrIdEmpresaContratada,
+            })
             .FirstOrDefaultAsync(ct)
             ?? throw new InvalidOperationException("Obra não encontrada.");
 
@@ -65,58 +72,49 @@ public sealed class MedicaoRelatorioService
 
         var contratada = await _context.Empresas.AsNoTracking()
             .Where(e => e.EmpIdEmpresa == obra.ObrIdEmpresaContratada)
-            .Select(e => e.EmpDsRazaoSocial)
+            .Select(e => (string?)e.EmpDsRazaoSocial)
             .FirstOrDefaultAsync(ct) ?? "";
 
-        var permiteLogo = false;
-        if (obra.ObrIdEmpresaContratante is > 0)
-        {
-            try
-            {
-                var empLic = await (
-                    from e in _context.Empresas.AsNoTracking()
-                    join l in _context.Licencas.AsNoTracking() on e.EmpIdLicenca equals l.LicIdLicenca into ls
-                    from l in ls.DefaultIfEmpty()
-                    where e.EmpIdEmpresa == obra.ObrIdEmpresaContratante
-                    select l == null ? (bool?)null : l.LicStPermiteLogoRdo
-                ).FirstOrDefaultAsync(ct);
-                permiteLogo = empLic == true;
-            }
-            catch
-            {
-                // Homolog: não derrubar relatório se join licença falhar.
-                permiteLogo = false;
-            }
-        }
-
+        // Sem logo nesta rodada (M3): Image/QuestPDF + join licença eram suspeitos de 500 corpo vazio.
         byte[]? logoBytes = null;
-        try
-        {
-            logoBytes = TryLoadLogoBytes(permiteLogo ? obra.ObrDsFoto : null);
-        }
-        catch
-        {
-            logoBytes = null;
-        }
 
         var periodoRows = await (
             from t in _context.Tarefas.AsNoTracking()
             join e in _context.Etapas.AsNoTracking() on t.TarIdEtapa equals e.EtaIdEtapa
-            join u in _context.UnidadesDeMedida.AsNoTracking() on t.TarIdUnidade equals u.UnmIdUnidade into us
-            from u in us.DefaultIfEmpty()
             where e.EtaIdObra == obraId && t.TarIdStatus == StatusEmExecucao
                   && t.TarDtMedicao >= diaIni && t.TarDtMedicao < diaFimExcl
             select new
             {
-                t.TarNrAgrupador, t.TarIdEtapa,
-                Etapa = e.EtaDsEtapa ?? "", Tarefa = t.TarDsTarefa ?? "",
-                t.TarVlValorUnitario, t.TarNrQtdPrevisao, t.TarNrQtdConstruida,
-                Unidade = u == null ? "" : (!string.IsNullOrEmpty(u.UnmDsSimbolo) ? u.UnmDsSimbolo : u.UnmDsUnidade ?? ""),
+                t.TarNrAgrupador,
+                t.TarIdEtapa,
+                t.TarIdUnidade,
+                Etapa = (string?)e.EtaDsEtapa,
+                Tarefa = (string?)t.TarDsTarefa,
+                t.TarVlValorUnitario,
+                t.TarNrQtdPrevisao,
+                t.TarNrQtdConstruida,
             }
         ).ToListAsync(ct);
 
         if (periodoRows.Count == 0)
             throw new InvalidOperationException("Não existem dados para o filtro informado.");
+
+        var unidadeIds = periodoRows.Where(x => x.TarIdUnidade != null).Select(x => x.TarIdUnidade!.Value).Distinct().ToList();
+        Dictionary<int, string> unidades;
+        if (unidadeIds.Count == 0)
+        {
+            unidades = new Dictionary<int, string>();
+        }
+        else
+        {
+            var undRows = await _context.UnidadesDeMedida.AsNoTracking()
+                .Where(u => unidadeIds.Contains(u.UnmIdUnidade))
+                .Select(u => new { u.UnmIdUnidade, Simbolo = (string?)u.UnmDsSimbolo, Nome = (string?)u.UnmDsUnidade })
+                .ToListAsync(ct);
+            unidades = undRows.ToDictionary(
+                x => x.UnmIdUnidade,
+                x => !string.IsNullOrEmpty(x.Simbolo) ? x.Simbolo! : (x.Nome ?? ""));
+        }
 
         var acumuladoRows = await (
             from t in _context.Tarefas.AsNoTracking()
@@ -127,27 +125,33 @@ public sealed class MedicaoRelatorioService
 
         var linhas = new List<LinhaMedicao>();
         decimal tgValor = 0, tgPeriodo = 0, tgAcumulado = 0, tgSaldo = 0;
-        foreach (var g in periodoRows.GroupBy(x => x.TarNrAgrupador).OrderBy(x => x.First().Etapa).ThenBy(x => x.First().Tarefa))
+        foreach (var g in periodoRows.GroupBy(x => x.TarNrAgrupador)
+                     .OrderBy(x => x.First().Etapa ?? "")
+                     .ThenBy(x => x.First().Tarefa ?? ""))
         {
             var first = g.First();
             var preco = first.TarVlValorUnitario ?? 0m;
-            var qtdPlan = (decimal)(first.TarNrQtdPrevisao ?? 0);
+            var qtdPlan = first.TarNrQtdPrevisao ?? 0m;
             var valor = preco * qtdPlan;
-            var qmPeriodo = g.Sum(x => (decimal)(x.TarNrQtdConstruida ?? 0));
+            var qmPeriodo = g.Sum(x => (decimal)(x.TarNrQtdConstruida ?? 0f));
             var qmAcum = acumuladoRows.Where(t => t.TarNrAgrupador == first.TarNrAgrupador && t.TarIdEtapa == first.TarIdEtapa)
-                .Sum(t => (decimal)(t.TarNrQtdConstruida ?? 0));
+                .Sum(t => (decimal)(t.TarNrQtdConstruida ?? 0f));
             var qmSaldo = qtdPlan - qmAcum;
             var vmPeriodo = qmPeriodo * preco;
             var vmAcum = qmAcum * preco;
             var vmSaldo = valor - vmAcum;
-            linhas.Add(new LinhaMedicao(first.Etapa, first.Tarefa, first.Unidade, qtdPlan, preco, valor, qmPeriodo, qmAcum, qmSaldo, vmPeriodo, vmAcum, vmSaldo));
+            var unid = first.TarIdUnidade is int uid && unidades.TryGetValue(uid, out var u) ? u : "";
+            linhas.Add(new LinhaMedicao(
+                first.Etapa ?? "", first.Tarefa ?? "", unid,
+                qtdPlan, preco, valor, qmPeriodo, qmAcum, qmSaldo, vmPeriodo, vmAcum, vmSaldo));
             tgValor += valor; tgPeriodo += vmPeriodo; tgAcumulado += vmAcum; tgSaldo += vmSaldo;
         }
 
         var dias = (diaFim - diaIni).Days;
         var prazo = dias / 30 <= 0 ? $"{dias + 1} dia(s)" : $"{dias / 30} mes(es)";
         var periodo = $"De {diaIni:dd/MM/yyyy} Até {diaFim:dd/MM/yyyy}";
-        var local = (obra.ObrDsLogradouro ?? "") + (!string.IsNullOrWhiteSpace(obra.ObrDsBairro) ? ", " + obra.ObrDsBairro : "");
+        var local = (obra.ObrDsLogradouro ?? "")
+                    + (!string.IsNullOrWhiteSpace(obra.ObrDsBairro) ? ", " + obra.ObrDsBairro : "");
         var cabeca = new Cabeca(contratada, periodo, obra.ObrDsObra ?? "", local, prazo, tgValor, tgPeriodo, tgAcumulado, tgSaldo);
 
         var tipo = (request.TipoRelatorio ?? "PDF").Trim();
@@ -156,15 +160,8 @@ public sealed class MedicaoRelatorioService
         if (tipo.Equals("Excel", StringComparison.OrdinalIgnoreCase) || tipo.Equals("xls", StringComparison.OrdinalIgnoreCase))
             return (BuildExcelHtml(cabeca, linhas, logoBytes), "application/vnd.ms-excel", $"Medicao_{labelIni}_{labelFim}.xls");
 
-        try
-        {
-            return (BuildPdf(cabeca, linhas, logoBytes), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
-        }
-        catch (Exception)
-        {
-            // Layout QuestPDF (tabela larga) às vezes falha — PDF simplificado.
-            return (BuildPdfSimple(cabeca, linhas), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
-        }
+        // M3: só PDF simples (sem Image/tabela larga) — Efetivo prova QuestPDF básico no mesmo host.
+        return (BuildPdfSimple(cabeca, linhas), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
     }
 
     private byte[]? TryLoadLogoBytes(string? obraFoto)

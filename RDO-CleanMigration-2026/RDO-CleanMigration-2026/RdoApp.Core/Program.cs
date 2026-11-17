@@ -9,7 +9,7 @@ using RdoApp.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ALB termina TLS; Kestrel na EC2 escuta sÃ³ HTTP (ex.: :5081).
+// ALB termina TLS; Kestrel na EC2 escuta só HTTP (ex.: :5081).
 var cookieSecurePolicy = builder.Environment.IsStaging()
     ? CookieSecurePolicy.SameAsRequest
     : CookieSecurePolicy.Always;
@@ -103,7 +103,7 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.Path = "/";
         options.Events = new CookieAuthenticationEvents
         {
-            // Cookie vÃ¡lido mas pipeline mandou para Login â†’ evita loop Login â†” ReturnUrl (P5a).
+            // Cookie válido mas pipeline mandou para Login → evita loop Login ↔ ReturnUrl (P5a).
             OnRedirectToLogin = ctx =>
             {
                 if (ctx.HttpContext.User?.Identity?.IsAuthenticated == true)
@@ -139,14 +139,14 @@ if (!app.Environment.IsDevelopment())
         branch => branch.UseExceptionHandler("/Home/Error"));
 }
 
-// HSTS sÃ³ fora de homolog (Staging atrÃ¡s do ALB â€” evita browser preso em HTTPS errado).
+// HSTS só fora de homolog (Staging atrás do ALB — evita browser preso em HTTPS errado).
 if (!app.Environment.IsDevelopment() && !app.Environment.IsStaging())
 {
     app.UseHsts();
 }
 
 
-// Staging/homolog: nÃ£o redirecionar para HTTPS no Kestrel (evita loop/414 atrÃ¡s do ALB).
+// Staging/homolog: não redirecionar para HTTPS no Kestrel (evita loop/414 atrás do ALB).
 if (app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
@@ -175,7 +175,7 @@ if (!string.IsNullOrWhiteSpace(uploadsRoot) && Directory.Exists(uploadsRoot))
 
 app.UseRouting();
 
-app.UseSession(); // âœ… Enable session support
+app.UseSession(); // ✅ Enable session support
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<HomologDiagnosticsMiddleware>();
@@ -194,7 +194,7 @@ app.MapGet("/Dashboard", () => Results.Redirect("/Dashboard/Index"));
 app.MapGet("/Rdo", () => Results.Redirect("/Rdo/Index"));
 app.MapGet("/Tarefa/Paralizacoes", () => Results.Redirect("/Tarefa/Paralizacoes/Index"));
 app.MapGet("/Efetivo", () => Results.Redirect("/Efetivo/Index"));
-// Nao mapear /efetivo/index nem /rdo/cadastro aqui â€” colidem (case-insensitive) com rotas MVC /Efetivo/Index e /Rdo/Cadastro.
+// Nao mapear /efetivo/index nem /rdo/cadastro aqui — colidem (case-insensitive) com rotas MVC /Efetivo/Index e /Rdo/Cadastro.
 
 app.MapControllers();
 

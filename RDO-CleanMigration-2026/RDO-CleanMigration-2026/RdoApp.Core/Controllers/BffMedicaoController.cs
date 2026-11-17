@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
@@ -29,36 +30,52 @@ public class BffMedicaoController : ControllerBase
     [HttpPost("relatorio")]
     public async Task<IActionResult> Relatorio([FromBody] MedicaoRelatorioRequestDto? body, CancellationToken ct)
     {
+        WriteDiag("HIT " + (body?.TipoRelatorio ?? "?") + " " + (body?.DataInicial ?? "") + ".." + (body?.DataFinal ?? ""));
+
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
-            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+            return JsonStatus(401, "Nenhuma obra selecionada.");
         if (body == null)
-            return BadRequest(new { message = "Corpo invalido." });
+            return JsonStatus(400, "Corpo invalido.");
         try
         {
             var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
+            WriteDiag("obraId=" + obraId);
             var (bytes, contentType, fileName) = await _relatorio.GenerateAsync(obraId, body, ct);
+            WriteDiag("OK bytes=" + bytes.Length + " type=" + contentType);
             return File(bytes, contentType, fileName);
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(new { message = ex.Message });
+            WriteDiag("400 " + ex.Message);
+            return JsonStatus(400, ex.Message);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Medicao relatorio 500");
-            try
-            {
-                var dir = Path.Combine(_env.ContentRootPath, "logs");
-                Directory.CreateDirectory(dir);
-                var dump = $"{DateTime.UtcNow:o}\n{ex.GetType().FullName}: {ex.Message}\n{ex.StackTrace}\nINNER: {ex.InnerException}";
-                System.IO.File.WriteAllText(Path.Combine(dir, "medicao-last-error.txt"), dump);
-            }
-            catch { /* ignore disk */ }
-
-            var msg = "Erro ao gerar relatório de medição: "
-                      + ex.GetType().Name + " — " + ex.Message
+            var msg = ex.GetType().Name + " — " + ex.Message
                       + (ex.InnerException != null ? " | " + ex.InnerException.Message : "");
-            return StatusCode(500, new { message = msg });
+            WriteDiag("500 " + msg + "\n" + ex.StackTrace);
+            return JsonStatus(500, "Erro ao gerar relatório de medição: " + msg);
         }
+    }
+
+    private IActionResult JsonStatus(int status, string message)
+    {
+        // Content explícito — StatusCode(object) às vezes chega vazio atrás do ALB.
+        Response.StatusCode = status;
+        return Content(JsonSerializer.Serialize(new { message }), "application/json");
+    }
+
+    private void WriteDiag(string line)
+    {
+        try
+        {
+            var dir = Path.Combine(_env.ContentRootPath, "logs");
+            Directory.CreateDirectory(dir);
+            System.IO.File.AppendAllText(
+                Path.Combine(dir, "medicao-diag.txt"),
+                DateTime.UtcNow.ToString("o") + " " + line + Environment.NewLine);
+        }
+        catch { /* ignore */ }
     }
 }
