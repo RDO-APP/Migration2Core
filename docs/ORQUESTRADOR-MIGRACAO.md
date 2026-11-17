@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-16 ~19:20 — Excel logo Efetivo/Medição (`ExcelHtmlLogoEmbed`, sem `data:` URI) · ícone Adicionar `fa-users` · PDF Efetivo OK  
+**Atualizado:** 2026-11-16 ~22:15 — Medição download (restaurar SPA) · Terceirizado extras no dropdown · logo Excel = pendência ClosedXML  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -163,6 +163,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **EQ-W (Razor)** = ponte W1 no `Migration2Core` — **sem** roadmap de features novas.
 - **Migration2Core** = homolog only até Linux L1; backend + host; **sem** prod `:80`.
 - RDS homolog Core: **`homol_rdoapp`** · mesma instância que prod **`novo_rdoapp`**. **47 tabelas ≠ colunas gêmeas** (lição L11 / cadastro O0). Diff DBeaver: [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql). **2026-11-03:** Q1–Q4 vazios/delta 0 após `ALTER` `tarefa` (4 colunas 11:54) + `MODIFY` varchar `tarefa` 12:22 / `rdo` 12:25. **Nunca** `ALTER` `novo_rdoapp` neste chat. Dados: **43 obras** homolog vs **284** prod — subset de propósito. **P1–P3 / Chart / lista RDO:** queries não pediam as 4 colunas novas; `MODIFY` varchar só alarga — **não** regressão. **PDF L16:** Hi/Hf/Ht no `SELECT` (deixa o catch L12). Detalhe: [`migracao/homolog-p3-tarefa-cadastro-tentativas.md`](migracao/homolog-p3-tarefa-cadastro-tentativas.md).
+- **AVISO cutover RDS (mandatório — Lucio 16/11):** Homolog hoje = Core → **`homol_rdoapp`**. No **fim da homologação / M10**, o Core em produção aponta para **`novo_rdoapp`**. **Estrutura (DDL)** dos dois catálogos deve ficar **gêmea** (diff Q1–Q4 limpo) antes desse cutover. **Conteúdo (DML)** pode divergir na fase homolog (subset de obras; INSERT pontual tipo `grupo` Terceirizado `34` em homol 16/11). Qualquer DDL novo: **só** `homol_rdoapp` primeiro → validar → **checklist M10** promove o mesmo script a `novo_rdoapp` **com Lucio OK** (nunca ALTER prod “de surpresa”). Ver também [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) § **Cutover** · manual M0′ §0.
 - URL homolog: **`https://homolog.sistema.rdoapp.com.br`** (:5081).
 - **EQ-M** prod hoje → API legado; alvo = mesma API que EQ-R (JWT / U-05).
 - **Trilha I (CI):** pausada até E2E homolog com Cards **com dados** (EQ-R preferencial).
@@ -426,10 +427,10 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Commit/push** Excel logo fix (`ExcelHtmlLogoEmbed`) + `fa-users` Adicionar + docs → **publish/deploy**.
-2. Smoke Excel Efetivo + Medição: **sem X no logo** (marca navy "rdo"); PDF segue com bitmap.
-3. Colaborador: smoke **Número** (obrigatório também no prod) · investigar **Terceirizado** ausente no dropdown (dados `grupo` × `ListaGruposPeloLado`).
-4. Backlog: **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · ClosedXML logo bitmap Excel · foto PDF linha/geo/legenda.
+1. **Commit/push** Terceirizado (`ListaGruposPeloLado` + IdLicenca) + docs → **publish/deploy** (client limpo: Medição download).
+2. Smoke Medição: Excel/PDF **baixam** (não toast “em migração”).
+3. Smoke Colaborador: perfil **Terceirizado** no dropdown; se ainda sumir → DBeaver `grupo` homol vs prod (SQL cms §7).
+4. Backlog: **logo Excel bitmap (ClosedXML)** · **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · foto PDF linha/geo/legenda.
 5. Lucio: polish **1.5a** · Impressora **4** · **3.1** · **CAT-PARALIZ-01**.
 
 

@@ -14,8 +14,12 @@ public static class LoginSessionHelper
         TryReadLogin(context)?.ObraColaborador?.ContratanteContratada ?? "";
 
     /// <summary>Licença do grupo na obra (paridade ListaPeloGrupo · idLicenca).</summary>
-    public static int GetIdLicenca(HttpContext context) =>
-        TryReadLogin(context)?.ObraColaborador?.IdLicenca ?? 0;
+    /// <remarks>Prod grava <c>int.MinValue</c> quando <c>gru_id_licenca</c> é null — tratar como 0 (sem filtro).</remarks>
+    public static int GetIdLicenca(HttpContext context)
+    {
+        var id = TryReadLogin(context)?.ObraColaborador?.IdLicenca ?? 0;
+        return id > 0 ? id : 0;
+    }
 
     public static int GetIdObraColaborador(HttpContext context)
     {

@@ -2,10 +2,26 @@
 
 **Instância:** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306`  
 **Conta/região:** RDOApp · us-east-2  
-**Atualizado:** 2026-11-03  
-**Relacionado:** [`aws-route53-rdoapp-dns-homolog-tecnico.md`](aws-route53-rdoapp-dns-homolog-tecnico.md) §8
+**Atualizado:** 2026-11-16  
+**Relacionado:** [`aws-route53-rdoapp-dns-homolog-tecnico.md`](aws-route53-rdoapp-dns-homolog-tecnico.md) §8 · orquestrador § decisões RDS
 
 Objetivo: classificar cada **catálogo (schema)** em **manter / reformar / investigar / candidato a apagar**, antes de qualquer `DROP DATABASE`.
+
+---
+
+## 0. Cutover — aviso (homolog → prod)
+
+| Hoje (homolog Core) | Depois (cutover / M10) |
+|---------------------|-------------------------|
+| Connection string → **`homol_rdoapp`** | Connection string → **`novo_rdoapp`** (mesmo RDS us-east-2) |
+
+| Tipo | Homolog agora | Prod `novo_rdoapp` | Regra |
+|------|---------------|--------------------|-------|
+| **DDL** (CREATE/ALTER/DROP coluna/tabela) | Permitido **só** com Lucio + script versionado; alinhar ao gêmeo | **Proibido** sem Lucio explícito | Antes do cutover: diff [`scripts/homol-vs-prod-schema-diff.sql`](../scripts/homol-vs-prod-schema-diff.sql) Q1–Q4 **limpo** |
+| **DML** (INSERT/UPDATE conteúdo: grupo, obras demo, …) | OK para fechar gaps (ex. `Terceirizado` id 34 em 16/11) | Só se **faltante** em prod **e** Lucio OK | Conteúdo **não** precisa ser clone 1:1 (homol = subset); catálogos de perfil/CMS devem convergir |
+| **Dados de negócio** | 43 obras (subset) | 284 obras (prod) | Comparar UI sempre no **mesmo** catálogo |
+
+**Checklist ao sair da homologação:** (1) schema gêmeo · (2) lista DML homol-only a reaplicar/conferir em prod · (3) trocar connection do Core · (4) smoke operador em `novo_rdoapp`.
 
 ---
 

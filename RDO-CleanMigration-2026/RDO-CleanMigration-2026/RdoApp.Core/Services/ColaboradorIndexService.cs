@@ -269,7 +269,7 @@ public class ColaboradorIndexService
         return new ColaboradorIndexActionResultDto { Ok = true };
     }
 
-    /// <summary>Paridade GrupoModel.ListaPeloGrupo — lado t/d + licença (inclui gru_st_contratante null = Colaborador).</summary>
+    /// <summary>Paridade GrupoModel.ListaPeloGrupo — lado t/d + licença (null/0 = Colaborador/Terceirizado).</summary>
     public async Task<List<ColaboradorIndexLookupDto>> ListaGruposPeloLadoAsync(
         HttpContext httpContext,
         CancellationToken cancellationToken)
@@ -285,20 +285,44 @@ public class ColaboradorIndexService
 
         if (!string.IsNullOrEmpty(lado))
         {
+            // Prod: extras (Colaborador/Terceirizado) usam gru_st_contratante NULL.
+            // Homol às vezes grava 0 — tratar 0 como “sem lado” (mesmo efeito que null).
             if (lado == "t")
             {
-                query = query.Where(g => g.GruStContratante == 1 || g.GruStContratante == null);
+                query = query.Where(g => g.GruStContratante == 1 || g.GruStContratante == null || g.GruStContratante == 0);
             }
             else if (lado == "d")
             {
-                query = query.Where(g => g.GruStContratante == 2 || g.GruStContratante == null);
+                query = query.Where(g => g.GruStContratante == 2 || g.GruStContratante == null || g.GruStContratante == 0);
             }
         }
 
-        return await query
+        var lista = await query
             .OrderBy(g => g.GruNmNome)
             .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
             .ToListAsync(cancellationToken);
+
+        // Garantir extras de perfil leve (cms §2) mesmo se filtro de licença/lado divergir no homol.
+        var extras = await _context.Grupos.AsNoTracking()
+            .Where(g => g.GruNmNome == "Colaborador" || g.GruNmNome == "Terceirizado")
+            .Select(g => new ColaboradorIndexLookupDto { Id = g.GruIdGrupo, Nome = g.GruNmNome ?? "" })
+            .ToListAsync(cancellationToken);
+
+        if (extras.Count == 0)
+        {
+            return lista;
+        }
+
+        var seen = new HashSet<int>(lista.Select(x => x.Id));
+        foreach (var e in extras)
+        {
+            if (seen.Add(e.Id))
+            {
+                lista.Add(e);
+            }
+        }
+
+        return lista.OrderBy(x => x.Nome, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
     private static string DigitsOnly(string? value) =>
