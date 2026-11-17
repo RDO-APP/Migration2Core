@@ -10,16 +10,18 @@ namespace RdoApp.Core.Infrastructure;
 /// </summary>
 public static class ExcelHtmlLogoEmbed
 {
-    /// <summary>Célula de logo compatível com Excel HTML-.xls (sem &lt;img&gt;).</summary>
+    /// <summary>Célula de logo compatível com Excel HTML-.xls (sem &lt;img&gt; / data-URI).</summary>
     public static string LogoCellHtml(byte[]? logoBytes, int widthPx = 100, int heightPx = 60)
     {
-        // logoBytes reservado para futuro ClosedXML — hoje HTML não embute bitmap.
+        // logoBytes reservado para futuro ClosedXML — Excel HTML ignora data: e muitos CSS de div.
         _ = logoBytes;
         var w = Math.Max(48, widthPx);
         var h = Math.Max(48, heightPx);
-        return $"<div style=\"width:{w}px;height:{h}px;background:#28496f;color:#fff;"
-            + "font-family:Arial,Helvetica,sans-serif;font-size:20pt;font-weight:bold;"
-            + $"line-height:{h}px;text-align:center;margin:4px auto;border-radius:6px;\">rdo</div>";
+        // bgcolor em <td> (Excel honra); div+background costuma virar célula branca vazia.
+        return $"<table width=\"{w}\" height=\"{h}\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">"
+            + $"<tr><td width=\"{w}\" height=\"{h}\" bgcolor=\"#28496f\" align=\"center\" valign=\"middle\""
+            + " style=\"color:#ffffff;font-family:Arial,sans-serif;font-size:18pt;font-weight:bold;\">rdo</td></tr>"
+            + "</table>";
     }
 
     public static byte[] Pack(string htmlDocument, byte[]? logoBytes)

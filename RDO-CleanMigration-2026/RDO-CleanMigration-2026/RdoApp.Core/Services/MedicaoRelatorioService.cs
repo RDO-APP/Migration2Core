@@ -59,6 +59,7 @@ public sealed class MedicaoRelatorioService
                 SELECT obr_ds_obra AS ObrDsObra,
                        obr_ds_logradouro AS ObrDsLogradouro,
                        obr_ds_bairro AS ObrDsBairro,
+                       obr_ds_foto AS ObrDsFoto,
                        obr_id_empresa_contratada AS ObrIdEmpresaContratada
                 FROM obra
                 WHERE obr_id_obra = {0}
@@ -81,7 +82,16 @@ public sealed class MedicaoRelatorioService
                 """,
                 obra.ObrIdEmpresaContratada.Value).ToListAsync(ct)).FirstOrDefault()?.Nome ?? "";
 
+        // PDF: bitmap via QuestPDF (padrão Efetivo). Excel HTML: marca "rdo" (ClosedXML = backlog).
         byte[]? logoBytes = null;
+        try
+        {
+            logoBytes = TryLoadLogoBytes(obra.ObrDsFoto);
+        }
+        catch
+        {
+            logoBytes = null;
+        }
 
         var periodoRows = await _context.Database.SqlQueryRaw<MedicaoLinhaSql>(
             """
@@ -172,8 +182,15 @@ public sealed class MedicaoRelatorioService
         if (tipo.Equals("Excel", StringComparison.OrdinalIgnoreCase) || tipo.Equals("xls", StringComparison.OrdinalIgnoreCase))
             return (BuildExcelHtml(cabeca, linhas, logoBytes), "application/vnd.ms-excel", $"Medicao_{labelIni}_{labelFim}.xls");
 
-        // M3: só PDF simples (sem Image/tabela larga) — Efetivo prova QuestPDF básico no mesmo host.
-        return (BuildPdfSimple(cabeca, linhas), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
+        // M6: voltar layout tabela (Efetivo/QuestPDF). BuildPdfSimple só se DocumentLayoutException.
+        try
+        {
+            return (BuildPdf(cabeca, linhas, logoBytes), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
+        }
+        catch (Exception)
+        {
+            return (BuildPdfSimple(cabeca, linhas), "application/pdf", $"Medicao_{labelIni}_{labelFim}.pdf");
+        }
     }
 
     private byte[]? TryLoadLogoBytes(string? obraFoto)
@@ -428,6 +445,7 @@ public sealed class MedicaoRelatorioService
         public string? ObrDsObra { get; set; }
         public string? ObrDsLogradouro { get; set; }
         public string? ObrDsBairro { get; set; }
+        public string? ObrDsFoto { get; set; }
         public int? ObrIdEmpresaContratada { get; set; }
     }
 

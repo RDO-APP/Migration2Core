@@ -427,10 +427,10 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Commit/push** (escopo): ordem perfil `PerfilSortKey` · Efetivo botão **Novo** (SVG) · Medição 500 harden · logs `homolog-*-tentativas.md` → **publish/deploy**.
-2. Smoke Efetivo: botão **Novo** visível → Cadastro; dropdown perfil = Colaborador → Terceirizado → Operador → Engenheiro → Diretor.
-3. Smoke Medição: PDF/Excel; se 500, anotar **texto completo** do toast (`ex.Message`) na tabela M2.
-4. Backlog: **logo Excel bitmap (ClosedXML)** · **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL** · foto PDF linha/geo/legenda.
+1. **Commit/push** (escopo M6): Medição `BuildPdf` tabela + `ObrDsFoto` · `ExcelHtmlLogoEmbed` `bgcolor`/rdo · log `homolog-relatorio-medicao-tentativas.md` → **publish/deploy**.
+2. Smoke Medição: **PDF** = grade/cabeçalho (não texto corrido) · **Excel** = célula navy **rdo** (não caixa branca).
+3. Smoke Efetivo (se ainda não): **Novo** SVG · ordem perfil Colab→Terc→Op→Eng→Dir.
+4. Backlog: **logo Excel bitmap (ClosedXML)** · impressora P3 reusar `ExcelHtmlLogoEmbed` + QuestPDF tabela · **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL**.
 5. Lucio: polish **1.5a** · Impressora **4** · **3.1** · **CAT-PARALIZ-01**.
 
 
