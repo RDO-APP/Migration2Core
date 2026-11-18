@@ -450,7 +450,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | # | Controle | Status homolog | Nota |
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
-| **1.1** | Editar obra / **Nova obra (+)** | ☑ tip | Salvar com mensagem (sem 500) · smoke Lucio pós-deploy |
+| **1.1** | Editar obra / **Nova obra (+)** | 🟡 O1 | DBNull→String no Salvar · log [`migracao/homolog-obra-cadastro-salvar-tentativas.md`](migracao/homolog-obra-cadastro-salvar-tentativas.md) **O2** código local |
 | **1.2** | Efetivo diário | ☑ | Copiar OK · relatório multi-dia OK · separador/logo → gate |
 | **1.3** | FILTRO | ✅ | |
 | **1.4** | Adicionar tarefa | ✅ | |

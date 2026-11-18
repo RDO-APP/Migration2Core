@@ -179,9 +179,19 @@ public class ObraCadastroService
         ObraCadastroSaveRequestDto request,
         CancellationToken cancellationToken)
     {
-        var entity = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == obraId, cancellationToken);
-        if (entity == null) return Fail("Obra nao encontrada.");
-        if (entity.ObrDtFim != null) return Fail("Obra finalizada — edicao bloqueada.");
+        // Não materializar Obra inteira: NULL em varchar + Pomelo = DBNull→String (O1 / L10 / f389736).
+        var meta = await _context.Obras.AsNoTracking()
+            .Where(o => o.ObrIdObra == obraId)
+            .Select(o => new
+            {
+                o.ObrIdObra,
+                o.ObrDtFim,
+                o.ObrIdMunicipio,
+                Foto = (string?)o.ObrDsFoto,
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (meta == null) return Fail("Obra nao encontrada.");
+        if (meta.ObrDtFim != null) return Fail("Obra finalizada — edicao bloqueada.");
 
         if (!TryValidate(request, out var desc, out var ini, out var fim, out var fail))
         {
@@ -199,31 +209,48 @@ public class ObraCadastroService
             return papelFail!;
         }
 
-        entity.ObrDsObra = desc;
-        entity.ObrDtInicio = ini.Date;
-        entity.ObrDtPrevisaoFim = fim;
-        entity.ObrDsLogradouro = (request.Logradouro ?? "").Trim();
+        var logradouro = (request.Logradouro ?? "").Trim();
         var numeroEdit = (request.Numero ?? "").Trim();
-        entity.ObrDsNumero = string.IsNullOrEmpty(numeroEdit) ? "0" : numeroEdit;
-        entity.ObrDsComplemento = (request.Complemento ?? "").Trim();
-        entity.ObrDsBairro = (request.Bairro ?? "").Trim();
+        var numero = string.IsNullOrEmpty(numeroEdit) ? "0" : numeroEdit;
+        var complemento = (request.Complemento ?? "").Trim();
+        var bairro = (request.Bairro ?? "").Trim();
         var cepEdit = new string((request.Cep ?? "").Where(char.IsDigit).ToArray());
         if (cepEdit.Length > 10) cepEdit = cepEdit[..10];
-        entity.ObrDsCep = cepEdit;
-        if (request.IdMunicipio > 0) entity.ObrIdMunicipio = request.IdMunicipio;
-        entity.ObrIdEmpresaContratante = idContratante > 0 ? idContratante : null;
-        entity.ObrIdEmpresaContratada = idContratada > 0 ? idContratada : null;
-        entity.ObrIdDono = donoId;
-        entity.ObrNrAreaTotal = request.AreaTotal;
-        entity.ObrNrAreaTotalConstruida = request.AreaConstruida;
-        if (!TryApplyLogo(entity, request, out var logoFail))
+        var municipioId = request.IdMunicipio > 0 ? request.IdMunicipio : meta.ObrIdMunicipio;
+        int? empContratante = idContratante > 0 ? idContratante : null;
+        int? empContratada = idContratada > 0 ? idContratada : null;
+
+        var logoStub = new Obra { ObrIdObra = obraId, ObrDsFoto = meta.Foto ?? "" };
+        if (!TryApplyLogo(logoStub, request, out var logoFail))
         {
             return logoFail!;
         }
 
+        var foto = logoStub.ObrDsFoto ?? "";
+
         try
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            var updated = await _context.Obras
+                .Where(o => o.ObrIdObra == obraId)
+                .ExecuteUpdateAsync(
+                    s => s
+                        .SetProperty(o => o.ObrDsObra, desc)
+                        .SetProperty(o => o.ObrDtInicio, ini.Date)
+                        .SetProperty(o => o.ObrDtPrevisaoFim, fim)
+                        .SetProperty(o => o.ObrDsLogradouro, logradouro)
+                        .SetProperty(o => o.ObrDsNumero, numero)
+                        .SetProperty(o => o.ObrDsComplemento, complemento)
+                        .SetProperty(o => o.ObrDsBairro, bairro)
+                        .SetProperty(o => o.ObrDsCep, cepEdit)
+                        .SetProperty(o => o.ObrIdMunicipio, municipioId)
+                        .SetProperty(o => o.ObrIdEmpresaContratante, empContratante)
+                        .SetProperty(o => o.ObrIdEmpresaContratada, empContratada)
+                        .SetProperty(o => o.ObrIdDono, donoId)
+                        .SetProperty(o => o.ObrNrAreaTotal, request.AreaTotal)
+                        .SetProperty(o => o.ObrNrAreaTotalConstruida, request.AreaConstruida)
+                        .SetProperty(o => o.ObrDsFoto, foto),
+                    cancellationToken);
+            if (updated == 0) return Fail("Obra nao encontrada.");
         }
         catch (DbUpdateException ex)
         {
@@ -235,7 +262,7 @@ public class ObraCadastroService
             return Fail("Erro ao salvar obra: " + (ex.InnerException?.Message ?? ex.Message));
         }
 
-        return new ObraCadastroSaveResultDto { Ok = true, ObraNome = entity.ObrDsObra, ObraId = entity.ObrIdObra };
+        return new ObraCadastroSaveResultDto { Ok = true, ObraNome = desc, ObraId = obraId };
     }
 
     /// <summary>
@@ -527,7 +554,7 @@ public class ObraCadastroService
         var minhas = await _context.Empresas.AsNoTracking()
             .Where(e => e.EmpIdColaborador == colaboradorId)
             .OrderBy(e => e.EmpNmFantasia)
-            .Select(e => new ObraCadastroLookupDto { Id = e.EmpIdEmpresa, Nome = e.EmpNmFantasia ?? "" })
+            .Select(e => new ObraCadastroLookupDto { Id = e.EmpIdEmpresa, Nome = (string?)e.EmpNmFantasia ?? "" })
             .ToListAsync(cancellationToken);
 
         var idsMinhas = minhas.Select(e => e.Id).ToList();
@@ -540,7 +567,7 @@ public class ObraCadastroService
         {
             var extras = await _context.Empresas.AsNoTracking()
                 .Where(e => extraIds.Contains(e.EmpIdEmpresa))
-                .Select(e => new ObraCadastroLookupDto { Id = e.EmpIdEmpresa, Nome = e.EmpNmFantasia ?? "" })
+                .Select(e => new ObraCadastroLookupDto { Id = e.EmpIdEmpresa, Nome = (string?)e.EmpNmFantasia ?? "" })
                 .ToListAsync(cancellationToken);
             minhas = minhas.Concat(extras).OrderBy(e => e.Nome).ToList();
         }
