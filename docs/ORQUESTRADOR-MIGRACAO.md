@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-16 ~23:20 — ordem perfil Colab→Terc→Op→Eng→Dir · Efetivo **Novo** SVG · Medição 500 harden · logs tentativas  
+**Atualizado:** 2026-11-18 ~18:55 — tip **`5b62953`** impressora+LISTA+obra · marcos **assumindo** smoke 1.1/2.1/PDF OK · gate melhorias L1  
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -122,7 +122,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — impressora deploy/smoke · **não** abrir **3.1** / **CAT-PARALIZ-01** / melhorias até gate Lucio 18/11 (paridade 100% + EC2 Linux).
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — confirmar smoke tip **`5b62953`** · residual espelho = **Copiar obra** · **não** abrir melhorias / **3.1** / CAT até gate L1.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -132,24 +132,24 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-15):** caminho homolog operador até **M9 D1** ≈ **~65–70%**. **Clusters Dimas já iniciados** (obra/etapa/tarefa, RDO/Chart, gestor P6a, P4 medição) ≈ **~75–80%** — o **~40%** antigo era snapshot out/26 (só P1–P3+RDO+Chart) e **não** acompanha M7/P6a. **PDF Dimas total** (fundação limpa + mobile⏸ + ETL Onda 6) ≈ **~45–50%** — por isso o “valor Dimas global” sobe mais devagar que os marcos M* web. Detalhe: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-18 — assumindo smoke tip `5b62953` OK):** espelho web operador ≈ **~95%**. Caminho até **M9 D1** ≈ **~78–82%**. Clusters Dimas iniciados ≈ **~85%**. **PDF Dimas total** (fundação + mobile⏸ + ETL) ≈ **~48–52%**. Residual espelho web = **Copiar obra** (+ polish opcional). Melhorias / **3.1** / CAT = **gate L1**. Detalhe TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
-| **M0** | **90** | Decisões A1–A5; inventário mobile `14cf5d3`; v0 API; Vite `client/` + build; `dotnet build` Core; E2E login→Escolher; docs E0–E6 | branding homolog; Escolher CSS STRATEGY-2; E2 localhost |
+| **M0** | **90** | Decisões A1–A5; inventário mobile; Vite `client/`; build Core; E2E login→Escolher; docs E0–E6 | branding homolog; E2 localhost (opcional) |
 | **M0′** | **95** | Matriz; manual ①–⑥; diagrama; Fase A PASS | HAR API prod (opcional) |
 | **M1** | **85** | Cenário **A**; v1 endpoints; tipos TS; mapa Core vs legado | Pacote npm; EQ-M não consome |
-| **W0.5 / E2E** | **95** | Selecionar + Cards React; **M3 PASS** | — (toolbar já M4) |
+| **W0.5 / E2E** | **95** | Selecionar + Cards React; **M3 PASS** | — |
 | **M2** | **100** | **FECHADO** | — |
-| **M3** | **95** | **FECHADO** | E2E passos 6–7 opcional |
-| **M4** | **90** | **M4.1–M4.7g** ☑ · **M4.8** Login SPA ☑ · P3 etapa vazia + marcar todos + stubs novo (`5f747b5`) | Smoke **G5/G6** · **UI-M1/M2c** · UI-M5 senha · congela EQ-W formal |
-| **M5 web** | **94** | **#1** RDO A5 ☑ · **#2** Chart **C1–C8** ☑ · **#3** Dashboard · card olho/lápis/relógio/+ | **DOC-FICHAS** · polish Chart tiles |
+| **M3** | **95** | **FECHADO** | E2E 6–7 opcional |
+| **M4** | **93** | **M4.1–M4.8** ☑ · shell/menu smoke ☑ · G5 = RDOs OK (sem item Relatórios) | **UI-M1/M2c** fontello fino · congela EQ-W formal · G6 polish |
+| **M5 web** | **97** | RDO · Chart · Dashboard · card ações · impressora A+B (+PDF tip) · LISTA UTF-8 | **DOC-FICHAS** (gate) · polish tiles (opcional) |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **92** | **7a–7d** · LISTA/Efetivo/Obra · **P6a** index+cadastros · **Paralizações** `a4159be` · **P4** medição (mesmo dia OK) · colab validação/ViaCEP · tipos equip · novo colab/acidente/equip na tarefa | smoke G5 · Relatórios stubs · formatação impressora · **3.1** · **CAT-PARALIZ-01** · Efetivo Copiar/Novo · polish **1.5a** · **não** P6b |
-| **M8** | **40** | Branch CI · roteiro D→E | Runway &lt;2 min · workflow gate |
-| **M9** | **12** | Fatia operador web ampla no Git | D1–D7 pacote homolog v1 · smoke pós-`5f747b5` · D4 mobile |
-| **M10** | **0** | — | Onda 2 / L1 · **P6b** CMS |
+| **M7+** | **96** | **7a–7d** · P4 · P6a indexes · Efetivo Copiar ☑ · Obra Salvar ☑ · impressora layout ☑ · Paralizações catálogo · 1.5a ☑ | **Copiar obra** (stub) · Relatórios menu (N/A se RDOs basta) · **3.1**/CAT/**M7-REL-*** = **gate L1** · **não** P6b |
+| **M8** | **40** | Branch CI · roteiro D→E | B3 runway &lt;2 min · workflow gate |
+| **M9** | **22** | Operador web amplo no Git + tip **`5b62953`** | D1 checklist formal · D2–D7 · D4 mobile |
+| **M10** | **0** | — | Onda 2 / **L1 Linux** · **P6b** CMS · cutover RDS |
 
 ---
 
@@ -427,9 +427,9 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **M6 Medição ✅** · **1.5a ✅** (Lucio 18/11 — Voltar/SALVAR OK).
-2. **Impressora #4** (I1–I3): PDF≈Excel · pendência ClosedXML — **commit/push/publish/deploy** + smoke (Lucio).
-3. Seguir **paridade prod** (smoke gaps já no ar: LISTA **2.1**, G5, Relatórios stub só se bloquearem espelho).
+1. **Tip `5b62953` no homolog** — Lucio confirma: **1.1** Salvar obra · **2.1** LISTA acentos · impressora **PDF**.
+2. Residual espelho: **Copiar obra** (stub → implementar) **ou** aceitar fora do 100% e ir a **B3** / preparação **L1**.
+3. **Não** abrir gate L1 (melhorias / 3.1 / CAT) até espelho + Linux.
 
 ### Gate Lucio 18/11 — melhorias / além-prod (**bloqueado**)
 
@@ -438,32 +438,32 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | Item | Nota |
 |------|------|
 | **3.1** · **CAT-PARALIZ-01** | Além da prod / tenant — explícito Lucio |
-| Melhorias backlog (`M7-REL-*` ClosedXML, **M7-REL-EFETIVO-HIST**, **M7-EFETIVO-NOVO-MODAL**, I18N-ES, DOC-FICHAS, UI-M3, foto-geo, etc.) | Mesmo gate — **não** intercalam a fila de espelho |
+| Melhorias backlog (`M7-REL-*` ClosedXML, **M7-REL-EFETIVO-DIAS/HIST**, I18N-ES, DOC-FICHAS, UI-M3, foto-geo, etc.) | Mesmo gate |
 
-**UI-M3:** continua com gates próprios **e** este gate L1 — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
+**UI-M3:** gates próprios **e** gate L1 — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
-### Pendências P3 Cards (Etapas / Tarefas) — Lucio 05/11
+### Pendências P3 Cards (Etapas / Tarefas) — Lucio 05/11 · snapshot 18/11
 
-Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.md`](migracao/p3-botoes-habilitacao-m7.md).
+Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.md`](migracao/p3-botoes-habilitacao-m7.md).  
+**Assumido pós-`5b62953`:** 1.1 / 2.1 / PDF impressora = ☑ (confirmar smoke).
 
 | # | Controle | Status homolog | Nota |
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
-| **1.1** | Editar obra / **Nova obra (+)** | 🟡 **smoke** | SPA Opção A · CEP/logo/colab · `+`/Voltar tip **`0268e73`** · create DBNull tip **`f389736`** — publish/deploy + smoke Salvar Lucio |
-| **1.2** | Efetivo diário | 🟡 **smoke** | SPA+BFF · Copiar · **Novo** SVG→Cadastro · PDF OK · Excel logo · ordem perfil + Medição 500 harden — publish/deploy |
-| **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
-| **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
-| **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |
-| **1.5a** | Voltar / SALVAR (cadastro etapa) | ✅ smoke | Lucio 18/11: inline OK · Voltar com seta · SALVAR sem ✓ (opcional vs prod) · tip `10616e0` |
-| **2.1** | LISTA | 🟡 **código** | SPA `TarefaIndexPage` + `ServeSpaIndex` `/Tarefa/Index` — **aguardando publish/deploy Lucio** |
-| **2.2** | SELECIONAR TUDO | ✅ smoke | Lucio 05/11 (já OK 04/11) |
-| **2.3** | Alterar status em massa | ✅ smoke | Lucio 05/11 · depois: re-gate RBAC `aterarStatusEmMassa` se quiser |
-| **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |
-| **3.1** | ⋮ → **Pausada** + código paralisação | ⏸ gate L1 | Além da prod · **só** após paridade 100% **+** EC2 Linux (Lucio 18/11) · com **CAT-PARALIZ-01** |
-| **4** | Impressora PDF + Excel (ícone no card) | ☑ A+B | Lucio 18/11: relógio HT OK · Excel layout OK · logo/aviso → **M7-REL-HORAS-XLS** · **C** dia útil depois · PDF smoke se ainda não |
-| **CAT-PARALIZ-01** | Códigos paralisação **por empresa** | ⏸ gate L1 | ALTER tenant · **só** após paridade 100% **+** EC2 Linux (Lucio 18/11) |
-| **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar opções vs prod |
-| — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |
+| **1.1** | Editar obra / **Nova obra (+)** | ☑ tip | Salvar com mensagem (sem 500) · smoke Lucio pós-deploy |
+| **1.2** | Efetivo diário | ☑ | Copiar OK · relatório multi-dia OK · separador/logo → gate |
+| **1.3** | FILTRO | ✅ | |
+| **1.4** | Adicionar tarefa | ✅ | |
+| **1.5** / **1.5a** | Etapa + Voltar/SALVAR | ✅ | |
+| **2.1** | LISTA | ☑ tip | UTF-8 DESCRIÇÃO/PREVISÃO/AÇÕES · smoke pós-deploy |
+| **2.2** / **2.3** | Selecionar tudo / status massa | ✅ | |
+| **3** | Card **⋮** status | ✅ | |
+| **3.1** | Pausada + código | ⏸ gate L1 | |
+| **4** | Impressora PDF + Excel | ☑ | Excel+HT OK · PDF layout tip · logo/aviso Excel → **M7-REL-HORAS-XLS** · **C** dia útil opcional |
+| **CAT-PARALIZ-01** | Códigos por empresa | ⏸ gate L1 | |
+| **5** | Menu ☰ | ☑ | Sem Relatórios · RDOs OK |
+| — | Olho / lápis / relógio / + | ✅ | |
+| — | **Copiar obra** (Index) | ⬜ stub | Único gap funcional espelho restante |
 
 ---
 
