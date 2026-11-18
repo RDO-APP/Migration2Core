@@ -333,11 +333,23 @@ public class BffObrasController : ControllerBase
         }
 
         if (!TryColaboradorId(out var colabSave))
-            return Unauthorized(new { message = "Sessão inválida." });
+            return Unauthorized(new ObraCadastroSaveResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
         if (!ObraSessionHelper.HasObraSelected(HttpContext))
-            return Unauthorized(new { message = "Nenhuma obra selecionada." });
+            return Unauthorized(new ObraCadastroSaveResultDto { Ok = false, ErrorMessage = "Nenhuma obra selecionada." });
         var obraId = ObraSessionHelper.GetObraId(HttpContext)!.Value;
-        var result = await _cadastro.SaveAsync(obraId, colabSave, body, cancellationToken);
+        ObraCadastroSaveResultDto result;
+        try
+        {
+            result = await _cadastro.SaveAsync(obraId, colabSave, body, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ObraCadastroSaveResultDto
+            {
+                Ok = false,
+                ErrorMessage = "Erro ao salvar obra: " + (ex.InnerException?.Message ?? ex.Message),
+            });
+        }
         if (!result.Ok) return BadRequest(result);
         if (!string.IsNullOrWhiteSpace(result.ObraNome))
             HttpContext.Session.SetString(SessionKeys.ObraNome, result.ObraNome);

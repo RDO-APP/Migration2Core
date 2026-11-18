@@ -28,7 +28,7 @@
 | **2** | `/Chart/Index` + `/chart/*` | `#/chart` | **M5 web** ☑ **C1–C4** (datas, 5 faixas CSS, ☰ export) · BFF `GET /api/bff/grafico/resumo` · [`homolog-p5a-chart-tentativas.md`](homolog-p5a-chart-tentativas.md) |
 | **3** | `/Dashboard/Index` | `#/dashboard/index` | **M5 web** SPA + BFF `GET /api/bff/dashboard` (01/nov) |
 | **4** | `/Rdo/Cadastro` | `#/rdo/cadastro` · toolbar Gerar RDO | **M7 7a** ☑ SPA `498ebc4` · **7b–7d** editar/PDF/assinar |
-| **5** | `/Obra/Cadastro` | `#/obra/cadastro` | **M7** ☑ editar + Nova Opção A · tips `c3cede9`/`0268e73`/`f389736` (fix DBNull create) · smoke Salvar pós-deploy |
+| **5** | `/Obra/Cadastro` | `#/obra/cadastro` | **M7** ☑ editar + Nova (`?nova=true`) Opção A · tip `c3cede9`/`97b817a` · smoke Lucio |
 | **6** | `/Efetivo/Index` | `#/efetivo/index` | **M7** |
 | **7** | `/Tarefa/Index`, `/Tarefa/Cadastro`, `/Etapa/Index`, `/Etapa/Cadastro` | toolbar + card | **M7** olho/lápis/relógio **SPA** ☑ · `TarefaIndex`/`EtapaIndex` SPA ☑ · **impressora formatação** próximo |
 | **8** | Menu gestor **P6a** (obra, empresa, colaborador, equipamento, …) | drawer | **Index SPA+BFF** ☑ tip `b90cc54` · cadastros empresa/colaborador/equipamento EmMigracao · Relatórios/Paralizações stub |

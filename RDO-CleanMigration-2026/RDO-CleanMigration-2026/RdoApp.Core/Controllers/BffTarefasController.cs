@@ -78,6 +78,8 @@ public class BffTarefasController : ControllerBase
     }
 
     [HttpPost]
+    [RequestSizeLimit(40_000_000)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 40_000_000)]
     public async Task<IActionResult> Save(
         [FromBody] TarefaCadastroSaveRequestDto? body,
         CancellationToken cancellationToken)

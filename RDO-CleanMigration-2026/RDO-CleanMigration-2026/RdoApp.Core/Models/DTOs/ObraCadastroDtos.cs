@@ -1,4 +1,4 @@
-﻿namespace RdoApp.Core.Models.Dtos;
+namespace RdoApp.Core.Models.Dtos;
 
 public sealed class ObraCadastroLookupDto
 {

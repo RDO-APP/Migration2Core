@@ -117,7 +117,7 @@ Chart, Dashboard, Grupo, Menu, Página **não** estão neste menu. Chart/Dashboa
 |----------|----------|---------|-----------------|
 | Gráfico geral (chart) | `/chart` | ✅ SPA `/Chart/Index` | `showChart` ← `visualizar` `/chart` |
 | Dashboard da obra | `/dashboard/index` | ✅ SPA `/Dashboard/Index` | `showDashboardObra` ← `acessarDashboard` |
-| Nova obra (+) | `/obra/cadastro` | ✅ SPA `/Obra/Cadastro?nova=true` (Opção A · tip `97b817a`) | `showNovaObra` ← `visualizar` `/obra/cadastro` (prod `nav.html`; **≠** `criarNovo` do NOVO em Index) |
+| Nova obra (se perfil) | `/obra/cadastro` | 🟡 SPA editar obra selecionada `/Obra/Cadastro` (não “nova” full) | `showNovaObra` ← `visualizar` `/obra/cadastro` |
 | Trocar senha (user menu) | `/colaborador/alterarsenha` | `/Account/ChangePassword` | sempre no menu usuário |
 | Logo | — | `/Obra/Escolher` | — |
 

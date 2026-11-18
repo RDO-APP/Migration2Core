@@ -476,7 +476,7 @@ Complementa P1–P4 (Login → Escolher → Cards → modal medição). Use esta
 | Classe | Prod (Angular `#/…`) | Entrada homolog (MVC) | UI homolog | Dados | Notas |
 |:------:|----------------------|------------------------|------------|-------|--------|
 | **P5a** | `#/rdo/index`, `#/chart`, `#/dashboard/index`, `#/efetivo/index`… | `/Rdo/Index`, `/Chart/Index`, … | React + `OperadorShell` | BFF `/api/bff/*` por módulo | **Full page** (`goOperador`) — não é popup de card |
-| **P5b** | `#/rdo/cadastro`, `#/obra/cadastro`… | `/Rdo/Cadastro`, `/Obra/Cadastro` | React + BFF | PUT `/api/bff/obras/cadastro?nova=true` | **Obra** ☑ Nova/editar Opção A · tips `c3cede9`/`0268e73`/`f389736` (DBNull) · dono=`emp_id_colaborador`. RDO = **M7 7a** ☑ |
+| **P5b** | `#/rdo/cadastro`, `#/obra/cadastro`… | `/Rdo/Cadastro`, `/Obra/Cadastro` | React + BFF | POST `/api/bff/obras/cadastro` | **Obra** ☑ editar + **Nova** (`?nova=true`) Opção A · CEP/logo/colab · tip `c3cede9`/`97b817a` · dono=`emp_id_colaborador`. RDO = **M7 7a** ☑ |
 | **P6** | `#/colaborador/index`, `#/grupo/index`… | `ModuloLegadoController` | “Em migração” | CRUD admin | **M7+** |
 
 **Molde P5a (copiar de Cards / RDO):**

@@ -6,6 +6,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 
 namespace RdoApp.Core.Services;
@@ -30,10 +31,17 @@ public sealed class HorasEquipamentoReportService
     }
 
     private readonly RdoDbContext _context;
+    private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _env;
 
-    public HorasEquipamentoReportService(RdoDbContext context)
+    public HorasEquipamentoReportService(
+        RdoDbContext context,
+        IConfiguration configuration,
+        IWebHostEnvironment env)
     {
         _context = context;
+        _configuration = configuration;
+        _env = env;
     }
 
     public async Task<HorasEquipamentoReportResult> GenerateAsync(
@@ -71,14 +79,16 @@ public sealed class HorasEquipamentoReportService
             throw new InvalidOperationException("Tarefa não encontrada nesta obra.");
         }
 
-        var obraNome = await _context.Obras.AsNoTracking()
+        var obra = await _context.Obras.AsNoTracking()
             .Where(o => o.ObrIdObra == obraId)
-            .Select(o => o.ObrDsObra)
-            .FirstOrDefaultAsync(cancellationToken) ?? "";
+            .Select(o => new { o.ObrDsObra, o.ObrDsFoto })
+            .FirstOrDefaultAsync(cancellationToken);
+        var obraNome = obra?.ObrDsObra ?? "";
 
         var descricao = string.IsNullOrWhiteSpace(request.DescricaoTarefa)
             ? cabeca.TarDsTarefa
             : request.DescricaoTarefa.Trim();
+        var logoBytes = TryLoadLogoBytes(obra?.ObrDsFoto);
 
         var raw = await (
             from tar in _context.Tarefas.AsNoTracking()
@@ -140,12 +150,14 @@ public sealed class HorasEquipamentoReportService
         var periodo =
             $"{dataInicial:dd/MM/yyyy HH:mm:ss} A {dataFimInclusive:dd/MM/yyyy HH:mm:ss}";
         var excel = string.Equals(request.TipoRelatorio, "Excel", StringComparison.OrdinalIgnoreCase);
-        var bytes = excel ? BuildExcel(obraNome, descricao, periodo, rows) : BuildPdf(obraNome, descricao, periodo, rows);
+        var bytes = excel
+            ? BuildExcel(obraNome, descricao, periodo, rows, logoBytes)
+            : BuildPdf(obraNome, descricao, periodo, rows, logoBytes);
 
         var di = dataInicial.ToString("dd-MM-yyyy", PtBr);
         var df = dataFinal.ToString("dd-MM-yyyy", PtBr);
         var nome =
-            $"Relatório Controle de Horas: {Sanitize(obraNome)}__{Sanitize(descricao)}__{di}__até__{df}"
+            $"Controle_de_Horas_{Sanitize(obraNome)}__{Sanitize(descricao)}__{di}__ate__{df}"
             + (excel ? ".xls" : ".pdf");
 
         return new HorasEquipamentoReportResult
@@ -177,11 +189,9 @@ public sealed class HorasEquipamentoReportService
     private static string Sanitize(string value)
     {
         foreach (var c in Path.GetInvalidFileNameChars())
-        {
             value = value.Replace(c, '-');
-        }
-
-        return value.Replace('/', '-');
+        // Evita %20 / dois-pontos no Content-Disposition (Excel mostra nome URL-encoded).
+        return value.Replace('/', '-').Replace(':', '-').Replace(' ', '_');
     }
 
     private static void AplicarRegras(HoraRow historico)
@@ -402,150 +412,260 @@ public sealed class HorasEquipamentoReportService
 
     private static string FormatTime(TimeSpan t) => t.ToString(@"hh\:mm");
 
-    private static byte[] BuildPdf(string obra, string equipamento, string periodo, List<HoraRow> rows)
+    private byte[]? TryLoadLogoBytes(string? obraFoto)
+    {
+        var uploadsRoot = _configuration["FileStorage:UploadsRoot"];
+        if (string.IsNullOrWhiteSpace(uploadsRoot))
+            uploadsRoot = Path.Combine(_env.ContentRootPath, "Uploads");
+        var relatives = new List<string>();
+        if (!string.IsNullOrWhiteSpace(obraFoto)) relatives.Add(obraFoto.Trim());
+        relatives.AddRange(["/images/logo.jpg", "/Assets/images/logo.jpg", "images/logo.jpg", "Assets/images/logo.jpg"]);
+        var roots = new[] { uploadsRoot, _env.WebRootPath, _env.ContentRootPath, Path.Combine(_env.ContentRootPath, "wwwroot") };
+        foreach (var rel in relatives.Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            var trimmed = rel.Replace('\\', '/').Trim();
+            if (trimmed.StartsWith("/Uploads/", StringComparison.OrdinalIgnoreCase)) trimmed = trimmed["/Uploads/".Length..];
+            else if (trimmed.StartsWith("Uploads/", StringComparison.OrdinalIgnoreCase)) trimmed = trimmed["Uploads/".Length..];
+            trimmed = trimmed.TrimStart('/');
+            var asFs = trimmed.Replace('/', Path.DirectorySeparatorChar);
+            foreach (var root in roots)
+            {
+                if (string.IsNullOrWhiteSpace(root)) continue;
+                var physical = Path.Combine(root.TrimEnd('\\', '/'), asFs);
+                if (File.Exists(physical)) return File.ReadAllBytes(physical);
+            }
+        }
+        return null;
+    }
+
+    private static byte[] BuildPdf(string obra, string equipamento, string periodo, List<HoraRow> rows, byte[]? logoBytes)
     {
         var somaHe = rows.Sum(x => x.TotalHorasExtras ?? 0).ToString("N", HorimetroFormat);
         var somaHn = rows.Sum(x => x.TotalHorasNormais ?? 0).ToString("N", HorimetroFormat);
         var somaHt = rows.Sum(x => x.HorimetroTotal ?? 0).ToString("N", HorimetroFormat);
         var somaMan = rows.Sum(x => x.SomaTotalHorasManut ?? 0).ToString("N", HorimetroFormat);
+        var headBg = Color.FromHex("#A4C2F4");
+        var totBg = Color.FromHex("#9abded");
 
         return Document.Create(container =>
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.A4.Landscape());
-                page.Margin(18);
-                page.DefaultTextStyle(x => x.FontSize(8).FontColor(Navy));
-                page.Header().Column(col =>
-                {
-                    col.Item().Text("Relatório Controle de Horas").Bold().FontSize(14);
-                    col.Item().Text($"Obra: {obra}");
-                    col.Item().Text($"Equipamento: {equipamento}");
-                    col.Item().Text($"Período: {periodo}");
-                    col.Item().PaddingTop(6).Text(
-                        $"Totais — HN: {somaHn}  HE: {somaHe}  Horím. tot.: {somaHt}  Manut.: {somaMan}");
-                });
-                page.Content().PaddingTop(8).Table(table =>
-                {
-                    table.ColumnsDefinition(c =>
-                    {
-                        c.ConstantColumn(58);
-                        c.ConstantColumn(38);
-                        c.ConstantColumn(38);
-                        c.ConstantColumn(42);
-                        c.ConstantColumn(42);
-                        c.ConstantColumn(42);
-                        c.ConstantColumn(36);
-                        c.ConstantColumn(36);
-                        c.ConstantColumn(38);
-                        c.ConstantColumn(38);
-                        c.ConstantColumn(40);
-                        c.ConstantColumn(40);
-                        c.RelativeColumn();
-                    });
+                page.Margin(12);
+                page.DefaultTextStyle(x => x.FontSize(7));
 
-                    string[] heads =
-                    [
-                        "Data", "Hi", "Hf", "Horím I", "Horím F", "Horím T",
-                        "HN", "HE", "HEi", "HEf", "Manut", "ManutOP", "Comentário"
-                    ];
-                    table.Header(h =>
+                page.Content().Column(main =>
+                {
+                    // Cabeçalho = Excel (logo bitmap + grade meta)
+                    main.Item().Border(1).BorderColor(Colors.Black).Padding(4).Column(hdr =>
                     {
-                        foreach (var head in heads)
+                        hdr.Item().Row(r =>
                         {
-                            h.Cell().Background(Navy).Padding(3).Text(head).FontColor(Colors.White).Bold();
-                        }
+                            r.ConstantItem(78).Height(46).AlignMiddle().AlignCenter().Element(e =>
+                            {
+                                if (logoBytes is { Length: > 32 }) e.Image(logoBytes).FitArea();
+                                else e.Text("rdo").Bold().FontSize(14).FontColor(Navy);
+                            });
+                            r.RelativeItem().AlignMiddle().AlignCenter()
+                                .Text("CONTROLE DE HORAS").Bold().FontSize(14).FontColor(Navy);
+                        });
+                        hdr.Item().PaddingTop(4).Table(t =>
+                        {
+                            t.ColumnsDefinition(c =>
+                            {
+                                c.ConstantColumn(72); c.RelativeColumn(2);
+                                c.ConstantColumn(48); c.RelativeColumn(2);
+                                c.ConstantColumn(78); c.RelativeColumn(2);
+                            });
+                            void L(string s) => t.Cell().Border(0.5f).Padding(2).Text(s).Bold().FontSize(7);
+                            void V(string s) => t.Cell().Border(0.5f).Padding(2).Text(s).FontSize(7);
+                            L("Equipamento"); V(equipamento); L("Período"); V(periodo);
+                            L("Frente de Serviço"); V(obra);
+                        });
                     });
 
-                    foreach (var r in rows)
+                    main.Item().PaddingTop(6).Table(table =>
                     {
-                        Cell(table, r.Data);
-                        Cell(table, r.HoraInicialTxt);
-                        Cell(table, r.HoraFinalTxt);
-                        Cell(table, r.HorimetroInicialFormatado);
-                        Cell(table, r.HorimetroFinalFormatado);
-                        Cell(table, r.HorimetroTotalFormatado);
-                        Cell(table, r.TotalHorasNormaisFormatado);
-                        Cell(table, r.TotalHorasExtrasFormatado);
-                        Cell(table, r.HoraExtraInicialTxt);
-                        Cell(table, r.HoraExtraFinalTxt);
-                        Cell(table, r.ManutencaoFormatado);
-                        Cell(table, r.ManutOpFormatado);
-                        Cell(table, r.Comentario);
-                    }
+                        table.ColumnsDefinition(c =>
+                        {
+                            c.ConstantColumn(50); c.ConstantColumn(34); c.ConstantColumn(34); c.ConstantColumn(40);
+                            c.ConstantColumn(48); c.ConstantColumn(34); c.ConstantColumn(34); c.ConstantColumn(40);
+                            c.ConstantColumn(48); c.ConstantColumn(44); c.ConstantColumn(44); c.ConstantColumn(46);
+                            c.RelativeColumn();
+                        });
+
+                        void Gh(string s, uint span) =>
+                            table.Cell().ColumnSpan(span).Background(headBg).Border(0.5f).Padding(2)
+                                .AlignCenter().AlignMiddle().Text(s).Bold().FontSize(6);
+                        void Sh(string s) =>
+                            table.Cell().Background(headBg).Border(0.5f).Padding(2)
+                                .AlignCenter().AlignMiddle().Text(s).Bold().FontSize(6);
+
+                        Gh("", 1); Gh("HORAS NORMAIS", 4); Gh("HORAS EXTRAS", 4); Gh("", 3); Gh("", 1);
+                        foreach (var h in new[]
+                                 {
+                                     "Data", "Entrada", "Saída", "Manutenção", "Total Horas Normais",
+                                     "Entrada", "Saída", "Manut./OP.", "Total Horas Extras",
+                                     "Horímetro Inicial", "Horímetro Final", "Horas Trabalhadas", "Observações"
+                                 })
+                            Sh(h);
+
+                        foreach (var r in rows)
+                        {
+                            Cell(table, r.Data); Cell(table, r.HoraInicialTxt); Cell(table, r.HoraFinalTxt);
+                            Cell(table, r.ManutencaoFormatado); Cell(table, r.TotalHorasNormaisFormatado);
+                            Cell(table, r.HoraExtraInicialTxt); Cell(table, r.HoraExtraFinalTxt);
+                            Cell(table, r.ManutOpFormatado); Cell(table, r.TotalHorasExtrasFormatado);
+                            Cell(table, r.HorimetroInicialFormatado); Cell(table, r.HorimetroFinalFormatado);
+                            Cell(table, r.HorimetroTotalFormatado); Cell(table, r.Comentario);
+                        }
+
+                        table.Cell().ColumnSpan(3).Background(totBg).Border(0.5f).Padding(2)
+                            .AlignRight().AlignMiddle().Text("TOTAL").Bold().FontSize(6);
+                        Tot(table, "", totBg); Tot(table, somaHn, totBg);
+                        Tot(table, "", totBg); Tot(table, "", totBg); Tot(table, "", totBg);
+                        Tot(table, somaHe, totBg); Tot(table, "", totBg); Tot(table, "", totBg);
+                        Tot(table, somaHt, totBg); Tot(table, "", totBg);
+                    });
+
+                    main.Item().PaddingTop(8).Table(t =>
+                    {
+                        t.ColumnsDefinition(c =>
+                        {
+                            c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn();
+                            c.RelativeColumn(); c.RelativeColumn();
+                        });
+                        void Th(string s) => t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2)
+                            .AlignCenter().Text(s).Bold().FontSize(6);
+                        void Td(string s, bool b = false)
+                        {
+                            var cell = t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2).AlignCenter();
+                            if (b) cell.Text(s).Bold().FontSize(6); else cell.Text(s).FontSize(6);
+                        }
+                        Th(""); Th("TOTAL APONTAMENTO"); Th("TOTAL MEDIÇÃO"); Th("VALOR DA HORA"); Th("TOTAL MEDIÇÃO");
+                        Td("HORAS MANUT."); Td(somaMan, true); Td(""); Td(""); Td("");
+                        Td("HORAS NORMAIS"); Td(somaHn, true); Td(""); Td(""); Td("");
+                        Td("HORAS EXTRAS"); Td(somaHe, true); Td(""); Td(""); Td("");
+                        Td("HORAS HORÍMETRO"); Td(somaHt, true); Td(""); Td(""); Td("");
+                        t.Cell().ColumnSpan(2).Border(0.5f).BorderColor("#D3D3D3").Padding(2)
+                            .AlignCenter().Text("TOTAL").Bold().FontSize(6);
+                        Td(""); Td(""); Td("");
+                    });
+
+                    main.Item().PaddingTop(6).Table(t =>
+                    {
+                        t.ColumnsDefinition(c =>
+                        {
+                            c.RelativeColumn(); c.RelativeColumn(); c.RelativeColumn();
+                            c.RelativeColumn(); c.RelativeColumn();
+                        });
+                        void Th(string s) => t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2)
+                            .AlignCenter().Text(s).Bold().FontSize(6);
+                        void Td(string s) => t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2)
+                            .AlignCenter().Text(s).FontSize(6);
+                        Th(""); Th("QUANTIDADE ABASTECIDA"); Th("PREÇO DO COMB."); Th("VALOR");
+                        Th("ABASTECIDO P/ HORIMETRO RODADO (LITROS)");
+                        Td("COMBUSTÍVEL"); Td(""); Td(""); Td(""); Td("");
+                    });
+
+                    main.Item().PaddingTop(6).Width(220).Table(t =>
+                    {
+                        t.ColumnsDefinition(c => { c.RelativeColumn(2); c.RelativeColumn(); });
+                        t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2).Text("Horas mínimas mês").FontSize(6);
+                        t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2);
+                        t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2).Text("Hora extra").FontSize(6);
+                        t.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2);
+                    });
                 });
             });
         }).GeneratePdf();
     }
 
-    private static void Cell(TableDescriptor table, string? text)
-    {
-        table.Cell().BorderBottom(0.5f).BorderColor("#D3D3D3").Padding(2).Text(text ?? "");
-    }
+    private static void Cell(TableDescriptor table, string? text) =>
+        table.Cell().Border(0.5f).BorderColor("#D3D3D3").Padding(2).AlignCenter().Text(text ?? "").FontSize(6);
 
-    private static byte[] BuildExcel(string obra, string equipamento, string periodo, List<HoraRow> rows)
+    private static void Tot(TableDescriptor table, string text, Color bg) =>
+        table.Cell().Background(bg).Border(0.5f).Padding(2).AlignCenter().AlignMiddle().Text(text).Bold().FontSize(6);
+
+    private static byte[] BuildExcel(string obra, string equipamento, string periodo, List<HoraRow> rows, byte[]? logoBytes)
     {
-        // HTML.xls — larguras estáveis no Excel (SpreadsheetML sem Column cortava Data/Equipamento).
+        // Paridade RDLC: cabeçalho · labels · ordem · TOTAL · bloco apontamento.
         var somaHe = rows.Sum(x => x.TotalHorasExtras ?? 0).ToString("N", HorimetroFormat);
         var somaHn = rows.Sum(x => x.TotalHorasNormais ?? 0).ToString("N", HorimetroFormat);
         var somaHt = rows.Sum(x => x.HorimetroTotal ?? 0).ToString("N", HorimetroFormat);
         var somaMan = rows.Sum(x => x.SomaTotalHorasManut ?? 0).ToString("N", HorimetroFormat);
-
         static string H(string? s) => WebUtility.HtmlEncode(s ?? "");
 
         var sb = new StringBuilder();
         sb.Append("<html><head><meta charset=\"utf-8\"/><style>");
         sb.Append("table{border-collapse:collapse;font-family:Arial,sans-serif;font-size:9pt;}");
         sb.Append("td,th{border:1px solid #000;padding:3px 4px;vertical-align:middle;}");
-        sb.Append(".title{font-size:14pt;font-weight:bold;}");
-        sb.Append(".hdr{background:#28496f;color:#fff;font-weight:bold;text-align:center;font-size:8pt;}");
-        sb.Append(".tot{background:#CFD8DC;font-weight:bold;}");
-        sb.Append(".num{text-align:right;}");
-        sb.Append("</style></head><body><table>");
-        sb.Append("<tr><td colspan=\"13\" class=\"title\">Relatório Controle de Horas</td></tr>");
-        sb.Append($"<tr><td colspan=\"2\"><b>Obra</b></td><td colspan=\"11\">{H(obra)}</td></tr>");
-        sb.Append($"<tr><td colspan=\"2\"><b>Equipamento</b></td><td colspan=\"11\">{H(equipamento)}</td></tr>");
-        sb.Append($"<tr><td colspan=\"2\"><b>Período</b></td><td colspan=\"11\">{H(periodo)}</td></tr>");
-        sb.Append($"<tr><td colspan=\"13\"><b>Totais</b> — HN: {H(somaHn)} · HE: {H(somaHe)} · Horím. tot.: {H(somaHt)} · Manut.: {H(somaMan)}</td></tr>");
-        sb.Append("<tr>");
+        sb.Append(".title{font-size:14pt;font-weight:bold;text-align:center;color:#28496f;}");
+        sb.Append(".grp,.sub{background:#A4C2F4;font-weight:bold;text-align:center;font-size:7pt;}");
+        sb.Append(".tot{background:#9abded;font-weight:bold;text-align:center;}");
+        sb.Append(".num{text-align:center;}");
+        sb.Append("</style></head><body>");
+
+        sb.Append("<table><tr>");
+        sb.Append("<td rowspan=\"3\" style=\"width:110px;text-align:center;vertical-align:middle;\">");
+        sb.Append(ExcelHtmlLogoEmbed.LogoCellHtml(logoBytes, 100, 55));
+        sb.Append("</td><td colspan=\"12\" class=\"title\">CONTROLE DE HORAS</td></tr>");
+        sb.Append($"<tr><td><b>Equipamento</b></td><td colspan=\"5\">{H(equipamento)}</td>");
+        sb.Append($"<td><b>Período</b></td><td colspan=\"5\">{H(periodo)}</td></tr>");
+        sb.Append($"<tr><td><b>Frente de Serviço</b></td><td colspan=\"11\">{H(obra)}</td></tr></table><br/>");
+
+        sb.Append("<table><colgroup>");
+        foreach (var w in new[] { 70, 48, 48, 55, 70, 48, 55, 55, 70, 70, 70, 70, 180 })
+            sb.Append($"<col style=\"width:{w}px\"/>");
+        sb.Append("</colgroup>");
+        sb.Append("<tr><th class=\"grp\"></th><th class=\"grp\" colspan=\"4\">HORAS NORMAIS</th>");
+        sb.Append("<th class=\"grp\" colspan=\"4\">HORAS EXTRAS</th><th class=\"grp\" colspan=\"3\"></th><th class=\"grp\"></th></tr><tr>");
         foreach (var head in new[]
                  {
-                     "Data", "Hora Ini.", "Hora Fim", "Horím. Ini.", "Horím. Fim", "Horím. Tot.",
-                     "HN", "HE", "HE Ini.", "HE Fim", "Manut", "ManutOP", "Comentário"
+                     "Data", "Entrada", "Saída", "Manutenção", "Total Horas Normais",
+                     "Entrada", "Saída", "Manut./OP.", "Total Horas Extras",
+                     "Horímetro Inicial", "Horímetro Final", "Horas Trabalhadas", "Observações"
                  })
-        {
-            sb.Append($"<th class=\"hdr\">{head}</th>");
-        }
+            sb.Append($"<th class=\"sub\">{head}</th>");
         sb.Append("</tr>");
 
         foreach (var r in rows)
         {
             sb.Append("<tr>");
-            sb.Append($"<td>{H(r.Data)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.Data)}</td>");
             sb.Append($"<td class=\"num\">{H(r.HoraInicialTxt)}</td>");
             sb.Append($"<td class=\"num\">{H(r.HoraFinalTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.ManutencaoFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.TotalHorasNormaisFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HoraExtraInicialTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HoraExtraFinalTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.ManutOpFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.TotalHorasExtrasFormatado)}</td>");
             sb.Append($"<td class=\"num\">{H(r.HorimetroInicialFormatado)}</td>");
             sb.Append($"<td class=\"num\">{H(r.HorimetroFinalFormatado)}</td>");
             sb.Append($"<td class=\"num\">{H(r.HorimetroTotalFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.TotalHorasNormaisFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.TotalHorasExtrasFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HoraExtraInicialTxt)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HoraExtraFinalTxt)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.ManutencaoFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.ManutOpFormatado)}</td>");
-            sb.Append($"<td>{H(r.Comentario)}</td>");
-            sb.Append("</tr>");
+            sb.Append($"<td>{H(r.Comentario)}</td></tr>");
         }
 
-        sb.Append("<tr class=\"tot\">");
-        sb.Append("<td colspan=\"6\">TOTAL</td>");
-        sb.Append($"<td class=\"num\">{H(somaHn)}</td><td class=\"num\">{H(somaHe)}</td>");
-        sb.Append("<td colspan=\"2\"></td>");
-        sb.Append($"<td class=\"num\" colspan=\"2\">{H(somaMan)}</td><td></td>");
-        sb.Append("</tr>");
-        sb.Append("</table></body></html>");
+        sb.Append("<tr class=\"tot\"><td colspan=\"3\" style=\"text-align:right;\">TOTAL</td><td></td>");
+        sb.Append($"<td>{H(somaHn)}</td><td></td><td></td><td></td><td>{H(somaHe)}</td>");
+        sb.Append($"<td></td><td></td><td>{H(somaHt)}</td><td></td></tr></table><br/>");
 
-        return Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
+        sb.Append("<table><tr><th class=\"sub\"></th><th class=\"sub\">TOTAL APONTAMENTO</th>");
+        sb.Append("<th class=\"sub\">TOTAL MEDIÇÃO</th><th class=\"sub\">VALOR DA HORA</th><th class=\"sub\">TOTAL MEDIÇÃO</th></tr>");
+        sb.Append($"<tr><td>HORAS MANUT.</td><td class=\"num\"><b>{H(somaMan)}</b></td><td></td><td></td><td></td></tr>");
+        sb.Append($"<tr><td>HORAS NORMAIS</td><td class=\"num\"><b>{H(somaHn)}</b></td><td></td><td></td><td></td></tr>");
+        sb.Append($"<tr><td>HORAS EXTRAS</td><td class=\"num\"><b>{H(somaHe)}</b></td><td></td><td></td><td></td></tr>");
+        sb.Append($"<tr><td>HORAS HORÍMETRO</td><td class=\"num\"><b>{H(somaHt)}</b></td><td></td><td></td><td></td></tr>");
+        sb.Append("<tr><td colspan=\"2\" style=\"text-align:center;\"><b>TOTAL</b></td><td></td><td></td><td></td></tr></table><br/>");
+        sb.Append("<table><tr><th class=\"sub\"></th><th class=\"sub\">QUANTIDADE ABASTECIDA</th>");
+        sb.Append("<th class=\"sub\">PREÇO DO COMB.</th><th class=\"sub\">VALOR</th>");
+        sb.Append("<th class=\"sub\">ABASTECIDO P/ HORIMETRO RODADO (LITROS)</th></tr>");
+        sb.Append("<tr><td>COMBUSTÍVEL</td><td></td><td></td><td></td><td></td></tr></table><br/>");
+        sb.Append("<table><tr><td>Horas mínimas mês</td><td></td></tr><tr><td>Hora extra</td><td></td></tr></table>");
+        sb.Append("</body></html>");
+        return ExcelHtmlLogoEmbed.Pack(sb.ToString(), logoBytes);
     }
 
     private sealed class HoraRow

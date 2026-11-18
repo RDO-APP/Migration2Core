@@ -254,10 +254,12 @@ public class RdoCadastroQueryService
             return new Dictionary<Guid, IReadOnlyList<RdoCadastroImagemDto>>();
         }
 
+        // Evita .Date no SQL (tradução MySQL/EF frágil) — fim exclusivo do dia do RDO.
+        var dataFimExclusivo = dataMedicao.Date.AddDays(1);
         var rows = await (
             from img in _context.Imagens.AsNoTracking()
             join t in _context.Tarefas.AsNoTracking() on img.ImaIdTarefa equals t.TarIdTarefa
-            where agrupadores.Contains(t.TarNrAgrupador) && t.TarDtMedicao.Date <= dataMedicao.Date
+            where agrupadores.Contains(t.TarNrAgrupador) && t.TarDtMedicao < dataFimExclusivo
             select new
             {
                 t.TarNrAgrupador,

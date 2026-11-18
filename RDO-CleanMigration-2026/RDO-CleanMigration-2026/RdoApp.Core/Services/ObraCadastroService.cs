@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
 using RdoApp.Core.Data.Entities;
@@ -221,7 +221,20 @@ public class ObraCadastroService
             return logoFail!;
         }
 
-        await _context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            return Fail("Falha ao gravar obra no banco: " + detail);
+        }
+        catch (Exception ex)
+        {
+            return Fail("Erro ao salvar obra: " + (ex.InnerException?.Message ?? ex.Message));
+        }
+
         return new ObraCadastroSaveResultDto { Ok = true, ObraNome = entity.ObrDsObra, ObraId = entity.ObrIdObra };
     }
 

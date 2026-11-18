@@ -122,7 +122,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish/deploy** tip **`5f747b5`** + smoke Georges · depois smoke **G5** · Relatórios stubs · impressora · **CAT-PARALIZ-01** · 3.1.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — impressora deploy/smoke · **não** abrir **3.1** / **CAT-PARALIZ-01** / melhorias até gate Lucio 18/11 (paridade 100% + EC2 Linux).
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -428,12 +428,19 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 ## Próxima ação (1)
 
 1. **M6 Medição ✅** · **1.5a ✅** (Lucio 18/11 — Voltar/SALVAR OK).
-2. **Backlog (não agora):** logo bitmap Excel **Medição + Efetivo** (ClosedXML).
-3. **Impressora #4** código local (I1/I2): Excel HTML+totais · relógio Horas Trabalhadas — **commit/push/publish/deploy** + smoke dia útil (Lucio).
-4. **3.1** + **CAT-PARALIZ-01** = **depois** · LISTA **2.1** smoke · **M7-REL-EFETIVO-HIST**.
+2. **Impressora #4** (I1–I3): PDF≈Excel · pendência ClosedXML — **commit/push/publish/deploy** + smoke (Lucio).
+3. Seguir **paridade prod** (smoke gaps já no ar: LISTA **2.1**, G5, Relatórios stub só se bloquearem espelho).
 
+### Gate Lucio 18/11 — melhorias / além-prod (**bloqueado**)
 
-**UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
+**Não executar** até **(A)** migração espelhando **100%** produção **e** **(B)** homolog Core em **EC2 Linux (L1)**:
+
+| Item | Nota |
+|------|------|
+| **3.1** · **CAT-PARALIZ-01** | Além da prod / tenant — explícito Lucio |
+| Melhorias backlog (`M7-REL-*` ClosedXML, **M7-REL-EFETIVO-HIST**, **M7-EFETIVO-NOVO-MODAL**, I18N-ES, DOC-FICHAS, UI-M3, foto-geo, etc.) | Mesmo gate — **não** intercalam a fila de espelho |
+
+**UI-M3:** continua com gates próprios **e** este gate L1 — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
 ### Pendências P3 Cards (Etapas / Tarefas) — Lucio 05/11
 
@@ -452,9 +459,9 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **2.2** | SELECIONAR TUDO | ✅ smoke | Lucio 05/11 (já OK 04/11) |
 | **2.3** | Alterar status em massa | ✅ smoke | Lucio 05/11 · depois: re-gate RBAC `aterarStatusEmMassa` se quiser |
 | **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |
-| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ depois | Além da prod · acoplado a **CAT-PARALIZ-01** · Lucio 18/11: após paridade |
-| **4** | Impressora PDF + Excel (ícone no card) | 🟡 código | I1/I2: Excel HTML+totais · relógio horas · log `homolog-impressora-horas-tentativas.md` — deploy+smoke |
-| **CAT-PARALIZ-01** | Códigos paralisação **por empresa** | ⬜ depois | ALTER tenant · Lucio 18/11: após espelhar prod |
+| **3.1** | ⋮ → **Pausada** + código paralisação | ⏸ gate L1 | Além da prod · **só** após paridade 100% **+** EC2 Linux (Lucio 18/11) · com **CAT-PARALIZ-01** |
+| **4** | Impressora PDF + Excel (ícone no card) | ☑ A+B | Lucio 18/11: relógio HT OK · Excel layout OK · logo/aviso → **M7-REL-HORAS-XLS** · **C** dia útil depois · PDF smoke se ainda não |
+| **CAT-PARALIZ-01** | Códigos paralisação **por empresa** | ⏸ gate L1 | ALTER tenant · **só** após paridade 100% **+** EC2 Linux (Lucio 18/11) |
 | **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |
 

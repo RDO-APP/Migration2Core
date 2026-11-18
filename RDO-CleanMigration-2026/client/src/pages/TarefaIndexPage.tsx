@@ -93,7 +93,7 @@ export function TarefaIndexPage() {
     </OperadorShell>
   )
 
-  if (loading) return shellWrap(<section className="cards-page"><p className="muted">Carregando�</p></section>)
+  if (loading) return shellWrap(<section className="cards-page"><p className="muted">Carregando…</p></section>)
   if (error) return shellWrap(<section className="cards-page"><p className="error">{error}</p></section>)
   if (!data) return null
 
@@ -185,12 +185,12 @@ export function TarefaIndexPage() {
                                   <tr>
                                     <th style={{ width: '2%' }} />
                                     <th style={{ width: '2%' }} />
-                                    <th>DESCRI��O</th>
+                                    <th>DESCRIÇÃO</th>
                                     <th className="d-none d-sm-table-cell">STATUS</th>
                                     <th className="d-none d-sm-table-cell">DATA INICIO</th>
-                                    <th className="d-none d-sm-table-cell">DATA PREVIS�O FIM</th>
+                                    <th className="d-none d-sm-table-cell">DATA PREVISÃO FIM</th>
                                     <th style={{ textAlign: 'center' }} colSpan={3}>
-                                      A��ES
+                                      AÇÕES
                                     </th>
                                   </tr>
                                 </thead>

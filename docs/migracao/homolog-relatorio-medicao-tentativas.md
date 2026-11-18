@@ -15,7 +15,8 @@
 | **M3** | 2026-11-17 16:25 | `(corpo vazio)` | Suspeita query/PDF | JSON `Content`; **PDF simples** (diagnóstico) | zip ~17:05 | — |
 | **M4** | 2026-11-17 17:20–17:23 | `(corpo vazio)` | Falta DI `MedicaoRelatorioService` | `AddScoped` | deployed | — |
 | **M5** | 2026-11-17 ~18:11 | `InvalidCastException DBNull→String` | Pomelo LINQ + `string` não-null = L13 | `SqlQueryRaw` + DTO `string?` | deployed | — |
-| **M6** | 2026-11-17 ~20:03 | Download OK · **Excel logo vazio** · **PDF texto solto** | (1) Excel HTML: `div`+CSS ≠ Excel → célula branca; bitmap = ClosedXML. (2) PDF ainda no **`BuildPdfSimple`** do M3 — aprendizado Efetivo **não** reapicado após M4/M5 | PDF → `BuildPdf` tabela (+ fallback simple); Excel logo → `<td bgcolor>` marca **rdo**; PDF carrega `obr_ds_foto` | **código local** | Publish/deploy → smoke |
+| **M6** | 2026-11-17 ~20:03→22:43 | Excel logo vazio · PDF texto solto → **PDF OK** | M3 `BuildPdfSimple` residual · Excel HTML sem bitmap | `BuildPdf` + `ObrDsFoto` · Excel `bgcolor`/rdo | tip `52ae547` · PDF grade+logo OK (Lucio 22:43) · Excel grade+rdo | Excel bitmap = M7 |
+| **M7** | — | Logo Excel = texto **rdo** (Medição + Efetivo) | Placeholder inventado no helper HTML — Excel não embute `data:` URI | ClosedXML + bytes logo (obra/brand) nos **dois** relatórios | ⬜ item Lucio 17/11 | Detalhe depois |
 
 ---
 
