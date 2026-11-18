@@ -33,6 +33,8 @@ public sealed class TarefaCadastroHistoricoDto
     public float? HorimetroInicial { get; init; }
     public float? HorimetroFinal { get; init; }
     public float? HorimetroTotal { get; init; }
+    /// <summary>Horas de relógio (≠ horímetro). DB ou derivado de Hi–Hf.</summary>
+    public float HorasTrabalhadas { get; init; }
     public float QtdConstruida { get; init; }
     public string UnidadeMedida { get; init; } = "";
     public string NomeColaborador { get; init; } = "";

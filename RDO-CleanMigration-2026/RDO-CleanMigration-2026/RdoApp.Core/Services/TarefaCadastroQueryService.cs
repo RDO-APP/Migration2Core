@@ -147,6 +147,7 @@ public class TarefaCadastroQueryService
                 tar.TarDtMedicaoHorimetroInicial,
                 tar.TarDtMedicaoHorimetroFinal,
                 tar.TarDtMedicaoHorimetroTotal,
+                tar.TarNrHorasTrabalhadas,
                 tar.TarNrQtdConstruida,
                 Unidade = un != null ? un.UnmDsUnidade : null,
                 NomeColab = col != null ? col.ColNmColaborador : null
@@ -174,6 +175,8 @@ public class TarefaCadastroQueryService
             HorimetroInicial = h.TarDtMedicaoHorimetroInicial,
             HorimetroFinal = h.TarDtMedicaoHorimetroFinal,
             HorimetroTotal = h.TarDtMedicaoHorimetroTotal,
+            HorasTrabalhadas = ResolveHorasTrabalhadas(
+                h.TarNrHorasTrabalhadas, h.TarDtMedicaoHoraInicial, h.TarDtMedicaoHoraFinal),
             QtdConstruida = h.TarNrQtdConstruida ?? 0,
             UnidadeMedida = h.Unidade ?? "",
             NomeColaborador = h.NomeColab ?? "",
@@ -462,5 +465,20 @@ public class TarefaCadastroQueryService
         }
 
         return value.Value.ToString(@"hh\:mm");
+    }
+
+    private static float ResolveHorasTrabalhadas(int? stored, TimeSpan? hi, TimeSpan? hf)
+    {
+        if (stored is > 0)
+        {
+            return stored.Value;
+        }
+
+        if (hi is null || hf is null || hf <= hi)
+        {
+            return stored ?? 0;
+        }
+
+        return (hf.Value - hi.Value).Hours;
     }
 }

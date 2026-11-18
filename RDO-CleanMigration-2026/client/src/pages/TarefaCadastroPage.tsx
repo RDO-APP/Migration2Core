@@ -582,7 +582,15 @@ export function TarefaCadastroPage() {
         showToast('error', result.errorMessage || 'Não foi possível salvar.')
         return
       }
-      flashToast('success', 'Registro salvo com sucesso.')
+      const n = result.imagensGravadas ?? 0
+      if (fotos.length > 0 && n <= 0) {
+        showToast('error', 'Tarefa salva, mas nenhuma foto foi gravada. Veja F12 → Network → POST /api/bff/tarefas.')
+        return
+      }
+      flashToast(
+        'success',
+        n > 0 ? `Registro salvo com sucesso. ${n} foto(s) gravada(s).` : 'Registro salvo com sucesso.',
+      )
       goOperador(P3_NAV.header.tarefaCards)
     } catch (e: unknown) {
       showToast('error', e instanceof Error ? e.message : 'Não foi possível salvar.')
@@ -1190,7 +1198,7 @@ export function TarefaCadastroPage() {
                                 <td>{dash(h.descricaoStatusTarefa)}</td>
                                 <td>{fmtNum(h.horimetroInicial)}</td>
                                 <td>{fmtNum(h.horimetroFinal)}</td>
-                                <td>{fmtNum(h.horimetroTotal)}</td>
+                                <td>{fmtNum(h.horasTrabalhadas)}</td>
                                 <td>{fmtNum(h.qtdConstruida)}</td>
                                 <td>{dash(h.unidadeMedida)}</td>
                                 <td>{dash(h.nomeColaborador)}</td>

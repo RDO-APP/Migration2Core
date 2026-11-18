@@ -378,6 +378,7 @@ export interface TarefaCadastroHistorico {
   horimetroInicial?: number | null
   horimetroFinal?: number | null
   horimetroTotal?: number | null
+  horasTrabalhadas?: number | null
   qtdConstruida: number
   unidadeMedida: string
   nomeColaborador: string
@@ -458,4 +459,5 @@ export interface TarefaCadastroSaveResult {
   ok: boolean
   id?: number
   errorMessage?: string
+  imagensGravadas?: number
 }

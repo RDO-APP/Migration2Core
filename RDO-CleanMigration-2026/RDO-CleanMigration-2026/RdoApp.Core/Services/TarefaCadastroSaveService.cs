@@ -175,6 +175,7 @@ public class TarefaCadastroSaveService
             var horimetroIniC = request.HorimetroInicial ?? 0;
             var horimetroFimC = request.HorimetroFinal ?? 0;
             var horimetroTotalC = request.HorimetroTotal ?? Math.Max(0, horimetroFimC - horimetroIniC);
+            var horasTrabC = DiffHorasRelogio(horaInicialC, horaFinalC);
 
             var created = new Tarefa
             {
@@ -189,7 +190,7 @@ public class TarefaCadastroSaveService
                 TarDtFim = request.Status == StatusFinalizada ? DateTime.Today : null,
                 TarDsComentario = request.Comentario ?? "",
                 TarDsFoto = "",
-                TarNrHorasTrabalhadas = null,
+                TarNrHorasTrabalhadas = horasTrabC,
                 TarDtMedicaoHoraInicial = horaInicialC,
                 TarDtMedicaoHoraFinal = horaFinalC,
                 TarDtMedicao = dataMedicao.Date,
@@ -251,6 +252,7 @@ public class TarefaCadastroSaveService
         var horimetroIni = request.HorimetroInicial ?? 0;
         var horimetroFim = request.HorimetroFinal ?? 0;
         var horimetroTotal = request.HorimetroTotal ?? Math.Max(0, horimetroFim - horimetroIni);
+        var horasTrab = DiffHorasRelogio(horaInicial, horaFinal);
 
         // Prod: ExisteInterseccaoHorario está comentado — permite nova medição mesmo no mesmo dia.
         if (request.NovaMedicao)
@@ -268,7 +270,7 @@ public class TarefaCadastroSaveService
                 TarDtFim = request.Status == StatusFinalizada ? DateTime.Today : null,
                 TarDsComentario = request.Comentario ?? "",
                 TarDsFoto = entity.TarDsFoto ?? "",
-                TarNrHorasTrabalhadas = entity.TarNrHorasTrabalhadas,
+                TarNrHorasTrabalhadas = horasTrab,
                 TarDtMedicaoHoraInicial = horaInicial,
                 TarDtMedicaoHoraFinal = horaFinal,
                 TarDtMedicao = dataMedicao.Date,
@@ -332,6 +334,7 @@ public class TarefaCadastroSaveService
         entity.TarDtMedicao = dataMedicao.Date;
         entity.TarDtMedicaoHoraInicial = horaInicial;
         entity.TarDtMedicaoHoraFinal = horaFinal;
+        entity.TarNrHorasTrabalhadas = horasTrab;
         entity.TarDtMedicaoHorimetroInicial = horimetroIni;
         entity.TarDtMedicaoHorimetroFinal = horimetroFim;
         entity.TarDtMedicaoHorimetroTotal = horimetroTotal;
@@ -612,5 +615,15 @@ public class TarefaCadastroSaveService
         }
 
         return TimeSpan.TryParse(t, CultureInfo.InvariantCulture, out ts) ? ts : null;
+    }
+
+    private static int? DiffHorasRelogio(TimeSpan? hi, TimeSpan? hf)
+    {
+        if (hi is null || hf is null || hf <= hi)
+        {
+            return null;
+        }
+
+        return (hf.Value - hi.Value).Hours;
     }
 }

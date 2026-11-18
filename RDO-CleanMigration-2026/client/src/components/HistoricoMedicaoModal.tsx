@@ -102,7 +102,7 @@ export function HistoricoMedicaoModal({ tarefaId, descricaoTarefa, onClose }: Hi
                         <td>{dash(h.descricaoStatusTarefa)}</td>
                         <td>{fmtNum(h.horimetroInicial)}</td>
                         <td>{fmtNum(h.horimetroFinal)}</td>
-                        <td>{fmtNum(h.horimetroTotal)}</td>
+                        <td>{fmtNum(h.horasTrabalhadas)}</td>
                         <td>{fmtNum(h.qtdConstruida)}</td>
                         <td>{dash(h.unidadeMedida)}</td>
                         <td>{dash(h.nomeColaborador)}</td>

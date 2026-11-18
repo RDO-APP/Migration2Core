@@ -1,6 +1,6 @@
 using System.Globalization;
+using System.Net;
 using System.Text;
-using System.Xml.Linq;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -485,47 +485,67 @@ public sealed class HorasEquipamentoReportService
 
     private static byte[] BuildExcel(string obra, string equipamento, string periodo, List<HoraRow> rows)
     {
-        XNamespace ss = "urn:schemas-microsoft-com:office:spreadsheet";
-        var cells = new List<XElement>();
+        // HTML.xls — larguras estáveis no Excel (SpreadsheetML sem Column cortava Data/Equipamento).
+        var somaHe = rows.Sum(x => x.TotalHorasExtras ?? 0).ToString("N", HorimetroFormat);
+        var somaHn = rows.Sum(x => x.TotalHorasNormais ?? 0).ToString("N", HorimetroFormat);
+        var somaHt = rows.Sum(x => x.HorimetroTotal ?? 0).ToString("N", HorimetroFormat);
+        var somaMan = rows.Sum(x => x.SomaTotalHorasManut ?? 0).ToString("N", HorimetroFormat);
 
-        void addRow(params string?[] values)
+        static string H(string? s) => WebUtility.HtmlEncode(s ?? "");
+
+        var sb = new StringBuilder();
+        sb.Append("<html><head><meta charset=\"utf-8\"/><style>");
+        sb.Append("table{border-collapse:collapse;font-family:Arial,sans-serif;font-size:9pt;}");
+        sb.Append("td,th{border:1px solid #000;padding:3px 4px;vertical-align:middle;}");
+        sb.Append(".title{font-size:14pt;font-weight:bold;}");
+        sb.Append(".hdr{background:#28496f;color:#fff;font-weight:bold;text-align:center;font-size:8pt;}");
+        sb.Append(".tot{background:#CFD8DC;font-weight:bold;}");
+        sb.Append(".num{text-align:right;}");
+        sb.Append("</style></head><body><table>");
+        sb.Append("<tr><td colspan=\"13\" class=\"title\">Relatório Controle de Horas</td></tr>");
+        sb.Append($"<tr><td colspan=\"2\"><b>Obra</b></td><td colspan=\"11\">{H(obra)}</td></tr>");
+        sb.Append($"<tr><td colspan=\"2\"><b>Equipamento</b></td><td colspan=\"11\">{H(equipamento)}</td></tr>");
+        sb.Append($"<tr><td colspan=\"2\"><b>Período</b></td><td colspan=\"11\">{H(periodo)}</td></tr>");
+        sb.Append($"<tr><td colspan=\"13\"><b>Totais</b> — HN: {H(somaHn)} · HE: {H(somaHe)} · Horím. tot.: {H(somaHt)} · Manut.: {H(somaMan)}</td></tr>");
+        sb.Append("<tr>");
+        foreach (var head in new[]
+                 {
+                     "Data", "Hora Ini.", "Hora Fim", "Horím. Ini.", "Horím. Fim", "Horím. Tot.",
+                     "HN", "HE", "HE Ini.", "HE Fim", "Manut", "ManutOP", "Comentário"
+                 })
         {
-            cells.Add(new XElement(ss + "Row",
-                values.Select(v =>
-                    new XElement(ss + "Cell",
-                        new XElement(ss + "Data", new XAttribute(ss + "Type", "String"), v ?? "")))));
+            sb.Append($"<th class=\"hdr\">{head}</th>");
         }
+        sb.Append("</tr>");
 
-        addRow("Relatório Controle de Horas");
-        addRow("Obra", obra);
-        addRow("Equipamento", equipamento);
-        addRow("Período", periodo);
-        addRow();
-        addRow("Data", "Hi", "Hf", "Horím I", "Horím F", "Horím T", "HN", "HE", "HEi", "HEf", "Manut", "ManutOP", "Comentário");
         foreach (var r in rows)
         {
-            addRow(
-                r.Data, r.HoraInicialTxt, r.HoraFinalTxt,
-                r.HorimetroInicialFormatado, r.HorimetroFinalFormatado, r.HorimetroTotalFormatado,
-                r.TotalHorasNormaisFormatado, r.TotalHorasExtrasFormatado,
-                r.HoraExtraInicialTxt, r.HoraExtraFinalTxt,
-                r.ManutencaoFormatado, r.ManutOpFormatado, r.Comentario);
+            sb.Append("<tr>");
+            sb.Append($"<td>{H(r.Data)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HoraInicialTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HoraFinalTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HorimetroInicialFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HorimetroFinalFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HorimetroTotalFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.TotalHorasNormaisFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.TotalHorasExtrasFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HoraExtraInicialTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.HoraExtraFinalTxt)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.ManutencaoFormatado)}</td>");
+            sb.Append($"<td class=\"num\">{H(r.ManutOpFormatado)}</td>");
+            sb.Append($"<td>{H(r.Comentario)}</td>");
+            sb.Append("</tr>");
         }
 
-        var doc = new XDocument(
-            new XDeclaration("1.0", "utf-8", "yes"),
-            new XElement(ss + "Workbook",
-                new XAttribute(XNamespace.Xmlns + "ss", ss.NamespaceName),
-                new XElement(ss + "Worksheet", new XAttribute(ss + "Name", "Horas"),
-                    new XElement(ss + "Table", cells))));
+        sb.Append("<tr class=\"tot\">");
+        sb.Append("<td colspan=\"6\">TOTAL</td>");
+        sb.Append($"<td class=\"num\">{H(somaHn)}</td><td class=\"num\">{H(somaHe)}</td>");
+        sb.Append("<td colspan=\"2\"></td>");
+        sb.Append($"<td class=\"num\" colspan=\"2\">{H(somaMan)}</td><td></td>");
+        sb.Append("</tr>");
+        sb.Append("</table></body></html>");
 
-        using var ms = new MemoryStream();
-        using (var writer = new StreamWriter(ms, new UTF8Encoding(true), leaveOpen: true))
-        {
-            doc.Save(writer);
-        }
-
-        return ms.ToArray();
+        return Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
     }
 
     private sealed class HoraRow

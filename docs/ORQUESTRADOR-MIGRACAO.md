@@ -427,11 +427,10 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Commit/push** (escopo M6): Medição `BuildPdf` tabela + `ObrDsFoto` · `ExcelHtmlLogoEmbed` `bgcolor`/rdo · log `homolog-relatorio-medicao-tentativas.md` → **publish/deploy**.
-2. Smoke Medição: **PDF** = grade/cabeçalho (não texto corrido) · **Excel** = célula navy **rdo** (não caixa branca).
-3. Smoke Efetivo (se ainda não): **Novo** SVG · ordem perfil Colab→Terc→Op→Eng→Dir.
-4. Backlog: **logo Excel bitmap (ClosedXML)** · impressora P3 reusar `ExcelHtmlLogoEmbed` + QuestPDF tabela · **M7-REL-EFETIVO-HIST** · **M7-EFETIVO-NOVO-MODAL**.
-5. Lucio: polish **1.5a** · Impressora **4** · **3.1** · **CAT-PARALIZ-01**.
+1. **M6 Medição ✅** · **1.5a ✅** (Lucio 18/11 — Voltar/SALVAR OK).
+2. **Backlog (não agora):** logo bitmap Excel **Medição + Efetivo** (ClosedXML).
+3. **Impressora #4** código local (I1/I2): Excel HTML+totais · relógio Horas Trabalhadas — **commit/push/publish/deploy** + smoke dia útil (Lucio).
+4. **3.1** + **CAT-PARALIZ-01** = **depois** · LISTA **2.1** smoke · **M7-REL-EFETIVO-HIST**.
 
 
 **UI-M3:** **não** abrir até M4.7 ☑ + M7 estável — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
@@ -448,13 +447,14 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **1.3** | FILTRO | ✅ smoke | Lucio 05/11 |
 | **1.4** | Adicionar tarefa | ✅ smoke | Lucio 05/11 |
 | **1.5** | Adicionar etapa | ✅ smoke | Funcional; **formatação** Voltar/SALVAR → **1.5a** |
-| **1.5a** | Voltar / SALVAR (cadastro etapa) | ⬜ polish | Ícone+texto empilhados / SALVAR sem ícone · desalinhados — print Lucio 05/11 · alinhar chrome prod (inline ícone+label) |
+| **1.5a** | Voltar / SALVAR (cadastro etapa) | ✅ smoke | Lucio 18/11: inline OK · Voltar com seta · SALVAR sem ✓ (opcional vs prod) · tip `10616e0` |
 | **2.1** | LISTA | 🟡 **código** | SPA `TarefaIndexPage` + `ServeSpaIndex` `/Tarefa/Index` — **aguardando publish/deploy Lucio** |
 | **2.2** | SELECIONAR TUDO | ✅ smoke | Lucio 05/11 (já OK 04/11) |
 | **2.3** | Alterar status em massa | ✅ smoke | Lucio 05/11 · depois: re-gate RBAC `aterarStatusEmMassa` se quiser |
 | **3** | Card **⋮** mudar status | ✅ | Painel + BFF · hover `09ae5fe` |
-| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ futuro | Além da prod — Lucio 04/11 · depende catálogo; ver **CAT-PARALIZ-01** (por empresa) |
-| **4** | Impressora PDF + Excel | 🟡 | Gera arquivo; **formatação** vs prod — Lucio 04/11 |
+| **3.1** | ⋮ → **Pausada** + código paralisação | ⬜ depois | Além da prod · acoplado a **CAT-PARALIZ-01** · Lucio 18/11: após paridade |
+| **4** | Impressora PDF + Excel (ícone no card) | 🟡 código | I1/I2: Excel HTML+totais · relógio horas · log `homolog-impressora-horas-tentativas.md` — deploy+smoke |
+| **CAT-PARALIZ-01** | Códigos paralisação **por empresa** | ⬜ depois | ALTER tenant · Lucio 18/11: após espelhar prod |
 | **5** | Menu ☰ hamburger | 🟡 | Reformatar + confirmar opções vs prod |
 | — | Olho / lápis / relógio / + | ✅ | Relógio layout fino **depois** |
 
