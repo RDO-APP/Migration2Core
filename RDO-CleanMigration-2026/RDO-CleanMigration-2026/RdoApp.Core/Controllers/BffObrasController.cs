@@ -209,24 +209,37 @@ public class BffObrasController : ControllerBase
     [HttpPost("convidar")]
     public async Task<IActionResult> Convidar([FromBody] ObraConviteRequestDto? body, CancellationToken cancellationToken)
     {
-        if (!TryColaboradorId(out var colaboradorId))
+        try
         {
-            return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
-        }
+            if (!TryColaboradorId(out var colaboradorId))
+            {
+                return Unauthorized(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sessão inválida." });
+            }
 
-        if (!ObraIndexService.CanObraLista(HttpContext, "enviarConvite"))
+            if (!ObraIndexService.CanObraLista(HttpContext, "enviarConvite"))
+            {
+                // Evita Forbid() sem scheme → InvalidOperationException → HTTP 500.
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Sem permissão para enviar convite." });
+            }
+
+            if (body == null || body.IdObra <= 0)
+            {
+                return BadRequest(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Obra inválida." });
+            }
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var result = await _obraIndex.ConvidarAsync(colaboradorId, body, baseUrl, cancellationToken);
+            return result.Ok ? Ok(result) : BadRequest(result);
+        }
+        catch (Exception ex)
         {
-            return Forbid();
+            return BadRequest(new ObraIndexActionResultDto
+            {
+                Ok = false,
+                ErrorMessage = $"Não foi possível enviar o convite: {ex.Message}",
+            });
         }
-
-        if (body == null || body.IdObra <= 0)
-        {
-            return BadRequest(new ObraIndexActionResultDto { Ok = false, ErrorMessage = "Obra inválida." });
-        }
-
-        var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var result = await _obraIndex.ConvidarAsync(colaboradorId, body, baseUrl, cancellationToken);
-        return result.Ok ? Ok(result) : BadRequest(result);
     }
 
     /// <summary>Aceita nova=true|1 (ASP.NET [FromQuery] bool rejeita "1").</summary>
@@ -235,8 +248,33 @@ public class BffObrasController : ControllerBase
         || string.Equals(nova, "true", StringComparison.OrdinalIgnoreCase);
 
     [HttpGet("cadastro")]
-    public async Task<IActionResult> GetCadastro([FromQuery] string? nova = null, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCadastro(
+        [FromQuery] string? nova = null,
+        [FromQuery] int? copiar = null,
+        CancellationToken cancellationToken = default)
     {
+        if (copiar is > 0)
+        {
+            if (!TryColaboradorId(out var colabCopia))
+            {
+                return Unauthorized(new { message = "Sessão inválida." });
+            }
+
+            if (!ObraIndexService.CanObraLista(HttpContext, "copiarObra"))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    new { message = "Sem permissão para copiar obra." });
+            }
+
+            var dtoCopia = await _cadastro.BuildCopiaAsync(colabCopia, copiar.Value, cancellationToken);
+            if (dtoCopia == null)
+            {
+                return NotFound(new { message = "Obra origem não encontrada ou sem vínculo." });
+            }
+
+            return Ok(dtoCopia);
+        }
+
         if (IsNovaQuery(nova))
         {
             if (!TryColaboradorId(out var colaboradorId))

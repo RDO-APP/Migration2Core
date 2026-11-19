@@ -53,6 +53,7 @@ builder.Services.AddScoped<EquipamentoIndexService>();
 builder.Services.AddScoped<EquipamentoCadastroService>();
 builder.Services.AddScoped<ParalizacaoService>();
 builder.Services.AddScoped<ShellContextService>();
+builder.Services.AddScoped<SmtpMailService>();
 builder.Services.AddScoped<RecuperarSenhaService>();
 
 // Configure DbContext with MySQL (Pomelo)

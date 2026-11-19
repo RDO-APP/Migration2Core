@@ -1,6 +1,4 @@
 using System.Globalization;
-using System.Net;
-using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
@@ -15,11 +13,13 @@ public class ObraIndexService
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
     private readonly RdoDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly SmtpMailService _mail;
 
-    public ObraIndexService(RdoDbContext context, IConfiguration configuration)
+    public ObraIndexService(RdoDbContext context, IConfiguration configuration, SmtpMailService mail)
     {
         _context = context;
         _configuration = configuration;
+        _mail = mail;
     }
 
     public async Task<ObraIndexBootstrapDto> BootstrapAsync(
@@ -240,108 +240,80 @@ public class ObraIndexService
         string publicBaseUrl,
         CancellationToken cancellationToken)
     {
-        var email = (request.EmailConvidada ?? "").Trim();
-        if (email.Length == 0)
-        {
-            return Fail("O Email do Convidado deve ser preenchido.");
-        }
-
-        if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-        {
-            return Fail("O Email é inválido.");
-        }
-
-        var vinculado = await _context.ObraColaboradores.AsNoTracking()
-            .AnyAsync(oc => oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == request.IdObra, cancellationToken);
-        if (!vinculado)
-        {
-            return Fail("Obra não encontrada ou sem permissão.");
-        }
-
-        var obra = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == request.IdObra, cancellationToken);
-        if (obra == null)
-        {
-            return Fail("Obra não encontrada.");
-        }
-
-        if (obra.ObrIdEmpresaContratada != null && obra.ObrIdEmpresaContratante != null)
-        {
-            return Fail("Já existe empresa contratante e contratada para essa obra.");
-        }
-
-        string papel;
-        if (obra.ObrIdEmpresaContratada != null && obra.ObrIdEmpresaContratante == null)
-        {
-            papel = "CONTRATANTE";
-        }
-        else if (obra.ObrIdEmpresaContratante != null && obra.ObrIdEmpresaContratada == null)
-        {
-            papel = "CONTRATADA";
-        }
-        else
-        {
-            papel = "CONVIDADA";
-        }
-
-        obra.ObrCdConvite = Guid.NewGuid().ToString("N");
-        await _context.SaveChangesAsync(cancellationToken);
-
-        var baseUrl = (publicBaseUrl ?? "").TrimEnd('/');
-        if (baseUrl.Length == 0)
-        {
-            baseUrl = (_configuration["App:PublicBaseUrl"] ?? "https://homolog.sistema.rdoapp.com.br").TrimEnd('/');
-        }
-
-        var link = $"{baseUrl}/convidada?o={obra.ObrCdConvite}";
-        var html =
-            $"<p>Prezado Usuario(a):<br/><br/>Este é um convite para ser {papel} na obra <strong>{System.Net.WebUtility.HtmlEncode(obra.ObrDsObra)}</strong>.<br/>Para aceitar acesse o link: {link}</p><p>Atenciosamente,</p>";
-
         try
         {
-            await EnviarEmailAsync(email, "Convite para o RDO App", html, cancellationToken);
+            var email = (request.EmailConvidada ?? "").Trim();
+            if (email.Length == 0)
+            {
+                return Fail("O Email do Convidado deve ser preenchido.");
+            }
+
+            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                return Fail("O Email é inválido.");
+            }
+
+            var vinculado = await _context.ObraColaboradores.AsNoTracking()
+                .AnyAsync(oc => oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == request.IdObra, cancellationToken);
+            if (!vinculado)
+            {
+                return Fail("Obra não encontrada ou sem permissão.");
+            }
+
+            var obra = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == request.IdObra, cancellationToken);
+            if (obra == null)
+            {
+                return Fail("Obra não encontrada.");
+            }
+
+            if (obra.ObrIdEmpresaContratada != null && obra.ObrIdEmpresaContratante != null)
+            {
+                return Fail("Já existe empresa contratante e contratada para essa obra.");
+            }
+
+            string papel;
+            if (obra.ObrIdEmpresaContratada != null && obra.ObrIdEmpresaContratante == null)
+            {
+                papel = "CONTRATANTE";
+            }
+            else if (obra.ObrIdEmpresaContratante != null && obra.ObrIdEmpresaContratada == null)
+            {
+                papel = "CONTRATADA";
+            }
+            else
+            {
+                papel = "CONVIDADA";
+            }
+
+            // Paridade prod: Guid com hífens (varchar 36).
+            obra.ObrCdConvite = Guid.NewGuid().ToString();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var baseUrl = (publicBaseUrl ?? "").TrimEnd('/');
+            if (baseUrl.Length == 0)
+            {
+                baseUrl = (_configuration["App:PublicBaseUrl"] ?? "https://homolog.sistema.rdoapp.com.br").TrimEnd('/');
+            }
+
+            var link = $"{baseUrl}/convidada?o={obra.ObrCdConvite}";
+            var html =
+                $"<p>Prezado Usuario(a):<br/><br/>Este é um convite para ser {papel} na obra <strong>{System.Net.WebUtility.HtmlEncode(obra.ObrDsObra)}</strong>.<br/>Para aceitar acesse o link: {link}</p><p>Atenciosamente,</p>";
+
+            try
+            {
+                await _mail.SendAsync(email, "Convite para o RDO App", html, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return Fail($"Não foi possível enviar o e-mail: {ex.Message}");
+            }
+
+            return new ObraIndexActionResultDto { Ok = true };
         }
         catch (Exception ex)
         {
-            return Fail($"Não foi possível enviar o e-mail: {ex.Message}");
+            return Fail($"Não foi possível enviar o convite: {ex.Message}");
         }
-
-        return new ObraIndexActionResultDto { Ok = true };
-    }
-
-    private async Task EnviarEmailAsync(string to, string subject, string htmlBody, CancellationToken cancellationToken)
-    {
-        var host = _configuration["Smtp:Host"];
-        if (string.IsNullOrWhiteSpace(host))
-        {
-            throw new InvalidOperationException("Smtp:Host não configurado.");
-        }
-
-        var port = _configuration.GetValue("Smtp:Port", 587);
-        var enableSsl = _configuration.GetValue("Smtp:EnableSsl", true);
-        var fromEmail = _configuration["Smtp:FromEmail"] ?? _configuration["Smtp:User"] ?? "noreply@rdoapp.com.br";
-        var fromName = _configuration["Smtp:FromName"] ?? "RDO App";
-        var user = _configuration["Smtp:User"];
-        var password = _configuration["Smtp:Password"];
-
-        using var client = new SmtpClient(host, port)
-        {
-            EnableSsl = enableSsl,
-            DeliveryMethod = SmtpDeliveryMethod.Network,
-        };
-        if (!string.IsNullOrWhiteSpace(user))
-        {
-            client.Credentials = new NetworkCredential(user, password);
-        }
-
-        using var message = new MailMessage
-        {
-            From = new MailAddress(fromEmail, fromName),
-            Subject = subject,
-            Body = htmlBody,
-            IsBodyHtml = true,
-        };
-        message.To.Add(to);
-        await client.SendMailAsync(message, cancellationToken);
     }
 
     private static bool TryParseDate(string? raw, out DateTime date)

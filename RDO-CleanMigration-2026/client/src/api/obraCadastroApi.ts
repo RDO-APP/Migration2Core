@@ -65,9 +65,18 @@ async function readJson<T>(res: Response, fallback: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export async function fetchObraCadastro(nova = false): Promise<ObraCadastro> {
-  const q = nova ? '?nova=true' : ''
-  const res = await fetch(`/api/bff/obras/cadastro${q}`, {
+export async function fetchObraCadastro(
+  opts: boolean | { nova?: boolean; copiar?: number } = false,
+): Promise<ObraCadastro> {
+  const q = new URLSearchParams()
+  if (typeof opts === 'boolean') {
+    if (opts) q.set('nova', 'true')
+  } else {
+    if (opts.copiar && opts.copiar > 0) q.set('copiar', String(opts.copiar))
+    else if (opts.nova) q.set('nova', 'true')
+  }
+  const qs = q.toString()
+  const res = await fetch(`/api/bff/obras/cadastro${qs ? `?${qs}` : ''}`, {
     credentials: 'include',
     headers: { Accept: 'application/json' },
   })

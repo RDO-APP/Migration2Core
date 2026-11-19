@@ -1,6 +1,7 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-18 ~18:55 — tip **`5b62953`** impressora+LISTA+obra · marcos **assumindo** smoke 1.1/2.1/PDF OK · gate melhorias L1  
+**Atualizado:** 2026-11-19 ~13:20 — Dia 1 **Copiar obra + Convite** código local · smoke pós-deploy · CPF Georges **`824.351.035-49`** · Próximo = smoke O4/O5 → prep **L1**  
+
 
 
 **Ler primeiro** em toda sessão do chat **Migração .NET Core** — depois [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md) (TSK × M\*).
@@ -122,7 +123,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — confirmar smoke tip **`5b62953`** · residual espelho = **Copiar obra** · **não** abrir melhorias / **3.1** / CAT até gate L1.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **Dia 1:** código **Copiar + Convite** ☑ local · **smoke O4/O5** pós-deploy → prep **L1 Linux**. Melhorias / residual / **3.1** / CAT = **pós-Linux**. `/convidada` ainda stub.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
 
@@ -132,23 +133,23 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-18 — assumindo smoke tip `5b62953` OK):** espelho web operador ≈ **~95%**. Caminho até **M9 D1** ≈ **~78–82%**. Clusters Dimas iniciados ≈ **~85%**. **PDF Dimas total** (fundação + mobile⏸ + ETL) ≈ **~48–52%**. Residual espelho web = **Copiar obra** (+ polish opcional). Melhorias / **3.1** / CAT = **gate L1**. Detalhe TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-19 — Dia 1 código):** espelho web operador ≈ **~98%** (Copiar cabeçalho + Convite envio). **M0 / M0′ / W0.5 / M3 / M4 / M5 web = FECHADOS**. Gap residual: clone listas colab/equip · `/convidada` · SMTP ops. Melhorias / **3.1** / CAT / fontello / DOC-FICHAS = **pós-Linux**. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
-| **M0** | **90** | Decisões A1–A5; inventário mobile; Vite `client/`; build Core; E2E login→Escolher; docs E0–E6 | branding homolog; E2 localhost (opcional) |
-| **M0′** | **95** | Matriz; manual ①–⑥; diagrama; Fase A PASS | HAR API prod (opcional) |
-| **M1** | **85** | Cenário **A**; v1 endpoints; tipos TS; mapa Core vs legado | Pacote npm; EQ-M não consome |
-| **W0.5 / E2E** | **95** | Selecionar + Cards React; **M3 PASS** | — |
+| **M0** | **100** | **FECHADO** | branding / E2 → pós-L1 (aceito) |
+| **M0′** | **100** | **FECHADO** | HAR → pós-L1 (aceito) |
+| **M1** | **85** | Cenário **A**; v1 endpoints; tipos TS; mapa Core vs legado | Pacote npm; EQ-M — com **M6** / pós-L1 |
+| **W0.5 / E2E** | **100** | **FECHADO** | — |
 | **M2** | **100** | **FECHADO** | — |
-| **M3** | **95** | **FECHADO** | E2E 6–7 opcional |
-| **M4** | **93** | **M4.1–M4.8** ☑ · shell/menu smoke ☑ · G5 = RDOs OK (sem item Relatórios) | **UI-M1/M2c** fontello fino · congela EQ-W formal · G6 polish |
-| **M5 web** | **97** | RDO · Chart · Dashboard · card ações · impressora A+B (+PDF tip) · LISTA UTF-8 | **DOC-FICHAS** (gate) · polish tiles (opcional) |
+| **M3** | **100** | **FECHADO** | E2E 6–7 N/A (D3 ACEITAR) |
+| **M4** | **100** | **FECHADO** · G5/G6/Login SPA smoke Dia 0 · congela EQ-W | fontello UI-M1/M2c = **ACEITAR** → pós-L1 |
+| **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **96** | **7a–7d** · P4 · P6a indexes · Efetivo Copiar ☑ · Obra Salvar ☑ · impressora layout ☑ · Paralizações catálogo · 1.5a ☑ | **Copiar obra** (stub) · Relatórios menu (N/A se RDOs basta) · **3.1**/CAT/**M7-REL-*** = **gate L1** · **não** P6b |
+| **M7+** | **97** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** código | smoke O4/O5 · clone listas · `/convidada` · **3.1**/CAT = pós-L1 · **não** P6b |
 | **M8** | **40** | Branch CI · roteiro D→E | B3 runway &lt;2 min · workflow gate |
-| **M9** | **22** | Operador web amplo no Git + tip **`5b62953`** | D1 checklist formal · D2–D7 · D4 mobile |
+| **M9** | **28** | Dia 0 operador web smoke amplo | D1 checklist formal · D2–D7 · D4 mobile |
 | **M10** | **0** | — | Onda 2 / **L1 Linux** · **P6b** CMS · cutover RDS |
 
 ---
@@ -427,18 +428,29 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-1. **Tip `5b62953` no homolog** — Lucio confirma: **1.1** Salvar obra · **2.1** LISTA acentos · impressora **PDF**.
-2. Residual espelho: **Copiar obra** (stub → implementar) **ou** aceitar fora do 100% e ir a **B3** / preparação **L1**.
-3. **Não** abrir gate L1 (melhorias / 3.1 / CAT) até espelho + Linux.
+### Dia 0 — FECHADO (19/11)
 
-### Gate Lucio 18/11 — melhorias / além-prod (**bloqueado**)
+A1–A3 · B1–B4 visual · C1–C3 · D1 ACEITAR · D2 SIM · D3 ACEITAR · CPF Georges `824.351.035-49`.
 
-**Não executar** até **(A)** migração espelhando **100%** produção **e** **(B)** homolog Core em **EC2 Linux (L1)**:
+### Dia 1 — Copiar obra + Enviar Convite (código 19/11)
+
+**Feito (local):** Copiar → `/Obra/Cadastro?copiar=` + `BuildCopiaAsync` (cabeçalho) · Convite sem 500 (`SmtpMailService` + BFF harden).  
+**Smoke:** [`migracao/homolog-obra-index-acoes-tentativas.md`](migracao/homolog-obra-index-acoes-tentativas.md) **O4/O5** pós publish/deploy.  
+**Fora:** `/convidada` aceitar · clone colab/equip no mesmo Salvar · melhorias pós-L1.
+
+### Dia 2 — Linux
+
+Prep **L1** (homolog Core em **EC2 Linux**) · depois gate melhorias.
+
+### Gate Lucio 18/11 — melhorias / residual aceito (**pós-Linux**)
+
+**Não executar** até **(A)** smoke Dia 1 O4/O5 OK (ou waiver residual listas/`convidada`) **e** **(B)** Core em **EC2 Linux (L1)**. Lista: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § **Residual Dia 0 → pós-L1**.
 
 | Item | Nota |
 |------|------|
-| **3.1** · **CAT-PARALIZ-01** | Além da prod / tenant — explícito Lucio |
-| Melhorias backlog (`M7-REL-*` ClosedXML, **M7-REL-EFETIVO-DIAS/HIST**, I18N-ES, DOC-FICHAS, UI-M3, foto-geo, etc.) | Mesmo gate |
+| **3.1** · **CAT-PARALIZ-01** | Além da prod / tenant |
+| Melhorias backlog (`M7-REL-*`, I18N-ES, DOC-FICHAS, UI-M3, foto-geo, …) | Gate L1 |
+| Residual aceito M0–M5 (fontello, HAR, branding, SMTP, UI-M5b, …) | Mesmo gate |
 
 **UI-M3:** gates próprios **e** gate L1 — [`fontello-fa-legado-marcos-ui.md`](migracao/fontello-fa-legado-marcos-ui.md).
 
@@ -450,7 +462,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | # | Controle | Status homolog | Nota |
 |---|----------|----------------|------|
 | — | **Gerar RDO** | ✅ OK | Toolbar |
-| **1.1** | Editar obra / **Nova obra (+)** | 🟡 O1 | DBNull→String no Salvar · log [`migracao/homolog-obra-cadastro-salvar-tentativas.md`](migracao/homolog-obra-cadastro-salvar-tentativas.md) **O2** código local |
+| **1.1** | Editar obra / **Nova obra (+)** | ☑ O3 | Smoke 19/11 Salvar OK · log [`migracao/homolog-obra-cadastro-salvar-tentativas.md`](migracao/homolog-obra-cadastro-salvar-tentativas.md) |
 | **1.2** | Efetivo diário | ☑ | Copiar OK · relatório multi-dia OK · separador/logo → gate |
 | **1.3** | FILTRO | ✅ | |
 | **1.4** | Adicionar tarefa | ✅ | |
@@ -463,7 +475,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **CAT-PARALIZ-01** | Códigos por empresa | ⏸ gate L1 | |
 | **5** | Menu ☰ | ☑ | Sem Relatórios · RDOs OK |
 | — | Olho / lápis / relógio / + | ✅ | |
-| — | **Copiar obra** (Index) | ⬜ stub | Único gap funcional espelho restante |
+| — | **Copiar obra** (Index) | ⬜ smoke O5 | Código cabeçalho ☑ · clone listas = residual |
 
 ---
 

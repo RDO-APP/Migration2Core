@@ -171,5 +171,29 @@ export async function enviarConviteObra(idObra: number, emailConvidada: string):
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
     body: JSON.stringify({ idObra, emailConvidada }),
   })
-  return readJson(res, 'enviar convite')
+  if (res.status === 401) {
+    throw new Error('Sessão expirada. Faça login novamente.')
+  }
+  if (res.status === 403) {
+    throw new Error('Sem permissão para esta ação.')
+  }
+  const text = await res.text()
+  let body: ObraIndexActionResult | null = null
+  if (text.trimStart().startsWith('{')) {
+    try {
+      body = JSON.parse(text) as ObraIndexActionResult
+    } catch {
+      /* */
+    }
+  }
+  if (!res.ok) {
+    return {
+      ok: false,
+      errorMessage:
+        body?.errorMessage ||
+        (body as { message?: string } | null)?.message ||
+        `Erro ${res.status} (enviar convite).`,
+    }
+  }
+  return body ?? { ok: true }
 }

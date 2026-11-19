@@ -123,10 +123,7 @@ export function ObraIndexPage() {
   }
 
   function onCopiar(item: ObraIndexItem) {
-    showToast(
-      'error',
-      `Cópia de «${item.descricao}» ainda em migração (criar obra nova com os dados). Use NOVO quando disponível.`,
-    )
+    goOperador(`/Obra/Cadastro?copiar=${item.idObra}`)
   }
 
   async function onExcluir(item: ObraIndexItem) {

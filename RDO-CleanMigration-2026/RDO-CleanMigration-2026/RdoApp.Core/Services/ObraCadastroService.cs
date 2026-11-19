@@ -101,6 +101,55 @@ public class ObraCadastroService
         };
     }
 
+    /// <summary>
+    /// Copiar obra (Dia 1): cabeçalho da origem com Id=0 / Nova=true.
+    /// Não clona colaboradores/equipamentos (listas só pós-Salvar no Core).
+    /// </summary>
+    public async Task<ObraCadastroDto?> BuildCopiaAsync(
+        int colaboradorId,
+        int idObraOrigem,
+        CancellationToken cancellationToken)
+    {
+        var vinculado = await _context.ObraColaboradores.AsNoTracking()
+            .AnyAsync(oc => oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == idObraOrigem, cancellationToken);
+        if (!vinculado)
+        {
+            return null;
+        }
+
+        var src = await GetAsync(idObraOrigem, colaboradorId, cancellationToken);
+        if (src == null)
+        {
+            return null;
+        }
+
+        return new ObraCadastroDto
+        {
+            Id = 0,
+            Nova = true,
+            Descricao = src.Descricao,
+            DataInicio = src.DataInicio,
+            DataPrevisaoFim = src.DataPrevisaoFim,
+            Logradouro = src.Logradouro,
+            Numero = src.Numero,
+            Complemento = src.Complemento,
+            Bairro = src.Bairro,
+            Cep = src.Cep,
+            IdUf = src.IdUf,
+            IdMunicipio = src.IdMunicipio,
+            IdContratante = src.IdContratante,
+            IdContratada = src.IdContratada,
+            AreaTotal = src.AreaTotal,
+            AreaConstruida = src.AreaConstruida,
+            CidadeEstado = src.CidadeEstado,
+            Finalizada = false,
+            // Foto nova no Salvar — não reaproveitar path da origem.
+            DescricaoFoto = "",
+            Empresas = src.Empresas,
+            IdsEmpresasDoUsuario = src.IdsEmpresasDoUsuario,
+        };
+    }
+
     public async Task<ObraCadastroDto?> GetAsync(
         int obraId,
         int colaboradorId,

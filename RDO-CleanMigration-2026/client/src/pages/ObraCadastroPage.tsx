@@ -66,8 +66,15 @@ function toForm(d: ObraCadastro): FormState {
   }
 }
 
+function copiarIdFromUrl(): number {
+  const raw = new URLSearchParams(window.location.search).get('copiar')
+  const n = raw ? Number(raw) : 0
+  return Number.isFinite(n) && n > 0 ? n : 0
+}
+
 function modoFromUrl(): 'nova' | 'editar' | 'visualizar' {
   const q = new URLSearchParams(window.location.search)
+  if (copiarIdFromUrl() > 0) return 'nova'
   if (q.get('nova') === '1' || q.get('nova')?.toLowerCase() === 'true') return 'nova'
   const m = q.get('modo')?.toLowerCase()
   return m === 'visualizar' ? 'visualizar' : 'editar'
@@ -101,7 +108,9 @@ function readFileAsDataUrl(file: File): Promise<string> {
 export function ObraCadastroPage() {
   const { shell } = useShellContext()
   const modo = modoFromUrl()
+  const copiarId = copiarIdFromUrl()
   const isNova = modo === 'nova'
+  const isCopia = copiarId > 0
   const fileRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState<FormState | null>(null)
   const [empresas, setEmpresas] = useState<ObraCadastroLookup[]>([])
@@ -161,7 +170,8 @@ export function ObraCadastroPage() {
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([fetchObraCadastro(isNova), fetchObraIndexBootstrap()])
+    const loadOpts = isCopia ? { copiar: copiarId } : { nova: isNova }
+    Promise.all([fetchObraCadastro(loadOpts), fetchObraIndexBootstrap()])
       .then(async ([d, boot]) => {
         if (cancelled) return
         setUfs(boot.ufs)
@@ -193,7 +203,7 @@ export function ObraCadastroPage() {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNova])
+  }, [isNova, isCopia, copiarId])
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev))
@@ -423,7 +433,7 @@ export function ObraCadastroPage() {
     <OperadorShell variant="cards" obraNome={form?.descricao || shell?.obraNome} shell={shell}>
       <section className="rdo-cadastro-page tarefa-cadastro-page">
         <div className="panel-heading">
-          <h3>{isNova ? 'Nova obra' : 'Obra'}</h3>
+          <h3>{isCopia ? 'Copiar obra' : isNova ? 'Nova obra' : 'Obra'}</h3>
         </div>
         {loading ? (
           <p className="muted">Carregando…</p>
@@ -431,7 +441,12 @@ export function ObraCadastroPage() {
           <p className="error">{error}</p>
         ) : form ? (
           <>
-            {modo === 'visualizar' ? (
+            {isCopia ? (
+              <p className="muted">
+                Cabeçalho pré-preenchido da obra origem. Ao salvar, cria obra nova (colaboradores e
+                equipamentos adicionar depois).
+              </p>
+            ) : modo === 'visualizar' ? (
               <p className="muted">Modo visualizar — campos somente leitura.</p>
             ) : form.finalizada ? (
               <p className="muted">Obra finalizada — campos somente leitura.</p>
