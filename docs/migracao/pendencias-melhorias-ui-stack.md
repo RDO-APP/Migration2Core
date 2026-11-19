@@ -94,7 +94,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M2d** | **Drawer menu mobile:** CSS prod — gap **logo ↔ ☰**, hamburger 63px desktop · `operador-shell.css` **2026-10-26** | P | **M4.7g** | 🟡 smoke Lucio |
 | **UI-P3-1.5a** | Cadastro etapa: botões **Voltar / SALVAR** inline | P | smoke 1.5 ✅ 05/11 | ✅ smoke Lucio 18/11 · tip `10616e0` · SALVAR ✓ opcional |
 | **UI-M4-layout** | Faixa desktop **FILTRO / ADICIONAR TAREFA / ETAPA** — alinhamento e tamanho vs prod (Lucio aceita menor hoje; refinamento no redesign) | P | **UI-M3** (Fase B) | ⏸ |
-| **UI-M5** | Login: smoke Esqueci senha SMTP homolog | P | M4.8 | ☐ |
+| **UI-M5** | Esqueci senha: visual ≈ prod (logo + fundo) ☑ código 19/11 · **SMTP homolog** ainda config EC2 | P | M4.8 | 🟡 visual local · SMTP ☐ |
 | **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core · mapa `LegacyOperadorRoutes` + `ModuloLegadoController` **2026-10-26** | M | **M5** + trilha **M4.7g** stubs | 🟡 smoke G5 |
 | **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod main.js + modal) | M | **M7** · não UI-M3 | ✅ smoke 05/11 |
 | **CAT-PARALIZ-01** | **Códigos de paralisação por empresa** — hoje `tarefa_codigo_paralizacao` é **global** (PK = código 3 chars). Melhor: `tarcp_id_empresa` + PK composta `(empresa, código)`; telas/APIs filtram pela empresa da sessão/obra; migrar clonando os ~22 códigos por empresa; join descrição = código+empresa. **Evitar** prefixo no código e escopo por obra. Até o ALTER: **não** liberar CRUD de paralização a cliente (só admin RDO). Relacionado **3.1** (⋮ Pausada). **Proibido** `ALTER novo_rdoapp` sem Lucio. | G | **M7+** (dados/tenant) | ⬜ backlog 06/11 |

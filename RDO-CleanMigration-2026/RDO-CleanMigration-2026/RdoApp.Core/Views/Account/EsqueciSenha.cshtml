@@ -1,6 +1,6 @@
 @model EsqueciSenhaDto
 @{
-    ViewData["Title"] = "Esqueci a senha - RDO App Equipamentos";
+    ViewData["Title"] = "Esqueci a Senha - RDO App";
     Layout = null;
     var sucesso = ViewData["Sucesso"] as string;
 }
@@ -12,61 +12,127 @@
     <title>@ViewData["Title"]</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Paridade prod #/esquecisenha — fundo full-bleed + logo rdo */
         body {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 24px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #1a3a6b 0%, #27496f 45%, #1e3a5f 100%);
         }
-        .login-card {
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgb(0 0 0 / 20%);
-            padding: 40px;
+        .esqueci {
             width: 100%;
             max-width: 420px;
+            text-align: center;
+            color: #fff;
         }
-        h2 { text-align: center; color: #27496f; margin-bottom: 1.5rem; font-size: 1.25rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 0.35rem; }
-        input.form-control {
+        .esqueci .logo {
+            width: 120px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 22px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+        .esqueci h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.75rem;
+            letter-spacing: 0.02em;
+        }
+        .field {
+            position: relative;
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+        .field input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+            color: #fff;
             font-size: 1rem;
+            padding: 12px 40px 12px 4px;
+            outline: none;
         }
-        .text-danger { color: #c0392b; font-size: 0.85rem; margin-top: 0.25rem; display: block; }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 6px;
+        .field input::placeholder {
+            color: rgba(255, 255, 255, 0.65);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .field .icon {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.85;
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+        .text-danger { color: #ffb4b4; font-size: 0.85rem; margin-top: 0.35rem; display: block; }
+        .validation-summary {
+            color: #ffb4b4;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px 12px;
             margin-bottom: 1rem;
             font-size: 0.9rem;
+            text-align: left;
         }
-        .actions { display: flex; gap: 10px; margin-top: 1.25rem; }
+        .alert-success {
+            background: rgba(212, 237, 218, 0.95);
+            color: #155724;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 1.75rem;
+            flex-wrap: wrap;
+        }
         .btn {
             flex: 1;
-            padding: 12px;
+            min-width: 140px;
+            padding: 14px 16px;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
             cursor: pointer;
-            text-align: center;
             text-decoration: none;
-            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
         }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-secondary { background: #e5e7eb; color: #27496f; }
-        .validation-summary { color: #c0392b; margin-bottom: 1rem; font-size: 0.9rem; }
+        .btn-cancel { background: #e53935; color: #fff; }
+        .btn-send { background: #2196f3; color: #fff; }
+        .btn:hover { filter: brightness(1.05); }
+        label.sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <h2>Esqueci a senha</h2>
+    <div class="esqueci">
+        <img class="logo" src="/images/logo.jpg" alt="RDO App"
+             onerror="this.onerror=null;this.src='/Assets/images/logo.jpg';" />
+        <h2>Esqueci a Senha</h2>
 
         @if (!string.IsNullOrEmpty(sucesso))
         {
@@ -75,21 +141,23 @@
 
         <div asp-validation-summary="All" class="validation-summary"></div>
 
-        <form asp-action="EsqueciSenha" method="post">
+        <form asp-action="EsqueciSenha" method="post" autocomplete="on">
             @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" placeholder="E-mail cadastrado" autocomplete="email" />
+            <div class="field">
+                <label asp-for="Email" class="sr-only"></label>
+                <input asp-for="Email" placeholder="E-mail cadastrado" autocomplete="email" />
+                <span class="icon" aria-hidden="true">✉</span>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Cpf"></label>
-                <input asp-for="Cpf" class="form-control" placeholder="000.000.000-00" autocomplete="off" />
+            <div class="field">
+                <label asp-for="Cpf" class="sr-only"></label>
+                <input asp-for="Cpf" placeholder="000.000.000-00" autocomplete="off" inputmode="numeric" maxlength="14" />
+                <span class="icon" aria-hidden="true">👤</span>
                 <span asp-validation-for="Cpf" class="text-danger"></span>
             </div>
             <div class="actions">
-                <a class="btn btn-secondary" asp-action="Login">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Enviar</button>
+                <a class="btn btn-cancel" asp-action="Login">✕ Cancelar</a>
+                <button type="submit" class="btn btn-send">✓ Enviar</button>
             </div>
         </form>
     </div>
