@@ -1,12 +1,12 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-20 · **Status:** tip L1 **`dde125e`** · **L1 Linux ☑** · **M6 Fase 0 (EQ-M) em curso** · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-20 · **Status:** tip L1 **`dde125e`** · **L1 Linux ☑** · **M6 Fase 0 Baseline OK** · **Fase 1.2 JWT código** · **`/convidada` C4 PASS** · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)  
 **Homolog ② host (L1 · 19/11):** EC2 Linux **`i-0776acb09b8438f22`** · Kestrel **5081** · TG healthy — **≠** Windows prod `i-05cb…` (:80).  
-**③ Apontador (M6 · 20/11):** ainda cenário **A** → `sistema.rdoapp.com.br` · plano [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · baseline [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) · smoke parcial (login/lista OK; nova medição falhava com `Empty response` quando horímetro legado = `null` — fix no Git mobile; rebuild APK pendente).
+**③ Apontador (M6 · 20/11):** **Baseline OK** · `main` **`8e7eb5e`** · smoke prod **PASS** · ainda cenário **A** → `sistema.rdoapp.com.br` · plano [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · baseline [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) · JWT slice [`migracao/m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md).
 
 ---
 

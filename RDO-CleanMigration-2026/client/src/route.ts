@@ -1,5 +1,6 @@
 export type OperadorPage =
   | 'login'
+  | 'convidada'
   | 'escolher'
   | 'cards'
   | 'tarefa-index'
@@ -30,6 +31,9 @@ export function detectOperadorPage(pathname = window.location.pathname): Operado
   const p = pathname.toLowerCase()
   if (p.includes('/account/login')) {
     return 'login'
+  }
+  if (p.includes('/convidada')) {
+    return 'convidada'
   }
   if (p.includes('/obra/escolher')) {
     return 'escolher'

@@ -4,6 +4,7 @@ import { ChartIndexPage } from './pages/ChartIndexPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { EscolherPage } from './pages/EscolherPage'
 import { LoginPage } from './pages/LoginPage'
+import { ConvidadaPage } from './pages/ConvidadaPage'
 import { RdoCadastroPage } from './pages/RdoCadastroPage'
 import { RdoIndexPage } from './pages/RdoIndexPage'
 import { TarefaCadastroPage } from './pages/TarefaCadastroPage'
@@ -31,6 +32,9 @@ function App() {
   const page = detectOperadorPage()
   if (page === 'login') {
     return <LoginPage />
+  }
+  if (page === 'convidada') {
+    return <ConvidadaPage />
   }
   if (page === 'escolher') {
     return <EscolherPage />

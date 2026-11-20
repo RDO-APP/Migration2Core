@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-19 ~22:00 — **L1 FECHADO (infra):** homolog Core em **EC2 Linux** `i-0776acb09b8438f22` · TG healthy · tip **`dde125e`** · **Amanhã:** smoke browser Lucio → gate melhorias pós-L1  
+**Atualizado:** 2026-11-20 ~15:25 — **C4 `/convidada` PASS** · **M6** Fase 0 Baseline OK · Fase 1.2 JWT código (SigningKey+smoke pendente) · L1 Linux `i-0776acb09b8438f22` 
 
 
 
@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **M6 Fase 0 Baseline OK** · próximo = **M6 Fase 1 JWT** · O4 `/convidada` (fix strategy) em paralelo.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **C4 PASS** · **M6 1.2** JWT código (SigningKey+smoke) · Lucio testando RDO assinatura contratante.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -134,7 +134,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-19 — L1):** homolog Core = **EC2 Linux dedicada** (TG healthy). Espelho web ≈ **~98%**. **M0 / M0′ / W0.5 / M3 / M4 / M5 web / L1 infra = FECHADOS**. Amanhã: smoke Lucio. Depois: melhorias / **3.1** / CAT / `/convidada` / clone listas. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-20):** homolog Core = **EC2 Linux dedicada** (TG healthy). Espelho web ≈ **~98%** com `/convidada` **C4 PASS**. **M0 / M0′ / W0.5 / M3 / M4 / M5 web / L1 infra = FECHADOS**. **M6** Fase 0 OK · 1.2 JWT código. Residual: clone listas · **3.1**/CAT · SigningKey smoke. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
@@ -147,8 +147,8 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M4** | **100** | **FECHADO** · G5/G6/Login SPA smoke Dia 0 · congela EQ-W | fontello UI-M1/M2c = **ACEITAR** → pós-L1 |
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
 | **M5 EQ-M** | **0** | — | **⏸** até M6 Fase 2 (homolog APK) |
-| **M6** | **25** | **Fase 0 Baseline OK** · `main` mobile `8e7eb5e` · smoke prod PASS | **Fase 1** JWT/OpenAPI · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) |
-| **M7+** | **97** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** código | smoke browser amanhã · clone listas · `/convidada` · **3.1**/CAT · **não** P6b |
+| **M6** | **35** | **Fase 0 Baseline OK** · `main` mobile `8e7eb5e` · smoke prod PASS · **1.2** JWT login/me código | SigningKey+smoke · OpenAPI YAML · LoginObra Bearer · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md) |
+| **M7+** | **98** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** · **`/convidada` C4 PASS** | clone listas · **3.1**/CAT · **não** P6b |
 | **M8** | **70** | Branch CI · roteiro · **L1 Linux ☑** `dde125e` | B3 runway &lt;2 min · CI Actions shell Linux |
 | **M9** | **35** | Dia 0 operador · L1 host estável | smoke L1 browser · D1 formal · D2–D7 · D4 mobile |
 | **M10** | **5** | L1 ≠ cutover RDS (separado) | **P6b** CMS · cutover RDS `novo_rdoapp` |
@@ -430,13 +430,14 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-### Agora — **M6 Fase 1 JWT** (EQ-M/I) + O4 `/convidada` republish (EQ-R)
+### Agora — **C4 PASS** · **M6 1.2 JWT** (SigningKey+smoke) · RDO assinatura contratante (Lucio)
 
 | | |
 |--|--|
 | Convite SMTP | ☑ O4x (Host `email-ssl.com.br`) |
-| Aceite | SPA `/convidada` + BFF — [`migracao/homolog-convidada-aceite.md`](migracao/homolog-convidada-aceite.md) · fix `CreateExecutionStrategy` · **☐ republish + smoke C4** |
-| M6 EQ-M | **Fase 0 Baseline OK** · `main` `8e7eb5e` · próximo **Fase 1 JWT** — [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
+| Aceite `/convidada` | ☑ **C4 PASS** 2026-11-20 ~15:25 — Contratante → Escolher · Diretor Contratante MIGRAÇÃO 15/11 — [`migracao/homolog-convidada-aceite.md`](migracao/homolog-convidada-aceite.md) |
+| M6 EQ-M | **Fase 0 Baseline OK** · `main` `8e7eb5e` · **1.2** JWT login/me **código** · pendente **SigningKey** (SSM) + smoke curl — [`m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md) |
+| Lucio agora | Testando **RDO assinatura contratante** no homolog |
 
 ### Dia 0 — FECHADO (19/11)
 
@@ -446,7 +447,7 @@ A1–A3 · B1–B4 visual · C1–C3 · D1 ACEITAR · D2 SIM · D3 ACEITAR · CP
 
 **Feito:** Copiar → smoke **O5 OK** · Convite sem 500 (código) · SMTP Staging Linux em andamento (**O4u** AUTH_OK Python · browser ainda `Failure sending mail` · harden `SmtpMailService` local **não** deployado).  
 **Smoke:** [`migracao/homolog-obra-index-acoes-tentativas.md`](migracao/homolog-obra-index-acoes-tentativas.md).  
-**Fora agora:** fechar O4 até baseline M6 · `/convidada` · clone colab/equip.
+**Atualizado 20/11:** O4 SMTP + `/convidada` C4 **PASS**. Residual Dia 1: clone colab/equip.
 
 ### Dia 2 — Linux · **L1 FECHADO (infra · 19/11)**
 

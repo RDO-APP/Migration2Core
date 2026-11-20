@@ -1,7 +1,10 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 using RdoApp.Core.Data;
 using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Middleware;
@@ -55,6 +58,35 @@ builder.Services.AddScoped<ParalizacaoService>();
 builder.Services.AddScoped<ShellContextService>();
 builder.Services.AddScoped<SmtpMailService>();
 builder.Services.AddScoped<RecuperarSenhaService>();
+builder.Services.AddScoped<ConvidadaAceiteService>();
+
+// M6 Fase 1.2 — JWT for mobile (cookie remains Default* for SPA)
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
+builder.Services.AddSingleton<MobileJwtTokenService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MobileJwt", policy =>
+    {
+        policy.SetIsOriginAllowed(static origin =>
+            {
+                if (string.Equals(origin, "https://homolog.sistema.rdoapp.com.br", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                {
+                    return false;
+                }
+
+                // Expo / Metro / local web — any localhost or 127.0.0.1 port
+                return uri.Host is "localhost" or "127.0.0.1";
+            })
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 // Configure DbContext with MySQL (Pomelo)
 builder.Services.AddDbContext<RdoDbContext>(options =>
@@ -84,7 +116,9 @@ builder.Services.AddSession(options =>
     options.Cookie.Path = "/";
 });
 
-// Configure Cookie Authentication (instead of Identity)
+// Configure Cookie Authentication (Default*) + JwtBearer for /api/mobile/*
+var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
+var jwtSigningKey = jwtSection["SigningKey"] ?? "";
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -122,6 +156,31 @@ builder.Services.AddAuthentication(options =>
                 HomologDiagnostics.SetRedirectMotivo(ctx.HttpContext, "nao-autenticado; vai-Login-com-ReturnUrl");
                 ctx.Response.Redirect(ctx.RedirectUri);
                 return Task.CompletedTask;
+            },
+        };
+    })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSection["Issuer"],
+            ValidAudience = jwtSection["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey)),
+            ClockSkew = TimeSpan.FromMinutes(1),
+        };
+        options.Events = new JwtBearerEvents
+        {
+            // API / mobile: 401 JSON — never HTML redirect (cookie SPA OnRedirectToLogin untouched).
+            OnChallenge = async context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync("""{"message":"Unauthorized"}""");
             },
         };
     });
@@ -175,6 +234,8 @@ if (!string.IsNullOrWhiteSpace(uploadsRoot) && Directory.Exists(uploadsRoot))
 }
 
 app.UseRouting();
+
+app.UseCors();
 
 app.UseSession(); // ✅ Enable session support
 app.UseAuthentication();

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 
 namespace RdoApp.Core.Services;
 
@@ -7,10 +8,12 @@ namespace RdoApp.Core.Services;
 public sealed class SmtpMailService
 {
     private readonly IConfiguration _configuration;
+    private readonly ILogger<SmtpMailService> _logger;
 
-    public SmtpMailService(IConfiguration configuration)
+    public SmtpMailService(IConfiguration configuration, ILogger<SmtpMailService> logger)
     {
         _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task SendAsync(string to, string subject, string htmlBody, CancellationToken cancellationToken = default)
@@ -28,14 +31,16 @@ public sealed class SmtpMailService
         var user = _configuration["Smtp:User"];
         var password = _configuration["Smtp:Password"];
 
+        // Ordem importa no SmtpClient: UseDefaultCredentials=false antes de Credentials.
         using var client = new SmtpClient(host, port)
         {
-            EnableSsl = enableSsl,
             DeliveryMethod = SmtpDeliveryMethod.Network,
+            EnableSsl = enableSsl,
+            UseDefaultCredentials = false,
         };
         if (!string.IsNullOrWhiteSpace(user))
         {
-            client.Credentials = new NetworkCredential(user, password);
+            client.Credentials = new NetworkCredential(user, password ?? "");
         }
 
         using var message = new MailMessage
@@ -46,6 +51,27 @@ public sealed class SmtpMailService
             IsBodyHtml = true,
         };
         message.To.Add(to);
-        await client.SendMailAsync(message, cancellationToken);
+        try
+        {
+            await client.SendMailAsync(message, cancellationToken);
+        }
+        catch (SmtpException ex)
+        {
+            var detail = FormatSmtpFailure(ex);
+            _logger.LogError(ex, "SMTP falhou {Host}:{Port} Ssl={Ssl} To={To}", host, port, enableSsl, to);
+            throw new InvalidOperationException($"SMTP {host}:{port} Ssl={enableSsl}: {detail}", ex);
+        }
+    }
+
+    private static string FormatSmtpFailure(SmtpException ex)
+    {
+        var sb = new StringBuilder();
+        sb.Append("Status=").Append(ex.StatusCode);
+        for (Exception? e = ex; e != null; e = e.InnerException)
+        {
+            sb.Append(" | ").Append(e.GetType().Name).Append(": ").Append(e.Message);
+        }
+
+        return sb.ToString();
     }
 }

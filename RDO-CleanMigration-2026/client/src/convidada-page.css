@@ -1,0 +1,129 @@
+.convidada-page {
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #0d47a1 0%, #1565c0 45%, #e3f2fd 100%);
+}
+
+.convidada-card {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 24px 32px;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.18);
+}
+
+.convidada-logo {
+  display: block;
+  width: 110px;
+  margin: 0 auto 8px;
+}
+
+.convidada-title {
+  text-align: center;
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: #1e293b;
+}
+
+.convidada-sub {
+  text-align: center;
+  margin: 0 0 20px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.convidada-h2 {
+  margin: 20px 0 12px;
+  font-size: 16px;
+  color: #0d47a1;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.convidada-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.convidada-field label {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.convidada-field input,
+.convidada-field select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: #0f172a;
+  background: #fff;
+}
+
+.convidada-field input:disabled,
+.convidada-field select:disabled {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.convidada-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.convidada-btn {
+  min-width: 140px;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.convidada-btn-cancel {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.convidada-btn-ok {
+  background: #1565c0;
+  color: #fff;
+}
+
+.convidada-btn-ok:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.convidada-alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.convidada-alert-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.convidada-alert-info {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.convidada-muted {
+  text-align: center;
+  color: #64748b;
+}

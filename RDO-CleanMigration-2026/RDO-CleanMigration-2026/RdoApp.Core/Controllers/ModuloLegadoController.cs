@@ -90,9 +90,10 @@ public class ModuloLegadoController : Controller
     public IActionResult ObraLista() =>
         Stub("Obra lista (legado)", "#/obra/lista", "Listagem legada `/obra/lista` — use Obras no drawer (`/Obra/Index`).", voltarUrl: "/Obra/Index");
 
+    [AllowAnonymous]
     [HttpGet("/convidada")]
     public IActionResult Convidada() =>
-        Stub("Convidada", "#/convidada", "Fluxo convidada (M7+).", voltarUrl: "/Account/Login");
+        OperadorSpaEntry.ServeSpaIndex(this, _env, "Convidada", requireObra: false);
 
     [HttpGet("/chart/rdos")]
     [HttpGet("/chart/atrasado")]

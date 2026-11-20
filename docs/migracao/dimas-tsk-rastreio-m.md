@@ -1,6 +1,7 @@
 # Rastreio Dimas (TSK) × marcos M* — execução homolog
 
-**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-16  
+**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-20  
+ 
 **Dono da execução:** plano **M\*** ([`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) + [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md))  
 **Referência Dimas:** PDF **Backlog_RDO v20260818** → [`../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md) (TSK-01…56 × Ondas U)
 
@@ -61,7 +62,7 @@ Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adi
 | **M4** | M4.1–M4.8 ☑ · P3 filtros/stubs `5f747b5` | G5/G6; UI-M1/M2c | **◐** Front + RBAC shell |
 | **M5 web** | RDO + Chart C1–C8 + Dashboard | DOC-FICHAS | **◐** TSK-31…36 · U-56/57 **~88%** |
 | **M5 EQ-M** | — | **⏸** | **⏸** TSK-46…56 |
-| **M6** | — | JWT/OpenAPI | **☐** TSK-07 · 40…41 |
+| **M6** | **Fase 0 OK** · JWT login/me **código** (`/api/mobile/auth/*`) | SigningKey+smoke · OpenAPI YAML · LoginObra Bearer | **◐** TSK-07 · 40…41 |
 | **M7+** | 7a–7d · Obra · P6a · Paralizações · P4 · colab/equip/tarefa · Efetivo/Medição PDF OK · Excel logo fix | CAT-PARALIZ · G5 · 3.1 · Terceirizado dropdown · ClosedXML Excel | **◐** escrita 17…23 · gestor 14…16 · medição 24…30 **~48%** · RBAC |
 | **M8** | Branch CI, roteiro | Runway &lt;2 min | **◐** deploy · **☐** ETL 43 |
 | **M9** | Fatia operador no Git | D1–D7 · smoke `5f747b5` | **◐** release fatia |
@@ -103,6 +104,22 @@ Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adi
 | U-56, U-57 | Gráficos, efetivo diário | M5/M7 (efetivo já rota) |
 | TSK-01…09 “completo” | Infra fundação | Backlog pós-M4 ou com Dimas |
 | TSK-43 | ETL apontamentos | **Onda 6 only** |
+
+---
+
+## Se Dimas entrar agora (20/11)
+
+**Ready (não reinventar):**
+- Homolog operador web SPA+BFF · L1 Linux · `/convidada` **C4 PASS**
+- M6 Fase 0 Baseline APK→prod OK (`main` `8e7eb5e`)
+- Slice JWT Core: `POST /api/mobile/auth/login` · `GET /api/mobile/auth/me` (código; cookie SPA intacto)
+- Docs: [`plano-m6-mobile-jwt.md`](plano-m6-mobile-jwt.md) · [`m6-fase1-jwt-openapi.md`](m6-fase1-jwt-openapi.md) · orquestrador
+
+**Missing (encaixe paralelo):**
+- `Jwt:SigningKey` Staging + smoke curl login/me
+- OpenAPI YAML formal / Swagger (1.1 além do mapa markdown)
+- `LoginObra` + obras/etapas/medição com **Bearer** (paridade APK)
+- Pacote tipos TS (1.3) · refresh token (1.4) · Fase 2 APK→homolog
 
 ---
 
