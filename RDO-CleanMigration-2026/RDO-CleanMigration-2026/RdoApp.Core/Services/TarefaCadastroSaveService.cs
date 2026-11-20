@@ -211,8 +211,20 @@ public class TarefaCadastroSaveService
             await _context.SaveChangesAsync(cancellationToken);
             await SyncVinculosAsync(created.TarIdTarefa, obraId, request, cancellationToken);
             await SyncAcidentesAsync(created.TarIdTarefa, request, cancellationToken);
+            var imgsCreated = await SyncNovasImagensAsync(
+                obraId, created.TarIdTarefa, request.ListaImagens, cancellationToken);
+            if (CountNovasComBase64(request.ListaImagens) > 0 && imgsCreated <= 0)
+            {
+                return Fail("Nenhuma foto foi gravada. Verifique o tamanho (máx. 2MB) e o formato (jpg/png/bmp).");
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
-            return new TarefaCadastroSaveResultDto { Ok = true, Id = created.TarIdTarefa };
+            return new TarefaCadastroSaveResultDto
+            {
+                Ok = true,
+                Id = created.TarIdTarefa,
+                ImagensGravadas = imgsCreated
+            };
         }
 
         var entity = await _context.Tarefas
@@ -317,9 +329,20 @@ public class TarefaCadastroSaveService
             }
 
             await SyncAcidentesAsync(clone.TarIdTarefa, request, cancellationToken);
-            await SyncNovasImagensAsync(obraId, clone.TarIdTarefa, request.ListaImagens, cancellationToken);
+            var imgsClone = await SyncNovasImagensAsync(
+                obraId, clone.TarIdTarefa, request.ListaImagens, cancellationToken);
+            if (CountNovasComBase64(request.ListaImagens) > 0 && imgsClone <= 0)
+            {
+                return Fail("Nenhuma foto foi gravada. Verifique o tamanho (máx. 2MB) e o formato (jpg/png/bmp).");
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
-            return new TarefaCadastroSaveResultDto { Ok = true, Id = clone.TarIdTarefa };
+            return new TarefaCadastroSaveResultDto
+            {
+                Ok = true,
+                Id = clone.TarIdTarefa,
+                ImagensGravadas = imgsClone
+            };
         }
 
         entity.TarDsTarefa = descricao;
@@ -350,16 +373,30 @@ public class TarefaCadastroSaveService
 
         await SyncVinculosAsync(entity.TarIdTarefa, obraId, request, cancellationToken);
         await SyncAcidentesAsync(entity.TarIdTarefa, request, cancellationToken);
-        await SyncNovasImagensAsync(obraId, entity.TarIdTarefa, request.ListaImagens, cancellationToken);
+        var imgsUpdate = await SyncNovasImagensAsync(
+            obraId, entity.TarIdTarefa, request.ListaImagens, cancellationToken);
+        if (CountNovasComBase64(request.ListaImagens) > 0 && imgsUpdate <= 0)
+        {
+            return Fail("Nenhuma foto foi gravada. Verifique o tamanho (máx. 2MB) e o formato (jpg/png/bmp).");
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
-        return new TarefaCadastroSaveResultDto { Ok = true, Id = entity.TarIdTarefa };
+        return new TarefaCadastroSaveResultDto
+        {
+            Ok = true,
+            Id = entity.TarIdTarefa,
+            ImagensGravadas = imgsUpdate
+        };
     }
+
+    private static int CountNovasComBase64(List<TarefaCadastroImagemSaveDto>? lista) =>
+        lista?.Count(i => !string.IsNullOrWhiteSpace(i.Base64)) ?? 0;
 
     /// <summary>
     /// Persiste fotos novas (base64) em <c>Uploads/Imagens/{obra}/{tarefa}/{yyyyMM}/</c>
     /// e grava <c>imagem</c>. Paridade prod <c>SaveImages</c> + pasta por mês (melhoria Lucio).
     /// </summary>
-    private async Task SyncNovasImagensAsync(
+    private async Task<int> SyncNovasImagensAsync(
         int obraId,
         int tarefaId,
         List<TarefaCadastroImagemSaveDto>? lista,
@@ -367,7 +404,7 @@ public class TarefaCadastroSaveService
     {
         if (lista is null || lista.Count == 0 || tarefaId <= 0)
         {
-            return;
+            return 0;
         }
 
         var uploadsRoot = _configuration["FileStorage:UploadsRoot"];
@@ -378,6 +415,7 @@ public class TarefaCadastroSaveService
 
         Directory.CreateDirectory(uploadsRoot);
         var ym = DateTime.Today.ToString("yyyyMM", CultureInfo.InvariantCulture);
+        var gravadas = 0;
 
         foreach (var item in lista)
         {
@@ -427,7 +465,10 @@ public class TarefaCadastroSaveService
                 ImaDtImagem = DateTime.Now,
                 ImaIdTarefa = tarefaId
             });
+            gravadas++;
         }
+
+        return gravadas;
     }
 
     private static string ExtFromFiletype(string? filetype)

@@ -161,6 +161,8 @@ public sealed class TarefaCadastroSaveResultDto
     public bool Ok { get; init; }
     public int Id { get; init; }
     public string? ErrorMessage { get; init; }
+    /// <summary>Qtd. de fotos novas gravadas em disco + tabela <c>imagem</c> neste save.</summary>
+    public int ImagensGravadas { get; init; }
 }
 
 public sealed class HorasEquipamentoReportRequestDto

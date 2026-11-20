@@ -188,11 +188,13 @@ public class TarefaCadastroQueryService
             .OrderBy(i => i.ImaDtImagem)
             .Select(i => new { i.ImaIdImagem, i.ImaDsCaminho })
             .ToListAsync(cancellationToken))
+            .Where(i => !string.IsNullOrWhiteSpace(i.ImaDsCaminho))
             .Select(i => new TarefaCadastroImagemDto
             {
                 Id = i.ImaIdImagem,
                 Href = FotoHref(i.ImaDsCaminho ?? "")
             })
+            .Where(i => !string.IsNullOrWhiteSpace(i.Href))
             .ToList();
 
         return new TarefaCadastroDto

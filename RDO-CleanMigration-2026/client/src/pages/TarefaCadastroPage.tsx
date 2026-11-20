@@ -582,8 +582,9 @@ export function TarefaCadastroPage() {
         showToast('error', result.errorMessage || 'Não foi possível salvar.')
         return
       }
+      const novasFotos = fotos.filter((f) => !!f.base64).length
       const n = result.imagensGravadas ?? 0
-      if (fotos.length > 0 && n <= 0) {
+      if (novasFotos > 0 && n <= 0) {
         showToast('error', 'Tarefa salva, mas nenhuma foto foi gravada. Veja F12 → Network → POST /api/bff/tarefas.')
         return
       }
@@ -932,10 +933,25 @@ export function TarefaCadastroPage() {
                       visualizar ? <p className="muted">Nenhuma foto nesta medição.</p> : null
                     ) : (
                       <section className="galeria rdo-galeria">
-                        {fotos.map((img) => (
+                        {fotos
+                          .filter((img) => !!img.href || !!img.base64)
+                          .map((img) => (
                           <div key={img.id} className="rdo-galeria-item">
                             <label>
-                              {img.href ? <img src={img.href} alt="" /> : <span className="muted">sem arquivo</span>}
+                              {img.href ? (
+                                <img
+                                  src={img.href}
+                                  alt=""
+                                  onError={(e) => {
+                                    const el = e.currentTarget
+                                    el.style.display = 'none'
+                                    const wrap = el.closest('.rdo-galeria-item')
+                                    if (wrap instanceof HTMLElement) wrap.style.display = 'none'
+                                  }}
+                                />
+                              ) : (
+                                <span className="muted">sem arquivo</span>
+                              )}
                             </label>
                           </div>
                         ))}

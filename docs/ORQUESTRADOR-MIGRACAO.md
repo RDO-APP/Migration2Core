@@ -430,14 +430,30 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-### Agora — **C4 PASS** · **M6 1.2 JWT** (SigningKey+smoke) · RDO assinatura contratante (Lucio)
+### Parque — M6 / M5 (2026-11-20 ~17:20) · prioridade EQ-R bugs Cards
+
+**Estacionado até smoke pós-deploy:**
+1. **Bug ⋮ status rápido** — código: clone com data+hora do clique · [`migracao/homolog-cards-status-rapido-bug.md`](migracao/homolog-cards-status-rapido-bug.md).
+2. **Fotos F8** — `imagensGravadas` + toast falso positivo · [`migracao/homolog-p4-foto-tentativas.md`](migracao/homolog-p4-foto-tentativas.md).
+
+**Snapshot M6 (não perder):**
+- Fase 0 Baseline OK · mobile `main` `8e7eb5e`
+- Fase 1.1 mapa ☑ · **1.2 JWT login+/me homolog PASS** (Georges) · 1.3/1.4 pendentes
+- Fase 2 (APK homolog) e **M5 EQ-M** continuam ⏸ até retomar M6
+
+**Snapshot M5:** web FECHADO · EQ-M ⏸ até M6 Fase 2
+
+**Retomar M6** só depois dos itens 1–2 acima (ou decisão Lucio).
+
+
+### Agora — **EQ-R bugs** · ⋮ status (horas/editar) + fotos · M6/M5 **estacionados** (ver Parque acima)
 
 | | |
 |--|--|
 | Convite SMTP | ☑ O4x (Host `email-ssl.com.br`) |
 | Aceite `/convidada` | ☑ **C4 PASS** 2026-11-20 ~15:25 — Contratante → Escolher · Diretor Contratante MIGRAÇÃO 15/11 — [`migracao/homolog-convidada-aceite.md`](migracao/homolog-convidada-aceite.md) |
-| M6 EQ-M | **Fase 0 Baseline OK** · `main` `8e7eb5e` · **1.2** JWT login/me **código** · pendente **SigningKey** (SSM) + smoke curl — [`m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md) |
-| Lucio agora | Testando **RDO assinatura contratante** no homolog |
+| M6 EQ-M | **estacionado** · 1.2 JWT PASS · retomar após ⋮/fotos — [`m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md) |
+| Lucio agora | Assinatura Contratante PDF ☑ · **bug ⋮ + fotos** na frente |
 
 ### Dia 0 — FECHADO (19/11)
 

@@ -68,6 +68,10 @@ public class TarefaStatusUpdateService
             return new TarefaStatusUpdateResultDto { Ok = true, Id = tarefaId };
         }
 
+        // ⋮ rápido: nova linha com data + hora do clique (sem abrir Nova Medição).
+        var agora = DateTime.Now;
+        var horaAgora = new TimeSpan(agora.Hour, agora.Minute, 0);
+
         var clone = new Tarefa
         {
             TarNrAgrupador = entity.TarNrAgrupador,
@@ -75,25 +79,25 @@ public class TarefaStatusUpdateService
             TarIdEtapa = entity.TarIdEtapa,
             TarIdUnidade = entity.TarIdUnidade,
             TarDsTarefa = entity.TarDsTarefa,
-            TarNrQtdConstruida = entity.TarNrQtdConstruida,
+            TarNrQtdConstruida = 0,
             TarDtInicio = entity.TarDtInicio,
             TarDtPrevisaoFim = entity.TarDtPrevisaoFim,
             TarDtFim = idStatus == StatusFinalizada ? DateTime.Today : entity.TarDtFim,
-            TarDsComentario = entity.TarDsComentario ?? "",
-            TarDsFoto = entity.TarDsFoto ?? "",
-            TarNrHorasTrabalhadas = entity.TarNrHorasTrabalhadas,
-            TarDtMedicaoHoraInicial = entity.TarDtMedicaoHoraInicial,
-            TarDtMedicaoHoraFinal = entity.TarDtMedicaoHoraFinal,
-            TarDtMedicao = DateTime.Now,
+            TarDsComentario = "",
+            TarDsFoto = "",
+            TarNrHorasTrabalhadas = 0,
+            TarDtMedicaoHoraInicial = horaAgora,
+            TarDtMedicaoHoraFinal = horaAgora,
+            TarDtMedicao = agora,
             TarVlValorUnitario = entity.TarVlValorUnitario,
             TarIdColaboradorInsercao = colaboradorId > 0 ? colaboradorId : entity.TarIdColaboradorInsercao,
-            TarDtInsercao = DateTime.Now,
-            TarDtUltimaAtualizacao = DateTime.Now,
+            TarDtInsercao = agora,
+            TarDtUltimaAtualizacao = agora,
             TarNrQtdPrevisao = entity.TarNrQtdPrevisao,
-            TarDtMedicaoHorimetroTotal = entity.TarDtMedicaoHorimetroTotal,
+            TarDtMedicaoHorimetroTotal = 0,
             TarCodigoParalizacao = entity.TarCodigoParalizacao,
-            TarDtMedicaoHorimetroInicial = entity.TarDtMedicaoHorimetroInicial,
-            TarDtMedicaoHorimetroFinal = entity.TarDtMedicaoHorimetroFinal
+            TarDtMedicaoHorimetroInicial = entity.TarDtMedicaoHorimetroFinal ?? entity.TarDtMedicaoHorimetroInicial,
+            TarDtMedicaoHorimetroFinal = entity.TarDtMedicaoHorimetroFinal ?? entity.TarDtMedicaoHorimetroInicial
         };
 
         _context.Tarefas.Add(clone);

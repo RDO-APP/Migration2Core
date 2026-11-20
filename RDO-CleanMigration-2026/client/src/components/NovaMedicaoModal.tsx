@@ -110,7 +110,16 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
         showToast('error', result.errorMessage || 'Não foi possível salvar.')
         return
       }
-      showToast('success', 'Registro salvo com sucesso.')
+      const novasFotos = fotos.filter((f) => !!f.base64).length
+      const n = result.imagensGravadas ?? 0
+      if (novasFotos > 0 && n <= 0) {
+        showToast('error', 'Medição salva, mas nenhuma foto foi gravada. Veja F12 → Network → POST /api/bff/tarefas.')
+        return
+      }
+      showToast(
+        'success',
+        n > 0 ? `Registro salvo com sucesso. ${n} foto(s) gravada(s).` : 'Registro salvo com sucesso.',
+      )
       onSaved()
     } catch (e: unknown) {
       showToast('error', e instanceof Error ? e.message : 'Não foi possível salvar.')
@@ -337,10 +346,21 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
                   </div>
                   {fotos.length > 0 ? (
                     <section className="galeria rdo-galeria">
-                      {fotos.map((img) => (
+                      {fotos
+                        .filter((img) => !!img.href || !!img.base64)
+                        .map((img) => (
                         <div key={img.id} className="rdo-galeria-item">
                           <label>
-                            <img src={img.href} alt="" />
+                            <img
+                              src={img.href}
+                              alt=""
+                              onError={(e) => {
+                                const el = e.currentTarget
+                                el.style.display = 'none'
+                                const wrap = el.closest('.rdo-galeria-item')
+                                if (wrap instanceof HTMLElement) wrap.style.display = 'none'
+                              }}
+                            />
                           </label>
                         </div>
                       ))}
