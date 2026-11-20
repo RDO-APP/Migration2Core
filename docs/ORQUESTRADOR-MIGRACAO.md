@@ -438,9 +438,11 @@ A1–A3 · B1–B4 visual · C1–C3 · D1 ACEITAR · D2 SIM · D3 ACEITAR · CP
 **Smoke:** [`migracao/homolog-obra-index-acoes-tentativas.md`](migracao/homolog-obra-index-acoes-tentativas.md) **O4/O5** pós publish/deploy.  
 **Fora:** `/convidada` aceitar · clone colab/equip no mesmo Salvar · melhorias pós-L1.
 
-### Dia 2 — Linux
+### Dia 2 — Linux (cutover 19/11)
 
-Prep **L1** (homolog Core em **EC2 Linux**) · depois gate melhorias.
+**L1 no ar:** EC2 **`i-0776acb09b8438f22`** (`172.31.2.111` · t3.small · systemd `rdoapp-core-homolog`) · TG `tg-equipamentos-homolog-5081` **healthy** · health path `/Account/Login` · Windows `i-05cb…` **fora** da 5081 (rollback).  
+**Próximo:** smoke browser Lucio (Login → Cards · O4/O5) · gate melhorias pós-L1.  
+**Plano:** [`migracao/plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md) · deploy [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · infra [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md).
 
 ### Gate Lucio 18/11 — melhorias / residual aceito (**pós-Linux**)
 
@@ -495,6 +497,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |
 | Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |
 | RDS | `rds-equipamentos-governanca-catalogos.md` |
+| Infra AWS (EC2/ALB/RDS/S3/…) | [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual §14 |
 | Chats | `CURSOR_MAPA_CHATS.md` |
 | CI (I) | `PLANO-CI-HOMOLOG-EC2.md` |
 | Ponte Razor (W) | `C:\Dev\Migration2Core\...\RdoApp.Core` |

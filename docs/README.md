@@ -14,6 +14,7 @@
 | API compartilhada EQ-R/EQ-M | [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md) · [`api-client/`](api-client/) |
 | Ops RDS / Dimas (referência) | [`ops/README.md`](ops/README.md) |
 | Governança catálogos RDS | [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · diff ①×② [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) |
+| Infra nuvem AWS (EC2/ALB/RDS/S3/…) | [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual §14 |
 | Git push (agente) | [`migracao/git-push-checklist.md`](migracao/git-push-checklist.md) |
 | CI homolog (código) | [`../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md`](../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md) |
 | Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** · stub [`editais-fapesc/README.md`](editais-fapesc/README.md) |

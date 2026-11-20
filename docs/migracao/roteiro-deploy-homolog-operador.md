@@ -16,7 +16,9 @@
 | “Código está no Cursor Equipamentos” | Workspace **Equipamentos** = legado prod + **cópia de docs**. Core homolog = repo **`RDO-APP/Migration2Core`** clonado no disco. |
 | “Path `C:\Dev\Migration2Core`” | **Canônico nos docs** — só vale se o clone existir. Sempre: `Test-Path C:\Dev\Migration2Core` → `True` antes de publish. |
 
-**Homolog:** `https://homolog.sistema.rdoapp.com.br` · EC2 `i-05cb0003c031a26da` · bucket `s3rdoapp` · região `us-east-2`
+**Homolog:** `https://homolog.sistema.rdoapp.com.br` · bucket `s3rdoapp` · região `us-east-2`  
+**L1 (atual · Linux):** EC2 `i-0776acb09b8438f22` · `/var/www/rdoapp_core` · scripts `publish-homolog-linux.ps1` + `deploy-homolog-linux-ssm.ps1` · guia [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md)  
+**W1 rollback (Windows):** `i-05cb0003c031a26da` · fora do TG 5081 após cutover 2026-11-19
 
 ---
 

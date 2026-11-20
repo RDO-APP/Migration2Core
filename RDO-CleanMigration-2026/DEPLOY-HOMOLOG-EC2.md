@@ -2,7 +2,7 @@
 
 **URL:** `https://homolog.sistema.rdoapp.com.br`  
 **Fase W1 (atual):** EC2 **Windows** `(Equipamentos)` · IIS porta **5081** · TG `tg-equipamentos-homolog-5081`  
-**Fase L1 (depois):** EC2 **Linux** dedicada — **mesma URL/TG** após gatilho G1–G2 em `Equipamentos/docs/plano-preparacao-migracao-homolog.md` **§11**.  
+**Fase L1:** EC2 **Linux** dedicada — **mesma URL/TG** — roteiro [`DEPLOY-HOMOLOG-LINUX-EC2.md`](DEPLOY-HOMOLOG-LINUX-EC2.md) · plano [`docs/migracao/plano-dia2-l1-linux.md`](../docs/migracao/plano-dia2-l1-linux.md).  
 **Banco:** **`homol_rdoapp`** (homolog Equipamentos) — connection string **só na EC2**, nunca no Git. Script DDL: `scripts/homol_rdoapp-sync-tables-from-prod.sql`.
 
 **Clique a clique (3 etapas):** `Equipamentos/docs/trilha-core-homolog-clique-a-clique.md`  
