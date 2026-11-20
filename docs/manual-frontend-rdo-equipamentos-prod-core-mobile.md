@@ -759,7 +759,8 @@ Não é só EC2 + RDS. Conta `775387704919` · região **us-east-2**:
 
 | Item | OK? | Observação |
 |------|:---:|------------|
-| **L1 Linux homolog** (TG healthy · tip ``dde125e``) | ☑ infra | Smoke browser Lucio = **amanhã** |`n| Linha GitHub col. ④ (`RDO-APP/EquipoToPiscina`) | ☑ | Lucio 2026-10-19 |
+| **L1 Linux homolog** (TG healthy · tip `dde125e`) | ☑ infra | Smoke browser Lucio = **amanhã** |
+| Linha GitHub col. ④ (`RDO-APP/EquipoToPiscina`) | ☑ | Lucio 2026-10-19 |
 | Catálogos RDS § tabela inicial | ☑ | conferido [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · Fase A 2026-10-19 |
 | Colunas ④⑤ nas páginas §1–§5 | ☑ | manual §1–§5 · Fase A |
 | Host homolog Piscinas | ☑ | `homologacao.piscinas.rdoapp.com.br` + `piscinas_rdoapp_homologa` (legado PQ; ≠ Core obras) |
