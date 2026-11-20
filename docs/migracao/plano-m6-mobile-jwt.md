@@ -28,14 +28,14 @@ Canônico: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) · [`api-cl
 
 | # | Passo | Status 20/11 |
 |---|--------|:------------:|
-| 0.1 | Identificar APK / branch / URL | ☑ repo + APK Dimas SHA256 |
-| 0.2 | Smoke **prod** Login→obra→medição | ⚠ parcial — login/lista/etapas ☑ · medição **FAIL** · fix null horímetro no clone |
+| 0.1 | Identificar APK / branch / URL | ☑ repo + APK EAS `@rdo-app` |
+| 0.2 | Smoke **prod** Login→obra→medição | ☑ **PASS** 20/11 · salvar + relógio · BD prod |
 | 0.3 | Inventário endpoints | ☑ no doc Fase 0 |
-| 0.4 | Decisão branch merge vs plano | ☐ Lucio |
-| 0.5 | **Baseline OK** → Fase 1 | ☐ bloqueado até 0.2 PASS + 0.4 |
+| 0.4 | Decisão branch merge vs plano | ☑ **A** · `main` @ `8e7eb5e` |
+| 0.5 | **Baseline OK** → Fase 1 | ☑ **2026-11-20** |
 
 **Fora da Fase 0:** apontar APK para homolog · JWT · alterar prod `:80`.  
-**Pausado (web):** O4 Convite — retomar depois do baseline mobile.
+**Próximo:** **M6 Fase 1** (OpenAPI / JWT Core homolog). O4 `/convidada` pode seguir em paralelo (EQ-R).
 
 ---
 

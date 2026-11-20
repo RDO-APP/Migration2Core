@@ -13,9 +13,9 @@
 |-------|--------|
 | Clone | `C:\Dev\EquipamentosMobile` |
 | Branch checkout | **`feature/alteracoes_apontador`** (tracking `origin/…`) |
-| Tip | **`8fe3c2f`** — *fix null horímetro nova medição* (base layout `14cf5d3`) |
-| `main` | `034ea13…` · merge-base com tip: `4b401ff…` |
-| Ahead de `main` | 4 commits (layout · paralização/horímetro · PDF/Excel · Gerar Apontamento) |
+| Tip feature (pré-merge) | **`cc3e7e6`** — EAS `@rdo-app` + nome APK stamp (base fix `8fe3c2f`) |
+| `main` | **`8e7eb5e`** — merge A `feature/alteracoes_apontador` → `main` (**2026-11-20**) |
+| Ahead de `main` | **0** (merge concluído) |
 | Variant default | **`appApontador`** · package `com.dimasduarta.rdoapp.apontador` |
 | Expo version (app) | `1.0.0` (`app.config` / expo) |
 | **URL prod (default)** | **`https://sistema.rdoapp.com.br`** (`EXPO_PUBLIC_API_ENV=prod`) |
@@ -45,18 +45,17 @@ CPF/obra de teste **prod** (não Georges homolog, salvo se existir no prod).
 | 2 | Login CPF + senha | ☑ `824.351.035-49` (Georges) · **2026-11-20 ~10:52** |
 | 3 | Lista de obras / escolher obra (`ObterObras` + `LoginObra`) | ☑ 2 obras Feira de Santana · Diretor Contratada (Básica) |
 | 4 | Cards/etapas carregam | ☑ `COMPLEXO EDUCACIONAL` → Etapas (Canteiro · Serviços · Estrutura · Pavimentação) |
-| 5 | Abrir tarefa / medição mínima (horímetro ou status) | ☐ **FAIL** — ver notas |
-| 6 | Foto se for o fluxo habitual | ☐ bloqueado por 5 |
-| 7 | Salvar apontamento (`/api/tarefa/Salvar` ou equivalente) | ☐ bloqueado por 5 |
+| 5 | Abrir tarefa / medição mínima (horímetro ou status) | ☑ APK EAS `8fe3c2f`+ · Pausada com códigos · Data\* vermelho = cosmético |
+| 6 | Foto se for o fluxo habitual | ☑ (se no fluxo) / N/A |
+| 7 | Salvar apontamento (`/api/tarefa/Salvar` ou equivalente) | ☑ gravou · aparece no relógio/histórico |
 
-**Resultado:** ☐ PASS · ☑ **FAIL** (parcial) — data: **2026-11-20**
+**Resultado:** ☑ **PASS** · ☐ FAIL — data: **2026-11-20 ~15:00** · BD **prod** (`sistema.rdoapp.com.br` / `novo_rdoapp`)
 
-**Notas 0.2 (Georges · Complexo / 1ª Etapa · Canteiro):**
-- Tela **Nova medição** abre com erro vermelho **`Empty response from backend`**.
-- Status → **Pausada**: códigos de paralisação **não** aparecem.
-- **Causa (código):** `handleResponse` em `src/services/index.ts` rejeita JSON `null`. Na abertura, `Promise.all` chama `CarregarHorimetroFinalUltimoHistoricoTarefa` (`float?` no legado — **null** sem horímetro anterior) + `GetCodigosParalizacoes`. O null do horímetro derruba o `all` → erro na UI **e** `pausedCodes` nunca popula.
-- **Fix Git:** `8fe3c2f` — `tarefaService` aceita `null` + `allSettled` (códigos Pausada). **APK instalado ainda sem o fix** até rebuild.
-- **Não** é falha do Core L1 / homolog — cenário A → `sistema.rdoapp.com.br`.
+**Notas 0.2 (Georges · Complexo / Canteiro · 2ª passada APK EAS `@rdo-app`):**
+- 1ª passada (APK Dimas): **FAIL** — `Empty response` + Pausada sem códigos (null horímetro + `Promise.all`).
+- **Fix:** `8fe3c2f` · rebuild EAS profile `appApontadorPreview` · projeto Expo **`rdo-app`** `68c136dc-…` · keystore novo (desinstalar app antigo antes de instalar).
+- 2ª passada: Pausada + códigos ☑ · salvar ☑ · histórico/relógio ☑.
+- Label **Data \*** vermelho = estilo `required` em `dateTime.tsx` (não é erro de validação).
 
 ---
 
@@ -112,12 +111,10 @@ App usa **mais** endpoints de tarefa/medição/foto — Fase 1 M6 deve cobrir o 
 
 | Opção | Significado |
 |-------|-------------|
-| **A — Merge** `feature/alteracoes_apontador` → `main` | Baseline = tip `14cf5d3` vira linha oficial |
+| **A — Merge** `feature/alteracoes_apontador` → `main` | Baseline = tip feature vira linha oficial |
 | **B — Plano escrito** | Listar o que entra/fica de fora antes do merge; baseline smoke pode ser loja **ou** build da feature |
 
-**Decisão Lucio:** ☐ A · ☐ B — data: ___ · notas: ___
-
-*(Orquestrador já citava esta decisão aberta desde M0 @ `14cf5d3`.)*
+**Decisão Lucio:** ☑ **A** · ☐ B — data: **2026-11-20** · notas: merge `8e7eb5e` em `main` · smoke 0.2 PASS no APK EAS
 
 ---
 
@@ -125,11 +122,11 @@ App usa **mais** endpoints de tarefa/medição/foto — Fase 1 M6 deve cobrir o 
 
 | Critério | Status |
 |----------|:------:|
-| 0.1 preenchido (repo ☑ + loja/celular) | ☐ |
-| 0.2 smoke prod PASS | ☐ |
+| 0.1 preenchido (repo ☑ + loja/celular) | ☑ |
+| 0.2 smoke prod PASS | ☑ |
 | 0.3 inventário aceito como contrato mínimo | ☑ repo |
-| 0.4 decisão A ou B registrada | ☐ |
-| **Baseline OK → liberar M6 Fase 1** | ☐ Lucio |
+| 0.4 decisão A ou B registrada | ☑ **A** |
+| **Baseline OK → liberar M6 Fase 1** | ☑ **2026-11-20** |
 
 ---
 

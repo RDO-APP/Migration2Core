@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **foco atual = M6 Fase 0 (EQ-M)** · rebuild APK + retestar medição · O4 Convite **pausado** · `/convidada` stub.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **M6 Fase 0 Baseline OK** · próximo = **M6 Fase 1 JWT** · O4 `/convidada` (fix strategy) em paralelo.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -147,7 +147,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M4** | **100** | **FECHADO** · G5/G6/Login SPA smoke Dia 0 · congela EQ-W | fontello UI-M1/M2c = **ACEITAR** → pós-L1 |
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
 | **M5 EQ-M** | **0** | — | **⏸** até M6 Fase 2 (homolog APK) |
-| **M6** | **15** | Fase 0 aberta · smoke parcial · fix null horímetro no Git mobile | **0.2 PASS** + **0.4/0.5** → Fase 1 JWT · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) |
+| **M6** | **25** | **Fase 0 Baseline OK** · `main` mobile `8e7eb5e` · smoke prod PASS | **Fase 1** JWT/OpenAPI · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) |
 | **M7+** | **97** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** código | smoke browser amanhã · clone listas · `/convidada` · **3.1**/CAT · **não** P6b |
 | **M8** | **70** | Branch CI · roteiro · **L1 Linux ☑** `dde125e` | B3 runway &lt;2 min · CI Actions shell Linux |
 | **M9** | **35** | Dia 0 operador · L1 host estável | smoke L1 browser · D1 formal · D2–D7 · D4 mobile |
@@ -357,7 +357,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | Nome | Trilha | O quê |
 |------|--------|--------|
 | **M5** (marco plano v1) | **EQ-M** | App **RDO Apontador** (`RDO-APP/EquipamentosMobile`): entrar no **mesmo plano** de migração que a web — homolog testável, API documentada (M1), **sem** rebuild greenfield (TSK mobile ⏸). |
-| **`feature/alteracoes_apontador`** | Git mobile | Tip **`8fe3c2f`** (fix null horímetro · M6 Fase 0 · 20/11). **Decisão aberta (0.4):** merge → `main` **ou** plano escrito **antes** de APK homolog oficial. |
+| **`feature/alteracoes_apontador`** | Git mobile | **Merge A → `main` `8e7eb5e`** (20/11) · Baseline OK · EAS `@rdo-app` · tip feature `cc3e7e6`. |
 | **M5-nav** (doc UI) | **EQ-R** | Só **menu drawer web** (9 itens → stubs). **Não** é o marco M5 do plano — nome colide; ver [`m4-7-menu-nav-stubs.md`](migracao/m4-7-menu-nav-stubs.md). |
 
 **Hoje:** Apontador em **prod** fala com **EQ-L** (`POST /api/login/LoginUser`, LoginObra, etc.) — cenário **A** ([`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md)). **Homolog web** usa **Core + BFF + cookie** (`homol_rdoapp`). **M5** fecha o gap: APK apontando para **homolog Core** (ou cenário B/C/D documentado), mesma obra/CPF teste que web, branch mobile alinhada.
@@ -430,19 +430,13 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-### Agora — **M6 Fase 0 (EQ-M · 20/11)** · Convite O4 pausado
-
-**Foco:** Apontador × prod (`sistema.rdoapp.com.br`) antes de JWT/homolog.
+### Agora — **M6 Fase 1 JWT** (EQ-M/I) + O4 `/convidada` republish (EQ-R)
 
 | | |
 |--|--|
-| Plano | [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
-| Checklist | [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) |
-| Repo | `RDO-APP/EquipamentosMobile` · `feature/alteracoes_apontador` |
-| Smoke | Login/lista/etapas ☑ Georges · **Nova medição FAIL** (`Empty response`) — legado `float?` null no horímetro |
-| Fix Git | `tarefaService` aceita null + `allSettled` (códigos Pausada) — **precisa rebuild APK** |
-| Próximo | Rebuild/instalar APK → retestar 0.2 completo → **0.4** merge A/B → **0.5** Baseline OK → Fase 1 JWT |
-| Pausado | O4 Convite / SMTP (retomar depois do baseline) · melhorias pós-L1 |
+| Convite SMTP | ☑ O4x (Host `email-ssl.com.br`) |
+| Aceite | SPA `/convidada` + BFF — [`migracao/homolog-convidada-aceite.md`](migracao/homolog-convidada-aceite.md) · fix `CreateExecutionStrategy` · **☐ republish + smoke C4** |
+| M6 EQ-M | **Fase 0 Baseline OK** · `main` `8e7eb5e` · próximo **Fase 1 JWT** — [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
 
 ### Dia 0 — FECHADO (19/11)
 
