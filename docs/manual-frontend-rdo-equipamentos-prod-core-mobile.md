@@ -1,11 +1,12 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-19 · **Status:** tip **`dde125e`** · **L1 Linux ☑** (homolog Core EC2 dedicada) · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-20 · **Status:** tip L1 **`dde125e`** · **L1 Linux ☑** · **M6 Fase 0 (EQ-M) em curso** · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)  
-**Homolog ② host (L1 · 19/11):** EC2 Linux **`i-0776acb09b8438f22`** · Kestrel **5081** · TG healthy — **≠** Windows prod `i-05cb…` (:80). Smoke browser Lucio = dia seguinte.
+**Homolog ② host (L1 · 19/11):** EC2 Linux **`i-0776acb09b8438f22`** · Kestrel **5081** · TG healthy — **≠** Windows prod `i-05cb…` (:80).  
+**③ Apontador (M6 · 20/11):** ainda cenário **A** → `sistema.rdoapp.com.br` · plano [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · baseline [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) · smoke parcial (login/lista OK; nova medição falhava com `Empty response` quando horímetro legado = `null` — fix no Git mobile; rebuild APK pendente).
 
 ---
 
@@ -38,6 +39,8 @@ Hosts produto: ① `https://sistema.rdoapp.com.br` · ② `https://homolog.siste
 ## Diagrama — vetores produto + FAPESC (arquitetura correta)
 
 **Correção (apps):** **③ Apontador** e **⑤ Piscineiro** **não** ficam acima do web nem “dentro” das telas Login→Cards. São **clientes móveis** (Expo/RN) que chamam o **mesmo host/API** que o browser: `sistema…` (obras) e `piscinas…` (piscinas). Cenário **A** (M1): mobile **não** aponta para homolog Core (②).
+
+**M6 (migração · ≠ edital RHAE):** Fase 0 = provar APK→prod; Fase 1 = OpenAPI/JWT no Core; Fase 2 = flavor homolog (reabre **M5 EQ-M**); gate **G-M6** antes de **M9 D4** / **M10**. Até **Baseline OK (0.5)**, **não** apontar Apontador para `homolog.sistema`.
 
 **Paridade §1–4:** só **web ①** vs **homolog ②** (strangler). Mobile replica **fluxo de negócio** com **UI RN**, via **`/api/*`** do legado prod.
 

@@ -12,6 +12,7 @@
 | Marcos M0–M3 · M0′ · I0 | `m0-*`, `m1-*`, [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-prod-kiro-mobile.md), [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md), [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md), [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) |
 | Estudos E0–E6 | arquivos `migracao-*.md`, `plano-execucao-migracao-v1.md`, `estudo-ci-homolog-readiness-e6.md` |
 | API compartilhada EQ-R/EQ-M | [`api-client-equipamentos-v1.md`](api-client-equipamentos-v1.md) · [`api-client/`](api-client/) |
+| **M6** Apontador (Fase 0→JWT) | [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · checklist [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) |
 | Ops RDS / Dimas (referência) | [`ops/README.md`](ops/README.md) |
 | Governança catálogos RDS | [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · diff ①×② [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) |
 | Infra nuvem AWS (EC2/ALB/RDS/S3/…) | [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual §14 |
