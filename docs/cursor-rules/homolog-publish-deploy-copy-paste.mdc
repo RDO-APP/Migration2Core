@@ -1,0 +1,49 @@
+---
+description: Sempre que falar publish/deploy homolog, listar comandos copy-paste (AWS separado dos scripts)
+alwaysApply: true
+---
+
+# Homolog — publish/deploy = copy-paste (Lucio executa)
+
+Canônico: `docs/migracao/roteiro-deploy-homolog-operador.md` · scripts em `C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts\`.  
+**L1 (2026-11-19):** EC2 Linux **`i-0776acb09b8438f22`** — usar scripts **linux** abaixo (não o Windows).
+
+## Obrigatório
+
+Sempre que a resposta mencionar **publish**, **deploy**, **SSM**, **zip homolog** ou pedir ao Lucio para publicar no homolog:
+
+1. **Não** assumir que ele lembra os comandos — **colar blocos** prontos para PowerShell do **PC**.
+2. **Separar** em duas seções (nunca misturar AWS e scripts no mesmo bloco):
+   - **AWS** (login + confirmação)
+   - **Scripts** (publish + deploy)
+3. **Não** rodar publish/deploy/SSM pelo agente, salvo se o Lucio pedir explicitamente para o agente executar.
+4. Um comando por fence `powershell` (fácil de copiar).
+
+## Modelo L1 Linux (colar assim)
+
+**AWS**
+
+```powershell
+aws login --remote
+```
+
+```powershell
+aws sts get-caller-identity --region us-east-2
+```
+
+**Scripts**
+
+```powershell
+cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts; .\publish-homolog-linux.ps1
+```
+
+```powershell
+cd C:\Dev\Migration2Core\RDO-CleanMigration-2026\scripts; .\deploy-homolog-linux-ssm.ps1 -S3Bucket s3rdoapp -InstanceId i-0776acb09b8438f22
+```
+
+## Notas rápidas
+
+- Guia: `RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md`
+- Esperado deploy: `Deploy homolog Core Linux OK` · smoke Login 200 (localhost + IP privado).
+- Rollback Windows: re-registrar `i-05cb0003c031a26da:5081` no TG `tg-equipamentos-homolog-5081`.
+- Se credencial já válida, ainda listar o bloco AWS (Lucio pula se quiser).

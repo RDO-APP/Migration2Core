@@ -1,7 +1,7 @@
 # Plano — Dia 2 / L1 Linux (homolog Core)
 
 **Trilha:** I (infra) + smoke EQ-R · **Repo:** `RDO-APP/Migration2Core`  
-**Atualizado:** 2026-11-19 · **Pré-condição:** smoke Dia 1 **O4/O5** OK (ou waiver)  
+**Atualizado:** 2026-11-19 ~22:00 · **L1 infra FECHADO** (`dde125e`) · **Amanhã:** smoke browser Lucio  
 **Fora:** prod `sistema` `:80` · `novo_rdoapp` · melhorias pós-L1 (3.1/CAT/`/convidada`/clone listas) · EQ-M
 
 **Canônicos relacionados:** [`plano-preparacao-migracao-homolog.md`](../plano-preparacao-migracao-homolog.md) §11 · [`estudo-ci-homolog-readiness-e6.md`](../estudo-ci-homolog-readiness-e6.md) §7 · [`roteiro-deploy-homolog-operador.md`](roteiro-deploy-homolog-operador.md) · [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md)
@@ -100,9 +100,9 @@ flowchart LR
 
 ## Fase 4 — Fechar Dia 2
 
-- [ ] ORQUESTRADOR: Dia 2 **L1 ☑** após smoke browser Lucio · Próxima ação = gate melhorias pós-L1.
+- [x] ORQUESTRADOR: Dia 2 **L1 infra ☑** · Próxima = smoke browser **amanhã** → gate melhorias.
 - [x] M10: Linux homolog ≠ cutover RDS (`novo_rdoapp`) — cutover continua M10 depois.
-- [ ] Commit/push Migration2Core + `sync-docs-onedrive-from-git.ps1`.
+- [x] Commit/push Migration2Core **`dde125e`** + sync OneDrive (este fechamento docs = tip seguinte).
 
 ---
 
@@ -110,11 +110,11 @@ flowchart LR
 
 | # | Critério |
 |---|----------|
-| 1 | `homolog.sistema` saudável no **Linux** |
-| 2 | Login + Cards + O4/O5 OK |
-| 3 | Rollback Windows documentado |
-| 4 | Doc + scripts no Git |
-| 5 | Prod `:80` / `novo_rdoapp` intocados |
+| 1 | `homolog.sistema` saudável no **Linux** (TG **healthy**) ☑ |
+| 2 | Login + Cards + O4/O5 OK | ☐ Lucio amanhã |
+| 3 | Rollback Windows documentado ☑ |
+| 4 | Doc + scripts no Git ☑ `dde125e` |
+| 5 | Prod `:80` / `novo_rdoapp` intocados ☑ |
 
 ---
 
@@ -128,7 +128,7 @@ CI Actions Linux: reutilizar S3/OIDC; trocar runner PowerShell → shell (E6 §7
 ## Todos de execução
 
 1. **l1-inv** — Inventário ALB/TG/SG + rascunho DEPLOY Linux ✅  
-2. **l1-ec2** — Provisionar EC2 + systemd (Lucio)  
-3. **l1-scripts** — publish / apply / deploy SSM Linux  
-4. **l1-cutover** — Piloto + TG + smoke browser  
-5. **l1-docs** — Fechar ORQUESTRADOR + commit/push/sync  
+2. **l1-ec2** — Provisionar EC2 + systemd ✅ `i-0776acb09b8438f22`  
+3. **l1-scripts** — publish / apply / deploy SSM Linux ✅  
+4. **l1-cutover** — Piloto + TG ✅ · smoke browser ☐ amanhã  
+5. **l1-docs** — Fechar ORQUESTRADOR + commit/push/sync ✅  

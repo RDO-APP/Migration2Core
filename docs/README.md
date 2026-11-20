@@ -15,6 +15,7 @@
 | Ops RDS / Dimas (referência) | [`ops/README.md`](ops/README.md) |
 | Governança catálogos RDS | [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · diff ①×② [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) |
 | Infra nuvem AWS (EC2/ALB/RDS/S3/…) | [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual §14 |
+| **L1 Linux homolog** (2026-11-19) | [`migracao/plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md) · [`../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · EC2 `i-0776acb09b8438f22` |
 | Git push (agente) | [`migracao/git-push-checklist.md`](migracao/git-push-checklist.md) |
 | CI homolog (código) | [`../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md`](../RDO-CleanMigration-2026/PLANO-CI-HOMOLOG-EC2.md) |
 | Trilha F (FAPESC) | [`estudos-lucio-apps-plano-migracao-core/`](estudos-lucio-apps-plano-migracao-core/) · chat **FAPESC Execução** · stub [`editais-fapesc/README.md`](editais-fapesc/README.md) |

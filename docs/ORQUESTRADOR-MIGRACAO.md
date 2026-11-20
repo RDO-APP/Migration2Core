@@ -1,6 +1,7 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-19 ~13:20 — Dia 1 **Copiar obra + Convite** código local · smoke pós-deploy · CPF Georges **`824.351.035-49`** · Próximo = smoke O4/O5 → prep **L1**  
+**Atualizado:** 2026-11-19 ~22:00 — **L1 FECHADO (infra):** homolog Core em **EC2 Linux** `i-0776acb09b8438f22` · TG healthy · tip **`dde125e`** · **Amanhã:** smoke browser Lucio → gate melhorias pós-L1  
+
 
 
 
@@ -116,24 +117,24 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | Fase | Marco | Passos | Status |
 |------|-------|--------|--------|
 | **A** | **M0′** doc | A1 RDS/hosts · A2 smoke prod + evidências · A3 aceite | **A executada** — ver [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · HAR API ○ opcional |
-| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **parcial** — B1/B2 OK · **SSM/apply** endurecido **`7e19d47`**; B3 serviço Windows / runway &lt;2 min na EC2 pendente |
+| **B** | **I0** | B1 publish/SSM · B2 smoke homolog · B3 runway &lt;2 min | **B1/B2 OK** · **L1 Linux ☑** (`dde125e`) · B3 runway &lt;2 min / CI Actions Linux = pós-smoke |
 | **C** | **M2 produto** | C1 BFF agrupador · C2 DTO card · C3 React accordion/cards · C5 redeploy | **C1–C3 + C5 homolog OK** — `/Tarefa/Cards` obra 42: 3 etapas · **13** tarefas · head/datas/%/status; **M2.5+** toolbar/ações · **M3** gate |
 | **D** | **M3** | D1–D4 E2E [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · D5 assinatura | **PASS 2026-10-19** (passos 1–5 · Lucio) |
 | **E** | **M4+** | E1 congela EQ-W · E2 M5 Apontador · E3 M6+ | **E1 ativo** — shell/layout · Escolher React |
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **Dia 1:** código **Copiar + Convite** ☑ local · **smoke O4/O5** pós-deploy → prep **L1 Linux**. Melhorias / residual / **3.1** / CAT = **pós-Linux**. `/convidada` ainda stub.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **Dia 2 L1 infra ☑** · **amanhã** smoke browser (Login→Cards · O4/O5) → **gate melhorias pós-L1**. `/convidada` ainda stub.
 
-**Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF (`7aee0f2`→`3a7f5ad`). **2026-10-27** P5a: T0–T4b redirects · **T5 E** listagem (`056eb29`) · **W1/W2** paridade RDO (`fd8a144`).
+**Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
-**Deploy:** roteiro [`migracao/roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) · pacote P2+P3 **2026-10-21** (ver runbook) · pré-check `Test-Path C:\Dev\Migration2Core`.
+**Deploy:** **L1** [`roteiro-deploy-homolog-operador.md`](migracao/roteiro-deploy-homolog-operador.md) + [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · InstanceId **`i-0776acb09b8438f22`** · pré-check `Test-Path C:\Dev\Migration2Core`.
 
 ### Pendências por marco (snapshot)
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-19 — Dia 1 código):** espelho web operador ≈ **~98%** (Copiar cabeçalho + Convite envio). **M0 / M0′ / W0.5 / M3 / M4 / M5 web = FECHADOS**. Gap residual: clone listas colab/equip · `/convidada` · SMTP ops. Melhorias / **3.1** / CAT / fontello / DOC-FICHAS = **pós-Linux**. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-19 — L1):** homolog Core = **EC2 Linux dedicada** (TG healthy). Espelho web ≈ **~98%**. **M0 / M0′ / W0.5 / M3 / M4 / M5 web / L1 infra = FECHADOS**. Amanhã: smoke Lucio. Depois: melhorias / **3.1** / CAT / `/convidada` / clone listas. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
@@ -147,10 +148,10 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
 | **M5 EQ-M** | **0** | — | **⏸ adiado** |
 | **M6** | **5** | — | JWT/OpenAPI · contrato mobile homolog |
-| **M7+** | **97** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** código | smoke O4/O5 · clone listas · `/convidada` · **3.1**/CAT = pós-L1 · **não** P6b |
-| **M8** | **40** | Branch CI · roteiro D→E | B3 runway &lt;2 min · workflow gate |
-| **M9** | **28** | Dia 0 operador web smoke amplo | D1 checklist formal · D2–D7 · D4 mobile |
-| **M10** | **0** | — | Onda 2 / **L1 Linux** · **P6b** CMS · cutover RDS |
+| **M7+** | **97** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** código | smoke browser amanhã · clone listas · `/convidada` · **3.1**/CAT · **não** P6b |
+| **M8** | **70** | Branch CI · roteiro · **L1 Linux ☑** `dde125e` | B3 runway &lt;2 min · CI Actions shell Linux |
+| **M9** | **35** | Dia 0 operador · L1 host estável | smoke L1 browser · D1 formal · D2–D7 · D4 mobile |
+| **M10** | **5** | L1 ≠ cutover RDS (separado) | **P6b** CMS · cutover RDS `novo_rdoapp` |
 
 ---
 
@@ -162,10 +163,11 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **Execução até nova decisão (2026-10-25):** **Lucio + Cursor** seguem **marcos M\*** (EQ-R homolog → M4.8 → M5…). **Dimas não é pré-requisito.** Se entrar depois: trabalho **em paralelo e independente** (Application, OpenAPI, U-05, revisão Core) **reutilizando** BFF/React/homolog já no Git — ver § [Rastreio Dimas](#rastreio-dimas-tsk--vigilância-vs-plano-m) e [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md). Pós-cutover operador: “adaptar ao PDF Dimas” = refator/hardening (**M6+**), não re-migrar front — ver doc acima § imposto Dimas.
 - **Transição suave → estratégia Dimas (com ou sem Dimas):** rampa **Ondas A→D** + gates **G-M4…G-M8** — canônico [`migracao/dimas-entrada-paralela-pos-m4.md`](migracao/dimas-entrada-paralela-pos-m4.md) § *Transição suave*. **Não** big-bang PDF; **sim** convergência Application/OpenAPI em **M6**.
 - **EQ-W (Razor)** = ponte W1 no `Migration2Core` — **sem** roadmap de features novas.
-- **Migration2Core** = homolog only até Linux L1; backend + host; **sem** prod `:80`.
+- **Migration2Core** = homolog only; backend + host; **sem** prod `:80`.
+- **L1 Linux (2026-11-19 · tip `dde125e`):** homolog Core em EC2 **`i-0776acb09b8438f22`** (AL2023 · t3.small · systemd `rdoapp-core-homolog` · `/var/www/rdoapp_core`) · TG `tg-equipamentos-homolog-5081` **healthy** · health `/Account/Login` · Windows `i-05cb…` **rollback** (fora da 5081) · **não** Loja PHP. Guia: [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · infra [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · plano [`migracao/plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md).
 - RDS homolog Core: **`homol_rdoapp`** · mesma instância que prod **`novo_rdoapp`**. **47 tabelas ≠ colunas gêmeas** (lição L11 / cadastro O0). Diff DBeaver: [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql). **2026-11-03:** Q1–Q4 vazios/delta 0 após `ALTER` `tarefa` (4 colunas 11:54) + `MODIFY` varchar `tarefa` 12:22 / `rdo` 12:25. **Nunca** `ALTER` `novo_rdoapp` neste chat. Dados: **43 obras** homolog vs **284** prod — subset de propósito. **P1–P3 / Chart / lista RDO:** queries não pediam as 4 colunas novas; `MODIFY` varchar só alarga — **não** regressão. **PDF L16:** Hi/Hf/Ht no `SELECT` (deixa o catch L12). Detalhe: [`migracao/homolog-p3-tarefa-cadastro-tentativas.md`](migracao/homolog-p3-tarefa-cadastro-tentativas.md).
-- **AVISO cutover RDS (mandatório — Lucio 16/11):** Homolog hoje = Core → **`homol_rdoapp`**. No **fim da homologação / M10**, o Core em produção aponta para **`novo_rdoapp`**. **Estrutura (DDL)** dos dois catálogos deve ficar **gêmea** (diff Q1–Q4 limpo) antes desse cutover. **Conteúdo (DML)** pode divergir na fase homolog (subset de obras; INSERT pontual tipo `grupo` Terceirizado `34` em homol 16/11). Qualquer DDL novo: **só** `homol_rdoapp` primeiro → validar → **checklist M10** promove o mesmo script a `novo_rdoapp` **com Lucio OK** (nunca ALTER prod “de surpresa”). Ver também [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) § **Cutover** · manual M0′ §0.
-- URL homolog: **`https://homolog.sistema.rdoapp.com.br`** (:5081).
+- **AVISO cutover RDS (mandatório — Lucio 16/11):** Homolog hoje = Core → **`homol_rdoapp`**. No **fim da homologação / M10**, o Core em produção aponta para **`novo_rdoapp`**. **Estrutura (DDL)** dos dois catálogos deve ficar **gêmea** (diff Q1–Q4 limpo) antes desse cutover. **Conteúdo (DML)** pode divergir na fase homolog (subset de obras; INSERT pontual tipo `grupo` Terceirizado `34` em homol 16/11). Qualquer DDL novo: **só** `homol_rdoapp` primeiro → validar → **checklist M10** promove o mesmo script a `novo_rdoapp` **com Lucio OK** (nunca ALTER prod “de surpresa”). Ver também [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) § **Cutover** · manual M0′ §0. **L1 ≠ cutover RDS.**
+- URL homolog: **`https://homolog.sistema.rdoapp.com.br`** (:5081 · **Linux L1**).
 - **EQ-M** prod hoje → API legado; alvo = mesma API que EQ-R (JWT / U-05).
 - **Trilha I (CI):** pausada até E2E homolog com Cards **com dados** (EQ-R preferencial).
 - **M2 BFF Cards:** **homolog-only** (EF `homol_rdoapp`) — não proxy prod API (ids de obra divergem).
@@ -328,7 +330,7 @@ Detalhe por página: [`matriz-4-paginas-prod-kiro-mobile.md`](matriz-4-paginas-p
 | M0 | PARCIAL PASS | [`m0-registro-encerramento.md`](m0-registro-encerramento.md) |
 | M1 | FECHADO | [`m1-execucao-checklist.md`](m1-execucao-checklist.md) |
 | M0′ | **PASS doc** (Fase A) · ativo até HAR opcional | [`m0-prime-fase-a-evidencias.md`](m0-prime-fase-a-evidencias.md) · matriz · manual |
-| I0 | **parcial** (B1/B2 OK · scripts B3 no repo) | [`homolog-core-deploy-rapido-plano.md`](homolog-core-deploy-rapido-plano.md) |
+| I0 / **L1** | **L1 FECHADO** 2026-11-19 (`dde125e`) · B3 CI Linux pós-smoke | [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · [`plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md) |
 | M2 | **FECHADO** | [`migracao/m2-execucao-checklist.md`](migracao/m2-execucao-checklist.md) |
 | M3 | **FECHADO** | [`e2e-fase0-checklist.md`](e2e-fase0-checklist.md) · [`migracao/m3-execucao-runbook.md`](migracao/m3-execucao-runbook.md) |
 | M4 | **M4.1/M4.3 OK** · **M4.4–M4.7** paridade **P2–P3** | [`migracao/m4-execucao-checklist.md`](migracao/m4-execucao-checklist.md) |
@@ -438,15 +440,25 @@ A1–A3 · B1–B4 visual · C1–C3 · D1 ACEITAR · D2 SIM · D3 ACEITAR · CP
 **Smoke:** [`migracao/homolog-obra-index-acoes-tentativas.md`](migracao/homolog-obra-index-acoes-tentativas.md) **O4/O5** pós publish/deploy.  
 **Fora:** `/convidada` aceitar · clone colab/equip no mesmo Salvar · melhorias pós-L1.
 
-### Dia 2 — Linux (cutover 19/11)
+### Dia 2 — Linux · **L1 FECHADO (infra · 19/11)**
 
-**L1 no ar:** EC2 **`i-0776acb09b8438f22`** (`172.31.2.111` · t3.small · systemd `rdoapp-core-homolog`) · TG `tg-equipamentos-homolog-5081` **healthy** · health path `/Account/Login` · Windows `i-05cb…` **fora** da 5081 (rollback).  
-**Próximo:** smoke browser Lucio (Login → Cards · O4/O5) · gate melhorias pós-L1.  
-**Plano:** [`migracao/plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md) · deploy [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · infra [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md).
+**Marco do dia:** homolog Core **saiu** da EC2 Windows compartilhada com prod e passou a **máquina Linux dedicada** — isolamento real do strangler. Tip **`dde125e`**.
 
-### Gate Lucio 18/11 — melhorias / residual aceito (**pós-Linux**)
+| | |
+|--|--|
+| EC2 | **`i-0776acb09b8438f22`** · `172.31.2.111` · t3.small · AL2023 |
+| Serviço | systemd **`rdoapp-core-homolog`** · `/var/www/rdoapp_core` |
+| TG | `tg-equipamentos-homolog-5081` · **healthy** · health `/Account/Login` |
+| Rollback | Windows `i-05cb0003c031a26da` **fora** da 5081 |
+| URL | `https://homolog.sistema.rdoapp.com.br` (igual) |
 
-**Não executar** até **(A)** smoke Dia 1 O4/O5 OK (ou waiver residual listas/`convidada`) **e** **(B)** Core em **EC2 Linux (L1)**. Lista: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § **Residual Dia 0 → pós-L1**.
+**Amanhã (Lucio):** smoke browser Login → Escolher → Cards · O4/O5.  
+**Depois do smoke:** gate melhorias pós-L1 ([`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)).  
+**Docs:** [`plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md) · [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · [`infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual **§14**.
+
+### Gate Lucio — melhorias / residual (**pós-L1 · após smoke amanhã**)
+
+**Infra L1 ☑.** Abrir melhorias quando smoke browser OK (ou waiver). Lista: [`migracao/pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § **Residual Dia 0 → pós-L1**.
 
 | Item | Nota |
 |------|------|

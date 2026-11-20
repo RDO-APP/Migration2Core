@@ -1,10 +1,11 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-19 · **Status:** tip **`5f747b5`** · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** medição · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-19 · **Status:** tip **`dde125e`** · **L1 Linux ☑** (homolog Core EC2 dedicada) · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
-**Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)
+**Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)  
+**Homolog ② host (L1 · 19/11):** EC2 Linux **`i-0776acb09b8438f22`** · Kestrel **5081** · TG healthy — **≠** Windows prod `i-05cb…` (:80). Smoke browser Lucio = dia seguinte.
 
 ---
 
@@ -737,20 +738,20 @@ Canônico DNA: [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-men
 
 ## 14. Infraestrutura na nuvem (AWS)
 
-**Canônico completo:** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) (inventário CLI **2026-11-19**).
+**Canônico completo:** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) (inventário + **L1 cutover 2026-11-19** · tip **`dde125e`**).
 
 Não é só EC2 + RDS. Conta `775387704919` · região **us-east-2**:
 
 | Camada | O que existe |
 |--------|----------------|
-| **EC2** | **Equipamentos** Windows `i-05cb0003c031a26da` **t2.medium** (prod `sistema`/:80 + homolog :5081) · **PHP** Linux `i-0af4ef47531a19acb` **t2.micro** (Loja) · **rdo-vpn** Pritunl |
+| **EC2** | **Prod** Windows `i-05cb0003c031a26da` **t2.medium** (`sistema`/:80 · piscinas :82) · **Homolog L1** Linux `i-0776acb09b8438f22` **t3.small** (:5081 · systemd) · **PHP** Loja `i-0af4ef…` **t2.micro** · **rdo-vpn** |
 | **RDS** | MySQL **8.4.9** `equipamentos` · **db.m5.xlarge** · endpoint `equipamentos.cslrikufb7hm…` · catálogos `novo_rdoapp` / `homol_rdoapp` / `piscinas_*` |
 | **ALB** | **Sistema-RDO** (sistema/homolog/piscinas) · **Loja-RDO** (loja) |
-| **TG** | `Ipv4-RDO` :80 prod · `tg-equipamentos-homolog-5081` · `tg-piscinas-82` · `RDO-Loja` :80 |
+| **TG** | prod `:80` · homolog `:5081` → **Linux L1** · piscinas `:82` · Loja `:80` |
 | **DNS/TLS** | Route 53 `rdoapp.com.br` · ACM no ALB |
 | **Mais** | S3 `s3rdoapp` (deploy) · SSM · EIP/VPN · SES sandbox (e-mail app = **Locaweb**/`Smtp:*`) · CloudFront sem alias (órfão?) · sem ElastiCache |
 
-**L1 / Loja:** **não** co-hospedar Core homolog na EC2 PHP da Loja (`t2.micro` + blast radius checkout). Nova Linux só homolog — ver doc §2.1 e [`plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md).
+**Marco L1:** homolog isolado do Windows de prod. **Não** usar EC2 Loja para Core. Deploy: [`DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md).
 
 ---
 
@@ -758,7 +759,7 @@ Não é só EC2 + RDS. Conta `775387704919` · região **us-east-2**:
 
 | Item | OK? | Observação |
 |------|:---:|------------|
-| Linha GitHub col. ④ (`RDO-APP/EquipoToPiscina`) | ☑ | Lucio 2026-10-19 |
+| **L1 Linux homolog** (TG healthy · tip ``dde125e``) | ☑ infra | Smoke browser Lucio = **amanhã** |`n| Linha GitHub col. ④ (`RDO-APP/EquipoToPiscina`) | ☑ | Lucio 2026-10-19 |
 | Catálogos RDS § tabela inicial | ☑ | conferido [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · Fase A 2026-10-19 |
 | Colunas ④⑤ nas páginas §1–§5 | ☑ | manual §1–§5 · Fase A |
 | Host homolog Piscinas | ☑ | `homologacao.piscinas.rdoapp.com.br` + `piscinas_rdoapp_homologa` (legado PQ; ≠ Core obras) |

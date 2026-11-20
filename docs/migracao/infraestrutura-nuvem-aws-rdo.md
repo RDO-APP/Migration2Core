@@ -2,7 +2,8 @@
 
 **Conta:** `775387704919` · **Região app:** `us-east-2` (Ohio)  
 **Inventário verificado:** 2026-11-19 (CLI) · **Trilha:** I  
-**Manual:** link em [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §14  
+**Marco L1 (mesmo dia):** cutover homolog → Linux `i-0776acb09b8438f22` · tip Git **`dde125e`** · TG healthy  
+**Manual:** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §14  
 **Não é:** inventário Loja PHP operacional (chat Loja) — só o que existe na conta e como se acopla ao Sistema/homolog.
 
 ---
