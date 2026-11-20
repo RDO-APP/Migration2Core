@@ -16,13 +16,15 @@
 | Horas `—` | `TarefaStatusUpdateService` clonava sem preencher hora. |
 | Sem Editar | `rdoAssinado` true se a medição está em `rdo_tarefa` de RDO status 2/3. Após assinar RDO do dia, Pausada/Em Execução ligadas ao RDO travam. Planejada **não** entra no sync RDO → continua editável. |
 
-## Correção (código local — aguarda publish/deploy)
+## Correção (Git `c61d366` · smoke no **próximo** publish/deploy)
 
 **⋮:** nova linha com **data + hora do clique** (`HoraInicial` = `HoraFinal` = agora), sem abrir página. Qtd/comentário zerados; horímetro carrega o final da medição anterior.
 
-Arquivos: `TarefaStatusUpdateService.cs` · `TaskCardAgrupador.tsx` (toast status inalterado).
+**Decisão Lucio 20/11 ~17:35:** não bloquear M6 — smoke ⋮ no próximo publish/deploy.
 
-## Smoke
+Arquivos: `TarefaStatusUpdateService.cs`.
+
+## Smoke (próximo publish)
 
 1. Cards → ⋮ → Pausada (ou Em Execução).
 2. Histórico: linha nova com **Data** + **Hora Inicial/Final** preenchidas (não `—`).

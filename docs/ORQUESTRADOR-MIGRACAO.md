@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-20 ~15:25 — **C4 `/convidada` PASS** · **M6** Fase 0 Baseline OK · Fase 1.2 JWT código (SigningKey+smoke pendente) · L1 Linux `i-0776acb09b8438f22` 
+**Atualizado:** 2026-11-20 ~20:30 — **C4 PASS** · **M6** Fase 0–1 OK · Fase 2 EAS **Homolog #8 PASS** (`EquipamentosMobile` `1226078`) · smoke APK pendente · L1 Linux `i-0776acb09b8438f22` 
 
 
 
@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **C4 PASS** · **M6 1.2** JWT código (SigningKey+smoke) · Lucio testando RDO assinatura contratante.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **M6 Fase 2** smoke APK homolog (login JWT) · ⋮ no próximo publish · Bearer BFF = gap jornada.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -134,21 +134,21 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-20):** homolog Core = **EC2 Linux dedicada** (TG healthy). Espelho web ≈ **~98%** com `/convidada` **C4 PASS**. **M0 / M0′ / W0.5 / M3 / M4 / M5 web / L1 infra = FECHADOS**. **M6** Fase 0 OK · 1.2 JWT código. Residual: clone listas · **3.1**/CAT · SigningKey smoke. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-20 ~20:30):** homolog Core = **EC2 Linux dedicada** (TG healthy). Espelho web ≈ **~98%** · `/convidada` **C4 PASS**. **M0 / M0′ / W0.5 / M3 / M4 / M5 web / L1 infra = FECHADOS**. **M6** Fase 0–1 OK · Fase 2 EAS **Homolog #8 PASS** · falta smoke APK + Bearer BFF. Residual web: clone listas · **3.1**/CAT · ⋮ smoke. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
 | **M0** | **100** | **FECHADO** | branding / E2 → pós-L1 (aceito) |
 | **M0′** | **100** | **FECHADO** | HAR → pós-L1 (aceito) |
-| **M1** | **85** | Cenário **A**; v1 endpoints; tipos TS; mapa Core vs legado | Pacote npm; EQ-M — com **M6** / pós-L1 |
+| **M1** | **90** | Cenário **A**; v1; mapa; pacote `@rdo-app/equipamentos-api-types` (1.3) | npm público opcional |
 | **W0.5 / E2E** | **100** | **FECHADO** | — |
 | **M2** | **100** | **FECHADO** | — |
 | **M3** | **100** | **FECHADO** | E2E 6–7 N/A (D3 ACEITAR) |
 | **M4** | **100** | **FECHADO** · G5/G6/Login SPA smoke Dia 0 · congela EQ-W | fontello UI-M1/M2c = **ACEITAR** → pós-L1 |
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
-| **M5 EQ-M** | **0** | — | **⏸** até M6 Fase 2 (homolog APK) |
-| **M6** | **35** | **Fase 0 Baseline OK** · `main` mobile `8e7eb5e` · smoke prod PASS · **1.2** JWT login/me código | SigningKey+smoke · OpenAPI YAML · LoginObra Bearer · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md) |
-| **M7+** | **98** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** · **`/convidada` C4 PASS** | clone listas · **3.1**/CAT · **não** P6b |
+| **M5 EQ-M** | **40** | Reaberto com M6 Fase 2 · EAS homolog APK na fila Expo | Smoke jornada campo homolog |
+| **M6** | **55** | Fase 0 OK · **1.2–1.4** · Fase 2 **2.1–2.3** (Homolog #8 · mobile tip `1226078`) | **2.4** smoke APK · Bearer BFF obra/etapa/tarefa · OpenAPI YAML · LoginObra · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
+| **M7+** | **98** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** · **`/convidada` C4 PASS** · Fotos F8 ☑ | clone listas · **3.1**/CAT · ⋮ smoke · **não** P6b |
 | **M8** | **70** | Branch CI · roteiro · **L1 Linux ☑** `dde125e` | B3 runway &lt;2 min · CI Actions shell Linux |
 | **M9** | **35** | Dia 0 operador · L1 host estável | smoke L1 browser · D1 formal · D2–D7 · D4 mobile |
 | **M10** | **5** | L1 ≠ cutover RDS (separado) | **P6b** CMS · cutover RDS `novo_rdoapp` |
@@ -219,6 +219,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 - **Docs hub:** [`imutabilidade/README.md`](imutabilidade/README.md) · stub edital [`editais-fapesc/README.md`](editais-fapesc/README.md)
 - **Dados:** RDO assinado origina **`novo_rdoapp`** (web **Equipamentos**); âncora = metadados + tx (tabela aditiva `rdo_ancoragem` — plano PoC)
 - **EDI / token pós-Termo:** chat **EDI · Smart contract · Token** (`9b8c1df2-…`) · [`edi-token-projeto/README.md`](edi-token-projeto/README.md)
+- **Objetivo pós-FAPESC (Lucio 20/nov/2026):** buscar **EDI + tokenização + smart contract** (camada produto / Web3 parcial) **depois** do Termo — dono chat EDI; **≠** M6 JWT/EAS. Detalhe + D13: README acima.
 - Cronograma: `estudos-lucio-apps-plano-migracao-core/estudo-migracao-fapesc-9-meses.md` · anexo `estudo-migracao-fapesc-anexo-2026-q4.md`
 - **Não** implementar PoC blockchain neste chat (**Migração**).
 
@@ -430,30 +431,29 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 ## Próxima ação (1)
 
-### Parque — M6 / M5 (2026-11-20 ~17:20) · prioridade EQ-R bugs Cards
+### Parque — M6 Fase 2 EAS OK (2026-11-20 ~20:30)
 
-**Estacionado até smoke pós-deploy:**
-1. **Bug ⋮ status rápido** — código: clone com data+hora do clique · [`migracao/homolog-cards-status-rapido-bug.md`](migracao/homolog-cards-status-rapido-bug.md).
-2. **Fotos F8** — `imagensGravadas` + toast falso positivo · [`migracao/homolog-p4-foto-tentativas.md`](migracao/homolog-p4-foto-tentativas.md).
+| Item | Status |
+|------|--------|
+| **Fotos F8** | ☑ PASS Lucio (tarefa + RDO PDF) · commit `c61d366` |
+| **⋮ status rápido** | código no Git · **smoke no próximo publish/deploy** (Lucio) — [`migracao/homolog-cards-status-rapido-bug.md`](migracao/homolog-cards-status-rapido-bug.md) |
+| **M6 Fase 1** | **1.2–1.4** ☑ · SigningKey Staging smoke ☑ |
+| **M6 Fase 2** | **2.1–2.3** ☑ · Actions **Homolog #8 PASS** · mobile `1226078` · APK em [expo builds](https://expo.dev/accounts/rdo-app/projects/rdo-app-apontador/builds) |
+| **M5 EQ-M** | reaberto com Fase 2 |
 
-**Snapshot M6 (não perder):**
-- Fase 0 Baseline OK · mobile `main` `8e7eb5e`
-- Fase 1.1 mapa ☑ · **1.2 JWT login+/me homolog PASS** (Georges) · 1.3/1.4 pendentes
-- Fase 2 (APK homolog) e **M5 EQ-M** continuam ⏸ até retomar M6
+**Snapshot M6:** Fase 0 OK · **1.2 PASS** · **1.3** pacote tipos · **1.4 FECHADO** · Fase 2 CI/EAS ☑ · **2.4 smoke** ☐ · Bearer BFF ☐
 
-**Snapshot M5:** web FECHADO · EQ-M ⏸ até M6 Fase 2
-
-**Retomar M6** só depois dos itens 1–2 acima (ou decisão Lucio).
-
-
-### Agora — **EQ-R bugs** · ⋮ status (horas/editar) + fotos · M6/M5 **estacionados** (ver Parque acima)
+### Agora — **M6 2.4 smoke APK** · depois Bearer BFF
 
 | | |
 |--|--|
-| Convite SMTP | ☑ O4x (Host `email-ssl.com.br`) |
-| Aceite `/convidada` | ☑ **C4 PASS** 2026-11-20 ~15:25 — Contratante → Escolher · Diretor Contratante MIGRAÇÃO 15/11 — [`migracao/homolog-convidada-aceite.md`](migracao/homolog-convidada-aceite.md) |
-| M6 EQ-M | **estacionado** · 1.2 JWT PASS · retomar após ⋮/fotos — [`m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md) |
-| Lucio agora | Assinatura Contratante PDF ☑ · **bug ⋮ + fotos** na frente |
+| Convite SMTP | ☑ O4x |
+| Fotos F8 | ☑ PASS · `c61d366` |
+| `historico_login` | ☑ web · JWT mobile **código** (confirmar no próximo publish) |
+| M6 Fase 2 CI | ☑ Homolog #8 · [`migracao/m6-fase2-apk-homolog.md`](migracao/m6-fase2-apk-homolog.md) |
+| Gap | BFF obra/etapa/tarefa ainda cookie — jornada completa = Bearer BFF |
+| Lucio agora | Instalar APK homolog · smoke **login JWT** (+ obra se der) · ⋮ no próximo publish |
+| Pós-FAPESC (anotado) | EDI + tokenização + smart contract → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)
 

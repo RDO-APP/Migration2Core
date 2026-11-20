@@ -12,11 +12,11 @@
 | # | Entrega | Status |
 |---|---------|:------:|
 | **1.1** | OpenAPI / mapa API mobile v1 (login + obra + medição mínima) | **stub** — mapa markdown abaixo (sem Swagger ainda) |
-| **1.2** | JWT no Core homolog — cookie SPA permanece Default* | **código landed** — smoke homolog **após publish** |
-| **1.3** | Pacote tipos TS compartilhado (residual M1) | **pending** |
-| **1.4** | CORS / audience / expiração / refresh (mínimo seguro) | **parcial** — ver nota de segurança; refresh **não** implementado |
+| **1.2** | JWT no Core homolog — cookie SPA permanece Default* | **PASS** homolog (login + `/me`) |
+| **1.3** | Pacote tipos TS compartilhado (residual M1) | **código** — [`m6-1.3-tipos-ts.md`](m6-1.3-tipos-ts.md) (commit pendente) |
+| **1.4** | CORS / audience / expiração / refresh (mínimo seguro) | **FECHADO** — [`m6-1.4-seguranca-jwt.md`](m6-1.4-seguranca-jwt.md) · refresh = **não** (re-login) |
 
-**Próxima ação:** publish/deploy homolog → smoke curl login + me (abaixo).
+**Próxima ação:** commit 1.3+1.4 docs (se Lucio pedir) · **Fase 2** APK homolog.
 
 ---
 
@@ -100,22 +100,23 @@ Lucio configura no **PC** (PowerShell) — agente **não** grava secret real no 
 
 ---
 
-## 1.4 Nota de segurança (parcial)
+## 1.4 Nota de segurança — **FECHADA**
 
-| Tema | Estado nesta fatia |
-|------|--------------------|
-| Cookie SPA | **Intacto** — DefaultAuthenticate/Challenge/SignIn = Cookies · `OnRedirectToLogin` inalterado |
-| Expiry | `Jwt:ExpiryMinutes` default **480** (8h) · sem sliding no JWT |
-| Audience | `rdo-apontador` · Issuer `https://homolog.sistema.rdoapp.com.br` |
-| Refresh token | **Não** implementado — re-login quando expirar |
-| CORS | Policy `MobileJwt`: homolog + `localhost` / `127.0.0.1` (qualquer porta) · só no controller mobile |
-| SigningKey | Placeholder no Git · **obrigatório** setar no Staging EC2 antes do smoke real |
-| Surface | Só login + me — **não** é paridade completa `/api/login/LoginUser` |
+Canônico: [`m6-1.4-seguranca-jwt.md`](m6-1.4-seguranca-jwt.md).
+
+| Tema | Decisão |
+|------|---------|
+| Cookie SPA | **Intacto** — Default* = Cookies |
+| Expiry | **480 min** · `expiresIn` no login · ClockSkew 1 min · sem sliding JWT |
+| Audience / Issuer | `rdo-apontador` / `https://homolog.sistema.rdoapp.com.br` |
+| Refresh | **Não** — app re-login em 401/expiry |
+| CORS | `MobileJwt` em `/api/mobile/auth/*` · homolog + localhost/127.0.0.1 |
+| SigningKey | Fora do Git · Staging EC2 |
 
 ---
 
 ## Fora desta fatia
 
 - Publish/deploy (Lucio) · commit (só se pedido)  
-- Swagger UI · pacote TS (1.3) · refresh (1.4 completo)  
-- Prod `:80` · apontar APK para homolog (Fase 2)
+- Swagger UI · refresh token (backlog)  
+- Prod `:80` · apontar APK para homolog (**Fase 2**)

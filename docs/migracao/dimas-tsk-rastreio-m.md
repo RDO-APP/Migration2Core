@@ -119,7 +119,7 @@ Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adi
 - `Jwt:SigningKey` Staging + smoke curl login/me
 - OpenAPI YAML formal / Swagger (1.1 além do mapa markdown)
 - `LoginObra` + obras/etapas/medição com **Bearer** (paridade APK)
-- Pacote tipos TS (1.3) · refresh token (1.4) · Fase 2 APK→homolog
+- ~~Pacote tipos (1.3) · 1.4 refresh=não · Fase 2 EAS Homolog #8~~ → **agora** smoke APK 2.4 + Bearer BFF
 
 ---
 

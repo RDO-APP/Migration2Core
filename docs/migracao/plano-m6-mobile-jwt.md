@@ -43,9 +43,9 @@ Canônico: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) · [`api-cl
 | # | Entrega | Aceite | Status 20/11 |
 |---|---------|--------|:------------:|
 | 1.1 | OpenAPI / mapa **API mobile v1** (login + obra + medição mínima) alinhado ao que o APK já usa | Diff documentado legado ↔ Core | **stub** mapa em [`m6-fase1-jwt-openapi.md`](m6-fase1-jwt-openapi.md) |
-| 1.2 | **JWT** (ou bearer documentado) no Core homolog — cookie web **permanece** para SPA | Token emitido + endpoint protegido smoke | **código landed** · smoke **após publish** |
-| 1.3 | Pacote tipos TS compartilhado (fechar residual **M1**) | Consumível por web e mobile | **pending** |
-| 1.4 | CORS / audience / expiração / refresh (mínimo seguro) | Nota de segurança no doc | **parcial** (sem refresh) |
+| 1.2 | **JWT** (ou bearer documentado) no Core homolog — cookie web **permanece** para SPA | Token emitido + endpoint protegido smoke | **PASS** homolog |
+| 1.3 | Pacote tipos TS compartilhado (fechar residual **M1**) | Consumível por web e mobile | **código** · [`m6-1.3-tipos-ts.md`](m6-1.3-tipos-ts.md) |
+| 1.4 | CORS / audience / expiração / refresh (mínimo seguro) | Nota de segurança no doc | **FECHADO** · [`m6-1.4-seguranca-jwt.md`](m6-1.4-seguranca-jwt.md) · refresh = não |
 
 Detalhe rotas / curl / security: [`m6-fase1-jwt-openapi.md`](m6-fase1-jwt-openapi.md).
 
@@ -92,7 +92,11 @@ Detalhe rotas / curl / security: [`m6-fase1-jwt-openapi.md`](m6-fase1-jwt-openap
 
 ## Próxima ação imediata (EQ-M · Lucio + agente)
 
-1. **Publish + deploy** homolog Core (Linux L1) com o slice JWT 1.2.  
-2. Setar **`Jwt:SigningKey`** no EC2 Staging (não usar placeholder do Git).  
-3. **Smoke 1.2** — curl `POST /api/mobile/auth/login` + `GET /api/mobile/auth/me` (ver [`m6-fase1-jwt-openapi.md`](m6-fase1-jwt-openapi.md)).  
-4. Seguinte: 1.3 tipos TS · 1.4 fechar nota (refresh decision) · depois Fase 2 APK homolog.
+1. ~~1.2 smoke JWT~~ **☑ PASS**.  
+2. ~~1.3 tipos TS~~ **☑** — [m6-1.3-tipos-ts.md](m6-1.3-tipos-ts.md).  
+3. ~~1.4 nota segurança~~ **FECHADO** — [m6-1.4-seguranca-jwt.md](m6-1.4-seguranca-jwt.md).  
+4. ~~Fase 2 EAS~~ **☑ Homolog #8** · tip 1226078 — [m6-fase2-apk-homolog.md](m6-fase2-apk-homolog.md).  
+5. **Agora: 2.4** smoke APK homolog (login JWT).  
+6. **⋮ status** smoke no **próximo** publish/deploy (não bloqueia M6).  
+7. Depois: Bearer nos BFF (jornada completa).
+

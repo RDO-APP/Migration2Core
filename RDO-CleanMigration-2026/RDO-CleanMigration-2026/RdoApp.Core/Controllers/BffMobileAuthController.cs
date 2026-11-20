@@ -19,15 +19,18 @@ public sealed class BffMobileAuthController : ControllerBase
 {
     private readonly RdoDbContext _context;
     private readonly MobileJwtTokenService _tokenService;
+    private readonly HistoricoLoginWriter _historicoLogin;
     private readonly ILogger<BffMobileAuthController> _logger;
 
     public BffMobileAuthController(
         RdoDbContext context,
         MobileJwtTokenService tokenService,
+        HistoricoLoginWriter historicoLogin,
         ILogger<BffMobileAuthController> logger)
     {
         _context = context;
         _tokenService = tokenService;
+        _historicoLogin = historicoLogin;
         _logger = logger;
     }
 
@@ -61,6 +64,16 @@ public sealed class BffMobileAuthController : ControllerBase
         }
 
         var (accessToken, expiresIn) = _tokenService.CreateToken(colaborador);
+
+        // Paridade web/prod: gravar historico_login (obra ainda null — LoginObra preenche depois).
+        await _historicoLogin.RecordAsync(
+            colaborador.ColIdColaborador,
+            colaborador.ColNrCpf ?? "",
+            colaborador.ColNmColaborador ?? "",
+            colaborador.ColDsEmail ?? "",
+            obraId: null,
+            obraNome: null,
+            cancellationToken);
 
         _logger.LogInformation(
             "Mobile JWT issued for {Nome} (ID: {ColaboradorId})",

@@ -58,12 +58,18 @@ Catálogo completo: [`api-client-equipamentos-v0.md`](api-client-equipamentos-v0
 
 ## Tipos TypeScript
 
-Arquivo canônico M1: [`equipamentos-api.types.ts`](api-client/equipamentos-api.types.ts) — espelho de `EquipamentosMobile` (`obraTypes`, `tarefasTypes`, `AuthContext`).
+| Camada | Path |
+|--------|------|
+| **Pacote M6 1.3** | [`packages/equipamentos-api-types`](../packages/equipamentos-api-types/) (`@rdo-app/equipamentos-api-types`) |
+| Docs M1 (legado) | [`api-client/equipamentos-api.types.ts`](api-client/equipamentos-api.types.ts) |
+| SPA BFF (largo) | `RDO-CleanMigration-2026/client/src/api/equipamentos-api.types.ts` |
+| JWT re-export | `client/src/api/mobileAuth.types.ts` |
+
+Plano: [`migracao/m6-1.3-tipos-ts.md`](migracao/m6-1.3-tipos-ts.md).
 
 ---
 
-## Próximo (M2)
+## Próximo (M6)
 
-- Wire `client/` com P0 + tipos M1  
-- Cards com dados (`Etapa[]`)  
-- EQ-W0.5 em paralelo se E2E Razor ainda necessário
+- Smoke `tsc` client com dep `file:` · wire Apontador na **Fase 2**  
+- 1.4 refresh decision
