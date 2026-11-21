@@ -1,12 +1,12 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-20 · **Status:** tip L1 **`dde125e`** · **L1 Linux ☑** · **M6 Fase 0 Baseline OK** · **Fase 1.2 JWT código** · **`/convidada` C4 PASS** · **M4.7–M4.8** + **P5a/P5b/P6a** + **P4** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Data:** 2026-11-21 · **Status:** tip L1 **`dde125e`** · **L1 Linux ☑** · **M6** Homolog #8 + lição **§ Apps** (spinner JWT) · **`/convidada` C4 PASS** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)  
 **Homolog ② host (L1 · 19/11):** EC2 Linux **`i-0776acb09b8438f22`** · Kestrel **5081** · TG healthy — **≠** Windows prod `i-05cb…` (:80).  
-**③ Apontador (M6 · 20/11):** **Baseline OK** · `main` **`8e7eb5e`** · smoke prod **PASS** · ainda cenário **A** → `sistema.rdoapp.com.br` · plano [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · baseline [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) · JWT slice [`migracao/m6-fase1-jwt-openapi.md`](migracao/m6-fase1-jwt-openapi.md).
+**③ Apontador (M6 · 21/11):** Fase 2 EAS **Homolog #8** · JWT login OK · gap ObterObras Bearer corrigido em código (#1) · ver **§ Apps** · plano [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`migracao/m6-fase2-apk-homolog.md`](migracao/m6-fase2-apk-homolog.md).
 
 ---
 
@@ -336,6 +336,44 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 **Decisão de produto (2026-10-21):** pacote **M4 P2+P3** continua **EQ-R DOM** espelhando prod Angular; Apontador/Piscineiro permanecem **cenário A** na API prod até **M6**.
 
 **Runbook implementação:** [`migracao/pacote-p2-p3-execucao-20261021.md`](migracao/pacote-p2-p3-execucao-20261021.md).
+
+---
+
+## Apps (③ Apontador · ⑤ Piscineiro)
+
+**Escopo:** regras de engenharia para **clientes móveis** Expo/RN — vale no Apontador (EQ-M) e, ao alterar ou migrar auth/API, no **Piscineiro** (PQ-M) e em qualquer app novo da família.
+
+### Caso Homolog #8 (21/11) — spinner infinito pós-login
+
+| | |
+|--|--|
+| **Sintoma** | Login JWT OK · tela coberta por spinner · Home/Sair sem toque |
+| **Causa** | Auth migrada **pela metade**: `/api/mobile/auth/login` (+ Bearer no `handleCall`) sem `POST /api/obra/ObterObras` JWT no Core. Cookie podia devolver **redirect HTML** Login; `fetch` + `LoadingOverlay` (zIndex alto) sem timeout → hang |
+| **Não foi** | “bug misterioso de React Native” nem falha do CPF de smoke |
+| **Por que 1ª vez** | Primeira jornada JWT **além** do login. Em prod/cookie a cadeia login→obras falava a mesma língua |
+
+**Correção (#1 código):** Core `MobileObraLegacyController` (ObterObras Bearer) · cookie `/api/*` → 401 JSON · app: timeout overlay ~20s + `AbortSignal` + não seguir redirect HTML cego. Detalhe: [`migracao/m6-fase2-apk-homolog.md`](migracao/m6-fase2-apk-homolog.md).
+
+### Regras (não repetir — Apontador, Piscineiro, apps futuros)
+
+| # | Regra | Por quê |
+|---|--------|---------|
+| 1 | **Corte de auth = cadeia até a 1ª tela útil** | Login sozinho não conta. Mapear: login → lista → detalhe → logout (mesmo esquema: Bearer **ou** cookie) |
+| 2 | **API mobile nunca devolve HTML Login** | `/api/*` → `401/403` JSON. Redirect HTML + `fetch` = hang |
+| 3 | **Overlay global com teto de tempo** | 15–20s e libera toque; spinner sem timeout é bug de produto |
+| 4 | **`fetch` de API sem seguir redirect cegamente** | Redirect em call autenticada = falha explícita |
+| 5 | **EAS/APK homolog só depois do backend do próximo hop** | Build #8 sem ObterObras JWT = spinner previsível na lista |
+| 6 | **Antes do build: inventário de calls da 1ª sessão** | Mesmo checklist da Fase 0 ([`m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) §0.3) ao mudar host/auth |
+
+### Checklist pré-APK (colar no PR / smoke)
+
+- [ ] Login e **próximo** endpoint da tela pós-login usam o **mesmo** esquema de auth  
+- [ ] Smoke curl/device: lista (obras/unidades) retorna JSON 200, não HTML  
+- [ ] Overlay ou loading global tem timeout / abort  
+- [ ] Logout / Home testáveis se a rede falhar  
+- [ ] Piscineiro / outro flavor: mesmas regras se apontar para Core ou mudar LoginUser→JWT  
+
+**Relacionado:** §6 contratos · §6b.1 lista obras · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-1.4-seguranca-jwt.md`](migracao/m6-1.4-seguranca-jwt.md).
 
 ---
 

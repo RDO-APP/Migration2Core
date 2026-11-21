@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-20 ~20:30 — **C4 PASS** · **M6** Fase 0–1 OK · Fase 2 EAS **Homolog #8 PASS** (`EquipamentosMobile` `1226078`) · smoke APK pendente · L1 Linux `i-0776acb09b8438f22` 
+**Atualizado:** 2026-11-21 ~12:30 — **⋮ BRT smoke OK** · **EQ-M-GPA-01** na lista melhorias · **M6** 2.4 APK pendente · L1 Linux `i-0776acb09b8438f22` 
 
 
 
@@ -110,7 +110,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Vocabulário:** **área da obra** / colaborador = P2–P5 (`OperadorShell` no código). **Operador Contratada** = um dos 5 papéis. **Gestor** = P6a. **Admin plataforma** = P6b. Não chamar a jornada de “operador”.
 
-**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4) · **§6b** · **§10** · **§12 DNA** · **§13 fichas** (molde Chegada/Botões/Saída; 1ª = P5a RDOs) · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
+**Manual front-end (M0′):** [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](manual-frontend-rdo-equipamentos-prod-core-mobile.md) — produto **①–⑤** (§1–§4) · **§6b** · **§ Apps** (Apontador/Piscineiro · anti-spinner JWT) · **§10** · **§12 DNA** · **§13 fichas** · **⑥ FAPESC** [`rdo-blockchain`](https://github.com/RDO-APP/rdo-blockchain) · PQ-L = **[EquipoToPiscina](https://github.com/RDO-APP/EquipoToPiscina)**.
 
 ### Plano de execução (A → E)
 
@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **M6 Fase 2** smoke APK homolog (login JWT) · ⋮ no próximo publish · Bearer BFF = gap jornada.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish Core** (ObterObras JWT) + **EAS Homolog #9** + smoke 2.4 · etapa/tarefa Bearer = gap.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -134,7 +134,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-20 ~20:30):** homolog Core = **EC2 Linux dedicada** (TG healthy). Espelho web ≈ **~98%** · `/convidada` **C4 PASS**. **M0 / M0′ / W0.5 / M3 / M4 / M5 web / L1 infra = FECHADOS**. **M6** Fase 0–1 OK · Fase 2 EAS **Homolog #8 PASS** · falta smoke APK + Bearer BFF. Residual web: clone listas · **3.1**/CAT · ⋮ smoke. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-21):** homolog Core = **EC2 Linux** (TG healthy). **M6** #1 código ☑ (`ObterObras` JWT + overlay timeout) · falta **publish Core** + **EAS #9** + smoke 2.4. Residual: etapa/tarefa Bearer · clone listas · **3.1**/CAT. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
@@ -147,7 +147,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M4** | **100** | **FECHADO** · G5/G6/Login SPA smoke Dia 0 · congela EQ-W | fontello UI-M1/M2c = **ACEITAR** → pós-L1 |
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
 | **M5 EQ-M** | **40** | Reaberto com M6 Fase 2 · EAS homolog APK na fila Expo | Smoke jornada campo homolog |
-| **M6** | **55** | Fase 0 OK · **1.2–1.4** · Fase 2 **2.1–2.3** (Homolog #8 · mobile tip `1226078`) | **2.4** smoke APK · Bearer BFF obra/etapa/tarefa · OpenAPI YAML · LoginObra · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
+| **M6** | **60** | Fase 0–1 OK · Fase 2 **2.1–2.3** · **#1** ObterObras JWT + overlay (código 21/11) | publish+**EAS #9** · **2.4** smoke · Bearer etapa/tarefa · OpenAPI · LoginObra · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
 | **M7+** | **98** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** · **`/convidada` C4 PASS** · Fotos F8 ☑ | clone listas · **3.1**/CAT · ⋮ smoke · **não** P6b |
 | **M8** | **70** | Branch CI · roteiro · **L1 Linux ☑** `dde125e` | B3 runway &lt;2 min · CI Actions shell Linux |
 | **M9** | **35** | Dia 0 operador · L1 host estável | smoke L1 browser · D1 formal · D2–D7 · D4 mobile |
@@ -426,6 +426,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | **M7-PDF-FOTO-LEGENDA** | Legenda manual por foto antes de GERAR RDO | 0% | backlog 16/11 |
 | **M7-REL-EFETIVO-HIST** | Listar relatórios efetivo gerados (período, quem, data/hora, PDF/Excel) | 0% | backlog 16/11 · ≠ download pontual já OK |
 | **M7-EFETIVO-NOVO-MODAL** | Modal Adicionar Colaborador na página Efetivo (paridade prod) | 10% | botão → Cadastro SPA |
+| **EQ-M-GPA-01** | Apontador: ações por GPA (não CMS 1:1); flags login/obra pós DNA/#29 + Bearer | 0% | [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md) § EQ-M-GPA-01 · decisão 21/11 |
 
 ---
 
@@ -441,18 +442,19 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | **M6 Fase 2** | **2.1–2.3** ☑ · Actions **Homolog #8 PASS** · mobile `1226078` · APK em [expo builds](https://expo.dev/accounts/rdo-app/projects/rdo-app-apontador/builds) |
 | **M5 EQ-M** | reaberto com Fase 2 |
 
-**Snapshot M6:** Fase 0 OK · **1.2 PASS** · **1.3** pacote tipos · **1.4 FECHADO** · Fase 2 CI/EAS ☑ · **2.4 smoke** ☐ · Bearer BFF ☐
+**Snapshot M6:** Fase 0–1 OK · Fase 2 CI/EAS #8 ☑ · **#1 código** ObterObras JWT + overlay ☑ · **publish/#9/2.4** ☐ · Bearer etapa/tarefa ☐
 
-### Agora — **M6 2.4 smoke APK** · depois Bearer BFF
+### Agora — **publish Core + EAS #9 + smoke 2.4**
 
 | | |
 |--|--|
 | Convite SMTP | ☑ O4x |
 | Fotos F8 | ☑ PASS · `c61d366` |
-| `historico_login` | ☑ web · JWT mobile **código** (confirmar no próximo publish) |
-| M6 Fase 2 CI | ☑ Homolog #8 · [`migracao/m6-fase2-apk-homolog.md`](migracao/m6-fase2-apk-homolog.md) |
-| Gap | BFF obra/etapa/tarefa ainda cookie — jornada completa = Bearer BFF |
-| Lucio agora | Instalar APK homolog · smoke **login JWT** (+ obra se der) · ⋮ no próximo publish |
+| `historico_login` | ☑ web · JWT mobile |
+| M6 #1 (spinner) | ☑ código · Core `MobileObraLegacyController` + cookie `/api` 401 · mobile timeout 20s |
+| M6 Fase 2 CI | ☑ Homolog #8 · falta **#9** pós-#1 · [`migracao/m6-fase2-apk-homolog.md`](migracao/m6-fase2-apk-homolog.md) |
+| Gap | etapa/tarefa ainda cookie BFF |
+| Lucio agora | **1)** publish/deploy Core · **2)** EAS Homolog #9 · **3)** smoke login+obras |
 | Pós-FAPESC (anotado) | EDI + tokenização + smart contract → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)

@@ -139,8 +139,16 @@ builder.Services.AddAuthentication(options =>
         options.Events = new CookieAuthenticationEvents
         {
             // Cookie válido mas pipeline mandou para Login → evita loop Login ↔ ReturnUrl (P5a).
+            // /api/* (Apontador): 401 JSON — nunca HTML Login (spinner infinito no fetch).
             OnRedirectToLogin = ctx =>
             {
+                if (ctx.Request.Path.StartsWithSegments("/api"))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    ctx.Response.ContentType = "application/json";
+                    return ctx.Response.WriteAsync("""{"message":"Unauthorized"}""");
+                }
+
                 if (ctx.HttpContext.User?.Identity?.IsAuthenticated == true)
                 {
                     HomologDiagnostics.SetRedirectMotivo(
@@ -154,6 +162,18 @@ builder.Services.AddAuthentication(options =>
                 }
 
                 HomologDiagnostics.SetRedirectMotivo(ctx.HttpContext, "nao-autenticado; vai-Login-com-ReturnUrl");
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;
+            },
+            OnRedirectToAccessDenied = ctx =>
+            {
+                if (ctx.Request.Path.StartsWithSegments("/api"))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    ctx.Response.ContentType = "application/json";
+                    return ctx.Response.WriteAsync("""{"message":"Forbidden"}""");
+                }
+
                 ctx.Response.Redirect(ctx.RedirectUri);
                 return Task.CompletedTask;
             },

@@ -46,16 +46,18 @@ Build/flavor **homolog** do Apontador falando com **`https://homolog.sistema.rdo
 | 2.1 | URL homolog → Core L1 + `.env.homolog.example` + EAS | ☑ |
 | 2.2 | Dual auth + Bearer em `handleCall` + token store | ☑ |
 | 2.3 | EAS build `appApontadorHomolog` | ☑ **Homolog #8 PASS** · tip mobile `1226078` (`packager: npm`) |
-| 2.4 | Smoke jornada | ☐ login JWT no device · jornada completa = gap Bearer |
+| 2.4 | Smoke jornada | ☐ após **publish Core** + **EAS Homolog #9** (overlay + ObterObras JWT) |
 
-Arquivos mobile: `appVariant.ts` · `authService.ts` · `mobileTokenStore.ts` · `services/index.ts` · `AuthContext.tsx` · `eas.json` · `.github/workflows/homolog.yml`.  
+Arquivos mobile: `appVariant.ts` · `authService.ts` · `mobileTokenStore.ts` · `services/index.ts` · `AuthContext.tsx` · `LoadingContext.tsx` · `eas.json` · `.github/workflows/homolog.yml`.  
 CI: [`EquipamentosMobile/docs/m6-fase2-eas-homolog-ci.md`](https://github.com/RDO-APP/EquipamentosMobile/blob/main/docs/m6-fase2-eas-homolog-ci.md).
 
 ---
 
 ## Gap conhecido (API)
 
-JWT hoje = **login + me** apenas. Obra/etapa/tarefa no Core ainda são **cookie BFF**.  
-Smoke completo de medição exige **Bearer nos BFF** (backlog) **ou** continua usando prod cen. A.
+JWT: **login + me** + **`POST /api/obra/ObterObras`** (Bearer · `MobileObraLegacyController` · 21/11).  
+Etapa/tarefa/medição ainda **cookie BFF** — jornada completa = Bearer BFF (backlog).
 
-**Agora:** baixar APK do build Homolog #8 · smoke **2.4 login** · depois Bearer BFF.
+**Homolog #8:** login JWT OK · spinner em ObterObras (cookie HTML / sem endpoint JWT) + overlay bloqueava Home/Sair.  
+**#1 código (21/11):** Core ObterObras JWT + cookie `/api`→401 JSON · mobile overlay timeout 20s + `handleCall` AbortSignal.  
+**Agora Lucio:** publish/deploy Core → EAS **Homolog #9** → smoke 2.4 (login + lista obras).
