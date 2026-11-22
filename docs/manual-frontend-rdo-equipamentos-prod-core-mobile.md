@@ -233,6 +233,8 @@ flowchart TB
 | Campos | horímetro, paralisação, datas | — | equipamentos | 🔀 | química / limpeza |
 | RDS | `novo_rdoapp` | — | via API | `piscinas_rdoapp` | via API |
 
+**Paridade botão×campo (EQ-M · 2026-11-22):** matriz secundária (EDITAR histórico, `qtdConstruida`, status default do **+** = último da tarefa, soft-fail imagens) em [`migracao/m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md). Regra: App espelha Web campo a campo via `/api/tarefa/*` JWT — não inventar default `status=2` no **+**.
+
 ---
 
 ## 4b. Trilha F — fluxo PoC imutabilidade (⑥ · não substitui §1–4)
