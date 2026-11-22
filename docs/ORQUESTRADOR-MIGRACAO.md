@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish Core** (ObterObras JWT) + **EAS Homolog #9** + smoke 2.4 · etapa/tarefa Bearer = gap.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish Core** (Bearer A+B+C) + smoke APK #10 (relógio · medição · print).
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -442,7 +442,7 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | **M6 Fase 2** | **2.1–2.3** ☑ · Actions **Homolog #8 PASS** · mobile `1226078` · APK em [expo builds](https://expo.dev/accounts/rdo-app/projects/rdo-app-apontador/builds) |
 | **M5 EQ-M** | reaberto com Fase 2 |
 
-**Snapshot M6:** Fase 0–1 OK · Fase 2 CI/EAS #8 ☑ · **#1 código** ObterObras JWT + overlay ☑ · **publish/#9/2.4** ☐ · Bearer etapa/tarefa ☐
+**Snapshot M6:** Fase 0–1 OK · Fase 2 CI/EAS #8/#10 ☑ · ObterObras+A+B+C JWT **código** ☑ · **publish Core + smoke C** ☐
 
 ### Agora — **publish Core + EAS #9 + smoke 2.4**
 
@@ -453,8 +453,8 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | `historico_login` | ☑ web · JWT mobile |
 | M6 #1 (spinner) | ☑ código · Core `MobileObraLegacyController` + cookie `/api` 401 · mobile timeout 20s |
 | M6 Fase 2 CI | ☑ Homolog #8 · falta **#9** pós-#1 · [`migracao/m6-fase2-apk-homolog.md`](migracao/m6-fase2-apk-homolog.md) |
-| Gap | etapa/tarefa ainda cookie BFF |
-| Lucio agora | **1)** publish/deploy Core · **2)** EAS Homolog #9 · **3)** smoke login+obras |
+| Gap | tarefa/medição/foto ainda sem Bearer |
+| Lucio agora | **publish Core** (LoginObra+etapas) · smoke #10 login→obras→etapas |
 | Pós-FAPESC (anotado) | EDI + tokenização + smart contract → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)

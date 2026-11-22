@@ -634,12 +634,27 @@ public class TarefaCadastroSaveService
             return false;
         }
 
-        return DateTime.TryParseExact(
-            value.Trim(),
-            new[] { "dd/MM/yyyy", "yyyy-MM-dd" },
-            PtBr,
-            DateTimeStyles.None,
-            out date);
+        var v = value.Trim();
+        if (DateTime.TryParseExact(
+                v,
+                new[] { "dd/MM/yyyy", "yyyy-MM-dd", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:ss.fffZ", "yyyy-MM-ddTHH:mm:ssZ" },
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out date))
+        {
+            date = date.Date;
+            return true;
+        }
+
+        // Mobile JWT / ISO round-trip.
+        if (DateTime.TryParse(v, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out date)
+            || DateTime.TryParse(v, PtBr, DateTimeStyles.None, out date))
+        {
+            date = date.Date;
+            return true;
+        }
+
+        return false;
     }
 
     private static TimeSpan? ParseTime(string? value)

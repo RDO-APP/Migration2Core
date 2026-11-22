@@ -375,6 +375,16 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 
 **Relacionado:** §6 contratos · §6b.1 lista obras · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · [`m6-1.4-seguranca-jwt.md`](migracao/m6-1.4-seguranca-jwt.md).
 
+### Smoke Homolog #10 (21/11) — login/obras/etapas OK · 3 erros de campo
+
+| # | Sintoma UI | Causa raiz | Lição (Apontador · Piscineiro · apps) |
+|---|------------|------------|----------------------------------------|
+| **1** | Card: 2º intervalo `NaN/NaN/NaN À NaN/NaN/NaN` (ícone pacote) | Core JWT etapas devolve `primeiraExecucao`/`ultimaExecucao` em **`dd/MM/yyyy`**; o card chama `formatDate()` que faz `new Date(string)` — JS **não** parseia BR → Invalid Date → NaN. Esquerda (`dataInicio`) funciona porque **não** passa por `formatDate`. Prod legado manda **ISO** (`2024-07-29T00:00:00`). | Contrato de data **único** (preferir ISO no JSON API; formatar só na UI). Nunca `new Date('dd/MM/yyyy')`. |
+| **2** | Relógio → “Erro ao carregar histórico” | App: `POST /api/tarefa/CarregarHistoricoTarefa/`. Core **ainda sem** endpoint JWT (pacote C). → 404/erro → catch do hook. | Mesma regra § Apps: **cada botão = hop API** no mesmo esquema auth. Lista etapas ≠ histórico. |
+| **3** | Nova medição → `HTTP error 404` | Abre modal e chama `POST /api/tarefa/ObterTarefa/` (e depois Salvar/etc.). Core **sem** `/api/tarefa/*` Bearer. | “Tela abre” ≠ API pronta. Smoke de campo exige inventário: ObterTarefa · historico · Salvar · fotos · status. |
+
+**Estado JWT (A+B+C código 22/11):** login · me · ObterObras · LoginObra · etapa Get/ObterEtapaTarefa · `/api/tarefa/*` (ObterTarefa · historico · Salvar · status · relatório · imagens · horímetro · paralizações). **Gate:** publish Core + smoke APK (relógio / nova medição / print).
+
 ---
 
 ## 7. Marcos

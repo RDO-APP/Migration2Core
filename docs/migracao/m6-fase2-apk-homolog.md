@@ -55,8 +55,8 @@ CI: [`EquipamentosMobile/docs/m6-fase2-eas-homolog-ci.md`](https://github.com/RD
 
 ## Gap conhecido (API)
 
-JWT: **login + me** + **`POST /api/obra/ObterObras`** (Bearer · `MobileObraLegacyController` · 21/11).  
-Etapa/tarefa/medição ainda **cookie BFF** — jornada completa = Bearer BFF (backlog).
+JWT: **login + me** + **ObterObras** + **LoginObra** + **etapa/Get · ObterEtapaTarefa** + **`/api/tarefa/*`** (A+B+C · 22/11).  
+**Gate:** publish Core + smoke campo (relógio · nova medição · print).
 
 **Homolog #8:** login JWT OK · spinner em ObterObras (cookie HTML / sem endpoint JWT) + overlay bloqueava Home/Sair.  
 **#1 código (21/11):** Core ObterObras JWT + cookie `/api`→401 JSON · mobile overlay timeout 20s + `handleCall` AbortSignal.  
