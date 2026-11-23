@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-22 — **EQ-M** EDITAR/+ campos (qtd/status) código ☑ · matriz [`migracao/m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) · falta EAS+smoke · L1 Linux `i-0776acb09b8438f22` 
+**Atualizado:** 2026-11-22 — **EQ-M** impressora Excel/PDF (HTML.xls + base64) código ☑ · matriz S9/S10 · falta EAS+smoke · L1 Linux `i-0776acb09b8438f22` 
 
 
 
@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **EAS Apontador** (fix EDITAR/+ qtd/status) + smoke S1–S8 · Core Bearer C já publish se ⋮ OK.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **EAS Apontador** (impressora S9/S10 + tip sticky/fotos) + smoke Excel/PDF · Core Bearer C já publish se ⋮ OK.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -444,16 +444,18 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 **Snapshot M6:** Fase 0–1 OK · Fase 2 CI/EAS #8/#10 ☑ · ObterObras+A+B+C JWT **código** ☑ · **publish Core + smoke C** ☐
 
-### Agora — **EAS Apontador + smoke EDITAR/+ (S1–S8)**
+### Agora — **EAS Apontador + smoke impressora (S9–S10)**
 
 | | |
 |--|--|
 | Convite SMTP | ☑ O4x |
 | Fotos F8 | ☑ PASS · `c61d366` |
 | Bearer A+B+C + ⋮ | ☑ Core + App · ⋮ salva histórico (Lucio) |
-| EDITAR histórico / + status / qtd | ☑ código 22/11 · [`m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) · **falta EAS + smoke** |
-| M6 Fase 2 CI | ☑ Homolog #8+ · próximo build EAS p/ campos |
-| Lucio agora | **commit/push EquipamentosMobile** · EAS · smoke: + com Pausada · EDITAR qtd sem 404 · Salvar |
+| EDITAR / + / sticky / fotos | ☑ tip `6c06334`+ · Homolog #14 |
+| Impressora Excel/PDF | ☑ código 22/11 (`.xls` HTML + datas BR + base64) · [`m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) S9/S10 · **falta EAS + smoke** |
+| M6 Fase 2 CI | ☑ Homolog #8+ · próximo build EAS = tip com print fix |
+| Lucio agora | **push EquipamentosMobile** · Actions Homolog · baixar build **mais novo** · smoke: Excel abre · PDF com páginas |
+| Residual | códigos count vs RDS · GERAR APONTAMENTO off · laudo N/A |
 | Pós-FAPESC (anotado) | EDI + tokenização + smart contract → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)

@@ -387,6 +387,16 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 
 **Estado JWT (A+B+C código 22/11):** login · me · ObterObras · LoginObra · etapa Get/ObterEtapaTarefa · `/api/tarefa/*` (ObterTarefa · historico · Salvar · status · relatório · imagens · horímetro · paralizações). **Gate:** publish Core + smoke APK (relógio / nova medição / print).
 
+### Impressora controle de horas (22/11) — Excel corrompido / PDF vazio
+
+| | |
+|--|--|
+| **Sintoma** | GERAR EXCEL “arquivo corrompido” · GERAR PDF vazio/opaco |
+| **Causa** | App tratava HTML.xls do Core como OpenXML/`xlsx`; datas em ISO (fuso) em vez de `dd/MM/yyyy`; base64 curto sem rejeição; erro API engolido |
+| **Fix App** | mime `.xls` + `vnd.ms-excel` · payload datas BR · `normalizeReportBase64` · mensagem BadRequest no modal |
+| **Não confundir** | **M7-REL-HORAS-XLS** (ClosedXML web / logo) ≠ download Apontador; App deve seguir o Core **HTML.xls** atual |
+| **Smoke** | EAS tip pós-fix → Excel abre · PDF com páginas · matriz S9/S10 |
+
 ---
 
 ## 7. Marcos
