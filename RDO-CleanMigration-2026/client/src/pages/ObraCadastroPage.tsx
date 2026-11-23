@@ -335,6 +335,7 @@ export function ObraCadastroPage() {
     try {
       const result = await saveObraCadastro({
         nova: isNova,
+        idObraOrigemCopia: isCopia ? copiarId : undefined,
         descricao,
         dataInicio: form.dataInicio.trim(),
         dataPrevisaoFim: form.dataPrevisaoFim.trim(),
@@ -357,9 +358,11 @@ export function ObraCadastroPage() {
       }
       flashToast(
         'success',
-        isNova
-          ? 'Obra criada. Agora você pode adicionar colaboradores e equipamentos.'
-          : 'Registro salvo com sucesso.',
+        isCopia
+          ? 'Obra copiada com colaboradores e equipamentos da origem.'
+          : isNova
+            ? 'Obra criada. Agora você pode adicionar colaboradores e equipamentos.'
+            : 'Registro salvo com sucesso.',
       )
       // Após criar, fica no cadastro (edição) para Blocos 3/4.
       goOperador('/Obra/Cadastro')
@@ -443,8 +446,8 @@ export function ObraCadastroPage() {
           <>
             {isCopia ? (
               <p className="muted">
-                Cabeçalho pré-preenchido da obra origem. Ao salvar, cria obra nova (colaboradores e
-                equipamentos adicionar depois).
+                Cabeçalho pré-preenchido da obra origem. Ao salvar, cria obra nova e clona
+                colaboradores e equipamentos da origem.
               </p>
             ) : modo === 'visualizar' ? (
               <p className="muted">Modo visualizar — campos somente leitura.</p>

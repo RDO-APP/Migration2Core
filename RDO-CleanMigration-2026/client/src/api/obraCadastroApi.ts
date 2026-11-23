@@ -22,6 +22,8 @@ export type ObraCadastro = {
   descricaoFoto?: string
   empresas?: ObraCadastroLookup[]
   idsEmpresasDoUsuario?: number[]
+  /** Copiar obra: origem das listas colab/equip. */
+  idObraOrigemCopia?: number
 }
 
 export type ObraCadastroSaveResult = {
@@ -85,6 +87,8 @@ export async function fetchObraCadastro(
 
 export async function saveObraCadastro(body: {
   nova?: boolean
+  /** Copiar obra — clona obra_colaborador + obra_equipamento no Create. */
+  idObraOrigemCopia?: number
   descricao: string
   dataInicio: string
   dataPrevisaoFim: string

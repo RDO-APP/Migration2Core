@@ -32,11 +32,15 @@ public sealed class ObraCadastroDto
     public IReadOnlyList<ObraCadastroLookupDto> Empresas { get; init; } = [];
     /// <summary>IDs em que o usuário é dono (emp_id_colaborador) — usados para derivar papel t/d.</summary>
     public IReadOnlyList<int> IdsEmpresasDoUsuario { get; init; } = [];
+    /// <summary>Copiar obra: id da origem (listas colab/equip clonadas no Salvar).</summary>
+    public int IdObraOrigemCopia { get; init; }
 }
 
 public sealed class ObraCadastroSaveRequestDto
 {
     public bool Nova { get; init; }
+    /// <summary>Copiar obra: id origem — clona obra_colaborador + obra_equipamento no Create.</summary>
+    public int IdObraOrigemCopia { get; init; }
     public string? Descricao { get; init; }
     public string? DataInicio { get; init; }
     public string? DataPrevisaoFim { get; init; }

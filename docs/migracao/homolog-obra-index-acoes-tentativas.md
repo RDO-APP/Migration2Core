@@ -88,6 +88,8 @@ Se `Host` vazio/ausente: copiar bloco `Smtp` do Windows Staging → Linux Stagin
 3. E-mail inválido → validação sem 500.  
 4. `/convidada` → stub (**esperado**).
 
-### Copiar (O5) — ☑ 20/11 ~09:08
+### Copiar (O5) — ☑ 20/11 ~09:08 · clone listas ☑ código 23/11
 
-**Fora O4 SMTP (próximo):** aceite `/convidada` — [`homolog-convidada-aceite.md`](homolog-convidada-aceite.md) · clone colab/equip no Salvar.
+**Clone listas (23/11):** `CreateAsync` + `IdObraOrigemCopia` → `obra_colaborador` (exceto criador) + `obra_equipamento` da origem. Smoke: Copiar → Salvar → Index/cadastro da nova obra com time/frota.  
+
+**Fora O4 SMTP:** aceite `/convidada` — [`homolog-convidada-aceite.md`](homolog-convidada-aceite.md).

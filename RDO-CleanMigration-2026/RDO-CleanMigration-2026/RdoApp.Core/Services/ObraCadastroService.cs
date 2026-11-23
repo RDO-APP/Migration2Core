@@ -103,7 +103,7 @@ public class ObraCadastroService
 
     /// <summary>
     /// Copiar obra (Dia 1): cabeçalho da origem com Id=0 / Nova=true.
-    /// Não clona colaboradores/equipamentos (listas só pós-Salvar no Core).
+    /// Listas obra_colaborador / obra_equipamento clonam no <see cref="CreateAsync"/> via IdObraOrigemCopia.
     /// </summary>
     public async Task<ObraCadastroDto?> BuildCopiaAsync(
         int colaboradorId,
@@ -147,6 +147,7 @@ public class ObraCadastroService
             DescricaoFoto = "",
             Empresas = src.Empresas,
             IdsEmpresasDoUsuario = src.IdsEmpresasDoUsuario,
+            IdObraOrigemCopia = idObraOrigem,
         };
     }
 
@@ -474,6 +475,20 @@ public class ObraCadastroService
             });
             await _context.SaveChangesAsync(cancellationToken);
 
+            // Paridade prod limparDadosCopia + SalvarLista*: clona time/frota da origem.
+            if (request.IdObraOrigemCopia > 0)
+            {
+                var cloneFail = await CloneListasFromOrigemAsync(
+                    colaboradorId,
+                    request.IdObraOrigemCopia,
+                    entity.ObrIdObra,
+                    cancellationToken);
+                if (cloneFail != null)
+                {
+                    return cloneFail;
+                }
+            }
+
             // Logo depois do insert (paridade prod — precisa do obr_id).
             if (!TryApplyLogo(entity, request, out var logoFail))
             {
@@ -497,6 +512,65 @@ public class ObraCadastroService
             ObraNome = entity.ObrDsObra,
             ObraId = entity.ObrIdObra,
         };
+    }
+
+    /// <summary>
+    /// Copia vínculos obra_colaborador (exceto o criador já inserido) e obra_equipamento da obra origem.
+    /// </summary>
+    private async Task<ObraCadastroSaveResultDto?> CloneListasFromOrigemAsync(
+        int colaboradorId,
+        int idObraOrigem,
+        int idObraNova,
+        CancellationToken cancellationToken)
+    {
+        var vinculado = await _context.ObraColaboradores.AsNoTracking()
+            .AnyAsync(oc => oc.OcoIdColaborador == colaboradorId && oc.OcoIdObra == idObraOrigem, cancellationToken);
+        if (!vinculado)
+        {
+            return Fail("Obra origem da cópia não encontrada ou sem vínculo.");
+        }
+
+        var colabsOrigem = await _context.ObraColaboradores.AsNoTracking()
+            .Where(oc => oc.OcoIdObra == idObraOrigem && oc.OcoIdColaborador != colaboradorId)
+            .ToListAsync(cancellationToken);
+
+        foreach (var src in colabsOrigem)
+        {
+            _context.ObraColaboradores.Add(new ObraColaborador
+            {
+                OcoIdObra = idObraNova,
+                OcoIdColaborador = src.OcoIdColaborador,
+                OcoIdCargo = src.OcoIdCargo,
+                OcoIdGrupo = src.OcoIdGrupo,
+                OcoStContratanteContratada = src.OcoStContratanteContratada,
+                OcoDtContratacao = src.OcoDtContratacao ?? DateTime.Now.Date,
+            });
+        }
+
+        var equipsOrigem = await _context.ObraEquipamentos.AsNoTracking()
+            .Where(oe => oe.OeqIdObra == idObraOrigem)
+            .ToListAsync(cancellationToken);
+
+        foreach (var src in equipsOrigem)
+        {
+            _context.ObraEquipamentos.Add(new ObraEquipamento
+            {
+                OeqIdObra = idObraNova,
+                OeqIdEquipamento = src.OeqIdEquipamento,
+                OeqTpAquisicao = src.OeqTpAquisicao ?? "S",
+                OeqDsFabricanteFornecedor = src.OeqDsFabricanteFornecedor ?? "",
+                OeqDtAquisicao = src.OeqDtAquisicao,
+                OeqDsContato = src.OeqDsContato ?? "",
+                OeqDsTelefone = src.OeqDsTelefone ?? "",
+            });
+        }
+
+        if (colabsOrigem.Count > 0 || equipsOrigem.Count > 0)
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        return null;
     }
 
     /// <summary>

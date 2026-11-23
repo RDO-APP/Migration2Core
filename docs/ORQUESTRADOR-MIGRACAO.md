@@ -148,7 +148,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard | DOC-FICHAS residual |
 | **M5 EQ-M** | **55** | M6 Fase 2 · APK Homolog em uso (EAS) | Smoke jornada campo completa (2.4) |
 | **M6** | **72** | Fase 0–2 CI · JWT A+B+C · impressora HTML.xls · qtd Pausada · fotos A+C | Smoke 2.4 formal · OpenAPI YAML · residual LoginObra fino |
-| **M7+** | **98** | 7a–7d · P4 · P6a · Efetivo · fotos F8 · impressora layout | clone listas · **3.1**/CAT · **M7-REL-HORAS-XLS → pós-M10** · **não** P6b |
+| **M7+** | **99** | 7a–7d · P4 · P6a · Efetivo · fotos F8 · impressora · **clone listas Copiar** código | smoke clone · **M7-REL-HORAS-XLS → pós-M10** · **não** P6b |
 | **M8** | **70** | L1 Linux ☑ · roteiro publish/SSM | B3 runway &lt;2 min · CI Actions shell Linux |
 | **M9** | **35** | Dia 0 operador · host L1 | aceite D1–D7 · D4 mobile · smoke release |
 | **M10** | **5** | L1 ≠ cutover RDS | **P6b** CMS · cutover Core→`novo_rdoapp` · **depois:** ClosedXML Excel horas |
@@ -452,9 +452,9 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | EDITAR / + / sticky / fotos A+C · qtd Pausada | ☑ tip `cf83fdc`/`9c7474d`+ |
 | Validações medição (hora/horímetro · Final=0) | ☑ código App+Core 23/11 · matriz [`m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) |
 | Impressora Excel/PDF | ☑ HTML.xls · aviso formato → **M7-REL-HORAS-XLS pós-M10** |
-| Lucio agora | **1** commit/push App+Core · **2** publish/deploy L1 · **3** EAS Homolog · **4** smoke + / EDITAR |
+| Lucio agora | smoke medição (APK) · **publish/deploy** clone Copiar · smoke time/frota na obra nova |
 | Smoke mínimo | Hora ini>fim → msg · Horímetro Final 0 e ini>fim → msg · qtd Pausada bloqueada · PDF OK |
-| Residual | max fotos licença App · clone listas · **3.1**/CAT · Excel ClosedXML pós-M10 |
+| Residual | smoke clone listas Copiar · Excel ClosedXML pós-M10 · melhorias pós-Core10 (V10/3.1/CAT) |
 | Pós-FAPESC (anotado) | EDI + token → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)
@@ -465,7 +465,7 @@ A1–A3 · B1–B4 visual · C1–C3 · D1 ACEITAR · D2 SIM · D3 ACEITAR · CP
 
 **Feito:** Copiar → smoke **O5 OK** · Convite sem 500 (código) · SMTP Staging Linux em andamento (**O4u** AUTH_OK Python · browser ainda `Failure sending mail` · harden `SmtpMailService` local **não** deployado).  
 **Smoke:** [`migracao/homolog-obra-index-acoes-tentativas.md`](migracao/homolog-obra-index-acoes-tentativas.md).  
-**Atualizado 20/11:** O4 SMTP + `/convidada` C4 **PASS**. Residual Dia 1: clone colab/equip.
+**Atualizado 20/11:** O4 SMTP + `/convidada` C4 **PASS**. **23/11:** clone colab/equip no Salvar **código** — falta smoke Lucio.
 
 ### Dia 2 — Linux · **L1 FECHADO (infra · 19/11)**
 
@@ -514,7 +514,7 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | **CAT-PARALIZ-01** | Códigos por empresa | ⏸ gate L1 | |
 | **5** | Menu ☰ | ☑ | Sem Relatórios · RDOs OK |
 | — | Olho / lápis / relógio / + | ✅ | |
-| — | **Copiar obra** (Index) | ⬜ smoke O5 | Código cabeçalho ☑ · clone listas = residual |
+| — | **Copiar obra** (Index) | ☑ O5 + clone código 23/11 | Smoke: time/frota na obra nova pós-Salvar |
 
 ---
 
