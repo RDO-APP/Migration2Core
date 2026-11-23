@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-22 22:27 BRT — **EQ-M** impressora Excel/PDF (HTML.xls + base64) código ☑ · matriz S9/S10 · falta EAS+smoke · L1 Linux `i-0776acb09b8438f22` 
+**Atualizado:** 2026-11-23 12:54 BRT — **EQ-M** validações medição (hora/horímetro) + Final horímetro=0 · Core `validateTarefaForm` alinhado · Excel → **pós-M10** · L1 `i-0776acb09b8438f22` 
 
 
 
@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **EAS Apontador** (impressora S9/S10 + tip sticky/fotos) + smoke Excel/PDF · Core Bearer C já publish se ⋮ OK.
+**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish/deploy Core** + **EAS APK** · smoke Nova Medição (hora/horímetro/qtd) · **Excel = pós-M10**.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -134,24 +134,24 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-21):** homolog Core = **EC2 Linux** (TG healthy). **M6** #1 código ☑ (`ObterObras` JWT + overlay timeout) · falta **publish Core** + **EAS #9** + smoke 2.4. Residual: etapa/tarefa Bearer · clone listas · **3.1**/CAT. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-23 12:54):** homolog Core = **EC2 Linux** healthy. Validações Nova Medição (hora ini>fim · horímetro · Final=0) código App+Core ☑ · falta **commit/push + publish + EAS**. Excel **aviso+somas** = **M7-REL-HORAS-XLS pós-M10**. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
-| **M0** | **100** | **FECHADO** | branding / E2 → pós-L1 (aceito) |
-| **M0′** | **100** | **FECHADO** | HAR → pós-L1 (aceito) |
-| **M1** | **90** | Cenário **A**; v1; mapa; pacote `@rdo-app/equipamentos-api-types` (1.3) | npm público opcional |
+| **M0** | **100** | **FECHADO** | branding / E2 residual aceito |
+| **M0′** | **100** | **FECHADO** | HAR residual aceito |
+| **M1** | **90** | Cenário **A**; v1; mapa; pacote tipos (1.3) | npm público opcional |
 | **W0.5 / E2E** | **100** | **FECHADO** | — |
 | **M2** | **100** | **FECHADO** | — |
-| **M3** | **100** | **FECHADO** | E2E 6–7 N/A (D3 ACEITAR) |
-| **M4** | **100** | **FECHADO** · G5/G6/Login SPA smoke Dia 0 · congela EQ-W | fontello UI-M1/M2c = **ACEITAR** → pós-L1 |
-| **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard smoke C1–C3 | DOC-FICHAS / polish tiles → pós-L1 |
-| **M5 EQ-M** | **40** | Reaberto com M6 Fase 2 · EAS homolog APK na fila Expo | Smoke jornada campo homolog |
-| **M6** | **60** | Fase 0–1 OK · Fase 2 **2.1–2.3** · **#1** ObterObras JWT + overlay (código 21/11) | publish+**EAS #9** · **2.4** smoke · Bearer etapa/tarefa · OpenAPI · LoginObra · [`plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) |
-| **M7+** | **98** | **7a–7d** · P4 · P6a · Efetivo · Obra Salvar O3 ☑ · impressora · 1.5a · **Copiar/Convite** · **`/convidada` C4 PASS** · Fotos F8 ☑ | clone listas · **3.1**/CAT · ⋮ smoke · **não** P6b |
-| **M8** | **70** | Branch CI · roteiro · **L1 Linux ☑** `dde125e` | B3 runway &lt;2 min · CI Actions shell Linux |
-| **M9** | **35** | Dia 0 operador · L1 host estável | smoke L1 browser · D1 formal · D2–D7 · D4 mobile |
-| **M10** | **5** | L1 ≠ cutover RDS (separado) | **P6b** CMS · cutover RDS `novo_rdoapp` |
+| **M3** | **100** | **FECHADO** | — |
+| **M4** | **100** | **FECHADO** · congela EQ-W | fontello fino residual aceito |
+| **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard | DOC-FICHAS residual |
+| **M5 EQ-M** | **55** | M6 Fase 2 · APK Homolog em uso (EAS) | Smoke jornada campo completa (2.4) |
+| **M6** | **72** | Fase 0–2 CI · JWT A+B+C · impressora HTML.xls · qtd Pausada · fotos A+C | Smoke 2.4 formal · OpenAPI YAML · residual LoginObra fino |
+| **M7+** | **98** | 7a–7d · P4 · P6a · Efetivo · fotos F8 · impressora layout | clone listas · **3.1**/CAT · **M7-REL-HORAS-XLS → pós-M10** · **não** P6b |
+| **M8** | **70** | L1 Linux ☑ · roteiro publish/SSM | B3 runway &lt;2 min · CI Actions shell Linux |
+| **M9** | **35** | Dia 0 operador · host L1 | aceite D1–D7 · D4 mobile · smoke release |
+| **M10** | **5** | L1 ≠ cutover RDS | **P6b** CMS · cutover Core→`novo_rdoapp` · **depois:** ClosedXML Excel horas |
 
 ---
 
@@ -444,19 +444,18 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 **Snapshot M6:** Fase 0–1 OK · Fase 2 CI/EAS #8/#10 ☑ · ObterObras+A+B+C JWT **código** ☑ · **publish Core + smoke C** ☐
 
-### Agora — **EAS Apontador + smoke impressora (S9–S10)**
+### Agora — **publish Core + EAS APK + smoke validações medição**
 
 | | |
 |--|--|
-| Convite SMTP | ☑ O4x |
-| Fotos F8 | ☑ PASS · `c61d366` |
-| Bearer A+B+C + ⋮ | ☑ Core + App · ⋮ salva histórico (Lucio) |
-| EDITAR / + / sticky / fotos | ☑ tip `6c06334`+ · Homolog #14 |
-| Impressora Excel/PDF | ☑ código 22/11 (`.xls` HTML + datas BR + base64) · [`m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) S9/S10 · **falta EAS + smoke** |
-| M6 Fase 2 CI | ☑ Homolog #8+ · próximo build EAS = tip com print fix |
-| Lucio agora | **push EquipamentosMobile** · Actions Homolog · baixar build **mais novo** · smoke: Excel abre · PDF com páginas |
-| Residual | códigos count vs RDS · GERAR APONTAMENTO off · laudo N/A |
-| Pós-FAPESC (anotado) | EDI + tokenização + smart contract → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
+| Convite SMTP · Fotos F8 · Bearer A+B+C · ⋮ | ☑ |
+| EDITAR / + / sticky / fotos A+C · qtd Pausada | ☑ tip `cf83fdc`/`9c7474d`+ |
+| Validações medição (hora/horímetro · Final=0) | ☑ código App+Core 23/11 · matriz [`m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) |
+| Impressora Excel/PDF | ☑ HTML.xls · aviso formato → **M7-REL-HORAS-XLS pós-M10** |
+| Lucio agora | **1** commit/push App+Core · **2** publish/deploy L1 · **3** EAS Homolog · **4** smoke + / EDITAR |
+| Smoke mínimo | Hora ini>fim → msg · Horímetro Final 0 e ini>fim → msg · qtd Pausada bloqueada · PDF OK |
+| Residual | max fotos licença App · clone listas · **3.1**/CAT · Excel ClosedXML pós-M10 |
+| Pós-FAPESC (anotado) | EDI + token → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)
 

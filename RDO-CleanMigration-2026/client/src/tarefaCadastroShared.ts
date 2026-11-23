@@ -139,6 +139,24 @@ export async function fileToTarefaImagem(file: File): Promise<TarefaCadastroImag
   }
 }
 
+/** HH:mm ou HH:mm:ss → minutos desde 00:00; null se vazio/inválido. */
+export function timeToMinutes(value: string): number | null {
+  const t = (value ?? '').trim()
+  if (!t) return null
+  const parts = t.split(':')
+  if (parts.length < 2) return null
+  const h = Number(parts[0])
+  const m = Number(parts[1])
+  if (!Number.isFinite(h) || !Number.isFinite(m) || h < 0 || h > 23 || m < 0 || m > 59) {
+    return null
+  }
+  return h * 60 + m
+}
+
+/**
+ * Validações de medição alinhadas ao legado (`TarefaController.salvar`) +
+ * bloqueio hora ini > fim (App / Lucio 23/11).
+ */
 export function validateTarefaForm(form: {
   descricao: string
   idEtapa: number
@@ -148,6 +166,10 @@ export function validateTarefaForm(form: {
   dataMedicao: string
   codigoParalizacao: string
   novaMedicao: boolean
+  horaInicial?: string
+  horaFinal?: string
+  horimetroInicial?: number
+  horimetroFinal?: number
 }): string | null {
   if (form.descricao.trim().length < 3) {
     return 'Por favor, introduza pelo menos três caracteres na Descrição da Tarefa.'
@@ -170,5 +192,30 @@ export function validateTarefaForm(form: {
   if ((form.novaMedicao || form.status !== STATUS_PLANEJADA) && form.dataMedicao.replace(/\D/g, '').length < 8) {
     return 'A Data da medição deve ser preenchida.'
   }
+
+  const hiStr = (form.horaInicial ?? '').trim()
+  const hfStr = (form.horaFinal ?? '').trim()
+  if (hiStr) {
+    const mi = timeToMinutes(hiStr)
+    if (mi === null) return 'A Hora Inicial é inválida.'
+  }
+  if (hfStr) {
+    const mf = timeToMinutes(hfStr)
+    if (mf === null) return 'A Hora Final é inválida.'
+  }
+  if (hiStr && hfStr) {
+    const mi = timeToMinutes(hiStr)
+    const mf = timeToMinutes(hfStr)
+    if (mi !== null && mf !== null && mi > mf) {
+      return 'A Hora Inicial não pode ser maior que a Hora Final.'
+    }
+  }
+
+  const hIni = Number(form.horimetroInicial ?? 0)
+  const hFim = Number(form.horimetroFinal ?? 0)
+  if (Number.isFinite(hIni) && Number.isFinite(hFim) && hIni > hFim) {
+    return 'O Horímetro Inicial não pode ser maior que o Horímetro Final.'
+  }
+
   return null
 }

@@ -78,6 +78,21 @@ public class TarefaCadastroSaveService
             return Fail("O Código de Paralização deve ser preenchido.");
         }
 
+        // Paridade legado TarefaController.salvar + App: bloquear hora/horímetro ini > fim.
+        var horaIniCheck = ParseTime(request.HoraInicial);
+        var horaFimCheck = ParseTime(request.HoraFinal);
+        if (horaIniCheck is not null && horaFimCheck is not null && horaIniCheck > horaFimCheck)
+        {
+            return Fail("A Hora Inicial não pode ser maior que a Hora Final.");
+        }
+
+        var horimetroIniCheck = request.HorimetroInicial ?? 0;
+        var horimetroFimCheck = request.HorimetroFinal ?? 0;
+        if (horimetroIniCheck > horimetroFimCheck)
+        {
+            return Fail("O Horímetro Inicial não pode ser maior que o Horímetro Final.");
+        }
+
         if (!TryParseDate(request.DataInicio, out var dataInicio))
         {
             return Fail("A Data Inicial Planejada deve ser preenchida.");

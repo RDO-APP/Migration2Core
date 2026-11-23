@@ -542,6 +542,10 @@ export function TarefaCadastroPage() {
       dataMedicao,
       codigoParalizacao,
       novaMedicao,
+      horaInicial,
+      horaFinal,
+      horimetroInicial,
+      horimetroFinal,
     })
     if (msg) {
       showToast('error', msg)

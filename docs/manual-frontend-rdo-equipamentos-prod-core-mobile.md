@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Atualizado:** 2026-11-22 22:27 BRT · tip L1 **`dde125e`** · L1 Linux ☑ · M6 Homolog #8+ · impressora App § Apps (S9/S10 código) · DNA · §13 · §14 · backlog pendencias  
+**Atualizado:** 2026-11-23 12:54 BRT · tip L1 **`dde125e`** · L1 Linux ☑ · EQ-M validações medição (hora/horímetro · Final=0) código ☑ · publish+EAS pendente · Excel pós-M10 · DNA · §13 · §14  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)  
@@ -385,7 +385,7 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 | **2** | Relógio → “Erro ao carregar histórico” | App: `POST /api/tarefa/CarregarHistoricoTarefa/`. Core **ainda sem** endpoint JWT (pacote C). → 404/erro → catch do hook. | Mesma regra § Apps: **cada botão = hop API** no mesmo esquema auth. Lista etapas ≠ histórico. |
 | **3** | Nova medição → `HTTP error 404` | Abre modal e chama `POST /api/tarefa/ObterTarefa/` (e depois Salvar/etc.). Core **sem** `/api/tarefa/*` Bearer. | “Tela abre” ≠ API pronta. Smoke de campo exige inventário: ObterTarefa · historico · Salvar · fotos · status. |
 
-**Estado JWT (A+B+C código 22/11):** login · me · ObterObras · LoginObra · etapa Get/ObterEtapaTarefa · `/api/tarefa/*` (ObterTarefa · historico · Salvar · status · relatório · imagens · horímetro · paralizações). **Gate:** publish Core + smoke APK (relógio / nova medição / print).
+**Estado JWT (A+B+C código 22/11):** login · me · ObterObras · LoginObra · etapa Get/ObterEtapaTarefa · `/api/tarefa/*` (ObterTarefa · historico · Salvar · status · relatório · imagens · horímetro · paralizações). **Validações medição 23/11:** hora/horímetro ini>fim · Final=0 no **+**. **Gate:** publish Core + EAS Homolog + smoke (hora/horímetro/qtd Pausada / PDF).
 
 ### Impressora controle de horas (22/11) — Excel corrompido / PDF vazio
 

@@ -74,6 +74,10 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
       dataMedicao,
       codigoParalizacao,
       novaMedicao: true,
+      horaInicial,
+      horaFinal,
+      horimetroInicial,
+      horimetroFinal,
     })
     if (msg) {
       showToast('error', msg)
