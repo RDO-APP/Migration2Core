@@ -1,7 +1,7 @@
 # Manual técnico e gráfico (front-end) — RDO App · 5 vetores produto + FAPESC (⑥)
 
 **Escopo:** Equipamentos (obras) · Migration Core · Apontador · **Piscinas (web)** · **Piscineiro (app)** · **FAPESC 031/2026 · imutabilidade (`rdo-blockchain`)**  
-**Data:** 2026-11-21 · **Status:** tip L1 **`dde125e`** · **L1 Linux ☑** · **M6** Homolog #8 + lição **§ Apps** (spinner JWT) · **`/convidada` C4 PASS** · **DNA** [`migracao/cms-grupo-menu-pagina-prod.md`](migracao/cms-grupo-menu-pagina-prod.md) §0 · **§13 árvore** · **§14 infra AWS** [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · backlog [`pendencias-melhorias-ui-stack.md`](migracao/pendencias-melhorias-ui-stack.md)  
+**Atualizado:** 2026-11-22 22:27 BRT · tip L1 **`dde125e`** · L1 Linux ☑ · M6 Homolog #8+ · impressora App § Apps (S9/S10 código) · DNA · §13 · §14 · backlog pendencias  
 **Público:** UX, front-end (EQ-R / PQ-R futuro), mobile (EQ-M / PQ-M), QA E2E, migração  
 
 **Instância RDS (comum):** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306` · governança: [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md)  

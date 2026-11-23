@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-22 — **EQ-M** impressora Excel/PDF (HTML.xls + base64) código ☑ · matriz S9/S10 · falta EAS+smoke · L1 Linux `i-0776acb09b8438f22` 
+**Atualizado:** 2026-11-22 22:27 BRT — **EQ-M** impressora Excel/PDF (HTML.xls + base64) código ☑ · matriz S9/S10 · falta EAS+smoke · L1 Linux `i-0776acb09b8438f22` 
 
 
 
