@@ -2,7 +2,9 @@
 
 **Instância:** `equipamentos.cslrikufb7hm.us-east-2.rds.amazonaws.com:3306`  
 **Conta/região:** RDOApp · us-east-2  
-**Atualizado:** 2026-11-16  
+**Atualizado:** 2026-11-23 · cutover detalhado: [`migracao/m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md)  
+
+
 **Relacionado:** [`aws-route53-rdoapp-dns-homolog-tecnico.md`](aws-route53-rdoapp-dns-homolog-tecnico.md) §8 · orquestrador § decisões RDS
 
 Objetivo: classificar cada **catálogo (schema)** em **manter / reformar / investigar / candidato a apagar**, antes de qualquer `DROP DATABASE`.
@@ -21,7 +23,7 @@ Objetivo: classificar cada **catálogo (schema)** em **manter / reformar / inves
 | **DML** (INSERT/UPDATE conteúdo: grupo, obras demo, …) | OK para fechar gaps (ex. `Terceirizado` id 34 em 16/11) | Só se **faltante** em prod **e** Lucio OK | Conteúdo **não** precisa ser clone 1:1 (homol = subset); catálogos de perfil/CMS devem convergir |
 | **Dados de negócio** | 43 obras (subset) | 284 obras (prod) | Comparar UI sempre no **mesmo** catálogo |
 
-**Checklist ao sair da homologação:** (1) schema gêmeo · (2) lista DML homol-only a reaplicar/conferir em prod · (3) trocar connection do Core · (4) smoke operador em `novo_rdoapp`.
+**Checklist ao sair da homologação:** ver [`migracao/m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md) §1–3. Resumo: (1) Q1–Q4 limpo · (2) DDL homol foi **alcançar** prod — **não** reaplicar esses ALTER em `novo_rdoapp` · (3) DML `grupo` 34 só existia gap no **homol** (prod já tinha) · (4) connection Core → `novo_rdoapp` · (5) smoke operador.
 
 ---
 

@@ -219,29 +219,45 @@ public class GraficoQueryService
           AND LENGTH({1}) >= 0 AND LENGTH({2}) >= 0
         GROUP BY o.obr_id_obra, o.obr_ds_obra
         """;
-
+    /// <summary>
+    /// Cadastro RDO thumbs → rdo_tp_comentario_geracao P/N.
+    /// Papel t/d = obra_colaborador do gerador (rdo_id_colaborador).
+    /// Não usar rdo_tp_comentario_assinatura (Assinar grava P/N lá).
+    /// </summary>
     private const string SqlComentario = """
         SELECT obra.obr_ds_obra AS obr_ds_obra,
-          (SELECT count(rdo.rdo_tp_comentario_geracao) FROM rdo
+          (SELECT COUNT(*) FROM rdo
+           INNER JOIN obra_colaborador ocg
+             ON ocg.oco_id_obra = rdo.rdo_id_obra
+            AND ocg.oco_id_colaborador = rdo.rdo_id_colaborador
            WHERE rdo.rdo_id_obra = obra.obr_id_obra
              AND rdo.rdo_dt_rdo BETWEEN {1} AND {2}
              AND rdo.rdo_tp_comentario_geracao = 'P'
-             AND rdo.rdo_tp_comentario_assinatura = 't') AS positivo_contratante,
-          (SELECT count(rdo.rdo_tp_comentario_geracao) FROM rdo
+             AND ocg.oco_st_contratante_contratada = 't') AS positivo_contratante,
+          (SELECT COUNT(*) FROM rdo
+           INNER JOIN obra_colaborador ocg
+             ON ocg.oco_id_obra = rdo.rdo_id_obra
+            AND ocg.oco_id_colaborador = rdo.rdo_id_colaborador
            WHERE rdo.rdo_id_obra = obra.obr_id_obra
              AND rdo.rdo_dt_rdo BETWEEN {1} AND {2}
              AND rdo.rdo_tp_comentario_geracao = 'P'
-             AND rdo.rdo_tp_comentario_assinatura = 'd') AS positivo_contratada,
-          (SELECT count(rdo.rdo_tp_comentario_geracao) FROM rdo
+             AND ocg.oco_st_contratante_contratada = 'd') AS positivo_contratada,
+          (SELECT COUNT(*) FROM rdo
+           INNER JOIN obra_colaborador ocg
+             ON ocg.oco_id_obra = rdo.rdo_id_obra
+            AND ocg.oco_id_colaborador = rdo.rdo_id_colaborador
            WHERE rdo.rdo_id_obra = obra.obr_id_obra
              AND rdo.rdo_dt_rdo BETWEEN {1} AND {2}
              AND rdo.rdo_tp_comentario_geracao = 'N'
-             AND rdo.rdo_tp_comentario_assinatura = 't') AS negativo_contratante,
-          (SELECT count(rdo.rdo_tp_comentario_geracao) FROM rdo
+             AND ocg.oco_st_contratante_contratada = 't') AS negativo_contratante,
+          (SELECT COUNT(*) FROM rdo
+           INNER JOIN obra_colaborador ocg
+             ON ocg.oco_id_obra = rdo.rdo_id_obra
+            AND ocg.oco_id_colaborador = rdo.rdo_id_colaborador
            WHERE rdo.rdo_id_obra = obra.obr_id_obra
              AND rdo.rdo_dt_rdo BETWEEN {1} AND {2}
              AND rdo.rdo_tp_comentario_geracao = 'N'
-             AND rdo.rdo_tp_comentario_assinatura = 'd') AS negativo_contratada
+             AND ocg.oco_st_contratante_contratada = 'd') AS negativo_contratada
         FROM obra
         INNER JOIN obra_colaborador oc ON obra.obr_id_obra = oc.oco_id_obra
         WHERE oc.oco_id_colaborador = {0}

@@ -1,4 +1,4 @@
-﻿/** Paridade prod POST api/medicao/gerarrelatorio + Download.base64 */
+/** Paridade prod POST api/medicao/gerarrelatorio + Download.base64 */
 
 function triggerDownload(blob: Blob, fileName: string) {
   const url = URL.createObjectURL(blob)

@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-23 12:54 BRT — **EQ-M** validações medição (hora/horímetro) + Final horímetro=0 · Core `validateTarefaForm` alinhado · Excel → **pós-M10** · L1 `i-0776acb09b8438f22` 
+**Atualizado:** 2026-11-23 21:55 BRT — **M9 GO** · próximo: deploy clone+Chart Comentários · depois prep **M10**
 
 
 
@@ -124,7 +124,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem):** ver § [Próxima ação (1)](#próxima-ação-1) — **publish/deploy Core** + **EAS APK** · smoke Nova Medição (hora/horímetro/qtd) · **Excel = pós-M10**.
+**Próxima ação (ordem) — 26/11 15:09 BRT:** Chart + Excel web **OK**. Lucio: deploy homolog com Copiar obra (preview colab/equip da origem + clone ao salvar) → smoke D6.2 · testar APK Homolog (`345bc37b`, Excel `.xlsx`) · D8 (editar medição sem horas → posição no histórico) · decidir Apontador A/B (recomendado **A** no dia D) · depois **M10** pré §2 (Q1–Q4, CS prod). Melhorias (ES etc.) só após espelho 100% + prod.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -134,7 +134,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-23 12:54):** homolog Core = **EC2 Linux** healthy. Validações Nova Medição (hora ini>fim · horímetro · Final=0) código App+Core ☑ · falta **commit/push + publish + EAS**. Excel **aviso+somas** = **M7-REL-HORAS-XLS pós-M10**. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-23 16:10):** plano **M9→M10** ativo · Lucio testa D1–D7 · clone Git ☑ `d04e727` · deploy clone ☐ · APK ☑ `a319ce69` · Excel = **pós-M10**. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
@@ -150,8 +150,8 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M6** | **72** | Fase 0–2 CI · JWT A+B+C · impressora HTML.xls · qtd Pausada · fotos A+C | Smoke 2.4 formal · OpenAPI YAML · residual LoginObra fino |
 | **M7+** | **99** | 7a–7d · P4 · P6a · Efetivo · fotos F8 · impressora · **clone listas Copiar** código | smoke clone · **M7-REL-HORAS-XLS → pós-M10** · **não** P6b |
 | **M8** | **70** | L1 Linux ☑ · roteiro publish/SSM | B3 runway &lt;2 min · CI Actions shell Linux |
-| **M9** | **35** | Dia 0 operador · host L1 | aceite D1–D7 · D4 mobile · smoke release |
-| **M10** | **5** | L1 ≠ cutover RDS | **P6b** CMS · cutover Core→`novo_rdoapp` · **depois:** ClosedXML Excel horas |
+| **M9** | **40** | Dia 0 · host L1 · roteiro D1–D7 escrito | executar aceite [`migracao/m9-aceite-d1-d7.md`](migracao/m9-aceite-d1-d7.md) |
+| **M10** | **10** | Checklist cutover + inventário BD | Q1–Q4 revalidar · CS→`novo_rdoapp` · [`migracao/m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md) · **P6b**/ClosedXML pós |
 
 ---
 
@@ -444,17 +444,18 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 
 **Snapshot M6:** Fase 0–1 OK · Fase 2 CI/EAS #8/#10 ☑ · ObterObras+A+B+C JWT **código** ☑ · **publish Core + smoke C** ☐
 
-### Agora — **publish Core + EAS APK + smoke validações medição**
+### Agora — **M9 aceite D1–D7 → GO → M10 cutover**
 
 | | |
 |--|--|
-| Convite SMTP · Fotos F8 · Bearer A+B+C · ⋮ | ☑ |
-| EDITAR / + / sticky / fotos A+C · qtd Pausada | ☑ tip `cf83fdc`/`9c7474d`+ |
-| Validações medição (hora/horímetro · Final=0) | ☑ código App+Core 23/11 · matriz [`m6-apk-botoes-campos-paridade-core.md`](migracao/m6-apk-botoes-campos-paridade-core.md) |
-| Impressora Excel/PDF | ☑ HTML.xls · aviso formato → **M7-REL-HORAS-XLS pós-M10** |
-| Lucio agora | smoke medição (APK) · **publish/deploy** clone Copiar · smoke time/frota na obra nova |
-| Smoke mínimo | Hora ini>fim → msg · Horímetro Final 0 e ini>fim → msg · qtd Pausada bloqueada · PDF OK |
-| Residual | smoke clone listas Copiar · Excel ClosedXML pós-M10 · melhorias pós-Core10 (V10/3.1/CAT) |
+| Ordem fixa | **M9** ([`m9-aceite-d1-d7.md`](migracao/m9-aceite-d1-d7.md)) → **GO D7** → **M10** ([`m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md)) |
+| Pré M9 | Core tip clone ☑ `d04e727` · deploy L1 ☐ Lucio · APK Homolog ☑ EAS `a319ce69` (`42bd2e66`) |
+| Lucio agora | Marcar D1…D7 no roteiro M9 · smoke Copiar após publish |
+| M10 schema | Só **revalidar** Q1–Q4 · **sem** ALTER `novo_rdoapp` (prod já era referência) |
+| M10 dia D | Bloqueado até GO · snapshot + CS `novo_rdoapp` + TG/rollback IIS `i-05cb0003c031a26da` |
+| Pós-M10 (não bloqueia) | **M7-REL-HORAS-XLS** · **P6b** · **CAT-PARALIZ-01** · **V10** · **3.1** · CI-B3 |
+| Convite SMTP · Fotos F8 · Bearer · ⋮ · validações medição | ☑ código |
+| Impressora Excel | ☑ HTML.xls aviso → ClosedXML **pós-M10** |
 | Pós-FAPESC (anotado) | EDI + token → chat EDI · [`edi-token-projeto/README.md`](edi-token-projeto/README.md) |
 
 ### Dia 0 — FECHADO (19/11)
@@ -534,6 +535,8 @@ Inventário homolog vs prod. Detalhe rotas: [`migracao/p3-botoes-habilitacao-m7.
 | Repo PoC blockchain | https://github.com/RDO-APP/rdo-blockchain |
 | Matriz 4 telas | `matriz-4-paginas-prod-kiro-mobile.md` |
 | RDS | `rds-equipamentos-governanca-catalogos.md` |
+| M9 aceite D1–D7 | [`migracao/m9-aceite-d1-d7.md`](migracao/m9-aceite-d1-d7.md) |
+| M10 cutover + BD | [`migracao/m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md) |
 | Infra AWS (EC2/ALB/RDS/S3/…) | [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual §14 |
 | Auditoria técnica (prompt Bluey · 19/11) | [`technical-audit/`](technical-audit/README.md) · **3 objetivos** [`OBJETIVOS-RAFAEL-BLUEY.md`](technical-audit/OBJETIVOS-RAFAEL-BLUEY.md) (Item 2 = takeover) · lista `16` · **× M\*** [`18`](technical-audit/18-AUDITORIA-VS-MARCOS-M.md) |
 | Chats | `CURSOR_MAPA_CHATS.md` |

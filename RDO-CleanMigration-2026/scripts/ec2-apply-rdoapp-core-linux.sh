@@ -112,7 +112,9 @@ fi
 systemctl daemon-reload
 systemctl restart "$SERVICE_NAME"
 sleep 3
-systemctl --no-pager --full status "$SERVICE_NAME" || true
+# Evita U+25CF (●) no stdout — quebra aws CLI no Windows (charmap) ao ler SSM.
+echo "service=$(systemctl is-active "$SERVICE_NAME" 2>/dev/null || echo unknown)"
+systemctl --no-pager --full status "$SERVICE_NAME" 2>&1 | sed 's/\xE2\x97\x8F/*/g' || true
 
 smoke_get() {
   local url="$1"

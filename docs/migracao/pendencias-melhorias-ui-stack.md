@@ -1,9 +1,22 @@
 # Pendências — melhorias de stack UI (EQ-R homolog)
 
-**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-18  
-**Gate Lucio 18/11:** **3.1** · **CAT-PARALIZ-01** · e **todas** as melhorias desta lista (**M7-REL-***, I18N, DOC-FICHAS, UI-M3, foto-geo, etc.) **só** depois de (A) homolog espelhando **100%** produção **e** (B) Core em **EC2 Linux (L1)**. Até lá: só fechar espelho/paridade + smoke/deploy.  
-**P3 em curso:** impressora deploy/smoke · LISTA **2.1** smoke · menu ☰ se gap de espelho — orquestrador § Pendências P3.  
+**Trilha:** EQ-R · **Repo:** `RDO-APP/Migration2Core` · **Atualizado:** 2026-11-21  
+**Gate Lucio 18/11:** **3.1** · **CAT-PARALIZ-01** · e **todas** as melhorias desta lista (**M7-REL-***, I18N, DOC-FICHAS, UI-M3, foto-geo, etc.) **só** depois de (A) espelho aceito **e** (B) Core em **EC2 Linux (L1)**.  
+**Dia 0 (19/11) FECHADO** — M0/M0′/W0.5/M3/M4/M5 web FECHADOS com residual abaixo.  
 **Contexto:** paridade **P1–P5a** usa DOM/classes do prod Angular/BS3 **sem** rodar Angular. Modernização “limpa” (item **UI-M3**) fica **depois** de M4.7 fechado + **M7** estável — **não** big-bang no meio da paridade.
+
+### Residual Dia 0 → pós-Linux (aceito 19/11)
+
+| ID | Residual | Vinculo marco |
+|----|----------|---------------|
+| — | Branding homolog / E2 localhost | M0 |
+| — | HAR API prod | M0′ |
+| **UI-M1 / UI-M2c** | Fontello/FA fino (D1 ACEITAR) | M4 |
+| **DOC-FICHAS** | Fichas manuais §13 restantes | M5 web |
+| — | Polish tiles Chart | M5 web |
+| **UI-M5** SMTP | Config SMTP EC2 homolog (D2 SIM) | P1 |
+| **UI-M5b** | Esqueci senha polish fino (ícones/FA, faixa, tipografia) | P1 |
+| **M7-REL-*** / I18N / UI-M3 / 3.1 / CAT / … | Já na tabela abaixo | M7+ |
 
 **Não confundir:** endpoint BFF `GET /api/bff/rdos/cadastro/bootstrap` (dados iniciais do formulário M7) **≠** framework **Bootstrap** (CSS em `/lib/bootstrap/dist/css/bootstrap.min.css`).
 
@@ -94,11 +107,12 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **UI-M2d** | **Drawer menu mobile:** CSS prod — gap **logo ↔ ☰**, hamburger 63px desktop · `operador-shell.css` **2026-10-26** | P | **M4.7g** | 🟡 smoke Lucio |
 | **UI-P3-1.5a** | Cadastro etapa: botões **Voltar / SALVAR** inline | P | smoke 1.5 ✅ 05/11 | ✅ smoke Lucio 18/11 · tip `10616e0` · SALVAR ✓ opcional |
 | **UI-M4-layout** | Faixa desktop **FILTRO / ADICIONAR TAREFA / ETAPA** — alinhamento e tamanho vs prod (Lucio aceita menor hoje; refinamento no redesign) | P | **UI-M3** (Fase B) | ⏸ |
-| **UI-M5** | Esqueci senha: visual ≈ prod (logo + fundo) ☑ código 19/11 · **SMTP homolog** ainda config EC2 | P | M4.8 | 🟡 visual local · SMTP ☐ |
+| **UI-M5** | Esqueci senha: logo + fundo ☑ smoke 19/11 · **SMTP homolog** config EC2 · **UI-M5b** polish fino (ícones/FA, faixa vazia, tipografia ≈ prod Angular) = **pós-Linux** | P | M4.8 / gate L1 | 🟡 SMTP ☐ · polish **UI-M5b** ⏸ L1 |
 | **M5-nav** | **Menu 9 itens:** cada `href` legado → MVC `EmMigracao` ou rota Core · mapa `LegacyOperadorRoutes` + `ModuloLegadoController` **2026-10-26** | M | **M5** + trilha **M4.7g** stubs | 🟡 smoke G5 |
 | **M7-P3** | **SELECIONAR TUDO** — marcar cards + fluxo alterar status em massa (prod main.js + modal) | M | **M7** · não UI-M3 | ✅ smoke 05/11 |
 | **CAT-PARALIZ-01** | **Códigos de paralisação por empresa** — hoje `tarefa_codigo_paralizacao` é **global** (PK = código 3 chars). Melhor: `tarcp_id_empresa` + PK composta `(empresa, código)`; telas/APIs filtram pela empresa da sessão/obra; migrar clonando os ~22 códigos por empresa; join descrição = código+empresa. **Evitar** prefixo no código e escopo por obra. Até o ALTER: **não** liberar CRUD de paralização a cliente (só admin RDO). Relacionado **3.1** (⋮ Pausada). **Proibido** `ALTER novo_rdoapp` sem Lucio. | G | **M7+** (dados/tenant) | ⬜ backlog 06/11 |
 | **DOC-DNA-01** | **DNA perfis / #29 dono** — admin prod `380…` ≠ smoke homolog `538…`. Material CSV/prints 16/11 (GPA/acao/menu/pagina/parametro) no § abaixo. **Não** analisar agora; espelhar prod→homol primeiro. Canônico cms §0/§6 · **#29**. | M | **#29** pós-M7 · ≠ P6b M10 | ⬜ backlog · material 16/11 |
+| **EQ-M-GPA-01** | **Apontador: ações por GPA (não CMS 1:1)** — mobile herda **ações** do `grupo` da obra (`grupo_pagina_acao` / flags no login·obra); **não** portar drawer `#/grupo` `#/menu` `#/pagina`. Hoje card campo tem menos botões (sem olho/lápis) por desenho de produto, **não** por CPF `380…`. Após DNA/#29 + Bearer BFF: expor flags → UI consome. Olho/lápis no app **só** se ação GPA + decisão de produto. | G | **M6+** / pós **DOC-DNA-01** · **≠** P6b | ⬜ decisão Lucio 21/11 · § abaixo |
 | **I18N-ES-01** | **Espanhol nas páginas (UI)** — catálogo `pt-BR`/`es` só no React homolog (EQ-R); **sem** CPF/doc estrangeiro, máscaras, schema ou login identity. Plano fechado § abaixo. | M | **M7+** / pós-paridade tela · **antes** de DOC-ID-PAIS | ⬜ backlog 13/11 |
 | **M7-FOTO-PERSIST** | **Gravar foto** em Nova Medição / cadastro tarefa: Escolher+Adicionar enviava só blob local; agora `listaImagens[].base64` → BFF → `Uploads/Imagens/{obra}/{tarefa}/{yyyyMM}/` + row `imagem`. | M | **M7+** P4 | 🟡 código 15/11 · smoke pós-deploy |
 | **M7-FOTO-PASTA-MES** | Separar fotos (RDO fotográfico / Uploads) em **pastas por mês**. Save novo já grava `{yyyyMM}`; restante: consolidar paths legados + opcional agrupar no PDF. | M | **M7+** | 🟡 parcial (path novo) |
@@ -111,7 +125,7 @@ Prioridade **dentro do M4** antes de **UI-M3**:
 | **M7-PDF-FOTO-LEGENDA** | **Legenda manual** antes de imprimir: campo texto por foto na galeria do Novo RDO → persiste → imprime sob a miniatura no PDF. | M | **M7+** | ⬜ backlog 16/11 |
 | **M7-REL-EFETIVO-LAYOUT** | Relatório Efetivo PDF/Excel ≈ RDLC. **PDF logo OK**. Excel layout OK (17/11). Célula texto **rdo** = placeholder HTML — **trocar por logo bitmap** (foto obra / brand) via **ClosedXML** no mesmo PR que Medição. | M | **M7+** | 🟡 layout OK · **logo bitmap Excel = item Lucio 17/11** |
 | **M7-REL-MEDICAO-LAYOUT** | Relatório Medição: PDF tabela OK (M6). Excel grade OK; logo = mesmo placeholder **rdo**. **Item:** logo bitmap Excel Medição **+** Efetivo juntos (ClosedXML). | M | **M7+** | 🟡 M6 smoke · **logo bitmap = item** 17/11 |
-| **M7-REL-HORAS-XLS** | Impressora Controle de Horas: Excel HTML.xls — layout OK (18/11). **Pendências ClosedXML (.xlsx):** (1) logo bitmap obra (hoje placeholder **rdo**); (2) aviso Excel “formato e extensão não coincidem” (HTML ≠ BIFF). PDF layout alinhado ao Excel 18/11. | M | **M7+** | 🟡 layout Excel OK · logo+aviso = item Lucio 18/11 |
+| **M7-REL-HORAS-XLS** | Impressora Controle de Horas: **22/11** Core → **`.xlsx` OOXML** (I5; HTML-.xls quebrava no Excel Android). Residual: logo bitmap obra (célula **rdo**); polish layout vs RDLC. PDF QuestPDF OK. | M | **M7+** | 🟡 xlsx código · logo bitmap = backlog |
 | **M7-COLAB-TERCEIRIZADO** | Perfil **Terceirizado** no dropdown: gap era **DML** — homol sem row; prod já tinha `34`. **INSERT** `grupo` 34 em `homol_rdoapp` 16/11 (espelho prod). Código extras + smoke pós-deploy. | M | **M7+** | 🟡 DML OK · smoke UI pendente |
 | **M7-REL-EFETIVO-HIST** | **Histórico de relatórios de Efetivo Diário** (como listagem de RDOs): tabela com período gerado, quem gerou, data/hora da geração, botões Excel/PDF (re-download), filtros. Exige persistir metadados a cada GERAR (schema + LGPD). | G | **M7+** | ⬜ backlog 16/11 |
 | **M7-EFETIVO-NOVO-MODAL** | **Adicionar Colaborador** no Efetivo: hoje botão → `/Colaborador/Cadastro` + ícone `fa-users`; paridade prod = modal `#novo-colaborador` na própria página. | M | **M7+** | ⬜ parcial (botão+rota+ícone) 16/11 |
@@ -188,8 +202,27 @@ flowchart LR
 | 4 | Modelo dono: empresa Loja × `obra.obr_id_dono` × usuário que atribui |
 | 5 | Fluxo UI #29 + efeito de troca de plano Loja |
 | 6 | § único: admin CPF ≠ dono ≠ Operador obra |
+| 7 | **EQ-M-GPA-01** — mapa ações GPA → flags no contrato mobile (login/obra); sem CMS drawer no APK |
 
 **ID backlog:** **DOC-DNA-01** · issue **#29** · **≠** P6b (M10) · ver [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md).
+
+---
+
+## EQ-M — GPA no Apontador (EQ-M-GPA-01) · decisão 21/11
+
+**Problema:** card mobile tem menos botões que o web (sem olho/lápis; Chart oculto no flavor Apontador). Isso é **desenho de campo**, não GPA do CPF admin `380…`.
+
+**Decisão Lucio (21/11):** no futuro o mobile **segue o espírito** do DNA — herda **ações** do `grupo` da obra — **não** o CMS menu/página 1:1.
+
+| Camada | Web | Mobile alvo |
+|--------|-----|-------------|
+| Drawer `#/grupo` `#/menu` `#/pagina` | P6b / admin | **não** portar |
+| Ações GPA (editar, status, gerar RDO, …) | shell / GPA | **sim** — flags no login/obra |
+| Admin `380…` / P6b | plataforma | **fora** do Apontador |
+
+**Pré-requisitos:** **DOC-DNA-01** / **#29** · Bearer BFF (M6) · contrato de flags. Olho/lápis no app só se ação GPA **e** produto quiser cadastro no campo.
+
+**ID backlog:** **EQ-M-GPA-01** · trilha **EQ-M** · **≠** P6b.
 
 ---
 
@@ -297,7 +330,7 @@ Tabela **`imagem`** (aditivo — **proibido** `ALTER novo_rdoapp` sem Lucio):
 - Paridade blocos: [`manual-frontend-rdo-equipamentos-prod-core-mobile.md`](../manual-frontend-rdo-equipamentos-prod-core-mobile.md) §10  
 - M4 checklist: [`m4-execucao-checklist.md`](m4-execucao-checklist.md)  
 - Decisão React vs Razor: [`migracao-frontend-razor-react-decisao.md`](../migracao-frontend-razor-react-decisao.md)  
-- Orquestrador: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § Pendências melhorias UI · § DNA / **#29**  
+- Orquestrador: [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md) § Melhorias produto · § DNA / **#29** · **EQ-M-GPA-01**  
 - CMS DNA: [`cms-grupo-menu-pagina-prod.md`](cms-grupo-menu-pagina-prod.md) §0 / §6  
 
 

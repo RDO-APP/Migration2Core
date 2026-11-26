@@ -81,7 +81,7 @@ export async function downloadRelatorioHorasEquipamento(
   const star = /filename\*=UTF-8''([^;]+)/i.exec(cd)
   const quoted = /filename="?([^";]+)"?/i.exec(cd)
   const name = decodeURIComponent(
-    star?.[1] ?? quoted?.[1] ?? `relatorio-horas.${body.tipoRelatorio === 'Excel' ? 'xls' : 'pdf'}`,
+    star?.[1] ?? quoted?.[1] ?? `relatorio-horas.${body.tipoRelatorio === 'Excel' ? 'xlsx' : 'pdf'}`,
   )
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')

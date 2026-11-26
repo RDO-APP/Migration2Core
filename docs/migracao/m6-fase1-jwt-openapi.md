@@ -29,9 +29,9 @@ Core hoje: BFF cookie em `/api/bff/*` + slice JWT em `/api/mobile/auth/*`.
 |------|-------------------|-------------------|-----|
 | Auth login | `POST /api/login/LoginUser` | `POST /api/mobile/auth/login` (JWT) · cookie SPA `/Account/Login` | Sem paridade surface LoginUser ainda |
 | Sessão / me | implícito no app | `GET /api/mobile/auth/me` (Bearer) | OK slice 1.2 |
-| Login obra | `POST /api/Usuario/LoginObra` | BFF obras/shell (cookie) | JWT + LoginObra **pending** |
-| Obras | `POST /api/obra/ObterObras` | `/api/bff/obras` (cookie) | Bearer mobile **pending** |
-| Etapas | `GET /api/etapa/Get` | `/api/bff/etapas` (cookie) | Bearer mobile **pending** |
+| Login obra | `POST /api/Usuario/LoginObra` | BFF obras/shell (cookie) | **JWT** `MobileUsuarioLegacyController` (21/11) |
+| Obras | `POST /api/obra/ObterObras` | `/api/bff/obras` (cookie) | **JWT** `MobileObraLegacyController` |
+| Etapas | `GET /api/etapa/Get` · `ObterEtapaTarefa` | `/api/bff/etapas` (cookie) | **JWT** `MobileEtapaLegacyController` (esqueleto) |
 | Tarefa / medição / foto | vários `/api/tarefa/*` | BFF tarefas/medição (cookie) | Bearer mobile **pending** |
 | Recuperar senha | `POST /api/colaborador/RecuperarSenha` | fluxo web Account | Mobile **pending** |
 

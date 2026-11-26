@@ -30,6 +30,12 @@ Arquivos: `TarefaStatusUpdateService.cs`.
 2. Histórico: linha nova com **Data** + **Hora Inicial/Final** preenchidas (não `—`).
 3. Sem RDO assinado naquele id → lápis Editar visível.
 
+## Regressão data D+1 (20/11 ~22h · Lucio)
+
+**Sintoma:** ⋮ gravou **21/11** com horas **01:07** (iguais = OK) enquanto no Brasil era **20/11 ~22h**.  
+**Causa:** EC2 Linux `DateTime.Now` = **UTC** → à noite BRT vira dia seguinte.  
+**Fix:** `AgoraBrasil()` (`America/Sao_Paulo`) em `TarefaStatusUpdateService` — **publish/deploy** antes de retestar.
+
 ## Relacionado
 
 - Fotos: [`homolog-p4-foto-tentativas.md`](homolog-p4-foto-tentativas.md) **F8** (`imagensGravadas`)

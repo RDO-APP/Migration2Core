@@ -17,17 +17,23 @@ public class BffObrasController : ControllerBase
     private readonly ObraIndexService _obraIndex;
     private readonly LoginObraService _loginObra;
     private readonly ObraCadastroService _cadastro;
+    private readonly ColaboradorIndexService _colabIndex;
+    private readonly EquipamentoIndexService _equipIndex;
 
     public BffObrasController(
         ObrasQueryService obras,
         ObraIndexService obraIndex,
         LoginObraService loginObra,
-        ObraCadastroService cadastro)
+        ObraCadastroService cadastro,
+        ColaboradorIndexService colabIndex,
+        EquipamentoIndexService equipIndex)
     {
         _obras = obras;
         _obraIndex = obraIndex;
         _loginObra = loginObra;
         _cadastro = cadastro;
+        _colabIndex = colabIndex;
+        _equipIndex = equipIndex;
     }
 
     /// <summary>M4.4 — obras do colaborador logado (cookie session).</summary>
@@ -246,6 +252,46 @@ public class BffObrasController : ControllerBase
     private static bool IsNovaQuery(string? nova) =>
         string.Equals(nova, "1", StringComparison.OrdinalIgnoreCase)
         || string.Equals(nova, "true", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Copiar obra: pré-visualiza colaboradores/equipamentos da origem (serão clonados ao Salvar).
+    /// </summary>
+    [HttpGet("cadastro/copia-vinculos")]
+    public async Task<IActionResult> GetCopiaVinculos(
+        [FromQuery] int copiar,
+        CancellationToken cancellationToken = default)
+    {
+        if (copiar <= 0)
+        {
+            return BadRequest(new { message = "Obra origem inválida." });
+        }
+
+        if (!TryColaboradorId(out var colabId))
+        {
+            return Unauthorized(new { message = "Sessão inválida." });
+        }
+
+        if (!ObraIndexService.CanObraLista(HttpContext, "copiarObra"))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden,
+                new { message = "Sem permissão para copiar obra." });
+        }
+
+        var origem = await _cadastro.BuildCopiaAsync(colabId, copiar, cancellationToken);
+        if (origem == null)
+        {
+            return NotFound(new { message = "Obra origem não encontrada ou sem vínculo." });
+        }
+
+        var cols = await _colabIndex.ListAsync(
+            HttpContext, copiar, new ColaboradorIndexFilterDto { Sexo = "S" }, origem.Descricao, cancellationToken);
+        var eqs = await _equipIndex.ListAsync(
+            copiar, new EquipamentoIndexFilterDto { TipoAquisicao = "S" }, origem.Descricao, cancellationToken);
+
+        // Criador da cópia já entra sozinho; os demais são clonados no Create.
+        var colabsPreview = cols.Items.Where(c => c.IdColaborador != colabId).ToList();
+        return Ok(new { colaboradores = colabsPreview, equipamentos = eqs.Items });
+    }
 
     [HttpGet("cadastro")]
     public async Task<IActionResult> GetCadastro(

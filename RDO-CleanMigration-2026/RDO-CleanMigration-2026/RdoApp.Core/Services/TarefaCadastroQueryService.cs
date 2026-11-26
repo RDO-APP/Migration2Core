@@ -136,7 +136,9 @@ public class TarefaCadastroQueryService
                 on tar.TarIdColaboradorInsercao equals col.ColIdColaborador into cols
             from col in cols.DefaultIfEmpty()
             where tar.TarNrAgrupador == t.TarNrAgrupador
-            orderby tar.TarDtMedicao descending, tar.TarDtMedicaoHoraInicial descending, tar.TarDtUltimaAtualizacao descending
+            // Paridade prod PreencherHistoricoTarefa: data DESC, hora ini DESC, atualização DESC.
+            // NULL de hora = 'sem apontamento' → trata como Zero p/ não flutuar acima de linhas com hora (MySQL NULLS FIRST em DESC).
+            orderby tar.TarDtMedicao descending, (tar.TarDtMedicaoHoraInicial ?? TimeSpan.Zero) descending, tar.TarDtUltimaAtualizacao descending
             select new
             {
                 tar.TarIdTarefa,

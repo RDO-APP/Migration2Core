@@ -14,6 +14,7 @@
 | **I2** | 2026-11-18 ~08:45 | Excel colunas cortadas · sem totais | SpreadsheetML sem larguras | Excel → HTML.xls + cabeçalhos + linha/faixa **Totais** | código local |
 | **I3** | 2026-11-18 ~14:30 | Layout Excel ≈ prod; PDF fraco; logo Excel **rdo**; aviso formato/extensão | PDF sem grupos/totais; HTML.xls ≠ BIFF | PDF = grade Excel; colgroup ####; pendência **M7-REL-HORAS-XLS** (ClosedXML logo+aviso) | código local · smoke pós-deploy |
 | **I4** | 2026-11-18 ~17:55 | Smoke **B** relógio + **A** Excel | — | Lucio: Horas Trabalhadas OK · Excel layout/totais OK · logo rdo backlog · **C** dia útil depois | ☑ A+B · seguir checklist 2.1 |
+| **I5** | 2026-11-22 ~21:15 | App: Excel “corrompido” · PDF vazio | (1) App `toISOString` ≠ Web `dd/MM/yyyy` (2) Core HTML-.xls rejeitado no Excel Android | App datas BR · Core `.xlsx` OOXML · `TryParseBrDate` flex | ☑ código · falta deploy Core + EAS Homolog **#16** |
 
 ---
 

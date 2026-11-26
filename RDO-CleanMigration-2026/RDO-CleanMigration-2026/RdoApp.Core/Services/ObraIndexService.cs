@@ -215,16 +215,17 @@ public class ObraIndexService
             return Fail("Obra não encontrada ou sem permissão.");
         }
 
-        var entity = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == idObra, cancellationToken);
-        if (entity == null)
+        // Não materializar entidade Obra completa (Pomelo DBNull→String em colunas NULL).
+        var existe = await _context.Obras.AsNoTracking()
+            .AnyAsync(o => o.ObrIdObra == idObra, cancellationToken);
+        if (!existe)
         {
             return Fail("Obra não encontrada.");
         }
 
-        _context.Obras.Remove(entity);
         try
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.Obras.Where(o => o.ObrIdObra == idObra).ExecuteDeleteAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -260,7 +261,17 @@ public class ObraIndexService
                 return Fail("Obra não encontrada ou sem permissão.");
             }
 
-            var obra = await _context.Obras.FirstOrDefaultAsync(o => o.ObrIdObra == request.IdObra, cancellationToken);
+            // Select parcial + (string?) — mesma família L13 / cadastro Obra (não FirstOrDefault entidade).
+            var obra = await _context.Obras.AsNoTracking()
+                .Where(o => o.ObrIdObra == request.IdObra)
+                .Select(o => new
+                {
+                    o.ObrIdObra,
+                    Nome = (string?)o.ObrDsObra,
+                    o.ObrIdEmpresaContratada,
+                    o.ObrIdEmpresaContratante
+                })
+                .FirstOrDefaultAsync(cancellationToken);
             if (obra == null)
             {
                 return Fail("Obra não encontrada.");
@@ -286,8 +297,12 @@ public class ObraIndexService
             }
 
             // Paridade prod: Guid com hífens (varchar 36).
-            obra.ObrCdConvite = Guid.NewGuid().ToString();
-            await _context.SaveChangesAsync(cancellationToken);
+            var codigoConvite = Guid.NewGuid().ToString();
+            await _context.Obras
+                .Where(o => o.ObrIdObra == request.IdObra)
+                .ExecuteUpdateAsync(
+                    s => s.SetProperty(o => o.ObrCdConvite, codigoConvite),
+                    cancellationToken);
 
             var baseUrl = (publicBaseUrl ?? "").TrimEnd('/');
             if (baseUrl.Length == 0)
@@ -295,9 +310,10 @@ public class ObraIndexService
                 baseUrl = (_configuration["App:PublicBaseUrl"] ?? "https://homolog.sistema.rdoapp.com.br").TrimEnd('/');
             }
 
-            var link = $"{baseUrl}/convidada?o={obra.ObrCdConvite}";
+            var link = $"{baseUrl}/convidada?o={codigoConvite}";
+            var nomeObra = obra.Nome ?? "";
             var html =
-                $"<p>Prezado Usuario(a):<br/><br/>Este é um convite para ser {papel} na obra <strong>{System.Net.WebUtility.HtmlEncode(obra.ObrDsObra)}</strong>.<br/>Para aceitar acesse o link: {link}</p><p>Atenciosamente,</p>";
+                $"<p>Prezado Usuario(a):<br/><br/>Este é um convite para ser {papel} na obra <strong>{System.Net.WebUtility.HtmlEncode(nomeObra)}</strong>.<br/>Para aceitar acesse o link: {link}</p><p>Atenciosamente,</p>";
 
             try
             {

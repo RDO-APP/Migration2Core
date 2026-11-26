@@ -15,6 +15,8 @@
 | **M6** Apontador (Fase 0→JWT) | [`migracao/plano-m6-mobile-jwt.md`](migracao/plano-m6-mobile-jwt.md) · checklist [`migracao/m6-fase0-baseline-apk-prod.md`](migracao/m6-fase0-baseline-apk-prod.md) |
 | Ops RDS / Dimas (referência) | [`ops/README.md`](ops/README.md) |
 | Governança catálogos RDS | [`rds-equipamentos-governanca-catalogos.md`](rds-equipamentos-governanca-catalogos.md) · diff ①×② [`scripts/homol-vs-prod-schema-diff.sql`](scripts/homol-vs-prod-schema-diff.sql) |
+| **M9** aceite D1–D7 | [`migracao/m9-aceite-d1-d7.md`](migracao/m9-aceite-d1-d7.md) |
+| **M10** cutover Core→prod | [`migracao/m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md) · BD homol×novo |
 | Infra nuvem AWS (EC2/ALB/RDS/S3/…) | [`migracao/infraestrutura-nuvem-aws-rdo.md`](migracao/infraestrutura-nuvem-aws-rdo.md) · manual §14 |
 | **L1 Linux homolog** (2026-11-19) | [`migracao/plano-dia2-l1-linux.md`](migracao/plano-dia2-l1-linux.md) · [`../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md`](../RDO-CleanMigration-2026/DEPLOY-HOMOLOG-LINUX-EC2.md) · EC2 `i-0776acb09b8438f22` |
 | Git push (agente) | [`migracao/git-push-checklist.md`](migracao/git-push-checklist.md) |

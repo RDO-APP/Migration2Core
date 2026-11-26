@@ -14,8 +14,9 @@
 |---|---------------|----------------|-------------|----------|-----------|
 | **O0** | 2026-11-18 ~17:30 | HTTP **500** ao Salvar obra (banner genérico / sem detalhe) | Exception no `SaveAsync` sem catch → pipeline HTML 500; SPA mascara | try/catch → `Fail("Erro ao salvar obra: …")` + BadRequest (tip **`5b62953`**) | ☑ mensagem chega no browser · causa raiz **não** resolvida |
 | **O1** | 2026-11-18 ~19:25 | `Erro ao salvar obra: Unable to cast object of type 'System.DBNull' to type 'System.String'.` | Catch O0 OK; cast na gravação/materialização `Obra` (coluna string NULL em `homol_rdoapp.obra`) — mesma família PDF L10 / create `f389736` | ver **O2** | ☑ sintoma Dia 0 |
-| **O2** | 2026-11-18 ~19:45 | (código) | Edit: `FirstOrDefault` entidade completa | `Select` meta + `ExecuteUpdateAsync` (sem materializar strings NULL) | código local · smoke pós-deploy |
+| **O2** | 2026-11-18 ~19:45 | (código) | Edit: `FirstOrDefault` entidade completa | `Select` meta + `ExecuteUpdateAsync` (sem materializar strings NULL) | código local |
 | **O2b** | 2026-11-18 ~19:50 | (código preventivo) | GET bootstrap: `EmpNmFantasia` `string` + NULL → mesmo cast (Pomelo `??` ainda GetString) | `Nome = (string?)e.EmpNmFantasia ?? ""` em `LoadEmpresasCadastroAsync` | código local |
+| **O3** | 2026-11-19 ~12:51 | Smoke editar + Salvar obra | — | Lucio: OK (CPF `824.351.035-49`) | ☑ A1 Dia 0 |
 
 ---
 

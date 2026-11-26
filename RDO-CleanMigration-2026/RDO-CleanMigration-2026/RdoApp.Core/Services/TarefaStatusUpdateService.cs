@@ -60,7 +60,7 @@ public class TarefaStatusUpdateService
                     .FirstOrDefaultAsync(t => t.TarIdTarefa == tarefaId, cancellationToken);
                 if (tracked != null)
                 {
-                    tracked.TarDtFim = DateTime.Today;
+                    tracked.TarDtFim = AgoraBrasil().Date;
                     await _context.SaveChangesAsync(cancellationToken);
                 }
             }
@@ -69,7 +69,9 @@ public class TarefaStatusUpdateService
         }
 
         // ⋮ rápido: nova linha com data + hora do clique (sem abrir Nova Medição).
-        var agora = DateTime.Now;
+        // EC2 Linux = UTC; usar America/Sao_Paulo senão data vira D+1 à noite no Brasil.
+        var agora = AgoraBrasil();
+        var dataMedicao = agora.Date;
         var horaAgora = new TimeSpan(agora.Hour, agora.Minute, 0);
 
         var clone = new Tarefa
@@ -82,13 +84,13 @@ public class TarefaStatusUpdateService
             TarNrQtdConstruida = 0,
             TarDtInicio = entity.TarDtInicio,
             TarDtPrevisaoFim = entity.TarDtPrevisaoFim,
-            TarDtFim = idStatus == StatusFinalizada ? DateTime.Today : entity.TarDtFim,
+            TarDtFim = idStatus == StatusFinalizada ? dataMedicao : entity.TarDtFim,
             TarDsComentario = "",
             TarDsFoto = "",
             TarNrHorasTrabalhadas = 0,
             TarDtMedicaoHoraInicial = horaAgora,
             TarDtMedicaoHoraFinal = horaAgora,
-            TarDtMedicao = agora,
+            TarDtMedicao = dataMedicao,
             TarVlValorUnitario = entity.TarVlValorUnitario,
             TarIdColaboradorInsercao = colaboradorId > 0 ? colaboradorId : entity.TarIdColaboradorInsercao,
             TarDtInsercao = agora,
@@ -159,4 +161,14 @@ public class TarefaStatusUpdateService
 
     private static TarefaStatusUpdateResultDto Fail(string message) =>
         new() { Ok = false, ErrorMessage = message };
+
+    /// <summary>Horário de Brasília (Linux: America/Sao_Paulo · Windows: E. South America Standard Time).</summary>
+    private static DateTime AgoraBrasil()
+    {
+        var tzId = OperatingSystem.IsWindows()
+            ? "E. South America Standard Time"
+            : "America/Sao_Paulo";
+        var tz = TimeZoneInfo.FindSystemTimeZoneById(tzId);
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+    }
 }

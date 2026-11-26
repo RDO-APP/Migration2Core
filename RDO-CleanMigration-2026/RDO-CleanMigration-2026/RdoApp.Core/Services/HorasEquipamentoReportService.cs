@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO.Compression;
 using System.Net;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
@@ -151,21 +152,21 @@ public sealed class HorasEquipamentoReportService
             $"{dataInicial:dd/MM/yyyy HH:mm:ss} A {dataFimInclusive:dd/MM/yyyy HH:mm:ss}";
         var excel = string.Equals(request.TipoRelatorio, "Excel", StringComparison.OrdinalIgnoreCase);
         var bytes = excel
-            ? BuildExcel(obraNome, descricao, periodo, rows, logoBytes)
+            ? BuildExcelXlsx(obraNome, descricao, periodo, rows)
             : BuildPdf(obraNome, descricao, periodo, rows, logoBytes);
 
         var di = dataInicial.ToString("dd-MM-yyyy", PtBr);
         var df = dataFinal.ToString("dd-MM-yyyy", PtBr);
         var nome =
             $"Controle_de_Horas_{Sanitize(obraNome)}__{Sanitize(descricao)}__{di}__ate__{df}"
-            + (excel ? ".xls" : ".pdf");
+            + (excel ? ".xlsx" : ".pdf");
 
         return new HorasEquipamentoReportResult
         {
             Bytes = bytes,
             FileName = nome,
             ContentType = excel
-                ? "application/vnd.ms-excel"
+                ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 : "application/pdf"
         };
     }
@@ -178,12 +179,30 @@ public sealed class HorasEquipamentoReportService
             return false;
         }
 
-        return DateTime.TryParseExact(
-            value.Trim(),
-            "dd/MM/yyyy",
-            PtBr,
-            DateTimeStyles.None,
-            out date);
+        var v = value.Trim();
+        if (DateTime.TryParseExact(
+                v,
+                new[]
+                {
+                    "dd/MM/yyyy",
+                    "dd/MM/yyyy HH:mm:ss",
+                    "yyyy-MM-dd",
+                    "yyyy-MM-ddTHH:mm:ss",
+                    "yyyy-MM-ddTHH:mm:ss.fffZ",
+                    "yyyy-MM-ddTHH:mm:ssZ",
+                },
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out date)
+            || DateTime.TryParseExact(v, "dd/MM/yyyy", PtBr, DateTimeStyles.None, out date)
+            || DateTime.TryParse(v, PtBr, DateTimeStyles.None, out date)
+            || DateTime.TryParse(v, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out date))
+        {
+            date = date.Date;
+            return true;
+        }
+
+        return false;
     }
 
     private static string Sanitize(string value)
@@ -588,84 +607,175 @@ public sealed class HorasEquipamentoReportService
     private static void Tot(TableDescriptor table, string text, Color bg) =>
         table.Cell().Background(bg).Border(0.5f).Padding(2).AlignCenter().AlignMiddle().Text(text).Bold().FontSize(6);
 
-    private static byte[] BuildExcel(string obra, string equipamento, string periodo, List<HoraRow> rows, byte[]? logoBytes)
+    /// <summary>
+    /// Excel OOXML (.xlsx) — HTML-.xls abre no desktop mas o Excel Android marca como corrompido.
+    /// </summary>
+    private static byte[] BuildExcelXlsx(string obra, string equipamento, string periodo, List<HoraRow> rows)
     {
-        // Paridade RDLC: cabeçalho · labels · ordem · TOTAL · bloco apontamento.
         var somaHe = rows.Sum(x => x.TotalHorasExtras ?? 0).ToString("N", HorimetroFormat);
         var somaHn = rows.Sum(x => x.TotalHorasNormais ?? 0).ToString("N", HorimetroFormat);
         var somaHt = rows.Sum(x => x.HorimetroTotal ?? 0).ToString("N", HorimetroFormat);
         var somaMan = rows.Sum(x => x.SomaTotalHorasManut ?? 0).ToString("N", HorimetroFormat);
-        static string H(string? s) => WebUtility.HtmlEncode(s ?? "");
 
-        var sb = new StringBuilder();
-        sb.Append("<html><head><meta charset=\"utf-8\"/><style>");
-        sb.Append("table{border-collapse:collapse;font-family:Arial,sans-serif;font-size:9pt;}");
-        sb.Append("td,th{border:1px solid #000;padding:3px 4px;vertical-align:middle;}");
-        sb.Append(".title{font-size:14pt;font-weight:bold;text-align:center;color:#28496f;}");
-        sb.Append(".grp,.sub{background:#A4C2F4;font-weight:bold;text-align:center;font-size:7pt;}");
-        sb.Append(".tot{background:#9abded;font-weight:bold;text-align:center;}");
-        sb.Append(".num{text-align:center;}");
-        sb.Append("</style></head><body>");
+        var sheet = new StringBuilder(16_384);
+        sheet.Append("""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>""");
+        sheet.Append("""<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">""");
+        sheet.Append("<sheetData>");
 
-        sb.Append("<table><tr>");
-        sb.Append("<td rowspan=\"3\" style=\"width:110px;text-align:center;vertical-align:middle;\">");
-        sb.Append(ExcelHtmlLogoEmbed.LogoCellHtml(logoBytes, 100, 55));
-        sb.Append("</td><td colspan=\"12\" class=\"title\">CONTROLE DE HORAS</td></tr>");
-        sb.Append($"<tr><td><b>Equipamento</b></td><td colspan=\"5\">{H(equipamento)}</td>");
-        sb.Append($"<td><b>Período</b></td><td colspan=\"5\">{H(periodo)}</td></tr>");
-        sb.Append($"<tr><td><b>Frente de Serviço</b></td><td colspan=\"11\">{H(obra)}</td></tr></table><br/>");
-
-        sb.Append("<table><colgroup>");
-        foreach (var w in new[] { 70, 48, 48, 55, 70, 48, 55, 55, 70, 70, 70, 70, 180 })
-            sb.Append($"<col style=\"width:{w}px\"/>");
-        sb.Append("</colgroup>");
-        sb.Append("<tr><th class=\"grp\"></th><th class=\"grp\" colspan=\"4\">HORAS NORMAIS</th>");
-        sb.Append("<th class=\"grp\" colspan=\"4\">HORAS EXTRAS</th><th class=\"grp\" colspan=\"3\"></th><th class=\"grp\"></th></tr><tr>");
-        foreach (var head in new[]
-                 {
-                     "Data", "Entrada", "Saída", "Manutenção", "Total Horas Normais",
-                     "Entrada", "Saída", "Manut./OP.", "Total Horas Extras",
-                     "Horímetro Inicial", "Horímetro Final", "Horas Trabalhadas", "Observações"
-                 })
-            sb.Append($"<th class=\"sub\">{head}</th>");
-        sb.Append("</tr>");
-
-        foreach (var r in rows)
+        var r = 1;
+        void Row(params string?[] cells)
         {
-            sb.Append("<tr>");
-            sb.Append($"<td class=\"num\">{H(r.Data)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HoraInicialTxt)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HoraFinalTxt)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.ManutencaoFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.TotalHorasNormaisFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HoraExtraInicialTxt)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HoraExtraFinalTxt)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.ManutOpFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.TotalHorasExtrasFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HorimetroInicialFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HorimetroFinalFormatado)}</td>");
-            sb.Append($"<td class=\"num\">{H(r.HorimetroTotalFormatado)}</td>");
-            sb.Append($"<td>{H(r.Comentario)}</td></tr>");
+            sheet.Append($"<row r=\"{r}\">");
+            for (var i = 0; i < cells.Length; i++)
+            {
+                var col = XlsxColName(i + 1);
+                sheet.Append($"<c r=\"{col}{r}\" t=\"inlineStr\"><is><t>{XlsxEsc(cells[i])}</t></is></c>");
+            }
+            sheet.Append("</row>");
+            r++;
         }
 
-        sb.Append("<tr class=\"tot\"><td colspan=\"3\" style=\"text-align:right;\">TOTAL</td><td></td>");
-        sb.Append($"<td>{H(somaHn)}</td><td></td><td></td><td></td><td>{H(somaHe)}</td>");
-        sb.Append($"<td></td><td></td><td>{H(somaHt)}</td><td></td></tr></table><br/>");
+        Row("rdo", "CONTROLE DE HORAS");
+        Row("Equipamento", equipamento, "Período", periodo);
+        Row("Frente de Serviço", obra);
+        Row();
+        Row(
+            "",
+            "HORAS NORMAIS", "", "", "",
+            "HORAS EXTRAS", "", "", "",
+            "", "", "", "");
+        Row(
+            "Data", "Entrada", "Saída", "Manutenção", "Total Horas Normais",
+            "Entrada", "Saída", "Manut./OP.", "Total Horas Extras",
+            "Horímetro Inicial", "Horímetro Final", "Horas Trabalhadas", "Observações");
 
-        sb.Append("<table><tr><th class=\"sub\"></th><th class=\"sub\">TOTAL APONTAMENTO</th>");
-        sb.Append("<th class=\"sub\">TOTAL MEDIÇÃO</th><th class=\"sub\">VALOR DA HORA</th><th class=\"sub\">TOTAL MEDIÇÃO</th></tr>");
-        sb.Append($"<tr><td>HORAS MANUT.</td><td class=\"num\"><b>{H(somaMan)}</b></td><td></td><td></td><td></td></tr>");
-        sb.Append($"<tr><td>HORAS NORMAIS</td><td class=\"num\"><b>{H(somaHn)}</b></td><td></td><td></td><td></td></tr>");
-        sb.Append($"<tr><td>HORAS EXTRAS</td><td class=\"num\"><b>{H(somaHe)}</b></td><td></td><td></td><td></td></tr>");
-        sb.Append($"<tr><td>HORAS HORÍMETRO</td><td class=\"num\"><b>{H(somaHt)}</b></td><td></td><td></td><td></td></tr>");
-        sb.Append("<tr><td colspan=\"2\" style=\"text-align:center;\"><b>TOTAL</b></td><td></td><td></td><td></td></tr></table><br/>");
-        sb.Append("<table><tr><th class=\"sub\"></th><th class=\"sub\">QUANTIDADE ABASTECIDA</th>");
-        sb.Append("<th class=\"sub\">PREÇO DO COMB.</th><th class=\"sub\">VALOR</th>");
-        sb.Append("<th class=\"sub\">ABASTECIDO P/ HORIMETRO RODADO (LITROS)</th></tr>");
-        sb.Append("<tr><td>COMBUSTÍVEL</td><td></td><td></td><td></td><td></td></tr></table><br/>");
-        sb.Append("<table><tr><td>Horas mínimas mês</td><td></td></tr><tr><td>Hora extra</td><td></td></tr></table>");
-        sb.Append("</body></html>");
-        return ExcelHtmlLogoEmbed.Pack(sb.ToString(), logoBytes);
+        foreach (var row in rows)
+        {
+            Row(
+                row.Data,
+                row.HoraInicialTxt,
+                row.HoraFinalTxt,
+                row.ManutencaoFormatado,
+                row.TotalHorasNormaisFormatado,
+                row.HoraExtraInicialTxt,
+                row.HoraExtraFinalTxt,
+                row.ManutOpFormatado,
+                row.TotalHorasExtrasFormatado,
+                row.HorimetroInicialFormatado,
+                row.HorimetroFinalFormatado,
+                row.HorimetroTotalFormatado,
+                row.Comentario);
+        }
+
+        Row("TOTAL", "", "", "", somaHn, "", "", "", somaHe, "", "", somaHt, "");
+        Row();
+        Row("", "TOTAL APONTAMENTO", "TOTAL MEDIÇÃO", "VALOR DA HORA", "TOTAL MEDIÇÃO");
+        Row("HORAS MANUT.", somaMan, "", "", "");
+        Row("HORAS NORMAIS", somaHn, "", "", "");
+        Row("HORAS EXTRAS", somaHe, "", "", "");
+        Row("HORAS HORÍMETRO", somaHt, "", "", "");
+        Row("TOTAL", "", "", "", "");
+        Row();
+        Row("", "QUANTIDADE ABASTECIDA", "PREÇO DO COMB.", "VALOR", "ABASTECIDO P/ HORIMETRO RODADO (LITROS)");
+        Row("COMBUSTÍVEL", "", "", "", "");
+        Row();
+        Row("Horas mínimas mês", "");
+        Row("Hora extra", "");
+
+        sheet.Append("</sheetData></worksheet>");
+
+        return PackXlsx(sheet.ToString());
+    }
+
+    private static string XlsxColName(int index1Based)
+    {
+        var n = index1Based;
+        var name = "";
+        while (n > 0)
+        {
+            n--;
+            name = (char)('A' + n % 26) + name;
+            n /= 26;
+        }
+        return name;
+    }
+
+    private static string XlsxEsc(string? value)
+    {
+        if (string.IsNullOrEmpty(value)) return "";
+        return WebUtility.HtmlEncode(value)
+            .Replace("\r\n", "&#10;")
+            .Replace("\n", "&#10;")
+            .Replace("\r", "&#10;");
+    }
+
+    private static byte[] PackXlsx(string sheet1Xml)
+    {
+        const string contentTypes = """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+              <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+              <Default Extension="xml" ContentType="application/xml"/>
+              <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+              <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+              <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+            </Types>
+            """;
+
+        const string rootRels = """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+              <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+            </Relationships>
+            """;
+
+        const string workbook = """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+              <sheets>
+                <sheet name="Controle" sheetId="1" r:id="rId1"/>
+              </sheets>
+            </workbook>
+            """;
+
+        const string workbookRels = """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+              <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+              <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+            </Relationships>
+            """;
+
+        const string styles = """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+              <fonts count="1"><font><sz val="10"/><name val="Arial"/></font></fonts>
+              <fills count="1"><fill><patternFill patternType="none"/></fill></fills>
+              <borders count="1"><border/></borders>
+              <cellStyleXfs count="1"><xf/></cellStyleXfs>
+              <cellXfs count="1"><xf xfId="0"/></cellXfs>
+            </styleSheet>
+            """;
+
+        using var ms = new MemoryStream();
+        using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            void Put(string path, string content)
+            {
+                var entry = zip.CreateEntry(path, CompressionLevel.Optimal);
+                using var writer = new StreamWriter(entry.Open(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+                writer.Write(content);
+            }
+
+            Put("[Content_Types].xml", contentTypes);
+            Put("_rels/.rels", rootRels);
+            Put("xl/workbook.xml", workbook);
+            Put("xl/_rels/workbook.xml.rels", workbookRels);
+            Put("xl/styles.xml", styles);
+            Put("xl/worksheets/sheet1.xml", sheet1Xml);
+        }
+
+        return ms.ToArray();
     }
 
     private sealed class HoraRow

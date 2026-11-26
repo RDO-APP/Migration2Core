@@ -85,6 +85,18 @@ export async function fetchObraCadastro(
   return readJson(res, 'cadastro obra')
 }
 
+/** Copiar obra: pré-visualização (somente leitura) do time/frota da origem; clonados ao Salvar. */
+export async function fetchCopiaVinculos(idObraOrigem: number): Promise<{
+  colaboradores: import('./colaboradorApi').ColaboradorIndexItem[]
+  equipamentos: import('./equipamentoApi').EquipamentoIndexItem[]
+}> {
+  const res = await fetch(`/api/bff/obras/cadastro/copia-vinculos?copiar=${idObraOrigem}`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return readJson(res, 'vínculos da obra origem')
+}
+
 export async function saveObraCadastro(body: {
   nova?: boolean
   /** Copiar obra — clona obra_colaborador + obra_equipamento no Create. */

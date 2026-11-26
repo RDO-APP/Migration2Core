@@ -12,7 +12,8 @@
 | Vertical | CPF | Senha | Catálogo esperado |
 |----------|-----|-------|-------------------|
 | **Piscinas** | `567.065.455-20` | `1234` | `piscinas_rdoapp_homologa` |
-| **Equipamentos** | `538.219.635-49` | `1234` | `homol_rdoapp` (Core `homolog.sistema`) |
+| **Equipamentos** | `538.219.635-49` | `1234` | `homol_rdoapp` (Core `homolog.sistema`) — canônico E2E |
+| **Equipamentos** | `824.351.035-49` | (senha do usuário) | `homol_rdoapp` — **Georges Sakelliou** · Dia 0 19/11 · obra MIGRAÇÃO 15/11 |
 
 Não commitar connection strings com senha de produção.
 

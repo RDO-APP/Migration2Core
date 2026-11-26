@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
+  fetchCopiaVinculos,
   fetchObraCadastro,
   fetchViaCep,
   saveObraCadastro,
@@ -186,7 +187,22 @@ export function ObraCadastroPage() {
           const muns = await fetchObraIndexMunicipios(next.idUf)
           if (!cancelled) setMunicipios(muns)
         }
-        if (!isNova) {
+        if (isCopia) {
+          // Copiar obra: mostra time/frota da origem (somente leitura); clonados ao Salvar.
+          try {
+            const v = await fetchCopiaVinculos(copiarId)
+            if (!cancelled) {
+              setColaboradores(v.colaboradores ?? [])
+              setEquipamentos(v.equipamentos ?? [])
+            }
+          } catch (e: unknown) {
+            if (!cancelled) {
+              setColaboradores([])
+              setEquipamentos([])
+              showToast('error', e instanceof Error ? e.message : 'Falha ao carregar vínculos da obra origem.')
+            }
+          }
+        } else if (!isNova) {
           await reloadVinculos()
         } else {
           setColaboradores([])
@@ -224,6 +240,8 @@ export function ObraCadastroPage() {
   }
 
   const disabled = (!isNova && !!form?.finalizada) || modo === 'visualizar'
+  // Copiar obra: listas são só preview (ids da origem) — sem editar/remover.
+  const listaSomenteLeitura = disabled || isCopia
   const lastCepLookup = useRef('')
 
   async function lookupCep(raw: string) {
@@ -729,7 +747,11 @@ export function ObraCadastroPage() {
                   </button>
                 </div>
               </div>
-              {isNova ? (
+              {isCopia ? (
+                <p className="muted" style={{ clear: 'both', padding: '8px 0' }}>
+                  Estes colaboradores da obra origem serão copiados ao salvar (você entra automaticamente como criador).
+                </p>
+              ) : isNova ? (
                 <p className="muted" style={{ clear: 'both', padding: '8px 0' }}>
                   Salve a obra para vincular colaboradores (igual produção: vínculos gravados com a obra).
                 </p>
@@ -747,7 +769,7 @@ export function ObraCadastroPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {isNova || listBusy ? (
+                    {(isNova && !isCopia) || listBusy ? (
                       <tr>
                         <td colSpan={7}>
                           {listBusy ? 'Carregando…' : 'Nenhum registro encontrado.'}
@@ -766,7 +788,7 @@ export function ObraCadastroPage() {
                           <td>{col.email || '—'}</td>
                           <td>{col.descricaoGrupo || '—'}</td>
                           <td>
-                            {col.editavel && !disabled ? (
+                            {col.editavel && !listaSomenteLeitura ? (
                               <button
                                 type="button"
                                 className="btn btn-simple btn-just-icon"
@@ -778,7 +800,7 @@ export function ObraCadastroPage() {
                             ) : null}
                           </td>
                           <td>
-                            {col.excluivel && !disabled ? (
+                            {col.excluivel && !listaSomenteLeitura ? (
                               <button
                                 type="button"
                                 className="btn btn-simple btn-just-icon"
@@ -816,7 +838,11 @@ export function ObraCadastroPage() {
                   </button>
                 </div>
               </div>
-              {isNova ? (
+              {isCopia ? (
+                <p className="muted" style={{ clear: 'both', padding: '8px 0' }}>
+                  Estes equipamentos da obra origem serão copiados ao salvar.
+                </p>
+              ) : isNova ? (
                 <p className="muted" style={{ clear: 'both', padding: '8px 0' }}>
                   Salve a obra para vincular equipamentos.
                 </p>
@@ -835,7 +861,7 @@ export function ObraCadastroPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {isNova || listBusy ? (
+                    {(isNova && !isCopia) || listBusy ? (
                       <tr>
                         <td colSpan={8}>
                           {listBusy ? 'Carregando…' : 'Nenhum registro encontrado.'}
@@ -855,7 +881,7 @@ export function ObraCadastroPage() {
                           <td>{eq.contato || '—'}</td>
                           <td>{eq.telefone || '—'}</td>
                           <td>
-                            {!disabled ? (
+                            {!listaSomenteLeitura ? (
                               <button
                                 type="button"
                                 className="btn btn-simple btn-just-icon"
@@ -867,7 +893,7 @@ export function ObraCadastroPage() {
                             ) : null}
                           </td>
                           <td>
-                            {!disabled ? (
+                            {!listaSomenteLeitura ? (
                               <button
                                 type="button"
                                 className="btn btn-simple btn-just-icon"

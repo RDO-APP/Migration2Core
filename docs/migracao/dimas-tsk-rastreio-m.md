@@ -1,4 +1,4 @@
-# Rastreio Dimas (TSK) × marcos M* — execução homolog
+﻿# Rastreio Dimas (TSK) × marcos M* — execução homolog
 
 **Trilha:** docs / orquestrador · **Atualizado:** 2026-11-20  
  
@@ -65,8 +65,8 @@ Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adi
 | **M6** | **Fase 0 OK** · JWT login/me **código** (`/api/mobile/auth/*`) | SigningKey+smoke · OpenAPI YAML · LoginObra Bearer | **◐** TSK-07 · 40…41 |
 | **M7+** | 7a–7d · Obra · P6a · Paralizações · P4 · colab/equip/tarefa · Efetivo/Medição PDF OK · Excel logo fix | CAT-PARALIZ · G5 · 3.1 · Terceirizado dropdown · ClosedXML Excel | **◐** escrita 17…23 · gestor 14…16 · medição 24…30 **~48%** · RBAC |
 | **M8** | Branch CI, roteiro | Runway &lt;2 min | **◐** deploy · **☐** ETL 43 |
-| **M9** | Fatia operador no Git | D1–D7 · smoke `5f747b5` | **◐** release fatia |
-| **M10** | — | L1 · P6b | **☐** cutover |
+| **M9** | Fatia operador · D1–D7 | aceite [`m9-aceite-d1-d7.md`](m9-aceite-d1-d7.md) · Lucio 23/11 | **◐** em teste |
+| **M10** | Cutover Core→`novo_rdoapp` | [`m10-cutover-checklist.md`](m10-cutover-checklist.md) · Q1–Q4 revalidar · sem ALTER | **☐** pós-GO |
 
 **Paralelo:** **I0** B1/B2 OK · B3 pendente. **TSK-32** → trilha **F**.
 
