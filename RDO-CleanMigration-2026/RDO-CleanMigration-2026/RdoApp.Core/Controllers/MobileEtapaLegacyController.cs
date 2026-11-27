@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Services;
 
@@ -18,7 +19,7 @@ namespace RdoApp.Core.Controllers;
 [ApiController]
 [Route("api/etapa")]
 [EnableCors("MobileJwt")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = MobileAuthSchemes.BearerOrCookie)]
 public sealed class MobileEtapaLegacyController : ControllerBase
 {
     private readonly RdoDbContext _context;

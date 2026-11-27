@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Services;
 
 namespace RdoApp.Core.Controllers;
@@ -16,7 +17,7 @@ namespace RdoApp.Core.Controllers;
 [ApiController]
 [Route("api/Usuario")]
 [EnableCors("MobileJwt")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = MobileAuthSchemes.BearerOrCookie)]
 public sealed class MobileUsuarioLegacyController : ControllerBase
 {
     private readonly RdoDbContext _context;

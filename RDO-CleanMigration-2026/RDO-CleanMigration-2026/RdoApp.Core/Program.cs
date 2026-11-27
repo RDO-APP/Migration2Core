@@ -28,6 +28,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<RbacRouteService>();
 builder.Services.AddScoped<LoginObraService>();
+builder.Services.AddScoped<LoginLegacyService>();
 builder.Services.AddScoped<HistoricoLoginWriter>();
 builder.Services.AddScoped<CardsQueryService>();
 builder.Services.AddScoped<TarefaCadastroQueryService>();

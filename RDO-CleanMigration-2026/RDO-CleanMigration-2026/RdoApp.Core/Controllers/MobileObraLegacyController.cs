@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Services;
 
 namespace RdoApp.Core.Controllers;
@@ -17,7 +18,7 @@ namespace RdoApp.Core.Controllers;
 [ApiController]
 [Route("api/obra")]
 [EnableCors("MobileJwt")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = MobileAuthSchemes.BearerOrCookie)]
 public sealed class MobileObraLegacyController : ControllerBase
 {
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");

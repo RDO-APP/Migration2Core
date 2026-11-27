@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RdoApp.Core.Data;
+using RdoApp.Core.Infrastructure;
 using RdoApp.Core.Models.Dtos;
 using RdoApp.Core.Services;
 using static RdoApp.Core.Services.CardsTarefaParity;
@@ -20,7 +21,7 @@ namespace RdoApp.Core.Controllers;
 [ApiController]
 [Route("api/tarefa")]
 [EnableCors("MobileJwt")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = MobileAuthSchemes.BearerOrCookie)]
 public sealed class MobileTarefaLegacyController : ControllerBase
 {
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
