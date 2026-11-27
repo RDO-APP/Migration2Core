@@ -397,6 +397,17 @@ Os **dois usam React**, mas renderizadores diferentes: browser (**HTML + CSS + B
 | **Não confundir** | **M7-REL-HORAS-XLS** (ClosedXML web / logo) ≠ download Apontador; App deve seguir o Core **HTML.xls** atual |
 | **Smoke** | EAS tip pós-fix → Excel abre · PDF com páginas · matriz S9/S10 |
 
+### Apontador — decisão 27/11 (cenário A + app novo)
+
+| | |
+|--|--|
+| **Dia D** | **A:** o APK de produção continua em `POST /api/login/LoginUser` + cookie. Core `39ff033` grava esse cookie e aceita cookie nas rotas `api/obra`, `api/etapa`, `api/tarefa`, `api/Usuario`. JWT (`/api/mobile/auth/login`) fica no build de homolog. |
+| **Quem está em produção hoje** | APK Dimas `Rdo_Apontador_11082026` · pacote `com.dimasduarta.rdoapp.apontador` · host `sistema.rdoapp.com.br`. Rotas de campo iguais às do app atual. Laudo fica fora do Apontador. |
+| **APK de produção novo (build EAS 27/11)** | App *RDO Apontador (Produção)* · pacote `com.rdoapp.apontador` (não substitui o do Dimas; instala ao lado) · arquivo `Rdo_Apontador_Producao_aaaammdd_hhmm.apk` · aponta para `sistema.rdoapp.com.br`. Código: repo EquipamentosMobile `main` `0391a88`. Build: conta `rdo-app` · projeto `rdo-app-apontador` · perfil `appApontadorPreview` · [build `3d55464d`](https://expo.dev/accounts/rdo-app/projects/rdo-app-apontador/builds/3d55464d-2f6e-41ed-b1f6-079912c04256). |
+| **Homolog (separado)** | Config pronta na `main`: `com.rdoapp.apontador.homolog` · nome *RDO Apontador (Homolog)* · `Rdo_Apontador_Homolog_*.apk`. A branch `homolog` do app ainda usa `com.dimasduarta.rdoapp.apontador.homolog` até o merge `main`→`homolog` (quem tem o homolog instalado reinstala). |
+| **Keystore (decisão 27/11)** | O EAS gerou um keystore novo na nuvem para `com.rdoapp.apontador` (credencial remota da conta `rdo-app`). Versões futuras desse app saem do mesmo projeto EAS com esse keystore; trocar o keystore impede atualizar o app instalado. Guardar cópia segura fora do Git (`eas credentials`). Nunca commitar keystore/senhas. |
+| **Excel no download** | Implementado: o app detecta pelo conteúdo — zip (`PK`) → `.xlsx`; demais (Excel antigo/HTML do legado) → `.xls` com `application/vnd.ms-excel`. Testar no aparelho com obra de teste antes de distribuir. |
+
 ---
 
 ## 7. Marcos

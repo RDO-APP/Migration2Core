@@ -1,6 +1,6 @@
 # M9 — Roteiro de aceite D1–D7 (release homolog → GO cutover)
 
-**Trilha:** EQ-R + EQ-M · **Atualizado:** 2026-11-23 21:55 BRT  
+**Trilha:** EQ-R + EQ-M · **Atualizado:** 2026-11-27 13:30 BRT  
 **Host:** `https://homolog.sistema.rdoapp.com.br` · RDS **`homol_rdoapp`** · L1 `i-0776acb09b8438f22`  
 **Critério:** paridade **operável** (fluxo + dados) — não pixel-perfect.  
 ## D8 — Ordem do histórico (fora do D1–D7 · 23/11)
@@ -22,8 +22,8 @@ Marcar cada linha: ☐ / ☑ PASS / ✗ FAIL + data BRT.
 | # | Item | Status 23/11 16:10 |
 |---|------|-------------------|
 | 1 | Core tip com **clone Copiar** | ☑ HEAD Git `d04e727` · `CloneListasFromOrigemAsync` |
-| 2 | **Publish + deploy** L1 Linux tip `d04e727`+ | ☐ Lucio — blocos abaixo |
-| 3 | Smoke mínimo pós-deploy: Login 200 + Copiar → colab/equip | ☐ após deploy |
+| 2 | **Publish + deploy** L1 Linux tip `39ff033` (`LoginUser` cookie + clone/Chart/horímetro) | ☑ Lucio 27/11 (ele confirmou) |
+| 3 | Smoke mínimo pós-deploy: Login 200 + Copiar → colab/equip | ☐ neste deploy |
 | 4 | APK Homolog | ☑ EAS Finished `42bd2e66` · commit **`a319ce69`** · profile `appApontadorHomolog` |
 | 5 | Tip App local vs APK | ⚠ local `72aeaa9` (hora/horímetro) **à frente** do APK `a319ce69` — D4 OK no tip APK; se precisar V5/V6 no mobile → novo EAS |
 
@@ -189,6 +189,7 @@ Pergunta única: **posso começar a preparar o cutover M10 (Core em produção c
 | D4 | | |
 | D5 | ☑ PASS Lucio | 23/11 |
 | D6 | ✗ colabs sem clone no host · smoke após deploy `d04e727` | 23/11 |
+| D6.2 | ☑ Lucio: copiar obra com colaboradores e equipamentos OK (deploy `39ff033`) | 27/11 |
 | D7 | ☑ GO Lucio 23/11 · Comentários Chart fix código (smoke pós-deploy) | 23/11 |
 
 **NO-GO se:** 500 em jornada crítica · medição sem bloqueio hora/horímetro · Copiar sem listas · mobile sem JWT homolog.

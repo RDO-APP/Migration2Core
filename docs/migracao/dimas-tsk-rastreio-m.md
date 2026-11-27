@@ -1,6 +1,6 @@
 ﻿# Rastreio Dimas (TSK) × marcos M* — execução homolog
 
-**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-20  
+**Trilha:** docs / orquestrador · **Atualizado:** 2026-11-27  
  
 **Dono da execução:** plano **M\*** ([`plano-execucao-migracao-v1.md`](../plano-execucao-migracao-v1.md) + [`ORQUESTRADOR-MIGRACAO.md`](../ORQUESTRADOR-MIGRACAO.md))  
 **Referência Dimas:** PDF **Backlog_RDO v20260818** → [`../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md`](../estudos-lucio-apps-plano-migracao-core/comparativo-dimas-v20260818.md) (TSK-01…56 × Ondas U)
@@ -62,7 +62,7 @@ Legenda coluna **Dimas:** **◐** parcial · **☐** não coberto · **⏸** adi
 | **M4** | M4.1–M4.8 ☑ · P3 filtros/stubs `5f747b5` | G5/G6; UI-M1/M2c | **◐** Front + RBAC shell |
 | **M5 web** | RDO + Chart C1–C8 + Dashboard | DOC-FICHAS | **◐** TSK-31…36 · U-56/57 **~88%** |
 | **M5 EQ-M** | — | **⏸** | **⏸** TSK-46…56 |
-| **M6** | **Fase 0 OK** · JWT login/me **código** (`/api/mobile/auth/*`) | SigningKey+smoke · OpenAPI YAML · LoginObra Bearer | **◐** TSK-07 · 40…41 |
+| **M6** | Fase 0 OK · JWT homolog · `LoginUser` cookie `39ff033` (deploy 27/11) | Smoke login cookie · `ListaStatusTarefaPermitidos` · OpenAPI YAML | **◐** TSK-07 · 40…41 |
 | **M7+** | 7a–7d · Obra · P6a · Paralizações · P4 · colab/equip/tarefa · Efetivo/Medição PDF OK · Excel logo fix | CAT-PARALIZ · G5 · 3.1 · Terceirizado dropdown · ClosedXML Excel | **◐** escrita 17…23 · gestor 14…16 · medição 24…30 **~48%** · RBAC |
 | **M8** | Branch CI, roteiro | Runway &lt;2 min | **◐** deploy · **☐** ETL 43 |
 | **M9** | Fatia operador · D1–D7 | aceite [`m9-aceite-d1-d7.md`](m9-aceite-d1-d7.md) · Lucio 23/11 | **◐** em teste |

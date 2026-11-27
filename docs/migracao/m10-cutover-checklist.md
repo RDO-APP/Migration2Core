@@ -76,7 +76,9 @@ SELECT gru_id, gru_nome FROM novo_rdoapp.grupo WHERE gru_id = 34;
 | 9 | Backup RDS | Snapshot `novo_rdoapp` + janela Lucio anunciada | |
 | 10 | Apontador | Dia D: **A** legado `api/*` em `sistema.rdoapp.com.br` **ou** **B** Core JWT — decisão escrita abaixo | |
 
-**Decisão Apontador (§2.10):** ☐ A legado · ☐ B Core JWT · data ____ · quem: ________
+**Decisão Apontador (§2.10) — 27/11 Lucio:** **A** (login legado `POST /api/login/LoginUser` + cookie). Código Core `39ff033` (deploy L1 no mesmo dia). Smoke desse login no homolog ainda aberto. **B** (JWT no APK de produção) fica em **APONTADOR-B**, depois do corte.
+
+APK que os usuários usam hoje: Dimas `Rdo_Apontador_11082026` · pacote `com.dimasduarta.rdoapp.apontador` · `sistema.rdoapp.com.br`. Rotas de campo conferidas iguais ao app atual. APK de produção novo — **build EAS disparado 27/11** (`rdo-app` / `rdo-app-apontador`, [build `3d55464d`](https://expo.dev/accounts/rdo-app/projects/rdo-app-apontador/builds/3d55464d-2f6e-41ed-b1f6-079912c04256)): pacote `com.rdoapp.apontador` · arquivo `Rdo_Apontador_Producao_*.apk` · instala ao lado do Dimas · código EquipamentosMobile `main` `0391a88` (Excel `.xls`/`.xlsx` por conteúdo já incluído). Homolog: `com.rdoapp.apontador.homolog` · `Rdo_Apontador_Homolog_*.apk`. **Keystore:** gerado pelo EAS na nuvem (conta `rdo-app`); manter o mesmo nas próximas versões e guardar cópia fora do Git. Laudo fora do Apontador. **Antes de distribuir:** teste em obra de teste (login, apontamento, Excel abre no celular).
 
 Homolog L1 (`i-0776acb09b8438f22` · TG `tg-equipamentos-homolog-5081`) **não** é o host deste cutover.
 
@@ -126,4 +128,4 @@ Backlog canônico pós-M10 — **fora** do caminho crítico do cutover:
 | Cutover executado | | |
 | Rollback testado (simulado ou real) | | |
 
-**Estado plano (23/11):** runbook M10 pronto · execução dia D **bloqueada** até M9 D7 GO · schema = só revalidar (sem ALTER).
+**Estado plano (27/11):** runbook M10 pronto · dia D ainda bloqueado até smoke deste deploy + assinatura M9 · schema = só revalidar (sem ALTER) · Apontador dia D = **A**.

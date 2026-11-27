@@ -1,6 +1,6 @@
 # Orquestrador — Migração (Equipamentos × FAPESC × infra)
 
-**Atualizado:** 2026-11-23 21:55 BRT — **M9 GO** · próximo: deploy clone+Chart Comentários · depois prep **M10**
+**Atualizado:** 2026-11-27 14:00 BRT — deploy L1 Lucio (tip `39ff033`) · Apontador dia D = **A** · APK produção novo em build EAS (app `main` `0391a88`) · keystore EAS remoto · D6.2 cópia de obra OK
 
 
 
@@ -124,7 +124,10 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **Paralelo:** trilha **F** (⑥ FAPESC) · **PQ** (④⑤) — não bloqueiam B–D.
 
-**Próxima ação (ordem) — 26/11 15:09 BRT:** Chart + Excel web **OK**. Lucio: deploy homolog com Copiar obra (preview colab/equip da origem + clone ao salvar) → smoke D6.2 · testar APK Homolog (`345bc37b`, Excel `.xlsx`) · D8 (editar medição sem horas → posição no histórico) · decidir Apontador A/B (recomendado **A** no dia D) · depois **M10** pré §2 (Q1–Q4, CS prod). Melhorias (ES etc.) só após espelho 100% + prod.
+**Próxima ação (ordem) — 27/11 14:00 BRT:** Core homolog no tip `39ff033` (`POST /api/login/LoginUser` + cookie nas rotas mobile); falta smoke desse login no homolog. **D6.2:** cópia de obra com colaboradores e equipamentos ☑ Lucio 27/11. Apontador no dia D = **A** (login legado). APK em uso pelos usuários continua o do Dimas (`Rdo_Apontador_11082026`, pacote `com.dimasduarta.rdoapp.apontador`).
+**APK de produção novo — build EAS disparado 27/11:** conta `rdo-app` · projeto `rdo-app-apontador` · perfil `appApontadorPreview` (env prod) · build `3d55464d-2f6e-41ed-b1f6-079912c04256` ([link](https://expo.dev/accounts/rdo-app/projects/rdo-app-apontador/builds/3d55464d-2f6e-41ed-b1f6-079912c04256)). App *RDO Apontador (Produção)* · pacote `com.rdoapp.apontador` · arquivo `Rdo_Apontador_Producao_*.apk` · instala ao lado do Dimas (pacote diferente, não é atualização). Código: repo **EquipamentosMobile** `main` = `0391a88` (separação prod/homolog no `app.config.ts` + download do Excel detecta `.xls` legado ou `.xlsx` Core pelo conteúdo).
+**Decisão keystore:** o EAS gerou um keystore novo na nuvem para `com.rdoapp.apontador` (credencial remota, conta `rdo-app`). Toda versão futura desse app tem de sair do mesmo projeto EAS com esse keystore; trocar o keystore impede atualizar o app já instalado. Guardar uma cópia fora do Git (`eas credentials` → baixar keystore) em local seguro. Não commitar keystore nem senhas.
+**Falta (Lucio):** baixar o APK quando o build terminar → testar em obra de teste (login, apontamento, Excel abre no celular) → só então distribuir. Branch `homolog` do app ainda sem a separação (hoje `com.dimasduarta.rdoapp.apontador.homolog`); merge `main`→`homolog` passa para `com.rdoapp.apontador.homolog` (quem tem o homolog reinstala). Depois: M10 pré §2 (Q1–Q4, CS prod). Laudo fora do Apontador. Melhorias só após espelho 100% + prod.
 
 **Histórico:** **M1** FECHADO 2026-10-17. **M3** PASS 2026-10-19. **M4.4–M4.6** deploy 2026-10-21. **2026-10-26** M4.7 + RDO BFF. **2026-10-27** P5a. **2026-11-19** Dia 0–1 operador · **L1 Linux cutover** (`dde125e`) — homolog deixa Windows compartilhado com prod.
 
@@ -134,7 +137,7 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 
 **%** = fatia **deste** marco (não peso no projeto inteiro).
 
-**Leitura rápida (2026-11-23 16:10):** plano **M9→M10** ativo · Lucio testa D1–D7 · clone Git ☑ `d04e727` · deploy clone ☐ · APK ☑ `a319ce69` · Excel = **pós-M10**. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
+**Leitura rápida (2026-11-27 14:00):** plano **M9→M10** · deploy L1 ☑ Lucio (tip `39ff033`, smoke login cookie ☐) · D1 D2 D5 D7 D8 Chart Excel web OK no aceite anterior · D6.2 cópia de obra com colaboradores e equipamentos ☑ Lucio 27/11 · APK usuários hoje = Dimas 11/08 · APK produção novo 🔄 build EAS (`main` `0391a88`, keystore EAS remoto) — teste em obra de teste antes de distribuir. TSK: [`migracao/dimas-tsk-rastreio-m.md`](migracao/dimas-tsk-rastreio-m.md).
 
 | Marco | % | Feito | Ainda pendente |
 |-------|:-:|--------|----------------|
@@ -146,11 +149,11 @@ Espelhar **EQ** com **PQ-L / PQ-R / PQ-M** (Piscineiro); **PQ-W** só se houver 
 | **M3** | **100** | **FECHADO** | — |
 | **M4** | **100** | **FECHADO** · congela EQ-W | fontello fino residual aceito |
 | **M5 web** | **100** | **FECHADO** · RDO/Chart/Dashboard | DOC-FICHAS residual |
-| **M5 EQ-M** | **55** | M6 Fase 2 · APK Homolog em uso (EAS) | Smoke jornada campo completa (2.4) |
-| **M6** | **72** | Fase 0–2 CI · JWT A+B+C · impressora HTML.xls · qtd Pausada · fotos A+C | Smoke 2.4 formal · OpenAPI YAML · residual LoginObra fino |
+| **M5 EQ-M** | **60** | M6 Fase 2 · APK Homolog EAS · rotas de campo = APK Dimas 11/08 | Smoke 2.4 · APK produção `com.rdoapp.apontador` em build EAS (`main` `0391a88`) · testar Excel `.xls`/`.xlsx` no aparelho · backup do keystore |
+| **M6** | **78** | Fase 0–2 · JWT homolog · `LoginUser` cookie `39ff033` (deploy Lucio 27/11) | Smoke login cookie no homolog · `ListaStatusTarefaPermitidos` · fotos/colab/equip legado · OpenAPI YAML |
 | **M7+** | **99** | 7a–7d · P4 · P6a · Efetivo · fotos F8 · impressora · **clone listas Copiar** código | smoke clone · **M7-REL-HORAS-XLS → pós-M10** · **não** P6b |
 | **M8** | **70** | L1 Linux ☑ · roteiro publish/SSM | B3 runway &lt;2 min · CI Actions shell Linux |
-| **M9** | **40** | Dia 0 · host L1 · roteiro D1–D7 escrito | executar aceite [`migracao/m9-aceite-d1-d7.md`](migracao/m9-aceite-d1-d7.md) |
+| **M9** | **70** | D1 D2 D5 D7 D8 · Chart · Excel web (aceite Lucio) · deploy `39ff033` | D6.2 cópia de obra ☑ Lucio 27/11 · assinatura D7.4 no roteiro · smoke login cookie |
 | **M10** | **10** | Checklist cutover + inventário BD | Q1–Q4 revalidar · CS→`novo_rdoapp` · [`migracao/m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md) · **P6b**/ClosedXML pós |
 
 ---
@@ -449,8 +452,8 @@ Lista numerada canônica: skill **`ponte-loja-sistema-rdo`** § Melhorias 1.0 �
 | | |
 |--|--|
 | Ordem fixa | **M9** ([`m9-aceite-d1-d7.md`](migracao/m9-aceite-d1-d7.md)) → **GO D7** → **M10** ([`m10-cutover-checklist.md`](migracao/m10-cutover-checklist.md)) |
-| Pré M9 | Core tip clone ☑ `d04e727` · deploy L1 ☐ Lucio · APK Homolog ☑ EAS `a319ce69` (`42bd2e66`) |
-| Lucio agora | Marcar D1…D7 no roteiro M9 · smoke Copiar após publish |
+| Pré M9 | Core tip ☑ `39ff033` · deploy L1 ☑ Lucio 27/11 · smoke login cookie ☐ · APK Homolog EAS `345bc37b` (`51a209f`) |
+| Lucio agora | Smoke login cookie no homolog · testar APK de produção (build EAS) em obra de teste · não enviar APK novo aos usuários de produção |
 | M10 schema | Só **revalidar** Q1–Q4 · **sem** ALTER `novo_rdoapp` (prod já era referência) |
 | M10 dia D | Bloqueado até GO · snapshot + CS `novo_rdoapp` + TG/rollback IIS `i-05cb0003c031a26da` |
 | Pós-M10 (não bloqueia) | **M7-REL-HORAS-XLS** · **P6b** · **CAT-PARALIZ-01** · **V10** · **3.1** · CI-B3 |
