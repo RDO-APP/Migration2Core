@@ -21,6 +21,11 @@ type NovaMedicaoModalProps = {
   onSaved: () => void
 }
 
+function parseDecimalTxt(v: string): number {
+  const n = Number(String(v ?? '').replace(',', '.'))
+  return Number.isFinite(n) ? n : 0
+}
+
 export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }: NovaMedicaoModalProps) {
   const [data, setData] = useState<TarefaCadastro | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -30,9 +35,12 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
   const [dataMedicao, setDataMedicao] = useState(todayBr())
   const [horaInicial, setHoraInicial] = useState('')
   const [horaFinal, setHoraFinal] = useState('')
-  const [qtdConstruida, setQtdConstruida] = useState(0)
+  // Texto no input: number controlado em 0 impedia apagar o zero e digitar por cima.
+  const [qtdConstruidaTxt, setQtdConstruidaTxt] = useState('0')
+  const qtdConstruida = parseDecimalTxt(qtdConstruidaTxt)
   const [horimetroInicial, setHorimetroInicial] = useState(0)
-  const [horimetroFinal, setHorimetroFinal] = useState(0)
+  const [horimetroFinalTxt, setHorimetroFinalTxt] = useState('0')
+  const horimetroFinal = parseDecimalTxt(horimetroFinalTxt)
   const [comentario, setComentario] = useState('')
   const [codigoParalizacao, setCodigoParalizacao] = useState('')
   const [fotos, setFotos] = useState<TarefaCadastroImagem[]>([])
@@ -237,9 +245,10 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
                     className="form-control"
                     type="number"
                     step="0.01"
-                    value={qtdConstruida}
+                    value={qtdConstruidaTxt}
                     disabled={locked || (status !== 1 && status !== 2 && status !== 3)}
-                    onChange={(e) => setQtdConstruida(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setQtdConstruidaTxt(e.target.value)}
                   />
                 </div>
               </div>
@@ -261,9 +270,10 @@ export function NovaMedicaoModal({ tarefaId, descricaoTarefa, onClose, onSaved }
                     className="form-control"
                     type="number"
                     step="0.1"
-                    value={horimetroFinal}
+                    value={horimetroFinalTxt}
                     disabled={locked}
-                    onChange={(e) => setHorimetroFinal(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setHorimetroFinalTxt(e.target.value)}
                   />
                 </div>
               </div>
